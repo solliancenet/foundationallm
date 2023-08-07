@@ -7,6 +7,9 @@ import os
 from azure.keyvault.secrets import SecretClient
 from azure.identity import DefaultAzureCredential
 
+from solliance.aicopilot import PromptModel
+from solliance.aicopilot import CSVAgent
+
 key_vault_url = os.environ['SOLLIANCEAICOPILOT__LANGCHAINAPI__KEYVAULTURL']
 credential = DefaultAzureCredential()
 secrets_client = SecretClient(key_vault_url, credential=credential)
@@ -23,7 +26,15 @@ app = FastAPI()
 
 @app.get('/', dependencies=[Depends(api_key_auth)])
 async def root():
-    return { 'message': 'Hello FoundationalLM!' }
+    return { 'message': 'This is the Solliance AI Copilot powered by FoundationalLM!' }
+
+@app.post('/run')
+async def run(prompt: PromptModel):
+    
+    agent = CSVAgent()
+    return agent.run(prompt)
+
+
 
 if __name__ == '__main__':
     uvicorn.run('main:app', host='0.0.0.0', port=8765, reload=True)
