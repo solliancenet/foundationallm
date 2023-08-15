@@ -14,11 +14,15 @@ namespace Solliance.AICopilot.ChatAPI
             builder.Services.AddOptions<CosmosDbSettings>()
                 .Bind(builder.Configuration.GetSection("MSCosmosDBOpenAI:CosmosDB"));
 
-            builder.Services.AddOptions<SemanticKernelRAGServiceSettings>()
+            builder.Services.AddOptions<SemanticKernelOrchestrationServiceSettings>()
                 .Bind(builder.Configuration.GetSection("MSCosmosDBOpenAI"));
 
+            builder.Services.AddOptions<LangChainOrchestrationServiceSettings>()
+                .Bind(builder.Configuration.GetSection("SollianceAICopilot:LangChainOrchestration"));
+
             builder.Services.AddSingleton<ICosmosDbService, CosmosDbService>();
-            builder.Services.AddSingleton<IRAGService, SemanticKernelRAGService>();
+            builder.Services.AddSingleton<ISemanticKernelOrchestrationService, SemanticKernelOrchestrationService>();
+            builder.Services.AddSingleton<ILangChainOrchestrationService, LangChainOrchestrationService>();
             builder.Services.AddSingleton<IChatService, ChatService>();
 
             // Simple, static system prompt service

@@ -2,6 +2,7 @@
 using Solliance.AICopilot.Core.Constants;
 using Solliance.AICopilot.Core.Interfaces;
 using Solliance.AICopilot.Core.Models.Chat;
+using Solliance.AICopilot.Core.Models.Orchestration;
 using Solliance.AICopilot.Core.Models.Search;
 
 namespace Solliance.AICopilot.Core.Services;
@@ -9,19 +10,35 @@ namespace Solliance.AICopilot.Core.Services;
 public class ChatService : IChatService
 {
     private readonly ICosmosDbService _cosmosDbService;
-    private readonly IRAGService _ragService;
+    private readonly ISemanticKernelOrchestrationService _semanticKernelOrchestrator;
+    private readonly ILangChainOrchestrationService _langChainOrchestrator;
     private readonly ILogger _logger;
 
-    public bool IsInitialized => _cosmosDbService.IsInitialized && _ragService.IsInitialized;
+    private LLMOrchestratorType _llmOrchestratorType = LLMOrchestratorType.LangChain;
+
+    public bool IsInitialized => _cosmosDbService.IsInitialized && _semanticKernelOrchestrator.IsInitialized && _langChainOrchestrator.IsInitialized;
 
     public ChatService(
         ICosmosDbService cosmosDbService,
-        IRAGService ragService,
+        ISemanticKernelOrchestrationService semanticKernelOrchestratorService,
+        ILangChainOrchestrationService langChainOrchestratorService,
         ILogger<ChatService> logger)
     {
         _cosmosDbService = cosmosDbService;
-        _ragService = ragService;
+        _semanticKernelOrchestrator = semanticKernelOrchestratorService;
+        _langChainOrchestrator = langChainOrchestratorService;
         _logger = logger;
+    }
+
+    public bool SetLLMOrchestratorPreference(string orchestrator)
+    {
+        if (Enum.TryParse(orchestrator, true, out LLMOrchestratorType llmOrchestratorType))
+        {
+            _llmOrchestratorType = llmOrchestratorType;
+            return true;
+        }
+        else
+            return false;
     }
 
     /// <summary>
@@ -85,8 +102,7 @@ public class ChatService : IChatService
         var messages = await _cosmosDbService.GetSessionMessagesAsync(sessionId);
 
         // Generate the completion to return to the user
-        //(string completion, int promptTokens, int responseTokens) = await_openAiService.GetChatCompletionAs ync(sessionId, conversation, retrievedDocuments);
-        var result = await _ragService.GetResponse(userPrompt, messages);
+        var result = await GetLLMOrchestrator().GetResponse(userPrompt, messages);
 
         // Add to prompt and completion to cache, then persist in Cosmos as transaction 
         var promptMessage = new Message(sessionId, nameof(Participants.User), result.UserPromptTokens, userPrompt, result.UserPromptEmbedding, null);
@@ -108,7 +124,7 @@ public class ChatService : IChatService
 
         await Task.CompletedTask;
 
-        var summary = await _ragService.Summarize(sessionId, prompt);
+        var summary = await GetLLMOrchestrator().Summarize(prompt);
 
         await RenameChatSessionAsync(sessionId, summary);
 
@@ -169,7 +185,7 @@ public class ChatService : IChatService
 
         try
         {
-            await _ragService.RemoveMemory(new Product { id = productId });
+            await _semanticKernelOrchestrator.RemoveMemory(new Product { id = productId });
         }
         catch (Exception ex)
         {
@@ -183,5 +199,17 @@ public class ChatService : IChatService
         ArgumentNullException.ThrowIfNullOrEmpty(completionPromptId);
 
         return await _cosmosDbService.GetCompletionPrompt(sessionId, completionPromptId);
+    }
+
+    private ILLMOrchestrationService GetLLMOrchestrator()
+    {
+        switch (_llmOrchestratorType)
+        {
+            case LLMOrchestratorType.SemanticKernel: 
+                return _semanticKernelOrchestrator as ILLMOrchestrationService;
+            case LLMOrchestratorType.LangChain: 
+            default:
+                return _langChainOrchestrator as ILLMOrchestrationService;
+        }
     }
 }

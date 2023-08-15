@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection;
 using Solliance.AICopilot.Core.Interfaces;
 using Solliance.AICopilot.Core.Models.Chat;
+using Solliance.AICopilot.Core.Models.Orchestration;
 using Solliance.AICopilot.Core.Models.Search;
 
 namespace Solliance.AICopilot.ChatAPI
@@ -19,6 +20,12 @@ namespace Solliance.AICopilot.ChatAPI
         {
             app.MapGet("/status", () => _chatService.IsInitialized ? "ready" : "initializing")
                 .WithName("GetServiceStatus");
+
+            app.MapPost("/orchestratorchoice", (string orchestrator) =>
+                    _chatService.SetLLMOrchestratorPreference(orchestrator) 
+                        ? Results.Ok()
+                        : Results.BadRequest($"The LLM orchestrator {orchestrator} is not supported."))
+                .WithName("SetOrchestratorChoice");
 
             app.MapGet("/sessions/", async () => await _chatService.GetAllChatSessionsAsync())
                 .WithName("GetAllChatSessions");

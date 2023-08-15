@@ -21,13 +21,13 @@ using Solliance.AICopilot.SemanticKernel.Memory;
 
 namespace Solliance.AICopilot.Core.Services;
 
-public class SemanticKernelRAGService : IRAGService
+public class SemanticKernelOrchestrationService : ISemanticKernelOrchestrationService
 {
-    readonly SemanticKernelRAGServiceSettings _settings;
+    readonly SemanticKernelOrchestrationServiceSettings _settings;
 
     readonly IKernel _semanticKernel;
     readonly IEnumerable<IMemorySource> _memorySources;
-    readonly ILogger<SemanticKernelRAGService> _logger;
+    readonly ILogger<SemanticKernelOrchestrationService> _logger;
     readonly ISystemPromptService _systemPromptService;
     readonly IChatCompletion _chat;
     readonly AzureCognitiveSearchVectorMemory _longTermMemory;
@@ -38,12 +38,12 @@ public class SemanticKernelRAGService : IRAGService
 
     public bool IsInitialized => _memoryInitialized;
 
-    public SemanticKernelRAGService(
+    public SemanticKernelOrchestrationService(
         ISystemPromptService systemPromptService,
         IEnumerable<IMemorySource> memorySources,
-        IOptions<SemanticKernelRAGServiceSettings> options,
+        IOptions<SemanticKernelOrchestrationServiceSettings> options,
         IOptions<AzureCognitiveSearchMemorySourceSettings> cognitiveSearchMemorySourceSettings,
-        ILogger<SemanticKernelRAGService> logger)
+        ILogger<SemanticKernelOrchestrationService> logger)
     {
         _systemPromptService = systemPromptService;
         _memorySources = memorySources;
@@ -156,7 +156,7 @@ public class SemanticKernelRAGService : IRAGService
         return new(reply.Content, chatHistory[0].Content, rawResult.Usage.PromptTokens, rawResult.Usage.CompletionTokens, userPromptEmbedding);
     }
 
-    public async Task<string> Summarize(string sessionId, string userPrompt)
+    public async Task<string> Summarize(string userPrompt)
     {
         var summarizerSkill = new GenericSummarizerSkill(
             await _systemPromptService.GetPrompt(_settings.OpenAI.ShortSummaryPromptName),

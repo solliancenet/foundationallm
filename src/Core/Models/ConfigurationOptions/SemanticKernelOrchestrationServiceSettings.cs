@@ -2,7 +2,7 @@
 
 namespace Solliance.AICopilot.Core.Models.ConfigurationOptions
 {
-    public record SemanticKernelRAGServiceSettings
+    public record SemanticKernelOrchestrationServiceSettings
     {
         public record OpenAISettings
         {

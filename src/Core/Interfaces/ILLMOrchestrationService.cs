@@ -1,18 +1,13 @@
 ﻿using Solliance.AICopilot.Core.Models.Chat;
-using Solliance.AICopilot.Core.Models.Search;
 
 namespace Solliance.AICopilot.Core.Interfaces
 {
-    public interface IRAGService
+    public interface ILLMOrchestrationService
     {
         bool IsInitialized { get; }
 
         Task<(string Completion, string UserPrompt, int UserPromptTokens, int ResponseTokens, float[]? UserPromptEmbedding)> GetResponse(string userPrompt, List<Message> messageHistory);
 
-        Task<string> Summarize(string sessionId, string userPrompt);
-
-        Task AddMemory(object item, string itemName, Action<object, float[]> vectorizer);
-
-        Task RemoveMemory(object item);
+        Task<string> Summarize(string content);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Solliance.AICopilot.Core.Models.Chat;
+using Solliance.AICopilot.Core.Models.Orchestration;
 using Solliance.AICopilot.Core.Models.Search;
 
 namespace Solliance.AICopilot.Core.Interfaces;
@@ -6,6 +7,8 @@ namespace Solliance.AICopilot.Core.Interfaces;
 public interface IChatService
 {
     bool IsInitialized { get; }
+
+    bool SetLLMOrchestratorPreference(string orchestrator);
 
     /// <summary>
     /// Returns list of chat session ids and names for left-hand nav to bind to (display Name and ChatSessionId as hidden)

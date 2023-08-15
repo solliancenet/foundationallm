@@ -24,7 +24,7 @@ namespace Solliance.AICopilot.Core.Services
         private readonly Database _database;
         private readonly Dictionary<string, Container> _containers;
 
-        private readonly IRAGService _ragService;
+        private readonly ISemanticKernelOrchestrationService _ragService;
         private readonly CosmosDbSettings _settings;
         private readonly ILogger _logger;
 
@@ -34,7 +34,7 @@ namespace Solliance.AICopilot.Core.Services
         public bool IsInitialized => _changeFeedsInitialized;
 
         public CosmosDbService(
-            IRAGService ragService,
+            ISemanticKernelOrchestrationService ragService,
             IOptions<CosmosDbSettings> settings, 
             ILogger<CosmosDbService> logger)
         {

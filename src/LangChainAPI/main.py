@@ -24,11 +24,17 @@ def api_key_auth(x_api_key: str = Depends(api_key_header)):
 
 app = FastAPI()
 
-@app.get('/', dependencies=[Depends(api_key_auth)])
+@app.get('/')
 async def root():
+    
     return { 'message': 'This is the Solliance AI Copilot powered by FoundationalLM!' }
 
-@app.post('/run')
+@app.get('/status', dependencies=[Depends(api_key_auth)])
+async def status():
+    
+    return 'ready'
+
+@app.post('/run', dependencies=[Depends(api_key_auth)])
 async def run(prompt: PromptModel):
     
     agent = CSVAgent()
