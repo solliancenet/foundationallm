@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UglyToad.PdfPig;
 
 namespace Solliance.AICopilot.SemanticKernel.MemorySource
 {
@@ -36,11 +37,12 @@ namespace Solliance.AICopilot.SemanticKernel.MemorySource
         {
             await EnsureConfig();
 
-            var filesContent = await Task.WhenAll(_config.TextFileMemorySources
-                .Select(tfms => tfms.TextFiles.Select(tf => ReadTextFileContent(tfms.ContainerName, tf)))
+            var filesContent = await Task.WhenAll(_config.FileMemorySources
+                .Select(tfms => tfms.Files.Select(tf => ReadTextFileContent(tfms.ContainerName, tf)))
                 .SelectMany(x => x));
 
             var chunkedFilesContent = filesContent
+                .Where(x => !string.IsNullOrWhiteSpace(x.Content))
                 .Select(txt => txt.SplitIntoChunks ? TextChunker.SplitPlainTextLines(txt.Content, _config.TextChunkMaxTokens) : new List<string>() { txt.Content })
                 .SelectMany(x => x).ToList();
 
@@ -76,12 +78,41 @@ namespace Solliance.AICopilot.SemanticKernel.MemorySource
             return await reader.ReadToEndAsync();
         }
 
-        private async Task<(string Content, bool SplitIntoChunks)> ReadTextFileContent(string containerName, TextFileMemorySourceFile file)
+        private async Task<(string Content, bool SplitIntoChunks)> ReadTextFileContent(string containerName, FileMemorySourceFile file)
         {
             var containerClient = GetBlobContainerClient(containerName);
             var blobClient = containerClient.GetBlobClient(file.FileName);
-            var reader = new StreamReader(await blobClient.OpenReadAsync());
-            return (await reader.ReadToEndAsync(), file.SplitIntoChunks);
+            var fileType = Path.GetExtension(file.FileName).ToUpper();
+
+            switch (fileType)
+            {
+                case ".TXT":
+                    return (await (new StreamReader(await blobClient.OpenReadAsync())).ReadToEndAsync(), file.SplitIntoChunks);
+                case ".PDF":
+                    return (await GetPdfText(blobClient), file.SplitIntoChunks);
+                default:
+                    return (string.Empty, false);
+            }
+        }
+
+        private async Task<string> GetPdfText(BlobClient blobClient)
+        {
+            try
+            {
+                var ms = new MemoryStream();
+                await blobClient.DownloadToAsync(ms);
+
+                using (var pdfDocument = PdfDocument.Open(ms.ToArray()))
+                {
+                    var pages = pdfDocument.GetPages();
+                    return string.Join(Environment.NewLine, pages.Select(p => p.Text).ToArray());
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erorr parsing PDF document");
+                return string.Empty;
+            }
         }
     }
 }
