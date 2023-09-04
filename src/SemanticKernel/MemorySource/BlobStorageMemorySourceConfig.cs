@@ -10,16 +10,16 @@ namespace Solliance.AICopilot.SemanticKernel.MemorySource
     {
         public int TextChunkMaxTokens { get; init; }
 
-        public List<TextFileMemorySource> TextFileMemorySources { get; init; }
+        public List<FileMemorySource> FileMemorySources { get; init; }
     }
 
-    public class TextFileMemorySource
+    public class FileMemorySource
     {
         public string ContainerName { get; init; }
-        public List<TextFileMemorySourceFile> TextFiles { get; init; }
+        public List<FileMemorySourceFile> Files { get; init; }
     }
 
-    public class TextFileMemorySourceFile
+    public class FileMemorySourceFile
     {
         public string FileName { get; init; }
         public bool SplitIntoChunks { get; init; }

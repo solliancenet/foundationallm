@@ -20,6 +20,9 @@ namespace Solliance.AICopilot.ChatAPI
             builder.Services.AddOptions<LangChainOrchestrationServiceSettings>()
                 .Bind(builder.Configuration.GetSection("SollianceAICopilot:LangChainOrchestration"));
 
+            builder.Services.AddOptions<ChatServiceSettings>()
+                .Bind(builder.Configuration.GetSection("SollianceAICopilot:Chat"));
+
             builder.Services.AddSingleton<ICosmosDbService, CosmosDbService>();
             builder.Services.AddSingleton<ISemanticKernelOrchestrationService, SemanticKernelOrchestrationService>();
             builder.Services.AddSingleton<ILangChainOrchestrationService, LangChainOrchestrationService>();

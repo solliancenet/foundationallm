@@ -13,6 +13,7 @@
 		<PackageReference Include="Microsoft.Extensions.Options" Version="7.0.1" />
 		<PackageReference Include="Microsoft.SemanticKernel" Version="0.18.230725.3-preview" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="PdfPig" Version="0.1.8" />
 		<PackageReference Include="System.Linq.Async" Version="6.0.1" />
 	</ItemGroup>
 </Project>

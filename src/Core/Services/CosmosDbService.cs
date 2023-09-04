@@ -9,6 +9,7 @@ using Solliance.AICopilot.Core.Models.ConfigurationOptions;
 using Newtonsoft.Json.Linq;
 using Solliance.AICopilot.Core.Models;
 using Solliance.AICopilot.Core.Utils;
+using System.Diagnostics;
 
 namespace Solliance.AICopilot.Core.Services
 {
@@ -47,6 +48,11 @@ namespace Solliance.AICopilot.Core.Services
             ArgumentException.ThrowIfNullOrEmpty(_settings.Containers);
 
             _logger = logger;
+
+            Type defaultTrace = Type.GetType("Microsoft.Azure.Cosmos.Core.Trace.DefaultTrace,Microsoft.Azure.Cosmos.Direct");
+            TraceSource traceSource = (TraceSource)defaultTrace.GetProperty("TraceSource").GetValue(null);
+            traceSource.Switch.Level = SourceLevels.All;
+            traceSource.Listeners.Clear();
 
             CosmosSerializationOptions options = new()
             {

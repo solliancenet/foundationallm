@@ -37,10 +37,15 @@ namespace Solliance.AICopilot.Core.Services
                     JsonConvert.SerializeObject(new LangChainCompletionRequest { Prompt = userPrompt }, _jsonSerializerSettings),
                     Encoding.UTF8, "application/json"));
 
-            var responseContent = await responseMessage.Content.ReadAsStringAsync();
-            var completionResponse = JsonConvert.DeserializeObject<LangChainCompletionResponse>(responseContent);
+            if (responseMessage.IsSuccessStatusCode)
+            {
+                var responseContent = await responseMessage.Content.ReadAsStringAsync();
+                var completionResponse = JsonConvert.DeserializeObject<LangChainCompletionResponse>(responseContent);
 
-            return new(completionResponse?.Info, userPrompt, 0, 0, new float[] { 0 });
+                return new(completionResponse?.Info, userPrompt, 0, 0, new float[] { 0 });
+            }
+            else
+                return new("A problem on my side prevented me from responding.", userPrompt, 0, 0, new float[] { 0 });
         }
 
         public async Task<string> Summarize(string content)
