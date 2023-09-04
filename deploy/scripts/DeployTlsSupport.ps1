@@ -2,7 +2,7 @@
 
 Param (
     [parameter(Mandatory=$false)][string][ValidateSet('prod','staging','none','custom', IgnoreCase=$false)]$sslSupport = "none",
-    [parameter(Mandatory=$false)][string]$name = "ms-openai-cosmosdb",
+    [parameter(Mandatory=$false)][string]$name = "foundationallm",
     [parameter(Mandatory=$false)][string]$aksName,
     [parameter(Mandatory=$false)][string]$resourceGroup,
     [parameter(Mandatory=$false)][string]$tlsCertFile="",

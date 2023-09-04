@@ -10,14 +10,14 @@ ENV ASPNETCORE_ENVIRONMENT=Development
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 COPY . .
-RUN dotnet restore "ChatServiceWebApi/ChatServiceWebApi.csproj"
-WORKDIR "/src/ChatServiceWebApi"
-RUN dotnet build "ChatServiceWebApi.csproj" -c Release -o /app/build
+RUN dotnet restore "ChatAPI/ChatAPI.csproj"
+WORKDIR "/src/ChatAPI"
+RUN dotnet build "ChatAPI.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "ChatServiceWebApi.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "ChatAPI.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "ChatServiceWebApi.dll"]
+ENTRYPOINT ["dotnet", "FoundationaLLM.ChatAPI.dll"]

@@ -1,7 +1,7 @@
 #! /usr/bin/pwsh
 
 Param(
-    [parameter(Mandatory=$false)][string]$name = "ms-openai-cosmos-db",
+    [parameter(Mandatory=$false)][string]$name = "foundationallm",
     [parameter(Mandatory=$false)][string]$aksName,
     [parameter(Mandatory=$false)][string]$resourceGroup,
     [parameter(Mandatory=$false)][string]$acrName,

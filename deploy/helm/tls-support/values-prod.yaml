@@ -1,6 +1,6 @@
-applicationName: ms-openai-cosmosdb-tls
-issuerName: ms-openai-cosmosdb-tls-prod
-certName: ms-openai-cosmosdb-tls-cert-prod
+applicationName: foundationallm-tls
+issuerName: foundationallm-tls-prod
+certName: foundationallm-tls-cert-prod
 environment: prod
 server: https://acme-v02.api.letsencrypt.org/directory
 certSecretName: tls-prod
