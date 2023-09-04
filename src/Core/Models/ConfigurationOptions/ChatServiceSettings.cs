@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Solliance.AICopilot.Core.Models.ConfigurationOptions
+namespace FoundationaLLM.Core.Models.ConfigurationOptions
 {
     public record ChatServiceSettings
     {

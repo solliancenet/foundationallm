@@ -4,6 +4,8 @@ using FoundationaLLM.Core.Interfaces;
 using FoundationaLLM.Core.Models.Chat;
 using FoundationaLLM.Core.Models.Orchestration;
 using FoundationaLLM.Core.Models.Search;
+using FoundationaLLM.Core.Models.ConfigurationOptions;
+using Microsoft.Extensions.Options;
 
 namespace FoundationaLLM.Core.Services;
 
