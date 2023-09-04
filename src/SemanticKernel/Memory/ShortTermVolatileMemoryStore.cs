@@ -4,9 +4,9 @@ using Microsoft.SemanticKernel.Memory;
 using Newtonsoft.Json;
 using System.Security.Cryptography;
 using System.Text;
-using Solliance.AICopilot.SemanticKernel.TextEmbedding;
+using FoundationaLLM.SemanticKernel.TextEmbedding;
 
-namespace Solliance.AICopilot.SemanticKernel.Memory
+namespace FoundationaLLM.SemanticKernel.Memory
 {
     public class ShortTermVolatileMemoryStore : VolatileMemoryStore
     {

@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UglyToad.PdfPig;
 
-namespace Solliance.AICopilot.SemanticKernel.MemorySource
+namespace FoundationaLLM.SemanticKernel.MemorySource
 {
     public class BlobStorageMemorySource : IMemorySource
     {

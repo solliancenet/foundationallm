@@ -1,9 +1,9 @@
-using Solliance.AICopilot.SemanticKernel.MemorySource;
-using Solliance.AICopilot.Core.Interfaces;
-using Solliance.AICopilot.Core.Models.ConfigurationOptions;
-using Solliance.AICopilot.Core.Services;
+using FoundationaLLM.SemanticKernel.MemorySource;
+using FoundationaLLM.Core.Interfaces;
+using FoundationaLLM.Core.Models.ConfigurationOptions;
+using FoundationaLLM.Core.Services;
 
-namespace Solliance.AICopilot.ChatAPI
+namespace FoundationaLLM.ChatAPI
 {
     public class Program
     {
@@ -12,13 +12,13 @@ namespace Solliance.AICopilot.ChatAPI
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddOptions<CosmosDbSettings>()
-                .Bind(builder.Configuration.GetSection("MSCosmosDBOpenAI:CosmosDB"));
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:CosmosDB"));
 
             builder.Services.AddOptions<SemanticKernelOrchestrationServiceSettings>()
-                .Bind(builder.Configuration.GetSection("MSCosmosDBOpenAI"));
+                .Bind(builder.Configuration.GetSection("FoundationaLLM"));
 
             builder.Services.AddOptions<LangChainOrchestrationServiceSettings>()
-                .Bind(builder.Configuration.GetSection("SollianceAICopilot:LangChainOrchestration"));
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:LangChainOrchestration"));
 
             builder.Services.AddOptions<ChatServiceSettings>()
                 .Bind(builder.Configuration.GetSection("SollianceAICopilot:Chat"));
@@ -33,15 +33,15 @@ namespace Solliance.AICopilot.ChatAPI
 
             // System prompt service backed by an Azure blob storage account
             builder.Services.AddOptions<DurableSystemPromptServiceSettings>()
-                .Bind(builder.Configuration.GetSection("MSCosmosDBOpenAI:DurableSystemPrompt"));
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:DurableSystemPrompt"));
             builder.Services.AddSingleton<ISystemPromptService, DurableSystemPromptService>();
 
             builder.Services.AddOptions<AzureCognitiveSearchMemorySourceSettings>()
-                .Bind(builder.Configuration.GetSection("MSCosmosDBOpenAI:CognitiveSearchMemorySource"));
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:CognitiveSearchMemorySource"));
             builder.Services.AddTransient<IMemorySource, AzureCognitiveSearchMemorySource>();
 
             builder.Services.AddOptions<BlobStorageMemorySourceSettings>()
-                .Bind(builder.Configuration.GetSection("MSCosmosDBOpenAI:BlobStorageMemorySource"));
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:BlobStorageMemorySource"));
             builder.Services.AddTransient<IMemorySource, BlobStorageMemorySource>();
 
             builder.Services.AddScoped<ChatEndpoints>();

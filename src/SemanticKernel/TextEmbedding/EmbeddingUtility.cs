@@ -2,7 +2,7 @@
 using System.Reflection;
 using System.Text;
 
-namespace Solliance.AICopilot.SemanticKernel.TextEmbedding
+namespace FoundationaLLM.SemanticKernel.TextEmbedding
 {
     public static class EmbeddingUtility
     {

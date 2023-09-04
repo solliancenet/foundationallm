@@ -15,7 +15,7 @@ The application frontend is a Blazor application with Intelligent Agent UI funct
 The application includes a left-hand nav that contains individual chat sessions. In a normal retail environment, users would only be able to see their own session but we've included them all here. The chat session includes a count of all of the tokens consumed in each session. When the user types a question and hits enter the service queries the vector data, then sends the response to Azure OpenAI which then generates a completion which is the displayed to the user. The first question also triggers the chat session to be named with whatever the user is asking about. Users can rename a chat if they like or delete it. The chat session displays all of the tokens consumed for that session. Each message in the chat also includes a token count. The `Prompt Tokens` are the tokens used in the call to Azure OpenAI. The Assistant tokens are the ones used to generate the completion text.
 
 <p align="center">
-    <img src="img/ui.png" width="100%">
+    <img src="./docs/media/ui.png" width="100%">
 </p>
 
 
@@ -24,7 +24,7 @@ The application includes a left-hand nav that contains individual chat sessions.
 The solution architecture is represented by this diagram:
 
 <p align="center">
-    <img src="img/architecture.png" width="100%">
+    <img src="./docs/media/architecture.png" width="100%">
 </p>
 
 ## Overall solution workflow
@@ -208,7 +208,7 @@ Change Feed capability to dynamically add and remove products to the vector data
 **Note:** Using the same chat session after adding them will sometimes result in the Cosmic Socks not being returned. If that happens, start a new chat session and ask the same question. Also, sometimes after removing the socks they will continue to be returned by the AI Assistant. If that occurs, also start a new chat session. The reason this occurs is that previous prompts and completions are sent to OpenAI to allow it to maintain conversational context. Because of this, it will sometimes use previous completions as data to make future ones.
 
 <p align="center">
-    <img src="img/socks.png" width="100%">
+    <img src="./docs/media/socks.png" width="100%">
 </p>
 
 ## Run locally and debug

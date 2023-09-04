@@ -1,6 +1,6 @@
 ﻿using Microsoft.SemanticKernel.Connectors.AI.OpenAI.Tokenizers;
 
-namespace Solliance.AICopilot.SemanticKernel.Chat
+namespace FoundationaLLM.SemanticKernel.Chat
 {
     public class SemanticKernelTokenizer : ITokenizer
     {

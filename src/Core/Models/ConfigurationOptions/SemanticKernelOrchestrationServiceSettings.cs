@@ -1,6 +1,6 @@
-﻿using Solliance.AICopilot.SemanticKernel.Chat;
+﻿using FoundationaLLM.SemanticKernel.Chat;
 
-namespace Solliance.AICopilot.Core.Models.ConfigurationOptions
+namespace FoundationaLLM.Core.Models.ConfigurationOptions
 {
     public record SemanticKernelOrchestrationServiceSettings
     {

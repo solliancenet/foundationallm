@@ -9,7 +9,7 @@ using Azure.Storage.Blobs;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Options;
 
-namespace Solliance.AICopilot.SemanticKernel.MemorySource
+namespace FoundationaLLM.SemanticKernel.MemorySource
 {
     public class AzureCognitiveSearchMemorySource : IMemorySource
     {

@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Solliance.AICopilot.Core.Interfaces;
+using FoundationaLLM.Core.Interfaces;
 
-namespace Solliance.AICopilot.Core.Tests
+namespace FoundationaLLM.Core.Tests
 {
     [TestFixture]
     public class OpenAiServiceTests

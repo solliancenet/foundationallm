@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace Solliance.AICopilot.Core.Models.Chat;
+namespace FoundationaLLM.Core.Models.Chat;
 
 public record Session
 {

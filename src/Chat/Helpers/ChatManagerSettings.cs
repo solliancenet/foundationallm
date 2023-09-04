@@ -1,4 +1,4 @@
-﻿namespace Solliance.AICopilot.Chat.Helpers
+﻿namespace FoundationaLLM.Chat.Helpers
 {
     public class ChatManagerSettings
     {

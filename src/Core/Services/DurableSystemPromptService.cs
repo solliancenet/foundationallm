@@ -1,10 +1,10 @@
 ﻿using Azure.Storage.Blobs;
 using Microsoft.Extensions.Options;
-using Solliance.AICopilot.SemanticKernel.Text;
-using Solliance.AICopilot.Core.Interfaces;
-using Solliance.AICopilot.Core.Models.ConfigurationOptions;
+using FoundationaLLM.SemanticKernel.Text;
+using FoundationaLLM.Core.Interfaces;
+using FoundationaLLM.Core.Models.ConfigurationOptions;
 
-namespace Solliance.AICopilot.Core.Services
+namespace FoundationaLLM.Core.Services
 {
     public class DurableSystemPromptService : ISystemPromptService
     {

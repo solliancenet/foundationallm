@@ -1,17 +1,16 @@
 ﻿using Microsoft.Azure.Cosmos.Fluent;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
-using Solliance.AICopilot.Core.Models.Chat;
-using Solliance.AICopilot.Core.Interfaces;
-using Solliance.AICopilot.Core.Models.Search;
+using FoundationaLLM.Core.Models.Chat;
+using FoundationaLLM.Core.Interfaces;
+using FoundationaLLM.Core.Models.Search;
 using Microsoft.Extensions.Options;
-using Solliance.AICopilot.Core.Models.ConfigurationOptions;
+using FoundationaLLM.Core.Models.ConfigurationOptions;
 using Newtonsoft.Json.Linq;
-using Solliance.AICopilot.Core.Models;
-using Solliance.AICopilot.Core.Utils;
-using System.Diagnostics;
+using FoundationaLLM.Core.Models;
+using FoundationaLLM.Core.Utils;
 
-namespace Solliance.AICopilot.Core.Services
+namespace FoundationaLLM.Core.Services
 {
     /// <summary>
     /// Service to access Azure Cosmos DB for NoSQL.

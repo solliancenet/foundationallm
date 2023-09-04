@@ -4,7 +4,7 @@ using Microsoft.SemanticKernel.SkillDefinition;
 using Microsoft.SemanticKernel.Text;
 using System.ComponentModel;
 
-namespace Solliance.AICopilot.SemanticKernel.Skills.Core
+namespace FoundationaLLM.SemanticKernel.Skills.Core
 {
     public class GenericSummarizerSkill
     {

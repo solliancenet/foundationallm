@@ -3,9 +3,9 @@ using Azure.AI.OpenAI;
 using Azure.Core;
 using Microsoft.Extensions.Logging;
 using System.Text.RegularExpressions;
-using Solliance.AICopilot.Core.Interfaces;
+using FoundationaLLM.Core.Interfaces;
 
-namespace Solliance.AICopilot.Core.Services;
+namespace FoundationaLLM.Core.Services;
 
 /// <summary>
 /// This service is provided as an example, it is not used by the main RAG flow.

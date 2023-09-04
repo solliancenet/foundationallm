@@ -1,13 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Solliance.AICopilot.Core.Constants;
-using Solliance.AICopilot.Core.Interfaces;
-using Solliance.AICopilot.Core.Models.Chat;
-using Solliance.AICopilot.Core.Models.ConfigurationOptions;
-using Solliance.AICopilot.Core.Models.Orchestration;
-using Solliance.AICopilot.Core.Models.Search;
+using FoundationaLLM.Core.Constants;
+using FoundationaLLM.Core.Interfaces;
+using FoundationaLLM.Core.Models.Chat;
+using FoundationaLLM.Core.Models.Orchestration;
+using FoundationaLLM.Core.Models.Search;
 
-namespace Solliance.AICopilot.Core.Services;
+namespace FoundationaLLM.Core.Services;
 
 public class ChatService : IChatService
 {

@@ -1,6 +1,6 @@
-﻿using Solliance.AICopilot.Core.Models.Chat;
+﻿using FoundationaLLM.Core.Models.Chat;
 
-namespace Solliance.AICopilot.Core.Interfaces
+namespace FoundationaLLM.Core.Interfaces
 {
     public interface ILLMOrchestrationService
     {

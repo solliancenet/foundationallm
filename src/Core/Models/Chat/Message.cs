@@ -1,6 +1,6 @@
 using Azure.Search.Documents.Indexes;
 
-namespace Solliance.AICopilot.Core.Models.Chat;
+namespace FoundationaLLM.Core.Models.Chat;
 
 public record Message
 {

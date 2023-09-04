@@ -2,10 +2,10 @@
 using Microsoft.SemanticKernel.AI.ChatCompletion;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Solliance.AICopilot.SemanticKernel.Text;
-using Solliance.AICopilot.SemanticKernel.TextEmbedding;
+using FoundationaLLM.SemanticKernel.Text;
+using FoundationaLLM.SemanticKernel.TextEmbedding;
 
-namespace Solliance.AICopilot.SemanticKernel.Chat
+namespace FoundationaLLM.SemanticKernel.Chat
 {
     public class ChatBuilder
     {

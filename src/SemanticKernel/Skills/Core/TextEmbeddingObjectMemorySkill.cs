@@ -7,9 +7,9 @@ using System.ComponentModel;
 using System.Numerics;
 using System.Runtime;
 using System.Text.Json;
-using Solliance.AICopilot.SemanticKernel.MemorySource;
+using FoundationaLLM.SemanticKernel.MemorySource;
 
-namespace Solliance.AICopilot.SemanticKernel.Skills.Core
+namespace FoundationaLLM.SemanticKernel.Skills.Core
 {
     /// <summary>
     /// TextEmbeddingObjectMemorySkill provides a skill to recall object information from the long term memory using vector-based similarity.

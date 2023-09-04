@@ -4,8 +4,8 @@
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <AssemblyName>Solliance.AICopilot.SemanticKernel</AssemblyName>
-    <RootNamespace>Solliance.AICopilot.SemanticKernel</RootNamespace>
+    <AssemblyName>FoundationaLLM.SemanticKernel</AssemblyName>
+    <RootNamespace>FoundationaLLM.SemanticKernel</RootNamespace>
   </PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Azure.Search.Documents" Version="11.5.0-alpha.20230531.1" />
