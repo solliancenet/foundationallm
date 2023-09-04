@@ -6,7 +6,7 @@ namespace FoundationaLLM.Core.Interfaces;
 
 public interface IChatService
 {
-    bool IsInitialized { get; }
+    string Status { get; }
 
     bool SetLLMOrchestrationPreference(string orchestrator);
 

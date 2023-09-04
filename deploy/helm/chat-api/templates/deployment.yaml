@@ -1,27 +1,27 @@
-{{- $name := include "chat-service-web-api.fullname" . -}}
+{{- $name := include "chat-api.fullname" . -}}
 {{- $cfgname := printf "%s-%s" "cfg" $name -}}
 {{- $secretName := printf "%s-%s" "secret" $name -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ template "chat-service-web-api.fullname" . }}
+  name: {{ template "chat-api.fullname" . }}
   labels:
-    app: {{ template "chat-service-web-api.name" . }}
-    chart: {{ template "chat-service-web-api.chart" . }}
+    app: {{ template "chat-api.name" . }}
+    chart: {{ template "chat-api.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ template "chat-service-web-api.name" . }}
+      app: {{ template "chat-api.name" . }}
       release: {{ .Release.Name }}
   template:
     metadata:
       annotations:
         rollme: {{ randAlphaNum 5 | quote }}
       labels:
-        app: {{ template "chat-service-web-api.name" . }}
+        app: {{ template "chat-api.name" . }}
         release: {{ .Release.Name }}
     spec:
       {{ if .Values.serviceaccount -}}
