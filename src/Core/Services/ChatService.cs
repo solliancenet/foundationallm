@@ -23,15 +23,15 @@ public class ChatService : IChatService
     {
         get
         {
-            if (_cosmosDbService.IsInitialized && _ragService.IsInitialized)
+            if (_cosmosDbService.IsInitialized && _semanticKernelOrchestration.IsInitialized)
                 return "ready";
 
             var status = new List<string>();
 
             if (!_cosmosDbService.IsInitialized)
                 status.Add("CosmosDBService: initializing");
-            if (!_ragService.IsInitialized)
-                status.Add("SemanticKernelRAGService: initializing");
+            if (!_semanticKernelOrchestration.IsInitialized)
+                status.Add("SemanticKernelOrchestrationService: initializing");
 
             return string.Join(",", status);
         }
