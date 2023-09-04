@@ -8,6 +8,6 @@ namespace FoundationaLLM.Core.Models.ConfigurationOptions
 {
     public record ChatServiceSettings
     {
-        public required string DefaultOrchestrator { get; init; }
+        public required string DefaultOrchestrationService { get; init; }
     }
 }

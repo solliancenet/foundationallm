@@ -291,7 +291,7 @@
 
     private async Task SubmitPromptAsync()
     {
-        if (CurrentSession?.SessionId == Interface.EMPTY_SESSION || UserPrompt == string.Empty || UserPrompt is null)
+        if (CurrentSession?.SessionId == Interface.EMPTY_SESSION || string.IsNullOrWhiteSpace(UserPrompt))
         {
             return;
         }

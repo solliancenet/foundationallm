@@ -8,7 +8,7 @@ public interface IChatService
 {
     bool IsInitialized { get; }
 
-    bool SetLLMOrchestratorPreference(string orchestrator);
+    bool SetLLMOrchestrationPreference(string orchestrator);
 
     /// <summary>
     /// Returns list of chat session ids and names for left-hand nav to bind to (display Name and ChatSessionId as hidden)

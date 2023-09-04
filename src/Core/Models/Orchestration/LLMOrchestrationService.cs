@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FoundationaLLM.Core.Models.Orchestration
 {
-    public enum LLMOrchestratorType
+    public enum LLMOrchestrationService
     {
         LangChain,
         SemanticKernel

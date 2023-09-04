@@ -21,10 +21,10 @@ namespace FoundationaLLM.ChatAPI
             app.MapGet("/status", () => _chatService.IsInitialized ? "ready" : "initializing")
                 .WithName("GetServiceStatus");
 
-            app.MapPost("/orchestratorchoice", (string orchestrator) =>
-                    _chatService.SetLLMOrchestratorPreference(orchestrator) 
+            app.MapPost("/orchestration", (string orchestrationService) =>
+                    _chatService.SetLLMOrchestrationPreference(orchestrationService) 
                         ? Results.Ok()
-                        : Results.BadRequest($"The LLM orchestrator {orchestrator} is not supported."))
+                        : Results.BadRequest($"The LLM orchestrator {orchestrationService} is not supported."))
                 .WithName("SetOrchestratorChoice");
 
             app.MapGet("/sessions/", async () => await _chatService.GetAllChatSessionsAsync())

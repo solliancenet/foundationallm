@@ -13,13 +13,13 @@ public class ChatService : IChatService
 {
     private readonly ICosmosDbService _cosmosDbService;
     private readonly ChatServiceSettings _settings;
-    private readonly ISemanticKernelOrchestrationService _semanticKernelOrchestrator;
-    private readonly ILangChainOrchestrationService _langChainOrchestrator;
+    private readonly ISemanticKernelOrchestrationService _semanticKernelOrchestration;
+    private readonly ILangChainOrchestrationService _langChainOrchestration;
     private readonly ILogger _logger;
 
-    private LLMOrchestratorType _llmOrchestratorType = LLMOrchestratorType.LangChain;
+    private LLMOrchestrationService _llmOrchestrationService = LLMOrchestrationService.LangChain;
 
-    public bool IsInitialized => _cosmosDbService.IsInitialized && _semanticKernelOrchestrator.IsInitialized && _langChainOrchestrator.IsInitialized;
+    public bool IsInitialized => _cosmosDbService.IsInitialized && _semanticKernelOrchestration.IsInitialized && _langChainOrchestration.IsInitialized;
 
     public ChatService(
         ICosmosDbService cosmosDbService,
@@ -30,18 +30,18 @@ public class ChatService : IChatService
     {
         _cosmosDbService = cosmosDbService;
         _settings = options.Value;
-        _semanticKernelOrchestrator = semanticKernelOrchestratorService;
-        _langChainOrchestrator = langChainOrchestratorService;
+        _semanticKernelOrchestration = semanticKernelOrchestratorService;
+        _langChainOrchestration = langChainOrchestratorService;
         _logger = logger;
 
-        SetLLMOrchestratorPreference(_settings.DefaultOrchestrator);
+        SetLLMOrchestrationPreference(_settings.DefaultOrchestrationService);
     }
 
-    public bool SetLLMOrchestratorPreference(string orchestrator)
+    public bool SetLLMOrchestrationPreference(string orchestrationService)
     {
-        if (Enum.TryParse(orchestrator, true, out LLMOrchestratorType llmOrchestratorType))
+        if (Enum.TryParse(orchestrationService, true, out LLMOrchestrationService llmOrchestrationService))
         {
-            _llmOrchestratorType = llmOrchestratorType;
+            _llmOrchestrationService = llmOrchestrationService;
             return true;
         }
         else
@@ -109,7 +109,7 @@ public class ChatService : IChatService
         var messages = await _cosmosDbService.GetSessionMessagesAsync(sessionId);
 
         // Generate the completion to return to the user
-        var result = await GetLLMOrchestrator().GetResponse(userPrompt, messages);
+        var result = await GetLLMOrchestrationService().GetResponse(userPrompt, messages);
 
         // Add to prompt and completion to cache, then persist in Cosmos as transaction 
         var promptMessage = new Message(sessionId, nameof(Participants.User), result.UserPromptTokens, userPrompt, result.UserPromptEmbedding, null);
@@ -131,7 +131,7 @@ public class ChatService : IChatService
 
         await Task.CompletedTask;
 
-        var summary = await GetLLMOrchestrator().Summarize(prompt);
+        var summary = await GetLLMOrchestrationService().Summarize(prompt);
 
         await RenameChatSessionAsync(sessionId, summary);
 
@@ -192,7 +192,7 @@ public class ChatService : IChatService
 
         try
         {
-            await _semanticKernelOrchestrator.RemoveMemory(new Product { id = productId });
+            await _semanticKernelOrchestration.RemoveMemory(new Product { id = productId });
         }
         catch (Exception ex)
         {
@@ -208,15 +208,15 @@ public class ChatService : IChatService
         return await _cosmosDbService.GetCompletionPrompt(sessionId, completionPromptId);
     }
 
-    private ILLMOrchestrationService GetLLMOrchestrator()
+    private ILLMOrchestrationService GetLLMOrchestrationService()
     {
-        switch (_llmOrchestratorType)
+        switch (_llmOrchestrationService)
         {
-            case LLMOrchestratorType.SemanticKernel: 
-                return _semanticKernelOrchestrator as ILLMOrchestrationService;
-            case LLMOrchestratorType.LangChain: 
+            case LLMOrchestrationService.SemanticKernel: 
+                return _semanticKernelOrchestration as ILLMOrchestrationService;
+            case LLMOrchestrationService.LangChain: 
             default:
-                return _langChainOrchestrator as ILLMOrchestrationService;
+                return _langChainOrchestration as ILLMOrchestrationService;
         }
     }
 }
