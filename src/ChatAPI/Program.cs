@@ -11,6 +11,8 @@ namespace FoundationaLLM.ChatAPI
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Services.AddApplicationInsightsTelemetry();
+
             builder.Services.AddOptions<CosmosDbSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:CosmosDB"));
 
@@ -54,6 +56,10 @@ namespace FoundationaLLM.ChatAPI
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
+
+            app.UseExceptionHandler(exceptionHandlerApp
+                    => exceptionHandlerApp.Run(async context
+                        => await Results.Problem().ExecuteAsync(context)));
 
             // Configure the HTTP request pipeline.
             app.UseSwagger();

@@ -118,14 +118,14 @@ Write-Host "Configuration file used is $valuesFile" -ForegroundColor Yellow
 
 if ($charts.Contains("api") -or  $charts.Contains("*")) {
     Write-Host "API chart - api" -ForegroundColor Yellow
-    $command = "helm upgrade --install $name-api ./chat-service-web-api -f $valuesFile --set ingress.hosts='{$aksHost}' --set image.repository=$acrLogin/chat-service-api --set image.tag=$tag --set hpa.activated=$autoscale"
+    $command = "helm upgrade --install $name-api ./chat-api -f $valuesFile --set ingress.hosts='{$aksHost}' --set image.repository=$acrLogin/chat-service-api --set image.tag=$tag --set hpa.activated=$autoscale"
     $command = createHelmCommand $command 
     Invoke-Expression "$command"
 }
 
 if ($charts.Contains("web") -or  $charts.Contains("*")) {
     Write-Host "Webapp chart - web" -ForegroundColor Yellow
-    $command = "helm upgrade --install $name-web ./chat-web-app -f $valuesFile --set ingress.hosts='{$aksHost}' --set image.repository=$acrLogin/chat-web-app --set image.tag=$tag  --set hpa.activated=$autoscale"
+    $command = "helm upgrade --install $name-web ./chat-ui -f $valuesFile --set ingress.hosts='{$aksHost}' --set image.repository=$acrLogin/chat-ui --set image.tag=$tag  --set hpa.activated=$autoscale"
     $command = createHelmCommand $command
     Invoke-Expression "$command"
 }
@@ -138,8 +138,17 @@ $apiStatus = "initializing"
 $retriesLeft = 50
 while (($apiStatus.ToString() -ne "ready") -and ($retriesLeft -gt 0)) {
     Start-Sleep -Seconds 20
-    $apiStatus = Invoke-RestMethod -Uri "https://$($aksHost)/api/status" -Method GET
-    Write-Host "API endpoint status: $($apiStatus)"
+    
+    try {
+        $apiStatus = Invoke-RestMethod -Uri "https://$($aksHost)/api/status" -Method GET
+    }
+    catch {
+        Write-Host "The attempt to invoke the API endpoint failed. Will retry."
+    }
+    finally {
+        Write-Host "API endpoint status: $($apiStatus)"
+    }
+
     $retriesLeft -= 1
 } 
 

@@ -23,5 +23,7 @@ namespace FoundationaLLM.Core.Models.ConfigurationOptions
         public required string ChangeFeedLeaseContainer { get; init; }
 
         public required string ChangeFeedSourceContainer { get; init; }
+
+        public bool EnableTracing { get; init; }
     }
 }

@@ -1,4 +1,4 @@
-# Default values for chat-web-app.
+# Default values for chat-ui.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
@@ -36,10 +36,12 @@ ingress:
 
 env:
   configmap:
-    - name: MSCosmosDBOpenAI__ChatManager__APIUrl
+    - name: FoundationaLLM__ChatManager__APIUrl
+  secret:
+    - name: ApplicationInsights__ConnectionString 
   values:
     - name: ASPNETCORE_ENVIRONMENT
       value: Production
-    - name: MSCosmosDBOpenAI__ChatManager__APIRoutePrefix
+    - name: FoundationaLLM__ChatManager__APIRoutePrefix
       value: /api
 

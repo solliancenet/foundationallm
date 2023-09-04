@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ template "chat-service-web-api.fullname" . }}
+  name: {{ template "chat-ui.fullname" . }}
   labels:
-    app: {{ template "chat-service-web-api.name" . }}
-    chart: {{ template "chat-service-web-api.chart" . }}
+    app: {{ template "chat-ui.name" . }}
+    chart: {{ template "chat-ui.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
@@ -15,5 +15,5 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app: {{ template "chat-service-web-api.name" . }}
+    app: {{ template "chat-ui.name" . }}
     release: {{ .Release.Name }}

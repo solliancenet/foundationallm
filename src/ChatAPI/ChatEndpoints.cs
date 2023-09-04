@@ -18,7 +18,7 @@ namespace FoundationaLLM.ChatAPI
 
         public void Map(WebApplication app)
         {
-            app.MapGet("/status", () => _chatService.IsInitialized ? "ready" : "initializing")
+            app.MapGet("/status", () => _chatService.Status)
                 .WithName("GetServiceStatus");
 
             app.MapPost("/orchestratorchoice", (string orchestrator) =>

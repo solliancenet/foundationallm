@@ -1,0 +1,14 @@
+{{- $name := include "chat-ui.fullname" . -}}
+{{- $apihost := include  "chat-ui.apihost" . -}}
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "cfg-{{ $name }}"
+  labels:
+    app: {{ template "chat-ui.name" . }}
+    chart: {{ template "chat-ui.chart" .}}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data:
+  FoundationaLLM__ChatManager__APIUrl: {{ .Values.apiUrl }}
