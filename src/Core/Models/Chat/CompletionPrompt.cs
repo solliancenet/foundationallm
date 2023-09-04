@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Solliance.AICopilot.Core.Models.Chat
+namespace FoundationaLLM.Core.Models.Chat
 {
     public class CompletionPrompt
     {

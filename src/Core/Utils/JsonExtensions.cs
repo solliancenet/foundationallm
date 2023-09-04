@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Solliance.AICopilot.Core.Utils
+namespace FoundationaLLM.Core.Utils
 {
     public static class JsonExtensions
     {

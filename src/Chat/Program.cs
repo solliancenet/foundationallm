@@ -1,4 +1,4 @@
-using Solliance.AICopilot.Chat.Helpers;
+using FoundationaLLM.Chat.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,7 +31,7 @@ static class ProgramExtensions
     public static void RegisterConfiguration(this WebApplicationBuilder builder)
     {
         builder.Services.AddOptions<ChatManagerSettings>()
-            .Bind(builder.Configuration.GetSection("MSCosmosDBOpenAI:ChatManager"));
+            .Bind(builder.Configuration.GetSection("FoundationaLLM:ChatManager"));
     }
 
     public static void RegisterServices(this IServiceCollection services)

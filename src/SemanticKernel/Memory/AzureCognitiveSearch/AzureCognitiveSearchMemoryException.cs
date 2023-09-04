@@ -2,7 +2,7 @@
 
 using System;
 
-namespace Solliance.AICopilot.SemanticKernel.Memory.AzureCognitiveSearch;
+namespace FoundationaLLM.SemanticKernel.Memory.AzureCognitiveSearch;
 
 #pragma warning disable RCS1194 // Implement exception constructors
 

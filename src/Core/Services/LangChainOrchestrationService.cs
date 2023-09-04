@@ -2,13 +2,13 @@
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using Solliance.AICopilot.Core.Interfaces;
-using Solliance.AICopilot.Core.Models.Chat;
-using Solliance.AICopilot.Core.Models.ConfigurationOptions;
-using Solliance.AICopilot.Core.Models.LangChain;
+using FoundationaLLM.Core.Interfaces;
+using FoundationaLLM.Core.Models.Chat;
+using FoundationaLLM.Core.Models.ConfigurationOptions;
+using FoundationaLLM.Core.Models.LangChain;
 using System.Text;
 
-namespace Solliance.AICopilot.Core.Services
+namespace FoundationaLLM.Core.Services
 {
     public class LangChainOrchestrationService : ILangChainOrchestrationService
     {

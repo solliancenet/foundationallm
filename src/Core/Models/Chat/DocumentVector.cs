@@ -1,4 +1,4 @@
-﻿namespace Solliance.AICopilot.Core.Models.Chat
+﻿namespace FoundationaLLM.Core.Models.Chat
 {
     public record DocumentVector
     {

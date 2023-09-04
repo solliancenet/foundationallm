@@ -2,24 +2,24 @@
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.AI.ChatCompletion;
 using Microsoft.SemanticKernel.AI.Embeddings;
-using Solliance.AICopilot.Core.Models.ConfigurationOptions;
-using Solliance.AICopilot.Core.Interfaces;
+using FoundationaLLM.Core.Models.ConfigurationOptions;
+using FoundationaLLM.Core.Interfaces;
 using Microsoft.Extensions.Logging;
-using Solliance.AICopilot.SemanticKernel.Skills.Core;
-using Solliance.AICopilot.Core.Models.Search;
+using FoundationaLLM.SemanticKernel.Skills.Core;
+using FoundationaLLM.Core.Models.Search;
 using System.Text.RegularExpressions;
 using Microsoft.SemanticKernel.AI.TextCompletion;
-using Solliance.AICopilot.Core.Models.Chat;
+using FoundationaLLM.Core.Models.Chat;
 using Newtonsoft.Json;
-using Solliance.AICopilot.SemanticKernel.Chat;
-using Solliance.AICopilot.SemanticKernel.Text;
-using Solliance.AICopilot.Core.Models;
-using Solliance.AICopilot.SemanticKernel.Memory.AzureCognitiveSearch;
-using Solliance.AICopilot.SemanticKernel.MemorySource;
+using FoundationaLLM.SemanticKernel.Chat;
+using FoundationaLLM.SemanticKernel.Text;
+using FoundationaLLM.Core.Models;
+using FoundationaLLM.SemanticKernel.Memory.AzureCognitiveSearch;
+using FoundationaLLM.SemanticKernel.MemorySource;
 using Microsoft.SemanticKernel.Memory;
-using Solliance.AICopilot.SemanticKernel.Memory;
+using FoundationaLLM.SemanticKernel.Memory;
 
-namespace Solliance.AICopilot.Core.Services;
+namespace FoundationaLLM.Core.Services;
 
 public class SemanticKernelOrchestrationService : ISemanticKernelOrchestrationService
 {

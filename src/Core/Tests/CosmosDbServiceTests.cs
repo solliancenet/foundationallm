@@ -2,10 +2,10 @@
 using Moq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Solliance.AICopilot.Core.Interfaces;
-using Solliance.AICopilot.Core.Models.Chat;
+using FoundationaLLM.Core.Interfaces;
+using FoundationaLLM.Core.Models.Chat;
 
-namespace Solliance.AICopilot.Core.Tests
+namespace FoundationaLLM.Core.Tests
 {
     [TestFixture]
     public class CosmosDbServiceTests

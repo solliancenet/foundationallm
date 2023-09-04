@@ -1,4 +1,4 @@
-namespace Solliance.AICopilot.Chat.Constants;
+namespace FoundationaLLM.Chat.Constants;
 
 public static class Interface
 {

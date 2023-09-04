@@ -1,7 +1,7 @@
-﻿using Solliance.AICopilot.Core.Models.Chat;
-using Solliance.AICopilot.Core.Models.Search;
+﻿using FoundationaLLM.Core.Models.Chat;
+using FoundationaLLM.Core.Models.Search;
 
-namespace Solliance.AICopilot.Core.Interfaces;
+namespace FoundationaLLM.Core.Interfaces;
 
 public interface ICosmosDbService
 {

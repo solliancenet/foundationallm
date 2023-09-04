@@ -3,10 +3,10 @@
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>Solliance.AICopilot.Chat</RootNamespace>
+    <RootNamespace>FoundationaLLM.Chat</RootNamespace>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <UserSecretsId>86b98284-0715-492f-80de-95ad9057b2d4</UserSecretsId>
-    <AssemblyName>Solliance.AICopilot.Chat</AssemblyName>
+    <AssemblyName>FoundationaLLM.Chat</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
     <Content Remove="appsettings.development.json" />

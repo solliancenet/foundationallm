@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Solliance.AICopilot.SemanticKernel.Chat
+namespace FoundationaLLM.SemanticKernel.Chat
 {
     public interface ITokenizer
     {

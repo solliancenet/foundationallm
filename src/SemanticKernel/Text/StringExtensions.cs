@@ -5,7 +5,7 @@ using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Solliance.AICopilot.SemanticKernel.Text
+namespace FoundationaLLM.SemanticKernel.Text
 {
     public static class StringExtensions
     {

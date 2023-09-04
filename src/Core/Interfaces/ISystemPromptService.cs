@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Solliance.AICopilot.Core.Interfaces
+namespace FoundationaLLM.Core.Interfaces
 {
     public interface ISystemPromptService
     {

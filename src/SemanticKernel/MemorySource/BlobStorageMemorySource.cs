@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Solliance.AICopilot.SemanticKernel.MemorySource
+namespace FoundationaLLM.SemanticKernel.MemorySource
 {
     public class BlobStorageMemorySource : IMemorySource
     {

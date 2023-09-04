@@ -1,4 +1,4 @@
-namespace Solliance.AICopilot.Core.Constants;
+namespace FoundationaLLM.Core.Constants;
 
 public enum Participants
 {

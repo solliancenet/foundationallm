@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection;
-using Solliance.AICopilot.Core.Interfaces;
-using Solliance.AICopilot.Core.Models.Chat;
-using Solliance.AICopilot.Core.Models.Orchestration;
-using Solliance.AICopilot.Core.Models.Search;
+using FoundationaLLM.Core.Interfaces;
+using FoundationaLLM.Core.Models.Chat;
+using FoundationaLLM.Core.Models.Orchestration;
+using FoundationaLLM.Core.Models.Search;
 
-namespace Solliance.AICopilot.ChatAPI
+namespace FoundationaLLM.ChatAPI
 {
     public class ChatEndpoints
     {

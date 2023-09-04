@@ -17,9 +17,9 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using Azure.Core.Serialization;
 using System.Reflection.Metadata;
-using Solliance.AICopilot.SemanticKernel.TextEmbedding;
+using FoundationaLLM.SemanticKernel.TextEmbedding;
 
-namespace Solliance.AICopilot.SemanticKernel.Memory.AzureCognitiveSearch
+namespace FoundationaLLM.SemanticKernel.Memory.AzureCognitiveSearch
 {
     /// <summary>
     /// Semantic Memory implementation using Azure Cognitive Search.

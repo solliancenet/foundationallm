@@ -8,10 +8,10 @@ using Azure.Search.Documents.Indexes;
 using Azure.Search.Documents.Indexes.Models;
 using Azure.Search.Documents.Models;
 using Microsoft.Extensions.Logging;
-using Solliance.AICopilot.Core.Interfaces;
-using Solliance.AICopilot.Core.Models.Search;
+using FoundationaLLM.Core.Interfaces;
+using FoundationaLLM.Core.Models.Search;
 
-namespace Solliance.AICopilot.Core.Services
+namespace FoundationaLLM.Core.Services
 {
     /// <summary>
     /// This service is provided as an example, it is not used by the main RAG flow.

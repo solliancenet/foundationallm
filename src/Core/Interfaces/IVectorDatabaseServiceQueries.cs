@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace Solliance.AICopilot.Core.Interfaces;
+namespace FoundationaLLM.Core.Interfaces;
 
 public interface IVectorDatabaseServiceQueries
 {

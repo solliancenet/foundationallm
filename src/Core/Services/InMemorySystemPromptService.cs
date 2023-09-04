@@ -1,7 +1,7 @@
-﻿using Solliance.AICopilot.SemanticKernel.Text;
-using Solliance.AICopilot.Core.Interfaces;
+﻿using FoundationaLLM.SemanticKernel.Text;
+using FoundationaLLM.Core.Interfaces;
 
-namespace Solliance.AICopilot.Core.Services
+namespace FoundationaLLM.Core.Services
 {
     public class InMemorySystemPromptService : ISystemPromptService
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Solliance.AICopilot.SemanticKernel.TextEmbedding
+namespace FoundationaLLM.SemanticKernel.TextEmbedding
 {
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
     public class EmbeddingFieldAttribute : Attribute

@@ -3,7 +3,7 @@
 using Azure.Search.Documents.Indexes;
 using Azure.Search.Documents.Indexes.Models;
 
-namespace Solliance.AICopilot.SemanticKernel.Memory.AzureCognitiveSearch;
+namespace FoundationaLLM.SemanticKernel.Memory.AzureCognitiveSearch;
 
 /// <summary>
 /// Azure Cognitive Search record and index definition.

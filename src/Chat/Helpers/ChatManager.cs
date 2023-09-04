@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
-using Solliance.AICopilot.Core.Models.Chat;
+using FoundationaLLM.Core.Models.Chat;
 
-namespace Solliance.AICopilot.Chat.Helpers
+namespace FoundationaLLM.Chat.Helpers
 {
     public class ChatManager : IChatManager
     {

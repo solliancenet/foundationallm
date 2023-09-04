@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace Solliance.AICopilot.Core.Utils
+namespace FoundationaLLM.Core.Utils
 {
     public static class ObjectExtensions
     {

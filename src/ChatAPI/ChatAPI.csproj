@@ -7,8 +7,8 @@
     <UserSecretsId>30330e17-47e4-4441-b37c-b4962fdec4c4</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <EnableSdkContainerSupport>true</EnableSdkContainerSupport>
-    <AssemblyName>Solliance.AICopilot.ChatAPI</AssemblyName>
-    <RootNamespace>Solliance.AICopilot.ChatAPI</RootNamespace>
+    <AssemblyName>FoundationaLLM.ChatAPI</AssemblyName>
+    <RootNamespace>FoundationaLLM.ChatAPI</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

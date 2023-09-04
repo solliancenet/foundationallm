@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Solliance.AICopilot.Core.Models.Search;
+using FoundationaLLM.Core.Models.Search;
 
-namespace Solliance.AICopilot.Core.Models
+namespace FoundationaLLM.Core.Models
 {
     public class ModelRegistry
     {
