@@ -49,6 +49,7 @@ public class SemanticKernelOrchestrationService : ISemanticKernelOrchestrationSe
         _memorySources = memorySources;
         _settings = options.Value;
         _logger = logger;
+        _logger.LogInformation("Initializing the Semantic Kernel orchestration service...");
 
         _memoryTypes = ModelRegistry.Models.ToDictionary(m => m.Key, m => m.Value.Type);
 
@@ -84,10 +85,12 @@ public class SemanticKernelOrchestrationService : ISemanticKernelOrchestrationSe
         _semanticKernel.RegisterMemory(_longTermMemory);
 
         _chat = _semanticKernel.GetService<IChatCompletion>();
+        _logger.LogInformation("Semantic Kernel orchestration service initialized.");
     }
 
     private async Task InitializeMemory()
     {
+        _logger.LogInformation("Initializing the Semantic Kernel orchestration service memory...");
         await _longTermMemory.Initialize(_memoryTypes.Values.ToList());
 
         // Get current short term memories
@@ -107,6 +110,7 @@ public class SemanticKernelOrchestrationService : ISemanticKernelOrchestrationSe
             }).ToList());
 
         _memoryInitialized = true;
+        _logger.LogInformation("Semantic Kernel RAG service memory initialized.");
     }
 
     public async Task<(string Completion, string UserPrompt, int UserPromptTokens, int ResponseTokens, float[]? UserPromptEmbedding)> GetResponse(string userPrompt, List<Message> messageHistory)

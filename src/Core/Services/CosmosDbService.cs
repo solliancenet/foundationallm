@@ -48,6 +48,7 @@ namespace FoundationaLLM.Core.Services
             ArgumentException.ThrowIfNullOrEmpty(_settings.Containers);
 
             _logger = logger;
+            _logger.LogInformation("Initializing Cosmos DB service.");
 
             Type defaultTrace = Type.GetType("Microsoft.Azure.Cosmos.Core.Trace.DefaultTrace,Microsoft.Azure.Cosmos.Direct");
             TraceSource traceSource = (TraceSource)defaultTrace.GetProperty("TraceSource").GetValue(null);
@@ -90,10 +91,12 @@ namespace FoundationaLLM.Core.Services
                 ?? throw new ArgumentException($"Unable to connect to the {_settings.ChangeFeedLeaseContainer} container required to listen to the CosmosDB change feed.");
 
             Task.Run(() => StartChangeFeedProcessors());
+            _logger.LogInformation("Cosmos DB service initialized.");
         }
 
         private async Task StartChangeFeedProcessors()
         {
+            _logger.LogInformation("Initializing the Change Feed Processors...");
             _changeFeedProcessors = new List<ChangeFeedProcessor>();
 
             try
@@ -107,9 +110,11 @@ namespace FoundationaLLM.Core.Services
                         .Build();
                     await changeFeedProcessor.StartAsync();
                     _changeFeedProcessors.Add(changeFeedProcessor);
+                    _logger.LogInformation($"Initialized the Change Feed Processor for the {monitoredContainerName} container.");
                 }
 
                 _changeFeedsInitialized = true;
+                _logger.LogInformation("Finished initializing the Change Feed Processors.");
             }
             catch (Exception ex)
             {
