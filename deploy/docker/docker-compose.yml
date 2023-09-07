@@ -1,6 +1,6 @@
 services:
   api:
-    image: ${REGISTRY:-mfoundationallm}/chat-api:${TAG:-latest}
+    image: ${REGISTRY:-foundationallm}/chat-api:${TAG:-latest}
     build:
       context: ../../
       dockerfile: ./sdrc/ChatAPI/Dockerfile
