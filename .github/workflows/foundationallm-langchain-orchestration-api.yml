@@ -58,6 +58,6 @@ jobs:
         uses: azure/webapps-deploy@v2
         id: deploy-to-webapp
         with:
-          app-name: 'foundationallm-langchain-api'
+          app-name: 'solliance-data-copilot-langchain-api'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_1BBBA4D581614E0AB9EF3399835D9F2F }}
