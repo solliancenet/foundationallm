@@ -9,9 +9,9 @@ from .prompt_model import PromptModel
 
 class CSVAgent:
 
-    def __init__(self):
+    def __init__(self, source_csv_file_url):
 
-        self.source_csv_file = "https://4qzigl76w7ebqpromptsa.blob.core.windows.net/hai-source/surveydata.csv?sp=r&st=2023-08-01T22:04:23Z&se=2023-08-31T06:04:23Z&spr=https&sv=2022-11-02&sr=c&sig=VX2C9O8VGNkG5BAU7C3vXxaAr9lhQooMyg5xdDM%2BKgM%3D"
+        self.source_csv_file = source_csv_file_url
         self.prompt_prefix = """
 You are an analytics agent named Khalil.
 You help users answer their questions about survey data. If the user asks you to answer any other question besides questions about the data, politely suggest that go ask a human as you are a very focused agent.

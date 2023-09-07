@@ -16,6 +16,8 @@ secrets_client = SecretClient(key_vault_url, credential=credential)
 api_key_value = secrets_client.get_secret('langchain-api-key').value
 api_key_header = APIKeyHeader(name='X-API-Key')
 
+source_csv_file_url = secrets_client.get_secret('source-csv-file-url').value
+
 def api_key_auth(x_api_key: str = Depends(api_key_header)):
     if x_api_key != api_key_value:
         raise HTTPException(
@@ -37,7 +39,7 @@ async def status():
 @app.post('/run', dependencies=[Depends(api_key_auth)])
 async def run(prompt: PromptModel):
     
-    agent = CSVAgent()
+    agent = CSVAgent(source_csv_file_url)
     return agent.run(prompt)
 
 
