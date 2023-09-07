@@ -1,5 +1,4 @@
-from http.client import HTTPException
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, HTTPException
 from fastapi.security import APIKeyHeader
 import uvicorn
 
