@@ -4,7 +4,7 @@ The general process for working with FoundationaLLM is:
 
 1. [Fork](http://help.github.com/forking/) on GitHub
 1. Clone your fork locally
-1. Configure the upstream repo (`git remote add upstream git://github.com/solliancenet/FoundationaLLM`)
+1. Configure the upstream repo (`git remote add upstream git://github.com/solliancenet/foundationallm-site`)
 1. Switch to the default branch (e.g. main, using `git checkout main`)
 1. Create a local branch from that (`git checkout -b myBranch`)
 1. Work on your feature
