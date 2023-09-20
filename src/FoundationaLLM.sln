@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SemanticKernel", "SemanticK
 EndProject
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "LangChainAPI", "LangChainAPI\LangChainAPI.pyproj", "{DF3AF954-1999-4244-A783-BCE96EE17816}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GatekeeperAPI", "GatekeeperAPI\GatekeeperAPI.csproj", "{1EE77A34-9EAA-40F1-A9E3-3E5CAE1F60BB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{DF3AF954-1999-4244-A783-BCE96EE17816}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DF3AF954-1999-4244-A783-BCE96EE17816}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DF3AF954-1999-4244-A783-BCE96EE17816}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1EE77A34-9EAA-40F1-A9E3-3E5CAE1F60BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1EE77A34-9EAA-40F1-A9E3-3E5CAE1F60BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1EE77A34-9EAA-40F1-A9E3-3E5CAE1F60BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1EE77A34-9EAA-40F1-A9E3-3E5CAE1F60BB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
