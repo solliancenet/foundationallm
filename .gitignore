@@ -363,3 +363,4 @@ __values/configFile.yaml
 .idea
 dMT
 migrationsettings.json
+deploy/__values/

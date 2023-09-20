@@ -9,7 +9,8 @@ Param (
     [parameter(Mandatory=$false)][string[]]$gvaluesTemplate="..,gvalues.template.yml",
     [parameter(Mandatory=$false)][string[]]$migrationSettingsTemplate="..,migrationsettings.template.json",
     [parameter(Mandatory=$false)][string]$ingressClass="addon-http-application-routing",
-    [parameter(Mandatory=$false)][string]$domain
+    [parameter(Mandatory=$false)][string]$domain,
+    [parameter(Mandatory=$true)][string]$deployAks
 )
 
 function EnsureAndReturnFirstItem($arr, $restype) {
@@ -38,11 +39,18 @@ $tokens=@{}
 # Write-Host "Storage Account: $($storage.name)" -ForegroundColor Yellow
 
 ## Getting API URL domain
-if ([String]::IsNullOrEmpty($domain)) {
-    $domain = $(az aks show -n $aksName -g $resourceGroup -o json --query addonProfiles.httpApplicationRouting.config.HTTPApplicationRoutingZoneName | ConvertFrom-Json)
-    if (-not $domain) {
-        $domain = $(az aks show -n $aksName -g $resourceGroup -o json --query addonProfiles.httpapplicationrouting.config.HTTPApplicationRoutingZoneName | ConvertFrom-Json)
+if ($deployAks)
+{
+    if ([String]::IsNullOrEmpty($domain)) {
+        $domain = $(az aks show -n $aksName -g $resourceGroup -o json --query addonProfiles.httpApplicationRouting.config.HTTPApplicationRoutingZoneName | ConvertFrom-Json)
+        if (-not $domain) {
+            $domain = $(az aks show -n $aksName -g $resourceGroup -o json --query addonProfiles.httpapplicationrouting.config.HTTPApplicationRoutingZoneName | ConvertFrom-Json)
+        }
     }
+}
+else
+{
+    $domain=$(az deployment group show -g $resourceGroup -n foundationallm-azuredeploy -o json --query properties.outputs.apiFqdn.value | ConvertFrom-Json)
 }
 
 $apiUrl = "https://$domain"
