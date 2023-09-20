@@ -54,6 +54,7 @@ else
 }
 
 $apiUrl = "https://$domain"
+Write-Host "API URL: $apiUrl" -ForegroundColor Yellow
 
 ## Getting CosmosDb info
 $docdb=$(az cosmosdb list -g $resourceGroup --query "[?kind=='GlobalDocumentDB'].{name: name, kind:kind, documentEndpoint:documentEndpoint}" -o json | ConvertFrom-Json)
