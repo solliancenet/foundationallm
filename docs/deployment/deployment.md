@@ -16,15 +16,15 @@ Use the steps below to validate that the solution was deployed successfully.
 
 Once the deployment script completes, the Application Insights `traces` query should display the following sequence of events:
 
-![API initialization sequence of events](./media/initialization-trace.png)
+![API initialization sequence of events](../media/initialization-trace.png)
 
 Next, you should be able to see multiple entries referring to the vectorization of the data that was imported into Cosmos DB:
 
-![API vectorization sequence of events](./media/initialization-embedding.png)
+![API vectorization sequence of events](../media/initialization-embedding.png)
 
 Finally, you should be able to see the Cognitive Search index being populated with the vectorized data:
 
-![Cognitive Search index populated with vectorized data](./media/initialization-vector-index.png)
+![Cognitive Search index populated with vectorized data](../media/initialization-vector-index.png)
 
 >**NOTE**:
 >
@@ -43,7 +43,7 @@ Use the steps below to monitor the solution with Application Insights:
     | order by desc timestamp
     ```
 
-    ![Application Insights query](w./media/monitoring-traces.png)
+    ![Application Insights query](../media/monitoring-traces.png)
 
 3. Select the `Export` button to explort the results the query.
 
