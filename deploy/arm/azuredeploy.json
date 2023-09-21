@@ -99,9 +99,29 @@
     },
     "aiSettings": {
       "name": "[format('{0}-ai', parameters('name'))]"
+    },
+    "keyVaultSettings": {
+      "name": "[format('{0}-kv', parameters('name'))]"
     }
   },
   "resources": [
+    {
+      "type": "Microsoft.KeyVault/vaults",
+      "apiVersion": "2022-07-01",
+      "name": "[variables('keyVaultSettings').name]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "createMode": "default",
+        "enabledForDeployment": true,
+        "enableRbacAuthorization": true,
+        "enableSoftDelete": true,
+        "sku": {
+          "family": "A",
+          "name": "standard"
+        },
+        "tenantId": "[tenant().tenantId]"
+      }
+    },
     {
       "type": "Microsoft.DocumentDB/databaseAccounts",
       "apiVersion": "2022-08-15",
