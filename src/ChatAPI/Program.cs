@@ -12,6 +12,7 @@ namespace FoundationaLLM.ChatAPI
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddApplicationInsightsTelemetry();
+            builder.Services.AddControllers();
 
             builder.Services.AddOptions<CosmosDbSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:CosmosDB"));
@@ -46,8 +47,6 @@ namespace FoundationaLLM.ChatAPI
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:BlobStorageMemorySource"));
             builder.Services.AddTransient<IMemorySource, BlobStorageMemorySource>();
 
-            builder.Services.AddScoped<ChatEndpoints>();
-
             // Add services to the container.
             builder.Services.AddAuthorization();
 
@@ -67,12 +66,7 @@ namespace FoundationaLLM.ChatAPI
 
             app.UseAuthorization();
 
-            // Map the chat REST endpoints:
-            using (var scope = app.Services.CreateScope())
-            {
-                var service = scope.ServiceProvider.GetService<ChatEndpoints>();
-                service?.Map(app);
-            }
+            app.MapControllers();
 
             app.Run();
         }
