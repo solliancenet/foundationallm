@@ -1,6 +1,6 @@
-using FoundationaLLM.SemanticKernelAPI.Interfaces;
-using FoundationaLLM.SemanticKernelAPI.Models.ConfigurationOptions;
-using FoundationaLLM.SemanticKernelAPI.Services;
+using FoundationaLLM.Core.Interfaces;
+using FoundationaLLM.Core.Models.ConfigurationOptions;
+using FoundationaLLM.Core.Services;
 
 namespace SemanticKernelAPI
 {
@@ -18,6 +18,7 @@ namespace SemanticKernelAPI
 
             // Add services to the container.
             builder.Services.AddAuthorization();
+            builder.Services.AddControllers();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -25,24 +26,25 @@ namespace SemanticKernelAPI
 
             var app = builder.Build();
 
-            app.UseExceptionHandler(exceptionHandlerApp
-                => exceptionHandlerApp.Run(async context
-                    => await Results.Problem().ExecuteAsync(context)));
+            //app.UseExceptionHandler(exceptionHandlerApp
+            //    => exceptionHandlerApp.Run(async context
+            //        => await Results.Problem().ExecuteAsync(context)));
 
             // Configure the HTTP request pipeline.
             app.UseSwagger();
             app.UseSwaggerUI();
 
+            // Map the chat REST endpoints:
+            //using (var scope = app.Services.CreateScope())
+            //{
+            //    var service = scope.ServiceProvider.GetService<SemanticKernelEndpoints>();
+            //    service?.Map(app);
+            //}
+
             app.UseHttpsRedirection();
             app.UseAuthorization();
-
-            // Map the chat REST endpoints:
-            using (var scope = app.Services.CreateScope())
-            {
-                var service = scope.ServiceProvider.GetService<SemanticKernelEndpoints>();
-                service?.Map(app);
-            }
-
+            app.MapControllers();
+            
             app.Run();
         }
     }

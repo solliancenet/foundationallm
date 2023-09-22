@@ -1,4 +1,4 @@
-using FoundationaLLM.SemanticKernelAPI.Interfaces;
+using FoundationaLLM.Core.Interfaces;
 
 namespace SemanticKernelAPI
 {
