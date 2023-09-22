@@ -14,7 +14,7 @@ namespace FoundationaLLM.GatekeeperAPI
 
             builder.Services.AddOptions<GatekeeperServiceSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:GatekeeperService"));
-            builder.Services.AddSingleton<IGatekeeperService, GatekeeperService>();
+            builder.Services.AddScoped<IGatekeeperService, GatekeeperService>();
 
             // Add services to the container.
             builder.Services.AddAuthorization();
