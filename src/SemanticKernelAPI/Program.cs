@@ -34,13 +34,6 @@ namespace SemanticKernelAPI
             app.UseSwagger();
             app.UseSwaggerUI();
 
-            // Map the chat REST endpoints:
-            //using (var scope = app.Services.CreateScope())
-            //{
-            //    var service = scope.ServiceProvider.GetService<SemanticKernelEndpoints>();
-            //    service?.Map(app);
-            //}
-
             app.UseHttpsRedirection();
             app.UseAuthorization();
             app.MapControllers();
