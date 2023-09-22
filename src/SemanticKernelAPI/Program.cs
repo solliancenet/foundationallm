@@ -14,7 +14,7 @@ namespace SemanticKernelAPI
 
             builder.Services.AddOptions<SemanticKernelServiceSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:SemanticKernelService"));
-            builder.Services.AddSingleton<ISemanticKernelService, SemanticKernelService>();
+            builder.Services.AddScoped<ISemanticKernelService, SemanticKernelService>();
 
             // Add services to the container.
             builder.Services.AddAuthorization();
