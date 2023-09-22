@@ -1,4 +1,4 @@
-﻿namespace FoundationaLLM.GatekeeperAPI.Interfaces;
+﻿namespace FoundationaLLM.Core.Interfaces;
 
 public interface IGatekeeperService
 {
