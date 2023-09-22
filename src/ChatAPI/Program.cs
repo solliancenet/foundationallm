@@ -13,6 +13,8 @@ namespace FoundationaLLM.ChatAPI
 
             builder.Services.AddApplicationInsightsTelemetry();
             builder.Services.AddControllers();
+            builder.Services.AddProblemDetails();
+            builder.Services.AddApiVersioning();
 
             builder.Services.AddOptions<CosmosDbSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:CosmosDB"));
