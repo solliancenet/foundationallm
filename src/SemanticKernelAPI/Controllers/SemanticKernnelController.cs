@@ -1,12 +1,14 @@
-﻿using FoundationaLLM.Core.Interfaces;
+﻿using Asp.Versioning;
+using FoundationaLLM.SemanticKernelAPI.Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FoundationaLLM.SemanticKernelAPI.Controllers
 {
-    //[Authorize]
-    [Route("api/semantickernnel")]
+    [Authorize]
+    [ApiVersion(1.0)]
     [ApiController]
+    [Route("api/semantickernnel")]
     public class SemanticKernnelController : ControllerBase
     {
         private readonly ISemanticKernelService _semanticKernelService;
@@ -18,11 +20,9 @@ namespace FoundationaLLM.SemanticKernelAPI.Controllers
         }
 
         [HttpGet("test")]
-        public async Task<IActionResult> Test()
+        public async Task Test()
         {
             await _semanticKernelService.Test();
-
-            return new OkResult();
         }
     }
 }

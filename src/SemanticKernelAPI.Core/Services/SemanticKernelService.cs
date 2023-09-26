@@ -1,9 +1,9 @@
-﻿using FoundationaLLM.Core.Interfaces;
-using FoundationaLLM.Core.Models.ConfigurationOptions;
+﻿using FoundationaLLM.SemanticKernelAPI.Core.Interfaces;
+using FoundationaLLM.SemanticKernelAPI.Core.Models.ConfigurationOptions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace FoundationaLLM.Core.Services;
+namespace FoundationaLLM.SemanticKernelAPI.Core.Services;
 
 public class SemanticKernelService : ISemanticKernelService
 {
