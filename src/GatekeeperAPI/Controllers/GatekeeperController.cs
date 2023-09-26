@@ -1,12 +1,14 @@
-﻿﻿using FoundationaLLM.Core.Interfaces;
+﻿using Asp.Versioning;
+using FoundationaLLM.GatekeeperAPI.Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FoundationaLLM.SemanticKernelAPI.Controllers
 {
-    //[Authorize]
-    [Route("api/gatekeeper")]
+    [Authorize]
+    [ApiVersion(1.0)]
     [ApiController]
+    [Route("api/gatekeeper")]
     public class GatekeeperController : ControllerBase
     {
         private readonly IGatekeeperService _gatekeeperService;
@@ -18,11 +20,9 @@ namespace FoundationaLLM.SemanticKernelAPI.Controllers
         }
 
         [HttpGet("test")]
-        public async Task<IActionResult> Test()
+        public async Task Test()
         {
             await _gatekeeperService.Test();
-
-            return new OkResult();
         }
     }
 }

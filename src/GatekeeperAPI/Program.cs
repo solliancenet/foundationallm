@@ -1,6 +1,6 @@
-using FoundationaLLM.Core.Interfaces;
-using FoundationaLLM.Core.Models.ConfigurationOptions;
-using FoundationaLLM.Core.Services;
+using FoundationaLLM.GatekeeperAPI.Core.Interfaces;
+using FoundationaLLM.GatekeeperAPI.Core.Models.ConfigurationOptions;
+using FoundationaLLM.GatekeeperAPI.Core.Services;
 
 namespace FoundationaLLM.GatekeeperAPI
 {
@@ -10,25 +10,25 @@ namespace FoundationaLLM.GatekeeperAPI
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.Services.AddApplicationInsightsTelemetry();
-
-            builder.Services.AddOptions<GatekeeperServiceSettings>()
-                .Bind(builder.Configuration.GetSection("FoundationaLLM:GatekeeperService"));
-            builder.Services.AddScoped<IGatekeeperService, GatekeeperService>();
-
             // Add services to the container.
+            builder.Services.AddApplicationInsightsTelemetry();
             builder.Services.AddAuthorization();
             builder.Services.AddControllers();
+            builder.Services.AddApiVersioning();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddOptions<GatekeeperServiceSettings>()
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:GatekeeperService"));
+            builder.Services.AddScoped<IGatekeeperService, GatekeeperService>();
+
             var app = builder.Build();
 
-            //app.UseExceptionHandler(exceptionHandlerApp
-            //    => exceptionHandlerApp.Run(async context
-            //        => await Results.Problem().ExecuteAsync(context)));
+            app.UseExceptionHandler(exceptionHandlerApp
+                => exceptionHandlerApp.Run(async context
+                    => await Results.Problem().ExecuteAsync(context)));
 
             // Configure the HTTP request pipeline.
             app.UseSwagger();

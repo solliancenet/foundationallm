@@ -1,9 +1,9 @@
-﻿using FoundationaLLM.Core.Interfaces;
-using FoundationaLLM.Core.Models.ConfigurationOptions;
+﻿using FoundationaLLM.GatekeeperAPI.Core.Interfaces;
+using FoundationaLLM.GatekeeperAPI.Core.Models.ConfigurationOptions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace FoundationaLLM.Core.Services;
+namespace FoundationaLLM.GatekeeperAPI.Core.Services;
 
 public class GatekeeperService : IGatekeeperService
 {
