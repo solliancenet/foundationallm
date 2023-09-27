@@ -203,7 +203,7 @@
 
     private async Task OnInputClose(string newName)
     {
-        if (newName != "" && newName != null)
+        if (String.IsNullOrWhiteSpace(newName))
         {
             bool updateCurrentChat = false;
 
