@@ -382,21 +382,39 @@ namespace FoundationaLLM.Core.Services
             var query = new QueryDefinition("SELECT c.id FROM c WHERE c.sessionId = @sessionId")
                 .WithParameter("@sessionId", sessionId);
 
-            var response = _completions.GetItemQueryIterator<Message>(query);
+            var response = _completions.GetItemQueryIterator<dynamic>(query);
+
+            Console.WriteLine($"Deleting {sessionId} session and related messages.");
 
             var batch = _completions.CreateTransactionalBatch(partitionKey);
+            var count = 0;
+
+            // Local function to execute and reset the batch.
+            async Task ExecuteBatchAsync()
+            {
+                if (count > 0) // Execute the batch only if it has any items.
+                {
+                    await batch.ExecuteAsync();
+                    count = 0;
+                    batch = _completions.CreateTransactionalBatch(partitionKey);
+                }
+            }
+
             while (response.HasMoreResults)
             {
                 var results = await response.ReadNextAsync();
                 foreach (var item in results)
                 {
-                    batch.DeleteItem(
-                        id: item.Id
-                    );
+                    batch.DeleteItem(item.id.ToString());
+                    count++;
+                    if (count >= 100) // Execute the batch after adding 100 items (100 actions per batch execution is the limit)
+                    {
+                        await ExecuteBatchAsync();
+                    }
                 }
             }
 
-            await batch.ExecuteAsync();
+            await ExecuteBatchAsync();
         }
 
         /// <summary>
