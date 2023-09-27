@@ -131,7 +131,7 @@
 
     protected override void OnInitialized()
     {
-        OnNavMenuChanged += async (o, e) =>
+        OnNavMenuChanged = async (o, e) =>
         {
             await this.InvokeAsync(async () =>
             {
@@ -205,7 +205,7 @@
 
     private async Task OnInputClose(string newName)
     {
-        if (newName != "")
+        if (!String.IsNullOrWhiteSpace(newName))
         {
             bool updateCurrentChat = false;
 
