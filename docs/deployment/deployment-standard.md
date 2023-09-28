@@ -16,17 +16,24 @@ Follow the steps below to deploy the solution to your Azure subscription.
 
 1. Ensure all the prerequisites are installed.  
 
-2. Clone the repository:
+1. Clone the repository:
    
     ```cmd
     git clone https://github.com/solliancenet/foundationallm.git
     ```
 
-5. Run the following script to provision the infrastructure and deploy the API and frontend. This will provision all of the required infrastructure, deploy the API and web app services into AKS, and import data into Cosmos DB.
+1. Run the following script to provision the infrastructure and deploy the API and frontend. This will provision all of the required infrastructure, deploy the API and web app services as ACA instances, and import data into Cosmos DB.
 
     ```pwsh
     cd foundationallm
     ./deploy/scripts/Unified-Deploy.ps1 -resourceGroup <rg_name> -location <location> -subscription <target_subscription_id>
+    ```
+
+1. To deploy to an AKS environment instead, run the same script with the added argument `-deployAks 1`, as shown below.  This will provision all of the required infrastructure, deploy the API and web app services as pods in an AKS cluster, and import data into Cosmos DB.
+
+    ```pwsh
+    cd foundationallm
+    ./deploy/scripts/Unified-Deploy.ps1 -resourceGroup <rg_name> -location <location> -subscription <target_subscription_id> -deployAks 1
     ```
 
 >**NOTE**: Make sure to set the `<location>` value to a region that supports Azure OpenAI services.  See [Azure OpenAI service regions](https://azure.microsoft.com/en-us/explore/global-infrastructure/products-by-region/?products=cognitive-services&regions=all) for more information.
