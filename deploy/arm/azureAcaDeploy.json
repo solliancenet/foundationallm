@@ -112,6 +112,17 @@
     },
     "keyVaultSettings": {
       "name": "[format('{0}-kv', parameters('name'))]"
+    },
+    "langChainApiKey": "[concat('sk-', uniqueString(tenant().tenantId, subscription().subscriptionId, resourceGroup().id))]",
+    "roleIdMapping": {
+      "Key Vault Administrator": "00482a5a-887f-4fb3-b363-3b7fe8e74483",
+      "Key Vault Certificates Officer": "a4417e6f-fecd-4de8-b567-7b0420556985",
+      "Key Vault Crypto Officer": "14b46e9e-c2b7-41b4-b07b-48a6ebf60603",
+      "Key Vault Crypto Service Encryption User": "e147488a-f6f5-4113-8e2d-b22465e65bf6",
+      "Key Vault Crypto User": "12338af0-0e69-4776-bea7-57ae8d297424",
+      "Key Vault Reader": "21090545-7ca7-4776-b22c-e363652d74d2",
+      "Key Vault Secrets Officer": "b86a8fe4-44ce-4948-aee5-eccb2c155cd7",
+      "Key Vault Secrets User": "4633458b-17de-408a-b874-0445c86b69e6"
     }
   },
   "resources": [
@@ -131,6 +142,17 @@
         },
         "tenantId": "[tenant().tenantId]"
       }
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "apiVersion": "2022-07-01",
+      "name": "[format('{0}/{1}', variables('keyVaultSettings').name, 'langchain-api-key')]",
+      "properties": {
+        "value": "[variables('langChainApiKey')]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultSettings').name)]"
+      ]
     },
     {
       "type": "Microsoft.DocumentDB/databaseAccounts",
@@ -544,7 +566,8 @@
         "[resourceId('Microsoft.App/managedEnvironments', format('{0}acaenv', parameters('name')))]",
         "[resourceId('Microsoft.Search/searchServices', variables('cognitiveSearchSettings').name)]",
         "[resourceId('Microsoft.DocumentDB/databaseAccounts', variables('cosmosDbSettings').name)]",
-        "[resourceId('Microsoft.Storage/storageAccounts', format('{0}promptsa', parameters('name')))]"
+        "[resourceId('Microsoft.Storage/storageAccounts', format('{0}promptsa', parameters('name')))]",
+        "[resourceId('Microsoft.App/containerapps', format('{0}langchainaca', parameters('name')))]"
       ],
       "identity": {
           "type": "SystemAssigned"
@@ -731,11 +754,11 @@
                           },
                           {
                               "name": "FoundationaLLM__LangChainOrchestration__APIUrl",
-                              "value": "https://solliance-data-copilot-langchain-api.azurewebsites.net"
+                              "value": "[concat('https://', reference(resourceId('Microsoft.App/containerApps', format('{0}langchainaca', parameters('name'))), providers('Microsoft.App', 'containerApps').apiVersions[0]).configuration.ingress.fqdn)]"
                           },
                           {
                               "name": "FoundationaLLM__LangChainOrchestration__APIKey",
-                              "value": "{{ langChainAPIKey }}"
+                              "value": "[variables('langChainApiKey')]"
                           },
                           {
                               "name": "ApplicationInsights__ConnectionString",
@@ -832,6 +855,81 @@
               },
               "volumes": []
           }
+      }
+    },
+    {
+      "type": "Microsoft.App/containerapps",
+      "apiVersion": "2023-05-02-preview",
+      "name": "[format('{0}langchainaca', parameters('name'))]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.App/managedEnvironments', format('{0}acaenv', parameters('name')))]",
+        "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultSettings').name)]"
+      ],
+      "identity": {
+          "type": "SystemAssigned"
+      },
+      "properties": {
+          "managedEnvironmentId": "[resourceId('Microsoft.App/managedEnvironments', format('{0}acaenv', parameters('name')))]",
+          "environmentId": "[resourceId('Microsoft.App/managedEnvironments', format('{0}acaenv', parameters('name')))]",
+          "workloadProfileName": "Warm",
+          "configuration": {
+              "secrets": [],
+              "activeRevisionsMode": "Single",
+              "ingress": {
+                  "external": true,
+                  "targetPort": 80,
+                  "exposedPort": 0,
+                  "stickySessions": {
+                    "affinity": "sticky"
+                  },
+                  "transport": "Auto",
+                  "traffic": [
+                      {
+                        "latestRevision": true,
+                          "weight": 100
+                      }
+                  ],
+                  "allowInsecure": false,
+                  "clientCertificateMode": "Ignore"
+              }
+          },
+          "template": {
+              "containers": [
+                  {
+                      "image": "mcr.microsoft.com/k8se/quickstart:latest",
+                      "name": "[format('{0}langchainaca', parameters('name'))]",
+                      "env": [
+                          {
+                              "name": "SOLLIANCEAICOPILOT__LANGCHAINAPI__KEYVAULTURL",
+                              "value": "[reference(resourceId('Microsoft.KeyVault/vaults', variables('keyVaultSettings').name), providers('Microsoft.KeyVault', 'vaults').apiVersions[0]).vaultUri]"
+                          }
+                      ],
+                      "resources": {
+                          "cpu": 0.5,
+                          "memory": "1Gi"
+                      },
+                      "probes": [],
+                      "volumeMounts": []
+                  }
+              ],
+              "scale": {
+                  "minReplicas": 2,
+                  "maxReplicas": 10
+              },
+              "volumes": []
+          }
+      }
+    }, 
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2020-04-01-preview",
+      "scope": "[format('Microsoft.KeyVault/vaults/{0}', variables('keyVaultSettings').name)]",
+      "name": "[guid(resourceId('Microsoft.App/containerapps', format('{0}langchainaca', parameters('name'))), variables('keyVaultSettings').name)]",
+      "properties": {
+        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('roleIdMapping')['Key Vault Secrets User'])]",
+        "principalId": "[reference(resourceId('Microsoft.App/containerapps', format('{0}langchainaca', parameters('name'))), providers('Microsoft.App', 'containerapps').apiVersions[0], 'full').identity.principalId]",
+        "principalType": "ServicePrincipal"
       }
     }
   ],
