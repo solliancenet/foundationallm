@@ -49,11 +49,15 @@ Push-Location $($MyInvocation.InvocationName | Split-Path)
 
 Write-Host "Deploying images..." -ForegroundColor Yellow
 
-Write-Host "API deployment - api" -ForegroundColor Yellow
+Write-Host "LangChainAPI deployment - langchain-api" -ForegroundColor Yellow
+$command = "az containerapp update --name $($deploymentOutputs.langChainAcaName.value) --resource-group $resourceGroup --image $acrLogin/langchain-api:$tag"
+Invoke-Expression "$command"
+
+Write-Host "ChatAPI deployment - chat-api" -ForegroundColor Yellow
 $command = "az containerapp update --name $($deploymentOutputs.apiAcaName.value) --resource-group $resourceGroup --image $acrLogin/chat-api:$tag"
 Invoke-Expression "$command"
 
-Write-Host "Webapp deployment - web" -ForegroundColor Yellow
+Write-Host "ChatUI deployment - chat-ui" -ForegroundColor Yellow
 $command = "az containerapp update --name $($deploymentOutputs.webAcaName.value) --resource-group $resourceGroup --image $acrLogin/chat-ui:$tag"
 Invoke-Expression "$command"
 

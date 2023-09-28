@@ -954,6 +954,10 @@
       "type": "string",
       "value": "[format('{0}chatwebaca', parameters('name'))]"
     },
+    "langChainAcaName": {
+      "type": "string",
+      "value": "[format('{0}langchainaca', parameters('name'))]"
+    },
     "resourcePrefix": {
       "type": "string",
       "value": "[parameters('name')]"
