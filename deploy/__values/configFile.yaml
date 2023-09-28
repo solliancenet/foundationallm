@@ -1,0 +1,46 @@
+cognitiveSearch:
+  key: 'aiv3gu6S1w4MBCjSXLpm79xbltAunT7906R8yRf2bwAzSeCsYAqE'
+  endpoint: 'https://tebhgv5thq7mi-cog-search.search.windows.net/'
+  indexName: 'vector-index'
+  maxVectorSearchResults: 10
+openAi:
+  completionsDeployment: 'completions'
+  completionsDeploymentMaxTokens: 8096
+  embeddingsDeployment: 'embeddings'
+  embeddingsDeploymentMaxTokens: 8191
+  chatCompletionPromptName: 'RetailAssistant.Default'
+  shortSummaryPromptName: 'Summarizer.TwoWords'
+  promptOptimization:
+    completionsMinTokens: 50
+    completionsMaxTokens: 300
+    systemMaxTokens: 1500
+    memoryMinTokens: 1500
+    memoryMaxTokens: 7000
+    messagesMinTokens: 100
+    messagesMaxTokens: 200
+  endpoint: 'https://24c7c-openai.openai.azure.com/'
+  key: 'bb955a5ad150450c9eaf5fc706c08e42'
+cosmosDb:
+  containers: 'completions, customer, product'
+  monitoredContainers: 'customer, product'
+  database: 'database'
+  changeFeedLeaseContainer: 'leases'
+  endpoint: 'https://tebhgv5thq7mi-cosmos-nosql.documents.azure.com:443/'
+  key: 'WN4Vk3JxSKz3W8iJVWKrgSvsMRbHXk5Xaests7srYAN15fKtrZ4Vy0O3drSVarG7laUwjUi7vS2HACDbJaxeNQ=='
+durableSystemPrompt:
+  blobStorageContainer: 'system-prompt'
+  blobStorageConnection: 'DefaultEndpointsProtocol=https;AccountName=tebhgv5thq7mipromptsa;AccountKey=AUPPPasZd9P09QGdg0d7RRqqysgFBzcpfVlze+L+9r0vsLhPf6W24AOu+/eepoReK77wOpihG3lm+AStFccp4w==;EndpointSuffix=core.windows.net'
+cognitiveSearchMemorySource:
+  configBlobStorageContainer: 'memory-source'
+  configFilePath: 'ACSMemorySourceConfig.json'
+  configBlobStorageConnection: 'DefaultEndpointsProtocol=https;AccountName=tebhgv5thq7mipromptsa;AccountKey=AUPPPasZd9P09QGdg0d7RRqqysgFBzcpfVlze+L+9r0vsLhPf6W24AOu+/eepoReK77wOpihG3lm+AStFccp4w==;EndpointSuffix=core.windows.net'
+  key: 'aiv3gu6S1w4MBCjSXLpm79xbltAunT7906R8yRf2bwAzSeCsYAqE'
+  endpoint: 'https://tebhgv5thq7mi-cog-search.search.windows.net/'
+blobStorageMemorySource:
+  configBlobStorageContainer: 'memory-source'
+  configFilePath: 'BlobMemorySourceConfig.json'
+  configBlobStorageConnection: 'DefaultEndpointsProtocol=https;AccountName=tebhgv5thq7mipromptsa;AccountKey=AUPPPasZd9P09QGdg0d7RRqqysgFBzcpfVlze+L+9r0vsLhPf6W24AOu+/eepoReK77wOpihG3lm+AStFccp4w==;EndpointSuffix=core.windows.net'
+apiUrl: https://
+routePrefix: /api
+applicationInsights:
+  connectionString: "InstrumentationKey=12be5af4-0b5a-4de4-8670-43f539caf37c;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/"
