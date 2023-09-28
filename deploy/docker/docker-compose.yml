@@ -2,8 +2,8 @@ services:
   chat-api:
     image: ${REGISTRY:-foundationallm}/chat-api:${TAG:-latest}
     build:
-      context: ../../
-      dockerfile: ./src/ChatAPI/Dockerfile
+      context: ../../src
+      dockerfile: ./ChatAPI/Dockerfile
     ports:
     - "80:80"
     environment:
