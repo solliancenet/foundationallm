@@ -40,6 +40,11 @@ blobStorageMemorySource:
   configBlobStorageContainer: 'memory-source'
   configFilePath: 'BlobMemorySourceConfig.json'
   configBlobStorageConnection: '{{blobStorageConnectionString}}'
+chat:
+  defaultOrchestrationService: 'SemanticKernel'
+langChain:
+  apiUrl: 'https://solliance-data-copilot-langchain-api.azurewebsites.net'
+  apiKey: '{{langChainApiKey}}'
 apiUrl: {{apiUrl}}
 routePrefix: /api
 applicationInsights:

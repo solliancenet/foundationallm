@@ -35,3 +35,4 @@ data:
   FoundationaLLM__CognitiveSearchMemorySource__ConfigFilePath: {{ .Values.cognitiveSearchMemorySource.configFilePath }}
   FoundationaLLM__BlobStorageMemorySource__ConfigBlobStorageContainer: {{ .Values.blobStorageMemorySource.configBlobStorageContainer }}
   FoundationaLLM__BlobStorageMemorySource__ConfigFilePath: {{ .Values.blobStorageMemorySource.configFilePath }}
+  FoundationaLLM__Chat__DefaultOrchestrationService: {{ .Values.chat.defaultOrchestrationService }}
