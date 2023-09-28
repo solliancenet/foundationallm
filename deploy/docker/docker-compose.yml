@@ -1,9 +1,9 @@
 services:
-  api:
+  chat-api:
     image: ${REGISTRY:-foundationallm}/chat-api:${TAG:-latest}
     build:
-      context: ../../src
-      dockerfile: ./ChatAPI/Dockerfile
+      context: ../../
+      dockerfile: ./src/ChatAPI/Dockerfile
     ports:
     - "80:80"
     environment:
@@ -12,7 +12,16 @@ services:
       AllowedHosts: '*'
       Logging__Loglevel__Default: 'Debug'
       Logging__Loglevel__Microsoft__AspNetCore: 'Debug'
-  web:
+  langchain-api:
+    image: ${REGISTRY:-foundationallm}/langchain-api:${TAG:-latest}
+    build:
+      context: ../../src/LangChainAPI
+      dockerfile: ./Dockerfile
+    ports:
+    - "8081:80"
+    environment:
+      SOLLIANCEAICOPILOT__LANGCHAINAPI__KEYVAULTURL: "{{keyVaultUrl}}"
+  chat-ui:
     image: ${REGISTRY:-foundationallm}/chat-ui:${TAG:-latest}
     build:
       context: ../../src
