@@ -1,3 +1,4 @@
+using FoundationaLLM.SemanticKernel.MemorySource;
 using FoundationaLLM.SemanticKernelAPI.Core.Interfaces;
 using FoundationaLLM.SemanticKernelAPI.Core.Models.ConfigurationOptions;
 using FoundationaLLM.SemanticKernelAPI.Core.Services;
@@ -21,8 +22,24 @@ namespace SemanticKernelAPI
             builder.Services.AddSwaggerGen();
 
             builder.Services.AddOptions<SemanticKernelServiceSettings>()
-                .Bind(builder.Configuration.GetSection("FoundationaLLM:SemanticKernelService"));
-            builder.Services.AddScoped<ISemanticKernelService, SemanticKernelService>();
+                .Bind(builder.Configuration.GetSection("FoundationaLLM"));
+            builder.Services.AddSingleton<ISemanticKernelService, SemanticKernelService>();
+
+            // Simple, static system prompt service
+            //builder.Services.AddSingleton<ISystemPromptService, InMemorySystemPromptService>();
+
+            // System prompt service backed by an Azure blob storage account
+            builder.Services.AddOptions<DurableSystemPromptServiceSettings>()
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:DurableSystemPrompt"));
+            builder.Services.AddSingleton<ISystemPromptService, DurableSystemPromptService>();
+
+            builder.Services.AddOptions<AzureCognitiveSearchMemorySourceSettings>()
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:CognitiveSearchMemorySource"));
+            builder.Services.AddTransient<IMemorySource, AzureCognitiveSearchMemorySource>();
+
+            builder.Services.AddOptions<BlobStorageMemorySourceSettings>()
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:BlobStorageMemorySource"));
+            builder.Services.AddTransient<IMemorySource, BlobStorageMemorySource>();
 
             var app = builder.Build();
 
