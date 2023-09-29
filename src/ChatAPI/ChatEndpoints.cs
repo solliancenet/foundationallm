@@ -1,9 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection;
+﻿using FoundationaLLM.Common.Models.Search;
 using FoundationaLLM.Core.Interfaces;
-using FoundationaLLM.Core.Models.Chat;
-using FoundationaLLM.Core.Models.Orchestration;
-using FoundationaLLM.Core.Models.Search;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FoundationaLLM.ChatAPI
 {
