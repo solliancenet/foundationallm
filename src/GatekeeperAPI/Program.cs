@@ -20,9 +20,9 @@ namespace FoundationaLLM.GatekeeperAPI
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            builder.Services.AddOptions<GatekeeperServiceSettings>()
-                .Bind(builder.Configuration.GetSection("FoundationaLLM:GatekeeperService"));
-            builder.Services.AddScoped<IGatekeeperService, GatekeeperService>();
+            builder.Services.AddOptions<RefinementServiceSettings>()
+                .Bind(builder.Configuration.GetSection("GatekeeperAPI:Refinement"));
+            builder.Services.AddScoped<IRefinementService, RefinementService>();
 
             var app = builder.Build();
 

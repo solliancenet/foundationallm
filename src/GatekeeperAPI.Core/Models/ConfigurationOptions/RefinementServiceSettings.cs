@@ -1,5 +1,5 @@
 ﻿namespace FoundationaLLM.GatekeeperAPI.Core.Models.ConfigurationOptions;
 
-public class GatekeeperServiceSettings
+public record RefinementServiceSettings
 {
 }

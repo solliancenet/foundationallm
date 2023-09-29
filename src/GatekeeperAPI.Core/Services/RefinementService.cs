@@ -5,24 +5,21 @@ using Microsoft.Extensions.Options;
 
 namespace FoundationaLLM.GatekeeperAPI.Core.Services;
 
-public class GatekeeperService : IGatekeeperService
+public class RefinementService : IRefinementService
 {
-    private readonly GatekeeperServiceSettings _settings;
+    private readonly RefinementServiceSettings _settings;
     private readonly ILogger _logger;
 
-    public GatekeeperService(
-        IOptions<GatekeeperServiceSettings> options,
-        ILogger<GatekeeperService> logger)
+    public RefinementService(
+        IOptions<RefinementServiceSettings> options,
+        ILogger<RefinementService> logger)
     {
         _settings = options.Value;
         _logger = logger;
     }
 
-    public async Task Test()
+    public async Task RefineUserPrompt(string userPrompt)
     {
-        await Task.Run(() => 
-        {
-            return; 
-        });
+        throw new NotImplementedException();
     }
 }
