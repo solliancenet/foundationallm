@@ -7,6 +7,7 @@
     <AssemblyName>FoundationaLLM.SemanticKernel</AssemblyName>
     <RootNamespace>FoundationaLLM.SemanticKernel</RootNamespace>
   </PropertyGroup>
+  
 	<ItemGroup>
 		<PackageReference Include="Azure.Search.Documents" Version="11.5.0-alpha.20230531.1" />
 		<PackageReference Include="Azure.Storage.Blobs" Version="12.16.0" />
@@ -16,4 +17,9 @@
 		<PackageReference Include="PdfPig" Version="0.1.8" />
 		<PackageReference Include="System.Linq.Async" Version="6.0.1" />
 	</ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj" />
+  </ItemGroup>
+  
 </Project>
