@@ -1,14 +1,14 @@
-﻿using Microsoft.Azure.Cosmos.Fluent;
-using Microsoft.Azure.Cosmos;
-using Microsoft.Extensions.Logging;
-using FoundationaLLM.Core.Models.Chat;
+﻿using FoundationaLLM.Common.Models;
+using FoundationaLLM.Common.Models.Chat;
+using FoundationaLLM.Common.Models.Search;
 using FoundationaLLM.Core.Interfaces;
-using FoundationaLLM.Core.Models.Search;
-using Microsoft.Extensions.Options;
 using FoundationaLLM.Core.Models.ConfigurationOptions;
-using Newtonsoft.Json.Linq;
-using FoundationaLLM.Core.Models;
 using FoundationaLLM.Core.Utils;
+using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.Cosmos.Fluent;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json.Linq;
 using System.Diagnostics;
 
 namespace FoundationaLLM.Core.Services

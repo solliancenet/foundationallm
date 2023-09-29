@@ -1,9 +1,7 @@
-﻿using NUnit.Framework;
-using Moq;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using FoundationaLLM.Common.Models.Chat;
 using FoundationaLLM.Core.Interfaces;
-using FoundationaLLM.Core.Models.Chat;
+using Moq;
+using NUnit.Framework;
 
 namespace FoundationaLLM.Core.Tests
 {

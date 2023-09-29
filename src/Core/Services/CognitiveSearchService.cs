@@ -1,15 +1,15 @@
-﻿using System.Collections;
-using System.Reflection;
-using System.Text.Json;
-using Azure;
+﻿using Azure;
 using Azure.Core.Serialization;
 using Azure.Search.Documents;
 using Azure.Search.Documents.Indexes;
 using Azure.Search.Documents.Indexes.Models;
 using Azure.Search.Documents.Models;
-using Microsoft.Extensions.Logging;
+using FoundationaLLM.Common.Models.Search;
 using FoundationaLLM.Core.Interfaces;
-using FoundationaLLM.Core.Models.Search;
+using Microsoft.Extensions.Logging;
+using System.Collections;
+using System.Reflection;
+using System.Text.Json;
 
 namespace FoundationaLLM.Core.Services
 {
