@@ -1,6 +1,14 @@
-﻿namespace FoundationaLLM.SemanticKernelAPI.Core.Interfaces;
+﻿using FoundationaLLM.Common.Models.Chat;
+
+namespace FoundationaLLM.SemanticKernelAPI.Core.Interfaces;
 
 public interface ISemanticKernelService
 {
-    Task Test();
+    Task<string> Complete(string userPrompt, List<Message> messageHistory);
+
+    Task<string> Summarize(string content);
+
+    Task AddMemory(object item, string itemName, Action<object, float[]> vectorizer);
+
+    Task RemoveMemory(object item);
 }
