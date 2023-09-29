@@ -12,28 +12,54 @@
 
 ## Deployment steps
 
-Follow the steps below to deploy the solution to your Azure subscription.
+Follow the steps below to deploy the solution to your Azure subscription. You will be prompted to log in to your Azure account during the deployment process.
 
-1. Ensure all the prerequisites are installed.  
+1. Ensure all the prerequisites are installed, and that Docker Desktop is running.  
 
-1. Clone the repository:
-   
+1. From a PowerShell prompt, execute the following to clone the repository:
+
     ```cmd
     git clone https://github.com/solliancenet/foundationallm.git
     ```
 
-1. Run the following script to provision the infrastructure and deploy the API and frontend. This will provision all of the required infrastructure, deploy the API and web app services as ACA instances, and import data into Cosmos DB.
+1. Run the following script to provision the infrastructure and deploy the API and frontend. This will provision all of the required infrastructure, deploy the API and web app services, and import data into Cosmos DB.
 
-    ```pwsh
-    cd foundationallm
-    ./deploy/scripts/Unified-Deploy.ps1 -resourceGroup <rg_name> -location <location> -subscription <target_subscription_id>
-    ```
+    1. Option 1: Fresh deployment using ACA
 
-1. To deploy to an AKS environment instead, run the same script with the added argument `-deployAks 1`, as shown below.  This will provision all of the required infrastructure, deploy the API and web app services as pods in an AKS cluster, and import data into Cosmos DB.
+        ```pwsh
+        cd foundationallm
+        ./deploy/scripts/Unified-Deploy.ps1 -resourceGroup <rg_name> -location <location> -subscription <target_subscription_id>
+        ```
 
-    ```pwsh
-    cd foundationallm
-    ./deploy/scripts/Unified-Deploy.ps1 -resourceGroup <rg_name> -location <location> -subscription <target_subscription_id> -deployAks 1
-    ```
+    2. Option 2: Fresh deployment using AKS
+        To deploy to an AKS environment instead, run the same script with the added argument `-deployAks 1`, as shown below.  This will provision all of the required infrastructure, deploy the API and web app services as pods in an AKS cluster, and import data into Cosmos DB.
+
+        ```pwsh
+        cd foundationallm
+        ./deploy/scripts/Unified-Deploy.ps1 -resourceGroup <rg_name> -location <location> -subscription <target_subscription_id> -deployAks 1
+        ```
+
+    3. Option 3: Deployment using existing Azure OpenAI resource
+        To deploy using an already provisioned Azure OpenAI resource, add the following parameters:
+        | Parameter | Description |
+        | --- | --- |
+        | `-openAiRg` | The name of the resource group containing the Azure OpenAI resource. |
+        | `-openAiName` | The name of the Azure OpenAI resource. |
+        | `-openAiCompletionsDeployment` | The name given to the deployment of a completions model deployed within the Azure OpenAI resource, eg. `completions` |
+        | `-openAiEmbeddingsDeployment` | The name given to the deployment of an embeddings model deployed within the Azure OpenAI resource, eg. `embeddings` |
+
+        ACA:
+
+        ```pwsh
+        cd foundationallm
+        ./deploy/scripts/Unified-Deploy.ps1 -resourceGroup <rg_name> -location <location> -subscription <target_subscription_id> -openAiRg <openai_rg_name> -openAiName <openai_resource_name> -openAiCompletionsDeployment <completions_deployment_name> -openAiEmbeddingsDeployment <embeddings_deployment_name>
+        ```
+
+        AKS:
+
+        ```pwsh
+        cd foundationallm
+        ./deploy/scripts/Unified-Deploy.ps1 -resourceGroup <rg_name> -location <location> -subscription <target_subscription_id> -deployAks 1 -openAiRg <openai_rg_name> -openAiName <openai_resource_name> -openAiCompletionsDeployment <completions_deployment_name> -openAiEmbeddingsDeployment <embeddings_deployment_name>
+        ```
 
 >**NOTE**: Make sure to set the `<location>` value to a region that supports Azure OpenAI services.  See [Azure OpenAI service regions](https://azure.microsoft.com/en-us/explore/global-infrastructure/products-by-region/?products=cognitive-services&regions=all) for more information.
