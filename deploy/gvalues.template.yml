@@ -49,3 +49,6 @@ apiUrl: {{apiUrl}}
 routePrefix: /api
 applicationInsights:
   connectionString: "{{aiConnectionString}}"
+langchainapi:
+  keyVaultUrl: '{{keyVaultUrl}}'
+  miClientId: '{{langChainApiMiClientId}}'

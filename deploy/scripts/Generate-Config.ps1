@@ -108,6 +108,8 @@ $tokens.openAiKey=$openAiKey
 $tokens.searchEndpoint="https://$($search.name).search.windows.net/"
 $tokens.searchAdminKey=$searchKey
 $tokens.aiConnectionString=$appinsightsConnectionString
+$tokens.keyVaultUrl=$keyVaultUrl
+$tokens.langChainApiMiClientId=$langChainApiMiClientId
 
 # Standard fixed tokens
 $tokens.ingressclass=$ingressClass
