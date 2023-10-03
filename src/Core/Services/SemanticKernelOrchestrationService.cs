@@ -14,17 +14,17 @@ namespace FoundationaLLM.Core.Services
     {
         readonly SemanticKernelOrchestrationServiceSettings _settings;
         readonly ILogger<SemanticKernelOrchestrationService> _logger;
-        readonly HttpClient _httpClient;
+        private readonly IHttpClientFactory _httpClientFactory;
         readonly JsonSerializerSettings _jsonSerializerSettings;
 
         public SemanticKernelOrchestrationService(
             IOptions<SemanticKernelOrchestrationServiceSettings> options,
-            ILogger<SemanticKernelOrchestrationService> logger)
+            ILogger<SemanticKernelOrchestrationService> logger,
+            IHttpClientFactory httpClientFactory)
         {
             _settings = options.Value;
             _logger = logger;
-
-            _httpClient = GetHttpClient();
+            _httpClientFactory = httpClientFactory;
             _jsonSerializerSettings = GetJsonSerializerSettings();
         }
 
@@ -34,10 +34,12 @@ namespace FoundationaLLM.Core.Services
 
         public async Task<(string Completion, string UserPrompt, int UserPromptTokens, int ResponseTokens, float[]? UserPromptEmbedding)> GetResponse(string userPrompt, List<Message> messageHistory)
         {
+            var client = _httpClientFactory.CreateClient(Constants.HttpClients.SemanticKernelApiClient);
+
             var messageHistoryList = messageHistory
                 .Select(message => new MessageHistory(message.Sender, message.Text))
                 .ToList();
-            var responseMessage = await _httpClient.PostAsync("api/orchestration/complete",
+            var responseMessage = await client.PostAsync("api/orchestration/complete",
                 new StringContent(
                     JsonConvert.SerializeObject(new SemanticKernelCompletionRequest { Prompt = userPrompt, MessageHistory = messageHistoryList }, _jsonSerializerSettings),
                     Encoding.UTF8, "application/json"));
@@ -55,7 +57,9 @@ namespace FoundationaLLM.Core.Services
 
         public async Task<string> Summarize(string content)
         {
-            var responseMessage = await _httpClient.PostAsync("api/orchestration/summarize",
+            var client = _httpClientFactory.CreateClient(Constants.HttpClients.SemanticKernelApiClient);
+
+            var responseMessage = await client.PostAsync("api/orchestration/summarize",
                 new StringContent(
                     JsonConvert.SerializeObject(new SemanticKernelSummarizeRequest { Prompt = content }, _jsonSerializerSettings),
                     Encoding.UTF8, "application/json"));
@@ -83,18 +87,6 @@ namespace FoundationaLLM.Core.Services
 
         #endregion
 
-        private HttpClient GetHttpClient()
-        {
-            var httpClient = new HttpClient()
-            {
-                BaseAddress = new Uri(_settings.APIUrl)
-            };
-
-            httpClient.DefaultRequestHeaders.Add("X-API-KEY", _settings.APIKey);
-
-            return httpClient;
-        }
-
         private JsonSerializerSettings GetJsonSerializerSettings()
         {
             return new JsonSerializerSettings()
@@ -105,7 +97,8 @@ namespace FoundationaLLM.Core.Services
 
         private bool GetServiceStatus()
         {
-            var responseMessage = _httpClient.Send(
+            var client = _httpClientFactory.CreateClient(Constants.HttpClients.SemanticKernelApiClient);
+            var responseMessage = client.Send(
                 new HttpRequestMessage(HttpMethod.Get, "/status"));
 
             return responseMessage.Content.ToString() == "ready";

@@ -20,6 +20,15 @@ namespace FoundationaLLM.ChatAPI
                 .AddTransientHttpErrorPolicy(policyBuilder =>
                     policyBuilder.WaitAndRetryAsync(
                         3, retryNumber => TimeSpan.FromMilliseconds(600)));
+            builder.Services.AddHttpClient(FoundationaLLM.Core.Constants.HttpClients.SemanticKernelApiClient,
+                    httpClient =>
+                    {
+                        httpClient.BaseAddress = new Uri(builder.Configuration["FoundationaLLM:SemanticKernelOrchestration:APIUrl"]);
+                        httpClient.DefaultRequestHeaders.Add("X-API-KEY", builder.Configuration["FoundationaLLM:SemanticKernelOrchestration:APIKey"]);
+                    })
+                .AddTransientHttpErrorPolicy(policyBuilder =>
+                    policyBuilder.WaitAndRetryAsync(
+                        3, retryNumber => TimeSpan.FromMilliseconds(600)));
 
             builder.Services.AddApplicationInsightsTelemetry();
             builder.Services.AddControllers();
