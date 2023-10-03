@@ -7,13 +7,13 @@ Before users in your team can deploy the solution using Cloud Shell, you need to
 2. Clone the repository:
    
     ```cmd
-    git clone https://github.com/AzureCosmosDB/VectorSearchAiAssistant.git
+    git clone https://github.com/solliancenet/foundationallm.git
     ```
 
 3. Switch to the `cognitive-search-vector` branch:
 
     ```cmd
-    cd VectorSearchAiAssistant
+    cd foundationallm
     git checkout cognitive-search-vector
     ```
 

@@ -159,7 +159,7 @@ namespace FoundationaLLM.Core.Services
                         var entity = jObject.ToObject(typeMetadata.Type);
 
                         // Add the entity to the Semantic Kernel memory used by the RAG service
-                        // We want to keep the VectorSearchAiAssistant.SemanticKernel project isolated from any domain-specific
+                        // We want to keep the foundationallm.SemanticKernel project isolated from any domain-specific
                         // references/dependencies, so we use a generic mechanism to get the name of the entity as well as to 
                         // set the vector property on the entity.
                         await _ragService.AddMemory(

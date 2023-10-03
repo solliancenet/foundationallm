@@ -23,7 +23,7 @@
     },
     "name": {
       "type": "string",
-      "defaultValue": "[uniqueString(resourceGroup().id)]",
+      "defaultValue": "[concat('f',uniqueString(resourceGroup().id))]",
       "maxLength": 15,
       "metadata": {
         "description": "Unique name for the deployed services below. Max length 15 characters, alphanumeric only:\r\n- Azure Cosmos DB for NoSQL\r\n- Azure Cosmos DB for MongoDB vCore\r\n- Azure OpenAI\r\n- Azure App Service\r\n- Azure Functions\r\n\r\nThe name defaults to a unique string generated from the resource group identifier.\r\n"
@@ -99,9 +99,42 @@
     },
     "aiSettings": {
       "name": "[format('{0}-ai', parameters('name'))]"
+    },
+    "keyVaultSettings": {
+      "name": "[format('{0}-kv', parameters('name'))]"
+    },
+    "langChainSettings": {
+      "miName": "[format('{0}-langchain-mi', parameters('name'))]"
+    },
+    "roleIdMapping": {
+      "Key Vault Administrator": "00482a5a-887f-4fb3-b363-3b7fe8e74483",
+      "Key Vault Certificates Officer": "a4417e6f-fecd-4de8-b567-7b0420556985",
+      "Key Vault Crypto Officer": "14b46e9e-c2b7-41b4-b07b-48a6ebf60603",
+      "Key Vault Crypto Service Encryption User": "e147488a-f6f5-4113-8e2d-b22465e65bf6",
+      "Key Vault Crypto User": "12338af0-0e69-4776-bea7-57ae8d297424",
+      "Key Vault Reader": "21090545-7ca7-4776-b22c-e363652d74d2",
+      "Key Vault Secrets Officer": "b86a8fe4-44ce-4948-aee5-eccb2c155cd7",
+      "Key Vault Secrets User": "4633458b-17de-408a-b874-0445c86b69e6"
     }
   },
   "resources": [
+    {
+      "type": "Microsoft.KeyVault/vaults",
+      "apiVersion": "2022-07-01",
+      "name": "[variables('keyVaultSettings').name]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "createMode": "default",
+        "enabledForDeployment": true,
+        "enableRbacAuthorization": true,
+        "enableSoftDelete": true,
+        "sku": {
+          "family": "A",
+          "name": "standard"
+        },
+        "tenantId": "[tenant().tenantId]"
+      }
+    },
     {
       "type": "Microsoft.DocumentDB/databaseAccounts",
       "apiVersion": "2022-08-15",
@@ -469,7 +502,11 @@
           "upgradeChannel": "patch"
         },
         "disableLocalAccounts": false,
-        "securityProfile": {},
+        "securityProfile": {
+          "workloadIdentity": {
+            "enabled": true
+          }
+        },
         "storageProfile": {
           "diskCSIDriver": {
             "enabled": true,
@@ -483,7 +520,7 @@
           }
         },
         "oidcIssuerProfile": {
-          "enabled": false
+          "enabled": true
         },
         "ingressProfile": {
           "webAppRouting": {
@@ -634,6 +671,39 @@
         "osType": "Linux",
         "osSKU": "Ubuntu",
         "enableFIPS": false
+      }
+    },
+    {
+      "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+      "apiVersion": "2023-01-31",
+      "name": "[variables('langChainSettings').miName]",
+      "location": "[parameters('location')]"
+    },
+    {
+      "type": "Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials",
+      "apiVersion": "2023-01-31",
+      "name": "[format('{0}/{1}', variables('langChainSettings').miName, 'langChainId')]",
+      "properties": {
+        "audiences": [
+          "api://AzureADTokenExchange"
+        ],
+        "issuer": "[reference(resourceId('Microsoft.ContainerService/managedClusters', variables('aksSettings').name), providers('Microsoft.ContainerService','managedClusters').apiVersions[0]).oidcIssuerProfile.issuerURL]",
+        "subject": "system:serviceaccount:default:langChainSa"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.ContainerService/managedClusters', variables('aksSettings').name)]",
+        "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('langChainSettings').miName)]"
+      ]
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "scope": "[format('Microsoft.KeyVault/vaults/{0}', variables('keyVaultSettings').name)]",
+      "name": "[guid(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}langchainmi', parameters('name'))), variables('keyVaultSettings').name)]",
+      "properties": {
+        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('roleIdMapping')['Key Vault Secrets User'])]",
+        "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('langChainSettings').miName), providers('Microsoft.ManagedIdentity', 'userAssignedIdentities').apiVersions[0]).principalId]",
+        "principalType": "ServicePrincipal"
       }
     }
   ],
