@@ -3,7 +3,7 @@ using FoundationaLLM.SemanticKernel.Core.Interfaces;
 using FoundationaLLM.SemanticKernel.Core.Models.ConfigurationOptions;
 using FoundationaLLM.SemanticKernel.Core.Services;
 
-namespace SemanticKernel.API
+namespace FoundationaLLM.SemanticKernel.API
 {
     public class Program
     {
