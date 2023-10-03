@@ -34,9 +34,12 @@ namespace FoundationaLLM.Core.Services
 
         public async Task<(string Completion, string UserPrompt, int UserPromptTokens, int ResponseTokens, float[]? UserPromptEmbedding)> GetResponse(string userPrompt, List<Message> messageHistory)
         {
+            var messageHistoryList = messageHistory
+                .Select(message => new MessageHistory(message.Sender, message.Text))
+                .ToList();
             var responseMessage = await _httpClient.PostAsync("api/orchestration/complete",
                 new StringContent(
-                    JsonConvert.SerializeObject(new SemanticKernelCompletionRequest { Prompt = userPrompt, MessageHistory = messageHistory }, _jsonSerializerSettings),
+                    JsonConvert.SerializeObject(new SemanticKernelCompletionRequest { Prompt = userPrompt, MessageHistory = messageHistoryList }, _jsonSerializerSettings),
                     Encoding.UTF8, "application/json"));
 
             if (responseMessage.IsSuccessStatusCode)

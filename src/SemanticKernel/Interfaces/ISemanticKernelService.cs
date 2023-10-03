@@ -4,7 +4,7 @@ namespace FoundationaLLM.SemanticKernel.Core.Interfaces;
 
 public interface ISemanticKernelService
 {
-    Task<string> Complete(string userPrompt, List<Message> messageHistory);
+    Task<string> Complete(string userPrompt, List<MessageHistory> messageHistory);
 
     Task<string> Summarize(string content);
 
