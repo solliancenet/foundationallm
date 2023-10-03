@@ -3,6 +3,7 @@
 @using global::FoundationaLLM.Core.Models.Chat;
 @using FoundationaLLM.Chat.Components
 @inject IChatManager chatManager
+@inject IJSRuntime JSRuntime
 
 
 <div class="h-100 d-flex flex-column" style="min-width: 275px;">
@@ -18,7 +19,7 @@
         </div>
     </div>
 
-    <div class="flex-grow-1 flex-column justify-content-center overflow-y-auto overflow-x-hidden">
+    <div class="flex-grow-1 flex-column justify-content-center overflow-y-auto overflow-x-hidden" id="ChatSessionsDiv">
         @if (_loadingComplete == true)
         {
             <div>
@@ -239,11 +240,19 @@
     {
         await chatManager.CreateNewChatSessionAsync();
 
-        if (ChatSessions.Count == 1)
+        if (CurrentSession is not null & ChatSessions is not null & ChatSessions?.Count > 0)
         {
-            CurrentSession = ChatSessions[0] with { };
-            await LoadCurrentChatAsync();
+            var match = ChatSessions?.LastOrDefault();
+            if (match is not null)
+            {
+                CurrentSession.SessionId = match.SessionId;
+                CurrentSession.Name = match.Name;
+                CurrentSession.TokensUsed = match.TokensUsed;
+            }
         }
+
+        await LoadCurrentChatAsync();
+        await JSRuntime.InvokeAsync<bool>("scrollToLastEntry", "ChatSessionsDiv");
 
         UpdateNavMenuDisplay("Add");
     }
