@@ -1,6 +1,6 @@
-using FoundationaLLM.GatekeeperAPI.Core.Interfaces;
-using FoundationaLLM.GatekeeperAPI.Core.Models.ConfigurationOptions;
-using FoundationaLLM.GatekeeperAPI.Core.Services;
+using FoundationaLLM.Gatekeeper.Core.Interfaces;
+using FoundationaLLM.Gatekeeper.Core.Models.ConfigurationOptions;
+using FoundationaLLM.Gatekeeper.Core.Services;
 
 namespace FoundationaLLM.GatekeeperAPI
 {

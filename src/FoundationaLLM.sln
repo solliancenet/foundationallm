@@ -15,7 +15,7 @@ Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "LangChainAPI", "LangChainAP
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GatekeeperAPI", "GatekeeperAPI\GatekeeperAPI.csproj", "{1EE77A34-9EAA-40F1-A9E3-3E5CAE1F60BB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GatekeeperAPI.Core", "GatekeeperAPI.Core\GatekeeperAPI.Core.csproj", "{EE8C3883-3439-428E-8EB6-583052FBB012}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gatekeeper", "Gatekeeper\Gatekeeper.csproj", "{EE8C3883-3439-428E-8EB6-583052FBB012}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

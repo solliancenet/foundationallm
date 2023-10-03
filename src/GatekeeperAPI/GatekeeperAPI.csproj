@@ -6,8 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>aba2bcd7-01c1-411a-b905-616c717118b8</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-    <AssemblyName>FoundationaLLM.GatekeeperAPI</AssemblyName>
-    <RootNamespace>FoundationaLLM.GatekeeperAPI</RootNamespace>
+    <AssemblyName>FoundationaLLM.Gatekeeper.API</AssemblyName>
+    <RootNamespace>FoundationaLLM.Gatekeeper.API</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -44,7 +44,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GatekeeperAPI.Core\GatekeeperAPI.Core.csproj" />
+    <ProjectReference Include="..\Gatekeeper\Gatekeeper.csproj" />
   </ItemGroup>
 
 </Project>

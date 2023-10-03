@@ -1,4 +1,4 @@
-﻿namespace FoundationaLLM.GatekeeperAPI.Core.Interfaces;
+﻿namespace FoundationaLLM.Gatekeeper.Core.Interfaces;
 
 public interface IRefinementService
 {

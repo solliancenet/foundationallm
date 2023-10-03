@@ -1,9 +1,9 @@
 ﻿using Asp.Versioning;
-using FoundationaLLM.GatekeeperAPI.Core.Interfaces;
+using FoundationaLLM.Gatekeeper.Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FoundationaLLM.SemanticKernelAPI.Controllers
+namespace FoundationaLLM.SemanticKernel.API.Controllers
 {
     //[Authorize]
     [ApiVersion(1.0)]
