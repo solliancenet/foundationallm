@@ -27,7 +27,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dotnet", "dotnet", "{28E0E9
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "python", "python", "{23275624-C0DA-4E93-9291-081D75E8CCD2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FoundationaLLM.Core.Tests", "tests\dotnet\FoundationaLLM.Core.Tests\FoundationaLLM.Core.Tests.csproj", "{CEA12F10-5DB4-485D-97D1-508286B9B30A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FoundationaLLM.Core.Tests", "..\tests\dotnet\FoundationaLLM.Core.Tests\FoundationaLLM.Core.Tests.csproj", "{CEA12F10-5DB4-485D-97D1-508286B9B30A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
