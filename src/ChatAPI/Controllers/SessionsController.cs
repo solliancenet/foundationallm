@@ -1,7 +1,7 @@
 ﻿using Asp.Versioning;
 using Azure.AI.OpenAI;
 using FoundationaLLM.Core.Interfaces;
-using FoundationaLLM.Core.Models.Chat;
+using FoundationaLLM.Common.Models.Chat;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FoundationaLLM.ChatAPI.Controllers
