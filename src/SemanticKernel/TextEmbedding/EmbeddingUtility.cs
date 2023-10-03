@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using FoundationaLLM.Common.Models.TextEmbedding;
+using Newtonsoft.Json.Linq;
 using System.Reflection;
 using System.Text;
 

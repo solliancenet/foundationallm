@@ -1,4 +1,4 @@
-﻿using FoundationaLLM.Core.Models.Chat;
+﻿using FoundationaLLM.Common.Models.Chat;
 
 namespace FoundationaLLM.Core.Interfaces
 {

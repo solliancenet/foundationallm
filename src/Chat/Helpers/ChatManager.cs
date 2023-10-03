@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
-using FoundationaLLM.Core.Models.Chat;
+using FoundationaLLM.Common.Models.Chat;
 
 namespace FoundationaLLM.Chat.Helpers
 {

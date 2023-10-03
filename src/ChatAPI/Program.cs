@@ -1,4 +1,3 @@
-using FoundationaLLM.SemanticKernel.MemorySource;
 using FoundationaLLM.Core.Interfaces;
 using FoundationaLLM.Core.Models.ConfigurationOptions;
 using FoundationaLLM.Core.Services;
@@ -31,7 +30,7 @@ namespace FoundationaLLM.ChatAPI
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:CosmosDB"));
 
             builder.Services.AddOptions<SemanticKernelOrchestrationServiceSettings>()
-                .Bind(builder.Configuration.GetSection("FoundationaLLM"));
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:SemanticKernelOrchestration"));
 
             builder.Services.AddOptions<LangChainOrchestrationServiceSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:LangChainOrchestration"));
@@ -43,22 +42,6 @@ namespace FoundationaLLM.ChatAPI
             builder.Services.AddSingleton<ISemanticKernelOrchestrationService, SemanticKernelOrchestrationService>();
             builder.Services.AddSingleton<ILangChainOrchestrationService, LangChainOrchestrationService>();
             builder.Services.AddSingleton<IChatService, ChatService>();
-
-            // Simple, static system prompt service
-            //builder.Services.AddSingleton<ISystemPromptService, InMemorySystemPromptService>();
-
-            // System prompt service backed by an Azure blob storage account
-            builder.Services.AddOptions<DurableSystemPromptServiceSettings>()
-                .Bind(builder.Configuration.GetSection("FoundationaLLM:DurableSystemPrompt"));
-            builder.Services.AddSingleton<ISystemPromptService, DurableSystemPromptService>();
-
-            builder.Services.AddOptions<AzureCognitiveSearchMemorySourceSettings>()
-                .Bind(builder.Configuration.GetSection("FoundationaLLM:CognitiveSearchMemorySource"));
-            builder.Services.AddTransient<IMemorySource, AzureCognitiveSearchMemorySource>();
-
-            builder.Services.AddOptions<BlobStorageMemorySourceSettings>()
-                .Bind(builder.Configuration.GetSection("FoundationaLLM:BlobStorageMemorySource"));
-            builder.Services.AddTransient<IMemorySource, BlobStorageMemorySource>();
 
             // Add services to the container.
             builder.Services.AddAuthorization();

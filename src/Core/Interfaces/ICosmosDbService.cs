@@ -1,5 +1,5 @@
-﻿using FoundationaLLM.Core.Models.Chat;
-using FoundationaLLM.Core.Models.Search;
+﻿using FoundationaLLM.Common.Models.Chat;
+using FoundationaLLM.Common.Models.Search;
 
 namespace FoundationaLLM.Core.Interfaces;
 

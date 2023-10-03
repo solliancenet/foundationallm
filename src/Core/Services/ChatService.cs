@@ -1,10 +1,10 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using FoundationaLLM.Common.Models.Chat;
+using FoundationaLLM.Common.Models.Search;
 using FoundationaLLM.Core.Constants;
 using FoundationaLLM.Core.Interfaces;
-using FoundationaLLM.Core.Models.Chat;
-using FoundationaLLM.Core.Models.Orchestration;
-using FoundationaLLM.Core.Models.Search;
 using FoundationaLLM.Core.Models.ConfigurationOptions;
+using FoundationaLLM.Core.Models.Orchestration;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace FoundationaLLM.Core.Services;

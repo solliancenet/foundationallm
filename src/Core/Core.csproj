@@ -4,9 +4,10 @@
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <AssemblyName>Solliance.AICopilot.Core</AssemblyName>
-    <RootNamespace>Solliance.AICopilot.Core</RootNamespace>
+    <AssemblyName>FoundationaLLM.Core</AssemblyName>
+    <RootNamespace>FoundationaLLM.Core</RootNamespace>
   </PropertyGroup>
+  
 	<ItemGroup>
 		<PackageReference Include="Azure.AI.OpenAI" Version="1.0.0-beta.6" />
 		<PackageReference Include="Azure.Search.Documents" Version="11.5.0-alpha.20230531.1" />
@@ -17,10 +18,10 @@
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.1" />
 		<PackageReference Include="Moq" Version="4.18.4" />
 		<PackageReference Include="NUnit" Version="3.13.3" />
-		<PackageReference Include="Microsoft.SemanticKernel" Version="0.18.230725.3-preview" />
 	</ItemGroup>
-	<ItemGroup>
-	  <ProjectReference Include="..\SemanticKernel\SemanticKernel.csproj" />
-	</ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj" />
+  </ItemGroup>
 
 </Project>
