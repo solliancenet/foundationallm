@@ -1,5 +1,7 @@
 <template>
-	<h1>ChatInput</h1>
+	<div class="chat-input">
+		<h1>ChatInput</h1>
+	</div>
 </template>
 
 <script>
@@ -15,4 +17,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+.chat-input {
+	height: 300px;
+	border: 1px solid blue;
+}
+
 </style>

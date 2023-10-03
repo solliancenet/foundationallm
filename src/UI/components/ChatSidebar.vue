@@ -1,5 +1,7 @@
 <template>
-	<h1>ChatSidebar</h1>
+	<div class="chat-sidebar">
+		<h1>ChatSidebar</h1>
+	</div>
 </template>
 
 <script lang="ts">
@@ -24,8 +26,10 @@ export default {
 
 <style lang="scss" scoped>
 
-	.sidebar {
-
+	.chat-sidebar {
+		width: 320px;
+		height: 100%;
+		border-right: 1px solid gray;
 	}
 
 </style>
