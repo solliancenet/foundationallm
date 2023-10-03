@@ -2,6 +2,7 @@ using FoundationaLLM.SemanticKernel.MemorySource;
 using FoundationaLLM.Core.Interfaces;
 using FoundationaLLM.Core.Models.ConfigurationOptions;
 using FoundationaLLM.Core.Services;
+using Polly;
 
 namespace FoundationaLLM.ChatAPI
 {
@@ -10,6 +11,16 @@ namespace FoundationaLLM.ChatAPI
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Services.AddHttpClient(FoundationaLLM.Core.Constants.HttpClients.LangChainApiClient,
+                    httpClient =>
+                    {
+                        httpClient.BaseAddress = new Uri(builder.Configuration["FoundationaLLM:LangChainOrchestration:APIUrl"]);
+                        httpClient.DefaultRequestHeaders.Add("X-API-KEY", builder.Configuration["FoundationaLLM:LangChainOrchestration:APIKey"]);
+                    })
+                .AddTransientHttpErrorPolicy(policyBuilder =>
+                    policyBuilder.WaitAndRetryAsync(
+                        3, retryNumber => TimeSpan.FromMilliseconds(600)));
 
             builder.Services.AddApplicationInsightsTelemetry();
             builder.Services.AddControllers();

@@ -1,6 +1,16 @@
 using FoundationaLLM.Chat.Helpers;
+using Polly;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddHttpClient(FoundationaLLM.Core.Constants.HttpClients.DefaultHttpClient,
+        httpClient =>
+        {
+            httpClient.BaseAddress = new Uri(builder.Configuration["FoundationaLLM:ChatManager:APIUrl"]);
+        })
+    .AddTransientHttpErrorPolicy(policyBuilder =>
+        policyBuilder.WaitAndRetryAsync(
+            3, retryNumber => TimeSpan.FromMilliseconds(600)));
 
 builder.RegisterConfiguration();
 builder.Services.AddRazorPages();
