@@ -7,21 +7,17 @@
 
 <script>
 export default {
-  name: 'ChatInput',
+	name: 'ChatInput',
 
-  data () {
-    return {
-
-    }
-  }
-}
+	data() {
+		return {};
+	},
+};
 </script>
 
 <style lang="scss" scoped>
-
 .chat-input {
 	height: 300px;
 	border: 1px solid blue;
 }
-
 </style>

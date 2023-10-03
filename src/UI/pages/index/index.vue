@@ -6,36 +6,32 @@
 </template>
 
 <script>
-
 export default {
-  name: 'index',
+	name: 'Index',
 
-  data () {
-    return {
-
-    }
-  }
-}
+	data() {
+		return {};
+	},
+};
 </script>
 
 <style>
-
-	html, body, #__nuxt, #__layout {
-		height: 100%;
-		margin: 0;
-	}
-
+html,
+body,
+#__nuxt,
+#__layout {
+	height: 100%;
+	margin: 0;
+}
 </style>
 
 <style lang="scss" scoped>
-	
-	.chat-app {
-		display: flex;
-		height: 100%
-	}
+.chat-app {
+	display: flex;
+	height: 100%;
+}
 
-	.expand {
-		flex: 1;
-	}
-
+.expand {
+	flex: 1;
+}
 </style>

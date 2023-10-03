@@ -10,18 +10,15 @@
 
 <script>
 export default {
-  name: 'ChatThread',
+	name: 'ChatThread',
 
-  data () {
-    return {
-
-    }
-  }
-}
+	data() {
+		return {};
+	},
+};
 </script>
 
 <style lang="scss" scoped>
-
 .chat-thread {
 	display: flex;
 	flex-direction: column;
@@ -31,5 +28,4 @@ export default {
 	flex: 1;
 	border: 1px solid red;
 }
-
 </style>
