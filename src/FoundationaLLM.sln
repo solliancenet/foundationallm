@@ -25,7 +25,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dotnet", "dotnet", "{28E0E9
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "python", "python", "{23275624-C0DA-4E93-9291-081D75E8CCD2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoundationaLLM.Core.Tests", "..\tests\dotnet\FoundationaLLM.Core.Tests\FoundationaLLM.Core.Tests.csproj", "{CEA12F10-5DB4-485D-97D1-508286B9B30A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core.Tests", "..\tests\dotnet\FoundationaLLM.Core.Tests\Core.Tests.csproj", "{CEA12F10-5DB4-485D-97D1-508286B9B30A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dotnet", "dotnet", "{B6DC1190-2873-44A3-85B3-63D7BDE99231}"
 EndProject
