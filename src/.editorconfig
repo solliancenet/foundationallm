@@ -1,3 +1,3 @@
-[*.{js,jsx,vue,html,sass,scss,css}]
+[*.{js,jsx,ts,json,vue,html,sass,scss,css}]
 charset = utf-8
 indent_size = 2
