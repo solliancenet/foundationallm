@@ -1,7 +1,9 @@
 ﻿@using global::FoundationaLLM.Chat.Constants;
 @using global::FoundationaLLM.Chat.Helpers;
-@using global::FoundationaLLM.Core.Models.Chat;
+@using FoundationaLLM.Chat.Components
+@using global::FoundationaLLM.Common.Models.Chat;
 @inject IChatManager chatManager
+@inject IJSRuntime JSRuntime
 
 
 <div class="h-100 d-flex flex-column" style="min-width: 275px;">
@@ -17,7 +19,7 @@
         </div>
     </div>
 
-    <div class="flex-grow-1 flex-column justify-content-center overflow-y-auto overflow-x-hidden">
+    <div class="flex-grow-1 flex-column justify-content-center overflow-y-auto overflow-x-hidden" id="ChatSessionsDiv">
         @if (_loadingComplete == true)
         {
             <div>
@@ -90,6 +92,7 @@
     <Input Caption="Rename a Chat"
        Value="@_popUpText"
        OnClose="@OnInputClose">
+    </Input>
 }
 
 
@@ -129,7 +132,7 @@
 
     protected override void OnInitialized()
     {
-        OnNavMenuChanged += async (o, e) =>
+        OnNavMenuChanged = async (o, e) =>
         {
             await this.InvokeAsync(async () =>
             {
@@ -203,7 +206,7 @@
 
     private async Task OnInputClose(string newName)
     {
-        if (newName != "")
+        if (!String.IsNullOrWhiteSpace(newName))
         {
             bool updateCurrentChat = false;
 
@@ -237,11 +240,19 @@
     {
         await chatManager.CreateNewChatSessionAsync();
 
-        if (ChatSessions.Count == 1)
+        if (CurrentSession is not null && ChatSessions is not null && ChatSessions?.Count > 0)
         {
-            CurrentSession = ChatSessions[0] with { };
-            await LoadCurrentChatAsync();
+            var match = ChatSessions?.LastOrDefault();
+            if (match is not null)
+            {
+                CurrentSession.SessionId = match.SessionId;
+                CurrentSession.Name = match.Name;
+                CurrentSession.TokensUsed = match.TokensUsed;
+            }
         }
+
+        await LoadCurrentChatAsync();
+        await JSRuntime.InvokeAsync<bool>("scrollToLastEntry", "ChatSessionsDiv");
 
         UpdateNavMenuDisplay("Add");
     }

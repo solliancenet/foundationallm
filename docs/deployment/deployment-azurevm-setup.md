@@ -9,13 +9,13 @@ Before users in your team can deploy the solution using Azure VM, you need to pe
 3. Clone the repository:
    
     ```cmd
-    git clone https://github.com/AzureCosmosDB/VectorSearchAiAssistant.git
+    git clone https://github.com/solliancenet/foundationallm.git
     ```
 
 4. Switch to the `cognitive-search-vector` branch:
 
     ```cmd
-    cd VectorSearchAiAssistant
+    cd foundationallm
     git checkout cognitive-search-vector
     ```
 

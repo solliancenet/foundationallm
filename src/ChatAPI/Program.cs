@@ -1,7 +1,7 @@
-using FoundationaLLM.SemanticKernel.MemorySource;
 using FoundationaLLM.Core.Interfaces;
 using FoundationaLLM.Core.Models.ConfigurationOptions;
 using FoundationaLLM.Core.Services;
+using Polly;
 
 namespace FoundationaLLM.ChatAPI
 {
@@ -11,13 +11,26 @@ namespace FoundationaLLM.ChatAPI
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Services.AddHttpClient(FoundationaLLM.Core.Constants.HttpClients.LangChainApiClient,
+                    httpClient =>
+                    {
+                        httpClient.BaseAddress = new Uri(builder.Configuration["FoundationaLLM:LangChainOrchestration:APIUrl"]);
+                        httpClient.DefaultRequestHeaders.Add("X-API-KEY", builder.Configuration["FoundationaLLM:LangChainOrchestration:APIKey"]);
+                    })
+                .AddTransientHttpErrorPolicy(policyBuilder =>
+                    policyBuilder.WaitAndRetryAsync(
+                        3, retryNumber => TimeSpan.FromMilliseconds(600)));
+
             builder.Services.AddApplicationInsightsTelemetry();
+            builder.Services.AddControllers();
+            builder.Services.AddProblemDetails();
+            builder.Services.AddApiVersioning();
 
             builder.Services.AddOptions<CosmosDbSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:CosmosDB"));
 
             builder.Services.AddOptions<SemanticKernelOrchestrationServiceSettings>()
-                .Bind(builder.Configuration.GetSection("FoundationaLLM"));
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:SemanticKernelOrchestration"));
 
             builder.Services.AddOptions<LangChainOrchestrationServiceSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:LangChainOrchestration"));
@@ -29,24 +42,6 @@ namespace FoundationaLLM.ChatAPI
             builder.Services.AddSingleton<ISemanticKernelOrchestrationService, SemanticKernelOrchestrationService>();
             builder.Services.AddSingleton<ILangChainOrchestrationService, LangChainOrchestrationService>();
             builder.Services.AddSingleton<IChatService, ChatService>();
-
-            // Simple, static system prompt service
-            //builder.Services.AddSingleton<ISystemPromptService, InMemorySystemPromptService>();
-
-            // System prompt service backed by an Azure blob storage account
-            builder.Services.AddOptions<DurableSystemPromptServiceSettings>()
-                .Bind(builder.Configuration.GetSection("FoundationaLLM:DurableSystemPrompt"));
-            builder.Services.AddSingleton<ISystemPromptService, DurableSystemPromptService>();
-
-            builder.Services.AddOptions<AzureCognitiveSearchMemorySourceSettings>()
-                .Bind(builder.Configuration.GetSection("FoundationaLLM:CognitiveSearchMemorySource"));
-            builder.Services.AddTransient<IMemorySource, AzureCognitiveSearchMemorySource>();
-
-            builder.Services.AddOptions<BlobStorageMemorySourceSettings>()
-                .Bind(builder.Configuration.GetSection("FoundationaLLM:BlobStorageMemorySource"));
-            builder.Services.AddTransient<IMemorySource, BlobStorageMemorySource>();
-
-            builder.Services.AddScoped<ChatEndpoints>();
 
             // Add services to the container.
             builder.Services.AddAuthorization();
@@ -67,12 +62,7 @@ namespace FoundationaLLM.ChatAPI
 
             app.UseAuthorization();
 
-            // Map the chat REST endpoints:
-            using (var scope = app.Services.CreateScope())
-            {
-                var service = scope.ServiceProvider.GetService<ChatEndpoints>();
-                service?.Map(app);
-            }
+            app.MapControllers();
 
             app.Run();
         }

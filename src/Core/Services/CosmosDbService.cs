@@ -1,14 +1,14 @@
-﻿using Microsoft.Azure.Cosmos.Fluent;
-using Microsoft.Azure.Cosmos;
-using Microsoft.Extensions.Logging;
-using FoundationaLLM.Core.Models.Chat;
+﻿using FoundationaLLM.Common.Models;
+using FoundationaLLM.Common.Models.Chat;
+using FoundationaLLM.Common.Models.Search;
 using FoundationaLLM.Core.Interfaces;
-using FoundationaLLM.Core.Models.Search;
-using Microsoft.Extensions.Options;
 using FoundationaLLM.Core.Models.ConfigurationOptions;
-using Newtonsoft.Json.Linq;
-using FoundationaLLM.Core.Models;
 using FoundationaLLM.Core.Utils;
+using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.Cosmos.Fluent;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json.Linq;
 using System.Diagnostics;
 
 namespace FoundationaLLM.Core.Services
@@ -159,7 +159,7 @@ namespace FoundationaLLM.Core.Services
                         var entity = jObject.ToObject(typeMetadata.Type);
 
                         // Add the entity to the Semantic Kernel memory used by the RAG service
-                        // We want to keep the VectorSearchAiAssistant.SemanticKernel project isolated from any domain-specific
+                        // We want to keep the foundationallm.SemanticKernel project isolated from any domain-specific
                         // references/dependencies, so we use a generic mechanism to get the name of the entity as well as to 
                         // set the vector property on the entity.
                         await _ragService.AddMemory(
@@ -382,21 +382,39 @@ namespace FoundationaLLM.Core.Services
             var query = new QueryDefinition("SELECT c.id FROM c WHERE c.sessionId = @sessionId")
                 .WithParameter("@sessionId", sessionId);
 
-            var response = _completions.GetItemQueryIterator<Message>(query);
+            var response = _completions.GetItemQueryIterator<dynamic>(query);
+
+            Console.WriteLine($"Deleting {sessionId} session and related messages.");
 
             var batch = _completions.CreateTransactionalBatch(partitionKey);
+            var count = 0;
+
+            // Local function to execute and reset the batch.
+            async Task ExecuteBatchAsync()
+            {
+                if (count > 0) // Execute the batch only if it has any items.
+                {
+                    await batch.ExecuteAsync();
+                    count = 0;
+                    batch = _completions.CreateTransactionalBatch(partitionKey);
+                }
+            }
+
             while (response.HasMoreResults)
             {
                 var results = await response.ReadNextAsync();
                 foreach (var item in results)
                 {
-                    batch.DeleteItem(
-                        id: item.Id
-                    );
+                    batch.DeleteItem(item.id.ToString());
+                    count++;
+                    if (count >= 100) // Execute the batch after adding 100 items (100 actions per batch execution is the limit)
+                    {
+                        await ExecuteBatchAsync();
+                    }
                 }
             }
 
-            await batch.ExecuteAsync();
+            await ExecuteBatchAsync();
         }
 
         /// <summary>

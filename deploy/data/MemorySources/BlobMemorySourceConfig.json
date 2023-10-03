@@ -1,9 +1,9 @@
 {
     "TextChunkMaxTokens": 250,
-    "TextFileMemorySources": [
+    "FileMemorySources": [
         {
             "ContainerName": "product-policy",
-            "TextFiles": [{
+            "Files": [{
                     "FileName": "return-policies.txt",
                     "SplitIntoChunks": true
                 },
@@ -15,7 +15,7 @@
         },
         {
             "ContainerName": "analytics-source",
-            "TextFiles": [{
+            "Files": [{
                     "FileName": "surveydata.txt",
                     "SplitIntoChunks": false
                 }
@@ -23,7 +23,7 @@
         },
         {
             "ContainerName": "about-source",
-            "TextFiles": [{
+            "Files": [{
                     "FileName": "about.txt",
                     "SplitIntoChunks": false
                 }

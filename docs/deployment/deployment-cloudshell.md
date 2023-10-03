@@ -15,13 +15,13 @@ Follow the steps below to deploy the solution to your Azure subscription.
 2. Clone the repository:
    
     ```cmd
-    git clone https://github.com/AzureCosmosDB/VectorSearchAiAssistant.git
+    git clone https://github.com/solliancenet/foundationallm.git
     ```
 
 3. Switch to the `cognitive-search-vector` branch:
 
     ```cmd
-    cd VectorSearchAiAssistant
+    cd foundationallm
     git checkout cognitive-search-vector
     ```
 
@@ -44,4 +44,4 @@ Follow the steps below to deploy the solution to your Azure subscription.
 
 >**NOTE**: The `<location>` specified must point to a region that supports the Azure OpenAI service. You can find the list of supported regions [here](https://azure.microsoft.com/en-us/explore/global-infrastructure/products-by-region/?products=cognitive-services).
 
->**NOTE**: If you already used the Cloud Shell in the target subscription, it is recommended to remove the `VectorSearchAiAssistant` folder from the home directory before cloning the repository again. You can do this by running `rm ./VectorSearchAiAssistant -r -f` in the Cloud Shell.
+>**NOTE**: If you already used the Cloud Shell in the target subscription, it is recommended to remove the `foundationallm` folder from the home directory before cloning the repository again. You can do this by running `rm ./foundationallm -r -f` in the Cloud Shell.
