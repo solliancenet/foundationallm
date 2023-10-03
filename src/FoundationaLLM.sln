@@ -17,6 +17,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SemanticKernelAPI", "Semant
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SemanticKernelAPI.Core", "SemanticKernelAPI.Core\SemanticKernelAPI.Core.csproj", "{ACC3A01C-9181-47B8-B539-C765EBFC0B67}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GatekeeperAPI", "GatekeeperAPI\GatekeeperAPI.csproj", "{1EE77A34-9EAA-40F1-A9E3-3E5CAE1F60BB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gatekeeper", "Gatekeeper\Gatekeeper.csproj", "{EE8C3883-3439-428E-8EB6-583052FBB012}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +55,14 @@ Global
 		{ACC3A01C-9181-47B8-B539-C765EBFC0B67}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ACC3A01C-9181-47B8-B539-C765EBFC0B67}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ACC3A01C-9181-47B8-B539-C765EBFC0B67}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1EE77A34-9EAA-40F1-A9E3-3E5CAE1F60BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1EE77A34-9EAA-40F1-A9E3-3E5CAE1F60BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1EE77A34-9EAA-40F1-A9E3-3E5CAE1F60BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1EE77A34-9EAA-40F1-A9E3-3E5CAE1F60BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE8C3883-3439-428E-8EB6-583052FBB012}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE8C3883-3439-428E-8EB6-583052FBB012}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE8C3883-3439-428E-8EB6-583052FBB012}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE8C3883-3439-428E-8EB6-583052FBB012}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

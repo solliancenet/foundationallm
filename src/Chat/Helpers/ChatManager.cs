@@ -11,17 +11,14 @@ namespace FoundationaLLM.Chat.Helpers
         private List<Session> _sessions { get; set; }
 
         private readonly ChatManagerSettings _settings;
-        private HttpClient _httpClient;
+        private readonly IHttpClientFactory _httpClientFactory;
 
         public ChatManager(
-            IOptions<ChatManagerSettings> settings)
+            IOptions<ChatManagerSettings> settings,
+            IHttpClientFactory httpClientFactory)
         {
             _settings = settings.Value;
-
-            _httpClient = new HttpClient()
-            {
-                BaseAddress = new Uri(_settings.APIUrl)
-            };
+            _httpClientFactory = httpClientFactory;
         }
 
         /// <summary>
@@ -148,14 +145,15 @@ namespace FoundationaLLM.Chat.Helpers
 
         private async Task<T> SendRequest<T>(HttpMethod method, string requestUri, object payload = null)
         {
+            var client = _httpClientFactory.CreateClient(Core.Constants.HttpClients.DefaultHttpClient);
             HttpResponseMessage responseMessage;
             switch (method)
             {
                 case HttpMethod m when m == HttpMethod.Get:
-                    responseMessage = await _httpClient.GetAsync($"{_settings.APIRoutePrefix}{requestUri}");
+                    responseMessage = await client.GetAsync($"{_settings.APIRoutePrefix}{requestUri}");
                     break;
                 case HttpMethod m when m == HttpMethod.Post:
-                    responseMessage = await _httpClient.PostAsync($"{_settings.APIRoutePrefix}{requestUri}",
+                    responseMessage = await client.PostAsync($"{_settings.APIRoutePrefix}{requestUri}",
                         payload == null ? null : JsonContent.Create(payload, payload.GetType()));
                     break;
                 default:
@@ -168,10 +166,11 @@ namespace FoundationaLLM.Chat.Helpers
 
         private async Task SendRequest(HttpMethod method, string requestUri)
         {
+            var client = _httpClientFactory.CreateClient(Core.Constants.HttpClients.DefaultHttpClient);
             switch (method)
             {
                 case HttpMethod m when m == HttpMethod.Delete:
-                    await _httpClient.DeleteAsync($"{_settings.APIRoutePrefix}{requestUri}");
+                    await client.DeleteAsync($"{_settings.APIRoutePrefix}{requestUri}");
                     break;
                 default:
                     throw new NotImplementedException($"The Http method {method.Method} is not supported.");

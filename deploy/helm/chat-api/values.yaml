@@ -61,6 +61,7 @@ env:
     - name: FoundationaLLM__CognitiveSearchMemorySource__ConfigFilePath
     - name: FoundationaLLM__BlobStorageMemorySource__ConfigBlobStorageContainer
     - name: FoundationaLLM__BlobStorageMemorySource__ConfigFilePath
+    - name: FoundationaLLM__Chat__DefaultOrchestrationService
   secret:
     - name: FoundationaLLM__CognitiveSearch__Endpoint
     - name: FoundationaLLM__CognitiveSearch__Key
@@ -73,6 +74,8 @@ env:
     - name: FoundationaLLM__CognitiveSearchMemorySource__Key
     - name: FoundationaLLM__CognitiveSearchMemorySource__ConfigBlobStorageConnection
     - name: FoundationaLLM__BlobStorageMemorySource__ConfigBlobStorageConnection
+    - name: FoundationaLLM__LangChainOrchestration__APIUrl
+    - name: FoundationaLLM__LangChainOrchestration__APIKey
     - name: ApplicationInsights__ConnectionString
   values:
     - name: ASPNETCORE_ENVIRONMENT

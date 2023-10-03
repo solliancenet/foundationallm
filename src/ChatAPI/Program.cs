@@ -2,6 +2,7 @@ using FoundationaLLM.SemanticKernel.MemorySource;
 using FoundationaLLM.Core.Interfaces;
 using FoundationaLLM.Core.Models.ConfigurationOptions;
 using FoundationaLLM.Core.Services;
+using Polly;
 
 namespace FoundationaLLM.ChatAPI
 {
@@ -11,7 +12,20 @@ namespace FoundationaLLM.ChatAPI
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Services.AddHttpClient(FoundationaLLM.Core.Constants.HttpClients.LangChainApiClient,
+                    httpClient =>
+                    {
+                        httpClient.BaseAddress = new Uri(builder.Configuration["FoundationaLLM:LangChainOrchestration:APIUrl"]);
+                        httpClient.DefaultRequestHeaders.Add("X-API-KEY", builder.Configuration["FoundationaLLM:LangChainOrchestration:APIKey"]);
+                    })
+                .AddTransientHttpErrorPolicy(policyBuilder =>
+                    policyBuilder.WaitAndRetryAsync(
+                        3, retryNumber => TimeSpan.FromMilliseconds(600)));
+
             builder.Services.AddApplicationInsightsTelemetry();
+            builder.Services.AddControllers();
+            builder.Services.AddProblemDetails();
+            builder.Services.AddApiVersioning();
 
             builder.Services.AddOptions<CosmosDbSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:CosmosDB"));
@@ -46,8 +60,6 @@ namespace FoundationaLLM.ChatAPI
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:BlobStorageMemorySource"));
             builder.Services.AddTransient<IMemorySource, BlobStorageMemorySource>();
 
-            builder.Services.AddScoped<ChatEndpoints>();
-
             // Add services to the container.
             builder.Services.AddAuthorization();
 
@@ -67,12 +79,7 @@ namespace FoundationaLLM.ChatAPI
 
             app.UseAuthorization();
 
-            // Map the chat REST endpoints:
-            using (var scope = app.Services.CreateScope())
-            {
-                var service = scope.ServiceProvider.GetService<ChatEndpoints>();
-                service?.Map(app);
-            }
+            app.MapControllers();
 
             app.Run();
         }
