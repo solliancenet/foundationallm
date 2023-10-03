@@ -34,6 +34,6 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Core\Core.csproj" />
+    <ProjectReference Include="..\..\dotnet\Core\Core.csproj" />
   </ItemGroup>
 </Project>
