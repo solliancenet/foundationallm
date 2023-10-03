@@ -1,10 +1,10 @@
 ﻿using Azure.Storage.Blobs;
 using FoundationaLLM.SemanticKernel.Text;
-using FoundationaLLM.SemanticKernelAPI.Core.Interfaces;
-using FoundationaLLM.SemanticKernelAPI.Core.Models.ConfigurationOptions;
+using FoundationaLLM.SemanticKernel.Core.Interfaces;
+using FoundationaLLM.SemanticKernel.Core.Models.ConfigurationOptions;
 using Microsoft.Extensions.Options;
 
-namespace FoundationaLLM.SemanticKernelAPI.Core.Services;
+namespace FoundationaLLM.SemanticKernel.Core.Services;
 
 public class DurableSystemPromptService : ISystemPromptService
 {

@@ -1,6 +1,6 @@
 ﻿using FoundationaLLM.Common.Models.Chat;
 
-namespace FoundationaLLM.SemanticKernelAPI.Core.Interfaces;
+namespace FoundationaLLM.SemanticKernel.Core.Interfaces;
 
 public interface ISemanticKernelService
 {

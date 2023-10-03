@@ -15,8 +15,6 @@ Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "LangChainAPI", "LangChainAP
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SemanticKernelAPI", "SemanticKernelAPI\SemanticKernelAPI.csproj", "{98D48365-5BC3-4358-A62A-D7472ECF8081}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SemanticKernelAPI.Core", "SemanticKernelAPI.Core\SemanticKernelAPI.Core.csproj", "{ACC3A01C-9181-47B8-B539-C765EBFC0B67}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{EB15554F-1CDA-4AFE-A5D5-036C2380FAC1}"
 EndProject
 Global
@@ -49,10 +47,6 @@ Global
 		{98D48365-5BC3-4358-A62A-D7472ECF8081}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{98D48365-5BC3-4358-A62A-D7472ECF8081}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{98D48365-5BC3-4358-A62A-D7472ECF8081}.Release|Any CPU.Build.0 = Release|Any CPU
-		{ACC3A01C-9181-47B8-B539-C765EBFC0B67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{ACC3A01C-9181-47B8-B539-C765EBFC0B67}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{ACC3A01C-9181-47B8-B539-C765EBFC0B67}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{ACC3A01C-9181-47B8-B539-C765EBFC0B67}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EB15554F-1CDA-4AFE-A5D5-036C2380FAC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EB15554F-1CDA-4AFE-A5D5-036C2380FAC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EB15554F-1CDA-4AFE-A5D5-036C2380FAC1}.Release|Any CPU.ActiveCfg = Release|Any CPU

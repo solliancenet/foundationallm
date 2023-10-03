@@ -7,8 +7,8 @@ using FoundationaLLM.SemanticKernel.Memory.AzureCognitiveSearch;
 using FoundationaLLM.SemanticKernel.MemorySource;
 using FoundationaLLM.SemanticKernel.Skills.Core;
 using FoundationaLLM.SemanticKernel.Text;
-using FoundationaLLM.SemanticKernelAPI.Core.Interfaces;
-using FoundationaLLM.SemanticKernelAPI.Core.Models.ConfigurationOptions;
+using FoundationaLLM.SemanticKernel.Core.Interfaces;
+using FoundationaLLM.SemanticKernel.Core.Models.ConfigurationOptions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.SemanticKernel;
@@ -18,7 +18,7 @@ using Microsoft.SemanticKernel.AI.TextCompletion;
 using Newtonsoft.Json;
 using System.Text.RegularExpressions;
 
-namespace FoundationaLLM.SemanticKernelAPI.Core.Services;
+namespace FoundationaLLM.SemanticKernel.Core.Services;
 
 public class SemanticKernelService : ISemanticKernelService
 {

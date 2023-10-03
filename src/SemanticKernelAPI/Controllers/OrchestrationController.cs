@@ -1,10 +1,10 @@
 ﻿using Asp.Versioning;
 using FoundationaLLM.Common.Models.Orchestration.SemanticKernel;
-using FoundationaLLM.SemanticKernelAPI.Core.Interfaces;
+using FoundationaLLM.SemanticKernel.Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FoundationaLLM.SemanticKernelAPI.Controllers
+namespace FoundationaLLM.SemanticKernel.API.Controllers
 {
     //[Authorize]
     [ApiVersion(1.0)]

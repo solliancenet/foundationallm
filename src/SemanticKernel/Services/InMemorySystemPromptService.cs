@@ -1,7 +1,7 @@
 ﻿using FoundationaLLM.SemanticKernel.Text;
-using FoundationaLLM.SemanticKernelAPI.Core.Interfaces;
+using FoundationaLLM.SemanticKernel.Core.Interfaces;
 
-namespace FoundationaLLM.SemanticKernelAPI.Core.Services;
+namespace FoundationaLLM.SemanticKernel.Core.Services;
 
 public class InMemorySystemPromptService : ISystemPromptService
 {

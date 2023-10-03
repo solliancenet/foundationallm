@@ -1,6 +1,6 @@
 ﻿using FoundationaLLM.SemanticKernel.Chat;
 
-namespace FoundationaLLM.SemanticKernelAPI.Core.Models.ConfigurationOptions;
+namespace FoundationaLLM.SemanticKernel.Core.Models.ConfigurationOptions;
 
 public record SemanticKernelServiceSettings
 {

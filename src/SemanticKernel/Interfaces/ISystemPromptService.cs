@@ -1,4 +1,4 @@
-﻿namespace FoundationaLLM.SemanticKernelAPI.Core.Interfaces;
+﻿namespace FoundationaLLM.SemanticKernel.Core.Interfaces;
 
 public interface ISystemPromptService
 {

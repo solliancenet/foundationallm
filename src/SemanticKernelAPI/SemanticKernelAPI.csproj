@@ -6,8 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>7c9a8485-ea86-4bfc-950e-53a32cba9839</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-    <AssemblyName>FoundationaLLM.SemanticKernelAPI</AssemblyName>
-    <RootNamespace>FoundationaLLM.SemanticKernelAPI</RootNamespace>
+    <AssemblyName>FoundationaLLM.SemanticKernel.API</AssemblyName>
+    <RootNamespace>FoundationaLLM.SemanticKernel.API</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -34,7 +34,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SemanticKernelAPI.Core\SemanticKernelAPI.Core.csproj" />
+    <ProjectReference Include="..\SemanticKernel\SemanticKernel.csproj" />
   </ItemGroup>
 
 </Project>

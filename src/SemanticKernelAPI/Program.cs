@@ -1,9 +1,9 @@
 using FoundationaLLM.SemanticKernel.MemorySource;
-using FoundationaLLM.SemanticKernelAPI.Core.Interfaces;
-using FoundationaLLM.SemanticKernelAPI.Core.Models.ConfigurationOptions;
-using FoundationaLLM.SemanticKernelAPI.Core.Services;
+using FoundationaLLM.SemanticKernel.Core.Interfaces;
+using FoundationaLLM.SemanticKernel.Core.Models.ConfigurationOptions;
+using FoundationaLLM.SemanticKernel.Core.Services;
 
-namespace SemanticKernelAPI
+namespace SemanticKernel.API
 {
     public class Program
     {
