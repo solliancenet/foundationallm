@@ -342,6 +342,6 @@
     /// </remarks>
     private async Task ScrollLastChatToView()
     {
-        await JSRuntime.InvokeAsync<bool>("scrollToLastMessage");
+        await JSRuntime.InvokeAsync<bool>("scrollToLastEntry", "MessagesInChatdiv");
     }
 }
