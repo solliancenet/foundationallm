@@ -1,6 +1,7 @@
 <template>
 	<div class="chat-input">
 		<h1>ChatInput</h1>
+		<Button>Send</Button>
 	</div>
 </template>
 

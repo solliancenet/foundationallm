@@ -15,5 +15,8 @@
     "sass": "^1.68.0",
     "vue": "^3.3.4",
     "vue-router": "^4.2.5"
+  },
+  "dependencies": {
+    "primevue": "^3.35.0"
   }
 }
