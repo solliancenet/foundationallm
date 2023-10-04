@@ -10,20 +10,20 @@ namespace FoundationaLLM.Core.API.Controllers
     [Route("[controller]")]
     public class OrchestrationController : ControllerBase
     {
-        private readonly IChatService _chatService;
+        private readonly ICoreService _coreService;
         private readonly ILogger<OrchestrationController> _logger;
 
-        public OrchestrationController(IChatService chatService,
+        public OrchestrationController(ICoreService coreService,
             ILogger<OrchestrationController> logger)
         {
-            _chatService = chatService;
+            _coreService = coreService;
             _logger = logger;
         }
 
         [HttpPost(Name = "SetOrchestratorChoice")]
         public IActionResult SetPreference([FromBody] string orchestrationService)
         {
-            var orchestrationPreferenceSet = _chatService.SetLLMOrchestrationPreference(orchestrationService);
+            var orchestrationPreferenceSet = _coreService.SetLLMOrchestrationPreference(orchestrationService);
 
             if (orchestrationPreferenceSet)
             {

@@ -9,7 +9,7 @@ using Microsoft.Extensions.Options;
 
 namespace FoundationaLLM.Core.Services;
 
-public class ChatService : IChatService
+public class CoreService : ICoreService
 {
     private readonly ICosmosDbService _cosmosDbService;
     private readonly ChatServiceSettings _settings;
@@ -37,12 +37,12 @@ public class ChatService : IChatService
         }
     }
 
-    public ChatService(
+    public CoreService(
         ICosmosDbService cosmosDbService,
         IOptions<ChatServiceSettings> options,
         ISemanticKernelOrchestrationService semanticKernelOrchestratorService,
         ILangChainOrchestrationService langChainOrchestratorService,
-        ILogger<ChatService> logger)
+        ILogger<CoreService> logger)
     {
         _cosmosDbService = cosmosDbService;
         _settings = options.Value;
@@ -125,9 +125,12 @@ public class ChatService : IChatService
 
             // Retrieve conversation, including latest prompt.
             var messages = await _cosmosDbService.GetSessionMessagesAsync(sessionId);
+            var messageHistoryList = messages
+                .Select(message => new MessageHistory(message.Sender, message.Text))
+                .ToList();
 
             // Generate the completion to return to the user
-            var result = await GetLLMOrchestrationService().GetResponse(userPrompt, messages);
+            var result = await GetLLMOrchestrationService().GetResponse(userPrompt, messageHistoryList);
 
             // Add to prompt and completion to cache, then persist in Cosmos as transaction 
             var promptMessage = new Message(sessionId, nameof(Participants.User), result.UserPromptTokens, userPrompt, result.UserPromptEmbedding, null);

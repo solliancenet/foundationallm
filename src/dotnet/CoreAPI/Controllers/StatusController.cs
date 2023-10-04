@@ -10,20 +10,20 @@ namespace FoundationaLLM.Core.API.Controllers
     [Route("[controller]")]
     public class StatusController : ControllerBase
     {
-        private readonly IChatService _chatService;
+        private readonly ICoreService _coreService;
         private readonly ILogger<StatusController> _logger;
 
-        public StatusController(IChatService chatService,
+        public StatusController(ICoreService coreService,
             ILogger<StatusController> logger)
         {
-            _chatService = chatService;
+            _coreService = coreService;
             _logger = logger;
         }
 
         [HttpGet(Name = "GetServiceStatus")]
         public string Get()
         {
-            return _chatService.Status;
+            return _coreService.Status;
         }
 
         [HttpOptions]

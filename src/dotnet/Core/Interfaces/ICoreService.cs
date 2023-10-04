@@ -4,7 +4,7 @@ using FoundationaLLM.Common.Models.Search;
 
 namespace FoundationaLLM.Core.Interfaces;
 
-public interface IChatService
+public interface ICoreService
 {
     string Status { get; }
 

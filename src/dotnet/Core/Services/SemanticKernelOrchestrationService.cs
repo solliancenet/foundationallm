@@ -32,16 +32,13 @@ namespace FoundationaLLM.Core.Services
 
         public bool IsInitialized => GetServiceStatus();
 
-        public async Task<(string Completion, string UserPrompt, int UserPromptTokens, int ResponseTokens, float[]? UserPromptEmbedding)> GetResponse(string userPrompt, List<Message> messageHistory)
+        public async Task<(string Completion, string UserPrompt, int UserPromptTokens, int ResponseTokens, float[]? UserPromptEmbedding)> GetResponse(string userPrompt, List<MessageHistory> messageHistory)
         {
             var client = _httpClientFactory.CreateClient(Constants.HttpClients.SemanticKernelApiClient);
 
-            var messageHistoryList = messageHistory
-                .Select(message => new MessageHistory(message.Sender, message.Text))
-                .ToList();
             var responseMessage = await client.PostAsync("api/orchestration/complete",
                 new StringContent(
-                    JsonConvert.SerializeObject(new SemanticKernelCompletionRequest { Prompt = userPrompt, MessageHistory = messageHistoryList }, _jsonSerializerSettings),
+                    JsonConvert.SerializeObject(new SemanticKernelCompletionRequest { Prompt = userPrompt, MessageHistory = messageHistory }, _jsonSerializerSettings),
                     Encoding.UTF8, "application/json"));
 
             if (responseMessage.IsSuccessStatusCode)

@@ -11,68 +11,68 @@ namespace FoundationaLLM.Core.API.Controllers
     [Route("[controller]")]
     public class SessionsController : ControllerBase
     {
-        private readonly IChatService _chatService;
+        private readonly ICoreService _coreService;
         private readonly ILogger<SessionsController> _logger;
 
-        public SessionsController(IChatService chatService,
+        public SessionsController(ICoreService coreService,
             ILogger<SessionsController> logger)
         {
-            _chatService = chatService;
+            _coreService = coreService;
             _logger = logger;
         }
 
         [HttpGet(Name = "GetAllChatSessions")]
         public async Task<IEnumerable<Session>> GetAllChatSessions()
         {
-            return await _chatService.GetAllChatSessionsAsync();
+            return await _coreService.GetAllChatSessionsAsync();
         }
 
         [HttpGet("{sessionId}/messages", Name = "GetChatSessionMessages")]
         public async Task<IEnumerable<Message>> GetChatSessionMessages(string sessionId)
         {
-            return await _chatService.GetChatSessionMessagesAsync(sessionId);
+            return await _coreService.GetChatSessionMessagesAsync(sessionId);
         }
 
         [HttpPost("{sessionId}/message/{messageId}/rate", Name = "RateMessage")]
         public async Task RateMessage(string messageId, string sessionId, bool? rating)
         {
-            await _chatService.RateMessageAsync(messageId, sessionId, rating);
+            await _coreService.RateMessageAsync(messageId, sessionId, rating);
         }
 
         [HttpGet("{sessionId}/completionprompts/{completionPromptId}", Name = "GetCompletionPrompt")]
         public async Task<CompletionPrompt> GetCompletionPrompt(string sessionId, string completionPromptId)
         {
-            return await _chatService.GetCompletionPrompt(sessionId, completionPromptId);
+            return await _coreService.GetCompletionPrompt(sessionId, completionPromptId);
         }
 
         [HttpPost(Name = "CreateNewChatSession")]
         public async Task<Session> CreateNewChatSession()
         {
-            return await _chatService.CreateNewChatSessionAsync();
+            return await _coreService.CreateNewChatSessionAsync();
         }
 
         [HttpPost("{sessionId}/rename", Name = "RenameChatSession")]
         public async Task RenameChatSession(string sessionId, string newChatSessionName)
         {
-            await _chatService.RenameChatSessionAsync(sessionId, newChatSessionName);
+            await _coreService.RenameChatSessionAsync(sessionId, newChatSessionName);
         }
 
         [HttpDelete("{sessionId}", Name = "DeleteChatSession")]
         public async Task DeleteChatSession(string sessionId)
         {
-            await _chatService.DeleteChatSessionAsync(sessionId);
+            await _coreService.DeleteChatSessionAsync(sessionId);
         }
 
         [HttpPost("{sessionId}/completion", Name = "GetChatCompletion")]
         public async Task<Completion> GetChatCompletion(string sessionId, [FromBody] string userPrompt)
         {
-            return await _chatService.GetChatCompletionAsync(sessionId, userPrompt);
+            return await _coreService.GetChatCompletionAsync(sessionId, userPrompt);
         }
 
         [HttpPost("{sessionId}/summarize-name", Name = "SummarizeChatSessionName")]
         public async Task<Completion> SummarizeChatSessionName(string sessionId, [FromBody] string prompt)
         {
-            return await _chatService.SummarizeChatSessionNameAsync(sessionId, prompt);
+            return await _coreService.SummarizeChatSessionNameAsync(sessionId, prompt);
         }
     }
 }
