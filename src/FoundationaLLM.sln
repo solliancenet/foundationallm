@@ -41,6 +41,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gatekeeper.Tests", "..\test
 EndProject
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "PythonSDK", "python\PythonSDK\PythonSDK.pyproj", "{2469CC23-7F26-4B84-8878-98D90604EEE8}"
 EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "AgentHubAPI", "python\AgentHubAPI\AgentHubAPI.pyproj", "{865A944E-76C4-4DA9-B367-6D1CAB66ABCC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -101,6 +103,8 @@ Global
 		{5B416B0E-E561-4DC1-9531-FAA323B5709B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2469CC23-7F26-4B84-8878-98D90604EEE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2469CC23-7F26-4B84-8878-98D90604EEE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{865A944E-76C4-4DA9-B367-6D1CAB66ABCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{865A944E-76C4-4DA9-B367-6D1CAB66ABCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -122,6 +126,7 @@ Global
 		{A5ADBB62-7573-4D07-8E15-F2AB5769CD1E} = {28E0E967-A94D-4820-8A61-0B71D3B2780F}
 		{5B416B0E-E561-4DC1-9531-FAA323B5709B} = {28E0E967-A94D-4820-8A61-0B71D3B2780F}
 		{2469CC23-7F26-4B84-8878-98D90604EEE8} = {32FD7A00-B42E-4B0B-B09C-9CE48D8E047B}
+		{865A944E-76C4-4DA9-B367-6D1CAB66ABCC} = {32FD7A00-B42E-4B0B-B09C-9CE48D8E047B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FF5DE858-4B85-4EE8-8A6D-46E8E4FBA078}
