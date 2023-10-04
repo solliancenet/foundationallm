@@ -1,10 +1,11 @@
 from fastapi import Depends, HTTPException
 from fastapi.security import APIKeyHeader
+from foundationallm.config import Configuration
 
-class ApiKeyValidator:
+class APIKeyValidator:
     
-    def __init__(self, api_key_value: str):
-        self.api_key_value = api_key_value
+    def __init__(self, api_key_secret_name: str):
+        self.api_key_value = Configuration.get_keyvault_value(api_key_secret_name)
         self.api_key_header = APIKeyHeader(name='X-API-Key')
 
     def api_key_auth(self, x_api_key: str = Depends(self.api_key_header)):

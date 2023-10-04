@@ -4,7 +4,7 @@ from azure.identity import DefaultAzureCredential, ManagedIdentityCredential
 from tenacity import retry, wait_random_exponential, stop_after_attempt, RetryError
 import logging
 
-class Config():
+class Configuration():
 
     @staticmethod
     def get_env_var(name: str, default: str = None, useKeyVault: bool = False, kv_name: str = None) -> str:

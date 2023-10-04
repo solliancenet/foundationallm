@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>2469cc23-7f26-4b84-8878-98d90604eee8</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>__init__.py</StartupFile>
+    <StartupFile>main.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -24,7 +24,9 @@
   <ItemGroup>
     <Compile Include="foundationallm\auth\api_key_validator.py" />
     <Compile Include="foundationallm\auth\__init__.py" />
-    <Compile Include="foundationallm\utils\config.py" />
+    <Compile Include="foundationallm\config\configuration.py" />
+    <Compile Include="foundationallm\config\__init__.py" />
+    <Compile Include="main.py" />
     <Compile Include="__init__.py" />
     <Compile Include="_version.py" />
   </ItemGroup>
@@ -46,7 +48,7 @@
   <ItemGroup>
     <Folder Include="foundationallm\" />
     <Folder Include="foundationallm\auth\" />
-    <Folder Include="foundationallm\utils\" />
+    <Folder Include="foundationallm\config\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

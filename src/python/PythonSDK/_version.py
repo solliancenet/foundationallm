@@ -1,1 +1,1 @@
-__version__ = "foundationallm"
+__version__ = "1.0.0"
