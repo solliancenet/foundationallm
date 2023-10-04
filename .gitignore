@@ -364,3 +364,6 @@ __values/configFile.yaml
 dMT
 migrationsettings.json
 deploy/__values/
+
+**/env
+***/.venv
