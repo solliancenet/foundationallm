@@ -20,20 +20,20 @@ namespace FoundationaLLM.SemanticKernel.API.Controllers
             _semanticKernelService = semanticKernelService;
         }
 
-        [HttpPost("complete")]
-        public async Task<SemanticKernelCompletionResponse> Complete([FromBody] SemanticKernelCompletionRequest request)
+        [HttpPost("completion")]
+        public async Task<SemanticKernelCompletionResponse> GetCompletion([FromBody] SemanticKernelCompletionRequest request)
         {
-            var info = await _semanticKernelService.Complete(request.Prompt, request.MessageHistory);
+            var info = await _semanticKernelService.GetCompletion(request.Prompt, request.MessageHistory);
 
             return new SemanticKernelCompletionResponse() { Info = info };
         }
 
-        [HttpPost("summarize")]
-        public async Task<SemanticKernelSummarizeResponse> Summarize([FromBody] SemanticKernelSummarizeRequest request)
+        [HttpPost("summary")]
+        public async Task<SemanticKernelSummaryResponse> GetSummary([FromBody] SemanticKernelSummaryRequest request)
         {
-            var info = await _semanticKernelService.Summarize(request.Prompt);
+            var info = await _semanticKernelService.GetSummary(request.Prompt);
 
-            return new SemanticKernelSummarizeResponse() { Info = info };
+            return new SemanticKernelSummaryResponse() { Info = info };
         }
 
         [HttpPost("memory/add")]

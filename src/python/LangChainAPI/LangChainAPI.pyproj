@@ -23,6 +23,8 @@
     <TestFramework>none</TestFramework>
     <UnitTestPattern>test*.py</UnitTestPattern>
     <UnitTestRootDirectory>.</UnitTestRootDirectory>
+    <Environment>OPENAI_API_KEY=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
+SOLLIANCEAICOPILOT__LANGCHAINAPI__KEYVAULTURL=https://solliance-aicopilot.vault.azure.net/</Environment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>

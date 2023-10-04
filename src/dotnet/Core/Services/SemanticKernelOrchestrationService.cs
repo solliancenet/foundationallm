@@ -32,11 +32,11 @@ namespace FoundationaLLM.Core.Services
 
         public bool IsInitialized => GetServiceStatus();
 
-        public async Task<(string Completion, string UserPrompt, int UserPromptTokens, int ResponseTokens, float[]? UserPromptEmbedding)> GetResponse(string userPrompt, List<MessageHistory> messageHistory)
+        public async Task<(string Completion, string UserPrompt, int UserPromptTokens, int ResponseTokens, float[]? UserPromptEmbedding)> GetCompletion(string userPrompt, List<MessageHistory> messageHistory)
         {
             var client = _httpClientFactory.CreateClient(Constants.HttpClients.SemanticKernelApiClient);
 
-            var responseMessage = await client.PostAsync("api/orchestration/complete",
+            var responseMessage = await client.PostAsync("api/orchestration/completion",
                 new StringContent(
                     JsonConvert.SerializeObject(new SemanticKernelCompletionRequest { Prompt = userPrompt, MessageHistory = messageHistory }, _jsonSerializerSettings),
                     Encoding.UTF8, "application/json"));
@@ -52,21 +52,21 @@ namespace FoundationaLLM.Core.Services
                 return new("A problem on my side prevented me from responding.", userPrompt, 0, 0, new float[] { 0 });
         }
 
-        public async Task<string> Summarize(string content)
+        public async Task<string> GetSummary(string content)
         {
             var client = _httpClientFactory.CreateClient(Constants.HttpClients.SemanticKernelApiClient);
 
-            var responseMessage = await client.PostAsync("api/orchestration/summarize",
+            var responseMessage = await client.PostAsync("api/orchestration/summary",
                 new StringContent(
-                    JsonConvert.SerializeObject(new SemanticKernelSummarizeRequest { Prompt = content }, _jsonSerializerSettings),
+                    JsonConvert.SerializeObject(new SemanticKernelSummaryRequest { Prompt = content }, _jsonSerializerSettings),
                     Encoding.UTF8, "application/json"));
 
             if (responseMessage.IsSuccessStatusCode)
             {
                 var responseContent = await responseMessage.Content.ReadAsStringAsync();
-                var summarizeResponse = JsonConvert.DeserializeObject<SemanticKernelSummarizeResponse>(responseContent);
+                var summaryResponse = JsonConvert.DeserializeObject<SemanticKernelSummaryResponse>(responseContent);
 
-                return summarizeResponse?.Info;
+                return summaryResponse?.Info;
             }
             else
                 return "A problem on my side prevented me from responding.";

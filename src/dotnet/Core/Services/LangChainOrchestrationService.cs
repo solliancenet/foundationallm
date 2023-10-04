@@ -31,11 +31,11 @@ namespace FoundationaLLM.Core.Services
 
         public bool IsInitialized => GetServiceStatus();
 
-        public async Task<(string Completion, string UserPrompt, int UserPromptTokens, int ResponseTokens, float[]? UserPromptEmbedding)> GetResponse(string userPrompt, List<MessageHistory> messageHistory)
+        public async Task<(string Completion, string UserPrompt, int UserPromptTokens, int ResponseTokens, float[]? UserPromptEmbedding)> GetCompletion(string userPrompt, List<MessageHistory> messageHistory)
         {
             var client = _httpClientFactory.CreateClient(Constants.HttpClients.LangChainApiClient);
 
-            var responseMessage = await client.PostAsync("/run",
+            var responseMessage = await client.PostAsync("/completion",
                 new StringContent(
                     JsonConvert.SerializeObject(new LangChainCompletionRequest { Prompt = userPrompt }, _jsonSerializerSettings),
                     Encoding.UTF8, "application/json"));
@@ -51,7 +51,7 @@ namespace FoundationaLLM.Core.Services
                 return new("A problem on my side prevented me from responding.", userPrompt, 0, 0, new float[] { 0 });
         }
 
-        public async Task<string> Summarize(string content)
+        public async Task<string> GetSummary(string content)
         {
             throw new NotImplementedException();
         }
