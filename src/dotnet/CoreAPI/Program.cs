@@ -54,6 +54,16 @@ namespace FoundationaLLM.Core.API
                 .AddTransientHttpErrorPolicy(policyBuilder =>
                     policyBuilder.WaitAndRetryAsync(
                         3, retryNumber => TimeSpan.FromMilliseconds(600)));
+            builder.Services
+                .AddHttpClient(FoundationaLLM.Core.Constants.HttpClients.GatekeeperApiClient,
+                    httpClient =>
+                    {
+                        httpClient.BaseAddress = new Uri(builder.Configuration["FoundationaLLM:GatekeeperApi:APIUrl"]);
+                        httpClient.DefaultRequestHeaders.Add("X-API-KEY", builder.Configuration["FoundationaLLM:GatekeeperApi:APIKey"]);
+                    })
+                .AddTransientHttpErrorPolicy(policyBuilder =>
+                    policyBuilder.WaitAndRetryAsync(
+                        3, retryNumber => TimeSpan.FromMilliseconds(600)));
 
             builder.Services.AddApplicationInsightsTelemetry();
             builder.Services.AddControllers();
