@@ -51,7 +51,13 @@
     <Compile Include="foundationallm\models\message.py" />
     <Compile Include="foundationallm\models\session.py" />
     <Compile Include="foundationallm\models\__init__.py" />
+    <Compile Include="foundationallm\auth\api_key_validator.py" />
+    <Compile Include="foundationallm\auth\__init__.py" />
+    <Compile Include="foundationallm\config\configuration.py" />
+    <Compile Include="foundationallm\config\__init__.py" />
     <Compile Include="main.py" />
+    <Compile Include="foundationallm\__init__.py" />
+    <Compile Include="foundationallm\_version.py" />
   </ItemGroup>
   <ItemGroup>
     <Content Include=".gitignore" />
@@ -66,6 +72,11 @@
     <Folder Include="foundationallm\models\" />
     <Folder Include="foundationallm\hubs\" />
     <Folder Include="foundationallm\datasources\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="foundationallm\" />
+    <Folder Include="foundationallm\auth\" />
+    <Folder Include="foundationallm\config\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
