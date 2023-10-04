@@ -9,7 +9,8 @@ Param (
     [parameter(Mandatory=$false)][string[]]$gvaluesTemplate="..,gvalues.template.yml",
     [parameter(Mandatory=$false)][string[]]$migrationSettingsTemplate="..,migrationsettings.template.json",
     [parameter(Mandatory=$false)][string]$ingressClass="addon-http-application-routing",
-    [parameter(Mandatory=$false)][string]$domain
+    [parameter(Mandatory=$false)][string]$domain,
+    [parameter(Mandatory=$true)][string]$deployAks
 )
 
 function EnsureAndReturnFirstItem($arr, $restype) {
@@ -38,14 +39,22 @@ $tokens=@{}
 # Write-Host "Storage Account: $($storage.name)" -ForegroundColor Yellow
 
 ## Getting API URL domain
-if ([String]::IsNullOrEmpty($domain)) {
-    $domain = $(az aks show -n $aksName -g $resourceGroup -o json --query addonProfiles.httpApplicationRouting.config.HTTPApplicationRoutingZoneName | ConvertFrom-Json)
-    if (-not $domain) {
-        $domain = $(az aks show -n $aksName -g $resourceGroup -o json --query addonProfiles.httpapplicationrouting.config.HTTPApplicationRoutingZoneName | ConvertFrom-Json)
+if ($deployAks)
+{
+    if ([String]::IsNullOrEmpty($domain)) {
+        $domain = $(az aks show -n $aksName -g $resourceGroup -o json --query addonProfiles.httpApplicationRouting.config.HTTPApplicationRoutingZoneName | ConvertFrom-Json)
+        if (-not $domain) {
+            $domain = $(az aks show -n $aksName -g $resourceGroup -o json --query addonProfiles.httpapplicationrouting.config.HTTPApplicationRoutingZoneName | ConvertFrom-Json)
+        }
     }
+}
+else
+{
+    $domain=$(az deployment group show -g $resourceGroup -n foundationallm-azuredeploy -o json --query properties.outputs.apiFqdn.value | ConvertFrom-Json)
 }
 
 $apiUrl = "https://$domain"
+Write-Host "API URL: $apiUrl" -ForegroundColor Yellow
 
 ## Getting CosmosDb info
 $docdb=$(az cosmosdb list -g $resourceGroup --query "[?kind=='GlobalDocumentDB'].{name: name, kind:kind, documentEndpoint:documentEndpoint}" -o json | ConvertFrom-Json)
@@ -71,6 +80,9 @@ $openAiKey=$(az cognitiveservices account keys list -g $openAiRg -n $openAi.name
 $search=$(az search service list -g $resourceGroup --query "[].{name: name, kind:kind}" -o json | ConvertFrom-Json)
 $searchKey=$(az search admin-key show -g $resourceGroup --service-name $search.name -o json --query primaryKey | ConvertFrom-Json)
 
+## Getting KeyVault info
+$keyvault=$(az keyvault list -g $resourceGroup --query "[0].{name: name, vaultUri: properties.vaultUri}" -o json | ConvertFrom-Json)
+
 ## Getting App Insights instrumentation key, if required
 $appinsightsId=@()
 $appInsightsName=$(az resource list -g $resourceGroup --resource-type Microsoft.Insights/components --query [].name | ConvertFrom-Json)
@@ -83,6 +95,10 @@ if ($appInsightsName -and $appInsightsName.Length -eq 1) {
     }
 }
 Write-Host "App Insights Instrumentation Key: $appinsightsId" -ForegroundColor Yellow
+
+$resourcePrefix=$(az deployment show -n foundationallm-azuredeploy -g $resourceGroup --query "properties.outputs.resourcePrefix.value" -o json | ConvertFrom-Json)
+$langChainApiMiClientId=$(az identity show -g $resourceGroup -n $resourcePrefix-langchain-mi -o json | ConvertFrom-Json).clientId
+$tenantId=$(az account show --query homeTenantId --output tsv)
 
 ## Showing Values that will be used
 
@@ -99,6 +115,9 @@ $tokens.openAiKey=$openAiKey
 $tokens.searchEndpoint="https://$($search.name).search.windows.net/"
 $tokens.searchAdminKey=$searchKey
 $tokens.aiConnectionString=$appinsightsConnectionString
+$tokens.keyVaultUrl=$keyvault.vaultUri
+$tokens.langChainApiMiClientId=$langChainApiMiClientId
+$tokens.tenantId=$tenantId
 
 # Standard fixed tokens
 $tokens.ingressclass=$ingressClass

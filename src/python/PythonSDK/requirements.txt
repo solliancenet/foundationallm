@@ -1,0 +1,13 @@
+langchain
+langchain-experimental
+ipykernel
+openai
+pandas
+tabulate
+psycopg2
+azure-identity
+azure-keyvault-secrets
+pyodbc
+pydantic
+sqlalchemy
+typing
