@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace FoundationaLLM.Core.API
+namespace FoundationaLLM.Common.OpenAPI
 {
     /// <summary>
     /// Represents the OpenAPI/Swashbuckle operation filter used to document information provided, but not used.

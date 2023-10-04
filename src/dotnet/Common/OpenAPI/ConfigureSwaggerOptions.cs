@@ -1,11 +1,13 @@
-﻿using Asp.Versioning.ApiExplorer;
+﻿using System.Reflection;
+using Asp.Versioning.ApiExplorer;
 using Asp.Versioning;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Text;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace FoundationaLLM.Core.API
+namespace FoundationaLLM.Common.OpenAPI
 {
     /// <summary>
     /// Configures the Swagger generation options.
@@ -35,10 +37,12 @@ namespace FoundationaLLM.Core.API
 
         private static OpenApiInfo CreateInfoForApiVersion(ApiVersionDescription description)
         {
-            var text = new StringBuilder("FoundationaLLM Core API");
+            var apiName = Assembly.GetEntryAssembly()?.GetName().Name;
+            var text = new StringBuilder(apiName);
+
             var info = new OpenApiInfo()
             {
-                Title = "Example API",
+                Title = apiName,
                 Version = description.ApiVersion.ToString(),
                 Contact = new OpenApiContact() { Name = "Solliance, Inc.", Email = "contact@solliance.net" },
                 License = new OpenApiLicense() { Name = "MIT", Url = new Uri("https://opensource.org/licenses/MIT") }

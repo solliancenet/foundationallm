@@ -1,8 +1,11 @@
 using Asp.Versioning;
+using FoundationaLLM.Common.OpenAPI;
 using FoundationaLLM.Core.Interfaces;
 using FoundationaLLM.Core.Models.ConfigurationOptions;
 using FoundationaLLM.Core.Services;
+using Microsoft.Extensions.Options;
 using Polly;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace FoundationaLLM.Core.API
 {
@@ -72,6 +75,7 @@ namespace FoundationaLLM.Core.API
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
             builder.Services.AddSwaggerGen(
                 options =>
                 {

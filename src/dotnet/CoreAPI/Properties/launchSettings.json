@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "ChatServiceWebApi": {
+    "CoreAPI": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {
