@@ -2,7 +2,8 @@
 public static class HttpClients
 {
     public const string DefaultHttpClient = "DefaultHttpClinet";
-    public const string LangChainApiClient = "LangChainApiClient";
-    public const string SemanticKernelApiClient = "SemanticKernelApiClient";
-    public const string GatekeeperApiClient = "GatewayApiClient";
+    public const string LangChainAPIClient = "LangChainApiClient";
+    public const string SemanticKernelAPIClient = "SemanticKernelApiClient";
+    public const string GatekeeperAPIClient = "GatewayApiClient";
+    public const string AgentFactoryAPIClient = "AgentFactoryAPIClient";
 }
