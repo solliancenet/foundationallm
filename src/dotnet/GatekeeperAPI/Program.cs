@@ -1,4 +1,6 @@
+using Asp.Versioning;
 using FoundationaLLM.Common.Constants;
+using FoundationaLLM.Common.OpenAPI;
 using FoundationaLLM.Gatekeeper.Core.Interfaces;
 using FoundationaLLM.Gatekeeper.Core.Models.ConfigurationOptions;
 using FoundationaLLM.Gatekeeper.Core.Services;
@@ -14,7 +16,6 @@ namespace FoundationaLLM.Gatekeeper.API
 
             // Add services to the container.
             builder.Services.AddApplicationInsightsTelemetry();
-            builder.Services.AddAuthorization();
             builder.Services.AddControllers();
             builder.Services.AddApiVersioning();
 
@@ -39,6 +40,42 @@ namespace FoundationaLLM.Gatekeeper.API
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:Refinement"));
             builder.Services.AddScoped<IRefinementService, RefinementService>();
 
+            builder.Services
+                .AddApiVersioning(options =>
+                {
+                    // Reporting api versions will return the headers
+                    // "api-supported-versions" and "api-deprecated-versions"
+                    options.ReportApiVersions = true;
+                    options.AssumeDefaultVersionWhenUnspecified = true;
+                    options.DefaultApiVersion = new ApiVersion(1, 0);
+                })
+                .AddMvc()
+                .AddApiExplorer(options =>
+                {
+                    // add the versioned api explorer, which also adds IApiVersionDescriptionProvider service
+                    // note: the specified format code will format the version as "'v'major[.minor][-status]"
+                    options.GroupNameFormat = "'v'VVV";
+                });
+
+            // Add services to the container.
+            builder.Services.AddAuthorization();
+
+            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+            builder.Services.AddEndpointsApiExplorer();
+
+            builder.Services.AddSwaggerGen(
+                options =>
+                {
+                    // Add a custom operation filter which sets default values
+                    options.OperationFilter<SwaggerDefaultValues>();
+
+                    var fileName = typeof(Program).Assembly.GetName().Name + ".xml";
+                    var filePath = Path.Combine(AppContext.BaseDirectory, fileName);
+
+                    // Integrate xml comments
+                    options.IncludeXmlComments(filePath);
+                });
+
             var app = builder.Build();
 
             app.UseExceptionHandler(exceptionHandlerApp
@@ -47,7 +84,19 @@ namespace FoundationaLLM.Gatekeeper.API
 
             // Configure the HTTP request pipeline.
             app.UseSwagger();
-            app.UseSwaggerUI();
+            app.UseSwaggerUI(
+                options =>
+                {
+                    var descriptions = app.DescribeApiVersions();
+
+                    // build a swagger endpoint for each discovered API version
+                    foreach (var description in descriptions)
+                    {
+                        var url = $"/swagger/{description.GroupName}/swagger.json";
+                        var name = description.GroupName.ToUpperInvariant();
+                        options.SwaggerEndpoint(url, name);
+                    }
+                });
 
             app.UseHttpsRedirection();
             app.UseAuthorization();
