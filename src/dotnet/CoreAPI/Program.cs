@@ -19,9 +19,6 @@ namespace FoundationaLLM.Core.API
             builder.Services.AddOptions<CosmosDbSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:CosmosDB"));
 
-            builder.Services.AddOptions<ChatServiceSettings>()
-                .Bind(builder.Configuration.GetSection("FoundationaLLM:Chat"));
-
             builder.Services.AddSingleton<ICosmosDbService, CosmosDbService>();
             builder.Services.AddSingleton<ICoreService, CoreService>();
             builder.Services.AddSingleton<IGatekeeperAPIService, GatekeeperAPIService>();
