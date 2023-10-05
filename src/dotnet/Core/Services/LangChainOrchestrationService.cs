@@ -35,7 +35,7 @@ namespace FoundationaLLM.Core.Services
         {
             var client = _httpClientFactory.CreateClient(Constants.HttpClients.LangChainApiClient);
 
-            var responseMessage = await client.PostAsync("/completion",
+            var responseMessage = await client.PostAsync("/orchestration/completion",
                 new StringContent(
                     JsonConvert.SerializeObject(new LangChainCompletionRequest { Prompt = userPrompt }, _jsonSerializerSettings),
                     Encoding.UTF8, "application/json"));

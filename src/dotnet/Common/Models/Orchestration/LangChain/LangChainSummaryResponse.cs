@@ -1,5 +1,5 @@
 ﻿namespace FoundationaLLM.Common.Models.Orchestration.LangChain;
 
-public class LangChainSummaryResponse : SummaryRequestBase
+public class LangChainSummaryResponse : SummaryResponseBase
 {
 }

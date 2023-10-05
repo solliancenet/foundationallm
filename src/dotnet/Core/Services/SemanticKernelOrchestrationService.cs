@@ -36,7 +36,7 @@ namespace FoundationaLLM.Core.Services
         {
             var client = _httpClientFactory.CreateClient(Constants.HttpClients.SemanticKernelApiClient);
 
-            var responseMessage = await client.PostAsync("api/orchestration/completion",
+            var responseMessage = await client.PostAsync("/orchestration/completion",
                 new StringContent(
                     JsonConvert.SerializeObject(new SemanticKernelCompletionRequest { Prompt = userPrompt, MessageHistory = messageHistory }, _jsonSerializerSettings),
                     Encoding.UTF8, "application/json"));
@@ -56,7 +56,7 @@ namespace FoundationaLLM.Core.Services
         {
             var client = _httpClientFactory.CreateClient(Constants.HttpClients.SemanticKernelApiClient);
 
-            var responseMessage = await client.PostAsync("api/orchestration/summary",
+            var responseMessage = await client.PostAsync("/orchestration/summary",
                 new StringContent(
                     JsonConvert.SerializeObject(new SemanticKernelSummaryRequest { Prompt = content }, _jsonSerializerSettings),
                     Encoding.UTF8, "application/json"));

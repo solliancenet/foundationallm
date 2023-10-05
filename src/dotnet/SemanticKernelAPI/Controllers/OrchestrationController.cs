@@ -9,7 +9,7 @@ namespace FoundationaLLM.SemanticKernel.API.Controllers
     //[Authorize]
     [ApiVersion(1.0)]
     [ApiController]
-    [Route("api/orchestration")]
+    [Route("orchestration")]
     public class OrchestrationController : ControllerBase
     {
         private readonly ISemanticKernelService _semanticKernelService;

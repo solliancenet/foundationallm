@@ -33,13 +33,13 @@ async def root():
 async def get_status():
     return 'ready'
 
-@app.post('/completion', dependencies=[Depends(api_key_auth)])
+@app.post('/orchestration/completion', dependencies=[Depends(api_key_auth)])
 async def get_completion(prompt: PromptModel):
     
     agent = CSVAgent(source_csv_file_url)
     return agent.run(prompt)
 
-@app.post('/summary', dependencies=[Depends(api_key_auth)])
+@app.post('/orchestration/summary', dependencies=[Depends(api_key_auth)])
 async def get_summary(content: str) -> str:
     pass
 
