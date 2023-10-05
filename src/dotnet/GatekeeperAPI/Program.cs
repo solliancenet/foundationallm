@@ -20,7 +20,7 @@ namespace FoundationaLLM.Gatekeeper.API
             builder.Services.AddApplicationInsightsTelemetry();
             builder.Services.AddControllers();
 
-            builder.Services.AddSingleton<IAgentFactoryAPIService, AgentFactoryAPIService>();
+            builder.Services.AddSingleton<IGatekeeperService, GatekeeperService>();
 
             builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 

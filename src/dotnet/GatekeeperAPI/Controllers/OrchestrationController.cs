@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
-namespace FoundationaLLM.SemanticKernel.API.Controllers
+namespace FoundationaLLM.Gatekeeper.API.Controllers
 {
     //[Authorize]
     [ApiVersion(1.0)]
@@ -14,24 +14,24 @@ namespace FoundationaLLM.SemanticKernel.API.Controllers
     [Route("[controller]")]
     public class OrchestrationController : ControllerBase
     {
-        private readonly IAgentFactoryAPIService _agentFactoryAPIService;
+        private readonly IGatekeeperService _gatekeeperService;
 
         public OrchestrationController(
-            IAgentFactoryAPIService agentFactoryAPIService)
+            IGatekeeperService gatekeeperService)
         {
-            _agentFactoryAPIService = agentFactoryAPIService;
+            _gatekeeperService = gatekeeperService;
         }
 
         [HttpPost("completion")]
         public async Task<CompletionResponseBase> GetCompletion([FromBody] CompletionRequestBase completionRequest)
         {
-            return await _agentFactoryAPIService.GetCompletion(completionRequest);
+            return await _gatekeeperService.GetCompletion(completionRequest);
         }
 
         [HttpPost("summarize")]
         public async Task<string> GetSummary([FromBody] string content)
         {
-            return await _agentFactoryAPIService.GetSummary(content);
+            return await _gatekeeperService.GetSummary(content);
         }
     }
 }
