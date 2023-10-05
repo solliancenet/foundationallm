@@ -11,11 +11,14 @@ namespace FoundationaLLM.AgentFactory.API.Controllers
     public class OrchestrationController : ControllerBase
     {
         private readonly IAgentFactoryService _agentFactoryService;
+        private readonly ILogger<OrchestrationController> _logger;
 
         public OrchestrationController(
-            IAgentFactoryService agentFactoryService)
+            IAgentFactoryService agentFactoryService,
+            ILogger<OrchestrationController> logger)
         {
             _agentFactoryService = agentFactoryService;
+            _logger = logger;
         }
 
         [HttpPost("completion")]
@@ -28,6 +31,20 @@ namespace FoundationaLLM.AgentFactory.API.Controllers
         public async Task<string> GetSummary([FromBody] string content)
         {
             return await _agentFactoryService.GetSummary(content);
+        }
+
+        [HttpPost("preference", Name = "SetOrchestratorChoice")]
+        public async Task<bool> SetPreference([FromBody] string orchestrationService)
+        {
+            var orchestrationPreferenceSet = _agentFactoryService.SetLLMOrchestrationPreference(orchestrationService);
+
+            if (orchestrationPreferenceSet)
+            {
+                return true;
+            }
+
+            _logger.LogError($"The LLM orchestrator {orchestrationService} is not supported.");
+            return false;
         }
     }
 }

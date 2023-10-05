@@ -14,24 +14,30 @@ namespace FoundationaLLM.Gatekeeper.API.Controllers
     [Route("[controller]")]
     public class OrchestrationController : ControllerBase
     {
-        private readonly IGatekeeperService _gatekeeperService;
+        private readonly IAgentFactoryAPIService _agentFactoryApiService;
 
         public OrchestrationController(
-            IGatekeeperService gatekeeperService)
+            IAgentFactoryAPIService agentFactoryApiService)
         {
-            _gatekeeperService = gatekeeperService;
+            _agentFactoryApiService = agentFactoryApiService;
         }
 
         [HttpPost("completion")]
         public async Task<CompletionResponseBase> GetCompletion([FromBody] CompletionRequestBase completionRequest)
         {
-            return await _gatekeeperService.GetCompletion(completionRequest);
+            return await _agentFactoryApiService.GetCompletion(completionRequest);
         }
 
         [HttpPost("summarize")]
         public async Task<string> GetSummary([FromBody] string content)
         {
-            return await _gatekeeperService.GetSummary(content);
+            return await _agentFactoryApiService.GetSummary(content);
+        }
+
+        [HttpPost("preference")]
+        public async Task<bool> SetLLMOrchestrationPreference([FromBody] string orchestrationService)
+        {
+            return await _agentFactoryApiService.SetLLMOrchestrationPreference(orchestrationService);
         }
     }
 }

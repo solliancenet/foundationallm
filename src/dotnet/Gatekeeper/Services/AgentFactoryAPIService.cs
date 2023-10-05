@@ -13,13 +13,13 @@ using FoundationaLLM.Common.Models.Orchestration;
 
 namespace FoundationaLLM.Gatekeeper.Core.Services
 {
-    public class GatekeeperService : IGatekeeperService
+    public class AgentFactoryAPIService : IAgentFactoryAPIService
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IRefinementService _refinementService;
         readonly JsonSerializerSettings _jsonSerializerSettings;
 
-        public GatekeeperService(IHttpClientFactory httpClientFactory,
+        public AgentFactoryAPIService(IHttpClientFactory httpClientFactory,
             IRefinementService refinementService)
         {
             _httpClientFactory = httpClientFactory;
@@ -78,6 +78,24 @@ namespace FoundationaLLM.Gatekeeper.Core.Services
             }
             else
                 return "A problem on my side prevented me from responding.";
+        }
+
+        public async Task<bool> SetLLMOrchestrationPreference(string orchestrationService)
+        {
+            var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.AgentFactoryAPIClient);
+
+            var responseMessage = await client.PostAsync("orchestration/preference",
+                new StringContent(orchestrationService));
+
+            if (responseMessage.IsSuccessStatusCode)
+            {
+                // The response value should be a boolean indicating whether the orchestration service was set successfully.
+                var responseContent = await responseMessage.Content.ReadAsStringAsync();
+                var orchestrationServiceSet = JsonConvert.DeserializeObject<bool>(responseContent);
+                return orchestrationServiceSet;
+            }
+
+            return false;
         }
     }
 }

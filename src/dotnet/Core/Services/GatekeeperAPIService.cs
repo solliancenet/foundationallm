@@ -74,6 +74,24 @@ namespace FoundationaLLM.Core.Services
                 return "A problem on my side prevented me from responding.";
         }
 
+        public async Task<bool> SetLLMOrchestrationPreference(string orchestrationService)
+        {
+            var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.GatekeeperAPIClient);
+
+            var responseMessage = await client.PostAsync("orchestration/preference",
+                new StringContent(orchestrationService));
+
+            if (responseMessage.IsSuccessStatusCode)
+            {
+                // The response value should be a boolean indicating whether the orchestration service was set successfully.
+                var responseContent = await responseMessage.Content.ReadAsStringAsync();
+                var orchestrationServiceSet = JsonConvert.DeserializeObject<bool>(responseContent);
+                return orchestrationServiceSet;
+            }
+            
+            return false;
+        }
+
         public Task AddMemory(object item, string itemName, Action<object, float[]> vectorizer)
         {
             throw new NotImplementedException();
