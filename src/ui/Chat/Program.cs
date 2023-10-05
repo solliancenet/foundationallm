@@ -3,7 +3,7 @@ using Polly;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddHttpClient(FoundationaLLM.Core.Constants.HttpClients.DefaultHttpClient,
+builder.Services.AddHttpClient(FoundationaLLM.Common.Constants.HttpClients.DefaultHttpClient,
         httpClient =>
         {
             httpClient.BaseAddress = new Uri(builder.Configuration["FoundationaLLM:ChatManager:APIUrl"]);

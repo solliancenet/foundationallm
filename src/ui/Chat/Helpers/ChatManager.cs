@@ -145,7 +145,7 @@ namespace FoundationaLLM.Chat.Helpers
 
         private async Task<T> SendRequest<T>(HttpMethod method, string requestUri, object payload = null)
         {
-            var client = _httpClientFactory.CreateClient(Core.Constants.HttpClients.DefaultHttpClient);
+            var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.DefaultHttpClient);
             HttpResponseMessage responseMessage;
             switch (method)
             {
@@ -166,7 +166,7 @@ namespace FoundationaLLM.Chat.Helpers
 
         private async Task SendRequest(HttpMethod method, string requestUri)
         {
-            var client = _httpClientFactory.CreateClient(Core.Constants.HttpClients.DefaultHttpClient);
+            var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.DefaultHttpClient);
             switch (method)
             {
                 case HttpMethod m when m == HttpMethod.Delete:

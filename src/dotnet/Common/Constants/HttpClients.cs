@@ -1,4 +1,4 @@
-﻿namespace FoundationaLLM.Core.Constants;
+﻿namespace FoundationaLLM.Common.Constants;
 public static class HttpClients
 {
     public const string DefaultHttpClient = "DefaultHttpClinet";
