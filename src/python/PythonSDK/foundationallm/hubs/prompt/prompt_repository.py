@@ -8,6 +8,6 @@ class PromptRepository(Repository):
         # This should connect to the data source and fetch metadata values
         # For simplicity, returning a static list
         return [
-            PromptMetadata("DefaultAgent", "Your name is Solli and you are here to assist employees with their questions."),
-            PromptMetadata("Coco", "Your name is Coco, and you can answer questions about past weather reports.")
+            PromptMetadata(name="DefaultAgent", prompt="Your name is Solli and you are here to assist employees with their questions."),
+            PromptMetadata(name="Coco", prompt="Your name is Coco, and you can answer questions about past weather reports.")
         ]
