@@ -73,5 +73,15 @@ namespace FoundationaLLM.Core.Services
             else
                 return "A problem on my side prevented me from responding.";
         }
+
+        public Task AddMemory(object item, string itemName, Action<object, float[]> vectorizer)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task RemoveMemory(object item)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

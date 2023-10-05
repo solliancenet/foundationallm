@@ -25,7 +25,7 @@ namespace FoundationaLLM.Core.Services
         private readonly Database _database;
         private readonly Dictionary<string, Container> _containers;
 
-        private readonly ISemanticKernelOrchestrationService _ragService;
+        private readonly IGatekeeperAPIService _ragService;
         private readonly CosmosDbSettings _settings;
         private readonly ILogger _logger;
 
@@ -35,7 +35,7 @@ namespace FoundationaLLM.Core.Services
         public bool IsInitialized => _changeFeedsInitialized;
 
         public CosmosDbService(
-            ISemanticKernelOrchestrationService ragService,
+            IGatekeeperAPIService ragService,
             IOptions<CosmosDbSettings> settings, 
             ILogger<CosmosDbService> logger)
         {
