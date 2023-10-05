@@ -1,11 +1,12 @@
-﻿using FoundationaLLM.Common.Models.Chat;
-using FoundationaLLM.Common.Models.Search;
-using FoundationaLLM.Core.Constants;
+﻿using FoundationaLLM.Common.Constants;
 using FoundationaLLM.Core.Interfaces;
+using FoundationaLLM.Common.Models.Chat;
 using FoundationaLLM.Core.Models.ConfigurationOptions;
 using FoundationaLLM.Core.Models.Orchestration;
+using FoundationaLLM.Common.Models.Search;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using FoundationaLLM.Common.Models.Orchestration;
 
 namespace FoundationaLLM.Core.Services;
 
@@ -129,6 +130,12 @@ public class CoreService : ICoreService
                 .Select(message => new MessageHistory(message.Sender, message.Text))
                 .ToList();
 
+            var completionRequest = new CompletionRequestBase
+            {
+                Prompt = userPrompt,
+                MessageHistory = messageHistoryList
+            };
+
             // Generate the completion to return to the user
             var result = await GetLLMOrchestrationService().GetResponse(userPrompt, messageHistoryList);
 
@@ -148,6 +155,42 @@ public class CoreService : ICoreService
             return new Completion { Text = "Could not generate a completion due to an internal error." };
         }
     }
+
+    //public async Task<Completion> GetChatCompletionAsync(string? sessionId, string userPrompt)
+    //{
+    //    try
+    //    {
+    //        ArgumentNullException.ThrowIfNull(sessionId);
+
+    //        // Retrieve conversation, including latest prompt.
+    //        // If you put this after the vector search it doesn't take advantage of previous information given so harder to chain prompts together.
+    //        // However if you put this before the vector search it can get stuck on previous answers and not pull additional information. Worth experimenting
+
+    //        // Retrieve conversation, including latest prompt.
+    //        var messages = await _cosmosDbService.GetSessionMessagesAsync(sessionId);
+    //        var messageHistoryList = messages
+    //            .Select(message => new MessageHistory(message.Sender, message.Text))
+    //            .ToList();
+
+    //        // Generate the completion to return to the user
+    //        var result = await GetLLMOrchestrationService().GetResponse(userPrompt, messageHistoryList);
+
+    //        // Add to prompt and completion to cache, then persist in Cosmos as transaction 
+    //        var promptMessage = new Message(sessionId, nameof(Participants.User), result.UserPromptTokens, userPrompt, result.UserPromptEmbedding, null);
+    //        var completionMessage = new Message(sessionId, nameof(Participants.Assistant), result.ResponseTokens, result.Completion, null, null);
+    //        var completionPrompt = new CompletionPrompt(sessionId, completionMessage.Id, result.UserPrompt);
+    //        completionMessage.CompletionPromptId = completionPrompt.Id;
+
+    //        await AddPromptCompletionMessagesAsync(sessionId, promptMessage, completionMessage, completionPrompt);
+
+    //        return new Completion { Text = result.Completion };
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        _logger.LogError(ex, $"Error getting completion in session {sessionId} for user prompt [{userPrompt}].");
+    //        return new Completion { Text = "Could not generate a completion due to an internal error." };
+    //    }
+    //}
 
     /// <summary>
     /// Generate a name for a chat message, based on the passed in prompt.

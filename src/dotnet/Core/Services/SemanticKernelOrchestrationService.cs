@@ -2,6 +2,8 @@
 using FoundationaLLM.Common.Models.Chat;
 using FoundationaLLM.Core.Models.ConfigurationOptions;
 using FoundationaLLM.Common.Models.Orchestration.SemanticKernel;
+using FoundationaLLM.Common.Settings;
+using FoundationaLLM.Common.Models.Orchestration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -25,16 +27,16 @@ namespace FoundationaLLM.Core.Services
             _settings = options.Value;
             _logger = logger;
             _httpClientFactory = httpClientFactory;
-            _jsonSerializerSettings = GetJsonSerializerSettings();
+            _jsonSerializerSettings = CommonJsonSerializerSettings.GetJsonSerializerSettings();
         }
 
         #region ISemanticKernelOrchestrationService
 
         public bool IsInitialized => GetServiceStatus();
 
-        public async Task<(string Completion, string UserPrompt, int UserPromptTokens, int ResponseTokens, float[]? UserPromptEmbedding)> GetResponse(string userPrompt, List<MessageHistory> messageHistory)
+        public async Task<CompletionResponseBase> GetResponse(string userPrompt, List<MessageHistory> messageHistory)
         {
-            var client = _httpClientFactory.CreateClient(Constants.HttpClients.SemanticKernelApiClient);
+            var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.SemanticKernelApiClient);
 
             var responseMessage = await client.PostAsync("api/orchestration/complete",
                 new StringContent(
@@ -44,17 +46,24 @@ namespace FoundationaLLM.Core.Services
             if (responseMessage.IsSuccessStatusCode)
             {
                 var responseContent = await responseMessage.Content.ReadAsStringAsync();
-                var completionResponse = JsonConvert.DeserializeObject<SemanticKernelCompletionResponse>(responseContent);
+                var completionResponse = JsonConvert.DeserializeObject<CompletionResponseBase>(responseContent);
 
-                return new(completionResponse?.Info, userPrompt, 0, 0, new float[] { 0 });
+                return completionResponse;
             }
-            else
-                return new("A problem on my side prevented me from responding.", userPrompt, 0, 0, new float[] { 0 });
+            
+            return new CompletionResponseBase
+            {
+                Completion = "A problem on my side prevented me from responding.",
+                UserPrompt = userPrompt,
+                UserPromptTokens = 0,
+                ResponseTokens = 0,
+                UserPromptEmbedding = new float[] { 0 }
+            };
         }
 
         public async Task<string> Summarize(string content)
         {
-            var client = _httpClientFactory.CreateClient(Constants.HttpClients.SemanticKernelApiClient);
+            var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.SemanticKernelApiClient);
 
             var responseMessage = await client.PostAsync("api/orchestration/summarize",
                 new StringContent(
@@ -81,20 +90,11 @@ namespace FoundationaLLM.Core.Services
         {
             throw new NotImplementedException();
         }
-
         #endregion
-
-        private JsonSerializerSettings GetJsonSerializerSettings()
-        {
-            return new JsonSerializerSettings()
-            {
-                ContractResolver = new CamelCasePropertyNamesContractResolver()
-            };
-        }
 
         private bool GetServiceStatus()
         {
-            var client = _httpClientFactory.CreateClient(Constants.HttpClients.SemanticKernelApiClient);
+            var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.SemanticKernelApiClient);
             var responseMessage = client.Send(
                 new HttpRequestMessage(HttpMethod.Get, "/status"));
 

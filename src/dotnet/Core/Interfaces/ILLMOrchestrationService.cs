@@ -1,4 +1,5 @@
 ﻿using FoundationaLLM.Common.Models.Chat;
+using FoundationaLLM.Common.Models.Orchestration;
 
 namespace FoundationaLLM.Core.Interfaces
 {
@@ -6,7 +7,7 @@ namespace FoundationaLLM.Core.Interfaces
     {
         bool IsInitialized { get; }
 
-        Task<(string Completion, string UserPrompt, int UserPromptTokens, int ResponseTokens, float[]? UserPromptEmbedding)> GetResponse(string userPrompt, List<MessageHistory> messageHistory);
+        Task<CompletionResponseBase> GetResponse(string userPrompt, List<MessageHistory> messageHistory);
 
         Task<string> Summarize(string content);
     }
