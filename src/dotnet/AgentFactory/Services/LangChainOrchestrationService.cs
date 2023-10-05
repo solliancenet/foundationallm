@@ -1,15 +1,19 @@
 ﻿using FoundationaLLM.Common.Models.Chat;
 using FoundationaLLM.Common.Models.Orchestration.LangChain;
-using FoundationaLLM.Core.Interfaces;
-using FoundationaLLM.Core.Models.ConfigurationOptions;
+using FoundationaLLM.AgentFactory.Interfaces;
+using FoundationaLLM.AgentFactory.Models.ConfigurationOptions;
+using FoundationaLLM.Common.Models.Orchestration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System.Text;
 using System.Net.Http;
+using FoundationaLLM.Common.Settings;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace FoundationaLLM.Core.Services
+namespace FoundationaLLM.AgentFactory.Services
 {
     public class LangChainOrchestrationService : ILangChainOrchestrationService
     {
@@ -26,14 +30,14 @@ namespace FoundationaLLM.Core.Services
             _settings = options.Value;
             _logger = logger;
             _httpClientFactory = httpClientFactory;
-            _jsonSerializerSettings = GetJsonSerializerSettings();
+            _jsonSerializerSettings = CommonJsonSerializerSettings.GetJsonSerializerSettings();
         }
 
         public bool IsInitialized => GetServiceStatus();
 
-        public async Task<(string Completion, string UserPrompt, int UserPromptTokens, int ResponseTokens, float[]? UserPromptEmbedding)> GetCompletion(string userPrompt, List<MessageHistoryItem> messageHistory)
+        public async Task<CompletionResponseBase> GetResponse(string userPrompt, List<MessageHistoryItem> messageHistory)
         {
-            var client = _httpClientFactory.CreateClient(Constants.HttpClients.LangChainApiClient);
+            var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.LangChainAPIClient);
 
             var responseMessage = await client.PostAsync("/orchestration/completion",
                 new StringContent(
@@ -43,12 +47,19 @@ namespace FoundationaLLM.Core.Services
             if (responseMessage.IsSuccessStatusCode)
             {
                 var responseContent = await responseMessage.Content.ReadAsStringAsync();
-                var completionResponse = JsonConvert.DeserializeObject<LangChainCompletionResponse>(responseContent);
+                var completionResponse = JsonConvert.DeserializeObject<CompletionResponseBase>(responseContent);
 
-                return new(completionResponse?.Info, userPrompt, 0, 0, new float[] { 0 });
+                return completionResponse;
             }
-            else
-                return new("A problem on my side prevented me from responding.", userPrompt, 0, 0, new float[] { 0 });
+
+            return new CompletionResponseBase
+            {
+                Completion = "A problem on my side prevented me from responding.",
+                UserPrompt = userPrompt,
+                UserPromptTokens = 0,
+                ResponseTokens = 0,
+                UserPromptEmbedding = new float[] { 0 }
+            };
         }
 
         public async Task<string> GetSummary(string content)
@@ -56,17 +67,9 @@ namespace FoundationaLLM.Core.Services
             throw new NotImplementedException();
         }
 
-        private JsonSerializerSettings GetJsonSerializerSettings()
-        {
-            return new JsonSerializerSettings()
-            {
-                ContractResolver = new CamelCasePropertyNamesContractResolver()
-            };
-        }
-
         private bool GetServiceStatus()
         {
-            var client = _httpClientFactory.CreateClient(Constants.HttpClients.LangChainApiClient);
+            var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.LangChainAPIClient);
             var responseMessage = client.Send(
                 new HttpRequestMessage(HttpMethod.Get, "/status"));
 

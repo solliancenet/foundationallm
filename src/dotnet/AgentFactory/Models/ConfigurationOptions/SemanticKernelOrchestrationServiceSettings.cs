@@ -1,4 +1,4 @@
-﻿namespace FoundationaLLM.Core.Models.ConfigurationOptions
+﻿namespace FoundationaLLM.AgentFactory.Models.ConfigurationOptions
 {
     public class SemanticKernelOrchestrationServiceSettings
     {

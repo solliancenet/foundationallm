@@ -10,20 +10,20 @@ namespace FoundationaLLM.Core.API.Controllers
     [Route("[controller]")]
     public class OrchestrationController : ControllerBase
     {
-        private readonly ICoreService _coreService;
+        private readonly IGatekeeperAPIService _gatekeeperAPIService;
         private readonly ILogger<OrchestrationController> _logger;
 
-        public OrchestrationController(ICoreService coreService,
+        public OrchestrationController(IGatekeeperAPIService gatekeeperAPIService,
             ILogger<OrchestrationController> logger)
         {
-            _coreService = coreService;
+            _gatekeeperAPIService = gatekeeperAPIService;
             _logger = logger;
         }
 
         [HttpPost(Name = "SetOrchestratorChoice")]
-        public IActionResult SetPreference([FromBody] string orchestrationService)
+        public async Task<IActionResult> SetPreference([FromBody] string orchestrationService)
         {
-            var orchestrationPreferenceSet = _coreService.SetLLMOrchestrationPreference(orchestrationService);
+            var orchestrationPreferenceSet = await _gatekeeperAPIService.SetLLMOrchestrationPreference(orchestrationService);
 
             if (orchestrationPreferenceSet)
             {

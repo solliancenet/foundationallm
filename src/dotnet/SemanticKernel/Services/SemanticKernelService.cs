@@ -17,6 +17,7 @@ using Microsoft.SemanticKernel.AI.Embeddings;
 using Microsoft.SemanticKernel.AI.TextCompletion;
 using Newtonsoft.Json;
 using System.Text.RegularExpressions;
+using FoundationaLLM.Common.Models.Orchestration;
 
 namespace FoundationaLLM.SemanticKernel.Core.Services;
 
@@ -164,7 +165,8 @@ public class SemanticKernelService : ISemanticKernelService
         var reply = await completionResults[0].GetChatMessageAsync();
         var rawResult = (completionResults[0] as ITextResult).ModelResult.GetOpenAIChatResult();
 
-        return reply.Content;
+        return new CompletionResponseBase(reply.Content, chatHistory[0].Content, rawResult.Usage.PromptTokens,
+            rawResult.Usage.CompletionTokens, userPromptEmbedding);
     }
 
     public async Task<string> GetSummary(string userPrompt)

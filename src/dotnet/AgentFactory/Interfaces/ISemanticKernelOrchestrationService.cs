@@ -1,4 +1,4 @@
-﻿namespace FoundationaLLM.Core.Interfaces
+﻿namespace FoundationaLLM.AgentFactory.Interfaces
 {
     public interface ISemanticKernelOrchestrationService : ILLMOrchestrationService
     {

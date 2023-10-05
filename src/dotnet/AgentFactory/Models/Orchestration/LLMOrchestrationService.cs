@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FoundationaLLM.Core.Models.Orchestration
+namespace FoundationaLLM.AgentFactory.Models.Orchestration
 {
     public enum LLMOrchestrationService
     {

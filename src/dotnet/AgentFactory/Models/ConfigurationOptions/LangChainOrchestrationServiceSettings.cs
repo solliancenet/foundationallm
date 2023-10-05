@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FoundationaLLM.Core.Models.ConfigurationOptions
+namespace FoundationaLLM.AgentFactory.Models.ConfigurationOptions
 {
     public class LangChainOrchestrationServiceSettings
     {

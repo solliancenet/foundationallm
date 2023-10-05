@@ -1,4 +1,5 @@
 ﻿using Asp.Versioning;
+using FoundationaLLM.Common.Models.Orchestration;
 using FoundationaLLM.Common.Models.Orchestration.SemanticKernel;
 using FoundationaLLM.SemanticKernel.Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -25,7 +26,7 @@ namespace FoundationaLLM.SemanticKernel.API.Controllers
         {
             var info = await _semanticKernelService.GetCompletion(request.Prompt, request.MessageHistory);
 
-            return new SemanticKernelCompletionResponse() { Info = info };
+            return completionResponse;
         }
 
         [HttpPost("summary")]
