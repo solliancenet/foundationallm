@@ -4,5 +4,5 @@ from foundationallm.models import Message
 
 class Session(BaseModel):    
     user_prompt: str
-    message_history: Optional(List[Message])
+    message_history: Optional[List[Message]] = None
     user_context: str
