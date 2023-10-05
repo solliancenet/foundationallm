@@ -120,7 +120,7 @@ public class SemanticKernelService : ISemanticKernelService
         }
     }
 
-    public async Task<string> Complete(string userPrompt, List<MessageHistory> messageHistory)
+    public async Task<string> Complete(string userPrompt, List<MessageHistoryItem> messageHistory)
     {
         var memorySkill = new TextEmbeddingObjectMemorySkill(
             _longTermMemory,

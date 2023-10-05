@@ -4,5 +4,5 @@ namespace FoundationaLLM.Common.Models.Orchestration.SemanticKernel;
 
 public class SemanticKernelCompletionRequest : CompletionRequestBase
 {
-    public List<MessageHistory> MessageHistory { get; init; } 
+    public List<MessageHistoryItem> MessageHistory { get; init; } 
 }

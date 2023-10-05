@@ -31,7 +31,7 @@ namespace FoundationaLLM.Core.Services
 
         public bool IsInitialized => GetServiceStatus();
 
-        public async Task<(string Completion, string UserPrompt, int UserPromptTokens, int ResponseTokens, float[]? UserPromptEmbedding)> GetResponse(string userPrompt, List<MessageHistory> messageHistory)
+        public async Task<(string Completion, string UserPrompt, int UserPromptTokens, int ResponseTokens, float[]? UserPromptEmbedding)> GetResponse(string userPrompt, List<MessageHistoryItem> messageHistory)
         {
             var client = _httpClientFactory.CreateClient(Constants.HttpClients.LangChainApiClient);
 
