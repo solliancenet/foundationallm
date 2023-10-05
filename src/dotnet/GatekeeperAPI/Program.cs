@@ -4,7 +4,9 @@ using FoundationaLLM.Common.OpenAPI;
 using FoundationaLLM.Gatekeeper.Core.Interfaces;
 using FoundationaLLM.Gatekeeper.Core.Models.ConfigurationOptions;
 using FoundationaLLM.Gatekeeper.Core.Services;
+using Microsoft.Extensions.Options;
 using Polly;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace FoundationaLLM.Gatekeeper.API
 {
@@ -17,13 +19,10 @@ namespace FoundationaLLM.Gatekeeper.API
             // Add services to the container.
             builder.Services.AddApplicationInsightsTelemetry();
             builder.Services.AddControllers();
-            builder.Services.AddApiVersioning();
-
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
 
             builder.Services.AddSingleton<IAgentFactoryAPIService, AgentFactoryAPIService>();
+
+            builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 
             builder.Services
                 .AddHttpClient(HttpClients.AgentFactoryAPIClient,

@@ -3,7 +3,9 @@ using FoundationaLLM.AgentFactory.Core.Services;
 using FoundationaLLM.AgentFactory.Models.ConfigurationOptions;
 using FoundationaLLM.Common.Constants;
 using FoundationaLLM.Common.OpenAPI;
+using Microsoft.Extensions.Options;
 using Polly;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace FoundationaLLM.AgentFactory.API
 {
@@ -18,6 +20,8 @@ namespace FoundationaLLM.AgentFactory.API
 
             builder.Services.AddOptions<LangChainOrchestrationServiceSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:LangChainOrchestration"));
+
+            builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 
             // Add services to the container.
             builder.Services.AddApplicationInsightsTelemetry();
