@@ -32,11 +32,12 @@ namespace FoundationaLLM.Core.API
             builder.Services.AddSingleton<ISemanticKernelOrchestrationService, SemanticKernelOrchestrationService>();
             builder.Services.AddSingleton<ILangChainOrchestrationService, LangChainOrchestrationService>();
             builder.Services.AddSingleton<ICoreService, CoreService>();
+            builder.Services.AddSingleton<IGatekeeperAPIService, GatekeeperAPIService>();
 
             builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 
             builder.Services
-                .AddHttpClient(HttpClients.LangChainApiClient,
+                .AddHttpClient(HttpClients.LangChainAPIClient,
                     httpClient =>
                     {
                         httpClient.BaseAddress = new Uri(builder.Configuration["FoundationaLLM:LangChainOrchestration:APIUrl"]);
@@ -46,7 +47,7 @@ namespace FoundationaLLM.Core.API
                     policyBuilder.WaitAndRetryAsync(
                         3, retryNumber => TimeSpan.FromMilliseconds(600)));
             builder.Services
-                .AddHttpClient(HttpClients.SemanticKernelApiClient,
+                .AddHttpClient(HttpClients.SemanticKernelAPIClient,
                     httpClient =>
                     {
                         httpClient.BaseAddress = new Uri(builder.Configuration["FoundationaLLM:SemanticKernelOrchestration:APIUrl"]);
@@ -56,11 +57,11 @@ namespace FoundationaLLM.Core.API
                     policyBuilder.WaitAndRetryAsync(
                         3, retryNumber => TimeSpan.FromMilliseconds(600)));
             builder.Services
-                .AddHttpClient(HttpClients.GatekeeperApiClient,
+                .AddHttpClient(HttpClients.GatekeeperAPIClient,
                     httpClient =>
                     {
-                        httpClient.BaseAddress = new Uri(builder.Configuration["FoundationaLLM:GatekeeperApi:APIUrl"]);
-                        httpClient.DefaultRequestHeaders.Add("X-API-KEY", builder.Configuration["FoundationaLLM:GatekeeperApi:APIKey"]);
+                        httpClient.BaseAddress = new Uri(builder.Configuration["FoundationaLLM:GatekeeperAPI:APIUrl"]);
+                        httpClient.DefaultRequestHeaders.Add("X-API-KEY", builder.Configuration["FoundationaLLM:GatekeeperAPI:APIKey"]);
                     })
                 .AddTransientHttpErrorPolicy(policyBuilder =>
                     policyBuilder.WaitAndRetryAsync(
