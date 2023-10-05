@@ -8,48 +8,45 @@ public interface ICoreService
 {
     string Status { get; }
 
-    bool SetLLMOrchestrationPreference(string orchestrator);
-
     /// <summary>
-    /// Returns list of chat session ids and names for left-hand nav to bind to (display Name and ChatSessionId as hidden)
+    /// Returns list of chat session ids and names.
     /// </summary>
     Task<List<Session>> GetAllChatSessionsAsync();
 
     /// <summary>
-    /// Returns the chat messages to display on the main web page when the user selects a chat from the left-hand nav
+    /// Returns the chat messages related to an existing session.
     /// </summary>
     Task<List<Message>> GetChatSessionMessagesAsync(string sessionId);
 
     /// <summary>
-    /// User creates a new Chat Session.
+    /// Creates a new chat session.
     /// </summary>
     Task<Session> CreateNewChatSessionAsync();
 
     /// <summary>
-    /// Rename the Chat Session from "New Chat" to the summary provided by OpenAI
+    /// Rename the chat session from its default (eg., "New Chat") to the summary provided by OpenAI.
     /// </summary>
     Task<Session> RenameChatSessionAsync(string sessionId, string newChatSessionName);
 
     /// <summary>
-    /// User deletes a chat session
+    /// Delete a chat session and related messages.
     /// </summary>
     Task DeleteChatSessionAsync(string sessionId);
 
     /// <summary>
-    /// Receive a prompt from a user, Vectorize it from _openAIService Get a completion from _openAiService
+    /// Receive a prompt from a user, vectorize it from the OpenAI service, and get a completion from the OpenAI service.
     /// </summary>
     Task<Completion> GetChatCompletionAsync(string? sessionId, string userPrompt);
 
+    /// <summary>
+    /// Generate a name for a chat message, based on the passed in prompt.
+    /// </summary>
     Task<Completion> SummarizeChatSessionNameAsync(string? sessionId, string prompt);
 
     /// <summary>
     /// Rate an assistant message. This can be used to discover useful AI responses for training, discoverability, and other benefits down the road.
     /// </summary>
     Task<Message> RateMessageAsync(string id, string sessionId, bool? rating);
-
-    Task AddProduct(Product product);
-
-    Task DeleteProduct(string productId, string categoryId);
 
     Task<CompletionPrompt> GetCompletionPrompt(string sessionId, string completionPromptId);
 }

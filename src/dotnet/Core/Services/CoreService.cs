@@ -1,11 +1,7 @@
 ﻿using FoundationaLLM.Common.Constants;
 using FoundationaLLM.Core.Interfaces;
 using FoundationaLLM.Common.Models.Chat;
-using FoundationaLLM.Core.Models.ConfigurationOptions;
-using FoundationaLLM.Core.Models.Orchestration;
-using FoundationaLLM.Common.Models.Search;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using FoundationaLLM.Common.Models.Orchestration;
 
 namespace FoundationaLLM.Core.Services;
@@ -13,26 +9,20 @@ namespace FoundationaLLM.Core.Services;
 public class CoreService : ICoreService
 {
     private readonly ICosmosDbService _cosmosDbService;
-    private readonly ChatServiceSettings _settings;
-    private readonly ISemanticKernelOrchestrationService _semanticKernelOrchestration;
-    private readonly ILangChainOrchestrationService _langChainOrchestration;
-    private readonly ILogger _logger;
-
-    private LLMOrchestrationService _llmOrchestrationService = LLMOrchestrationService.LangChain;
+    private readonly IGatekeeperAPIService _gatekeeperAPIService;
+    private readonly ILogger<CoreService> _logger;
 
     public string Status
     {
         get
         {
-            if (_cosmosDbService.IsInitialized && _semanticKernelOrchestration.IsInitialized)
+            if (_cosmosDbService.IsInitialized)
                 return "ready";
 
             var status = new List<string>();
 
             if (!_cosmosDbService.IsInitialized)
                 status.Add("CosmosDBService: initializing");
-            if (!_semanticKernelOrchestration.IsInitialized)
-                status.Add("SemanticKernelOrchestrationService: initializing");
 
             return string.Join(",", status);
         }
@@ -40,29 +30,12 @@ public class CoreService : ICoreService
 
     public CoreService(
         ICosmosDbService cosmosDbService,
-        IOptions<ChatServiceSettings> options,
-        ISemanticKernelOrchestrationService semanticKernelOrchestratorService,
-        ILangChainOrchestrationService langChainOrchestratorService,
+        IGatekeeperAPIService gatekeeperAPIService,
         ILogger<CoreService> logger)
     {
         _cosmosDbService = cosmosDbService;
-        _settings = options.Value;
-        _semanticKernelOrchestration = semanticKernelOrchestratorService;
-        _langChainOrchestration = langChainOrchestratorService;
+        _gatekeeperAPIService = gatekeeperAPIService;
         _logger = logger;
-
-        SetLLMOrchestrationPreference(_settings.DefaultOrchestrationService);
-    }
-
-    public bool SetLLMOrchestrationPreference(string orchestrationService)
-    {
-        if (Enum.TryParse(orchestrationService, true, out LLMOrchestrationService llmOrchestrationService))
-        {
-            _llmOrchestrationService = llmOrchestrationService;
-            return true;
-        }
-        else
-            return false;
     }
 
     /// <summary>
@@ -137,7 +110,7 @@ public class CoreService : ICoreService
             };
 
             // Generate the completion to return to the user
-            var result = await GetLLMOrchestrationService().GetResponse(userPrompt, messageHistoryList);
+            var result = await _gatekeeperAPIService.GetCompletion(completionRequest);
 
             // Add to prompt and completion to cache, then persist in Cosmos as transaction 
             var promptMessage = new Message(sessionId, nameof(Participants.User), result.UserPromptTokens, userPrompt, result.UserPromptEmbedding, null);
@@ -156,42 +129,6 @@ public class CoreService : ICoreService
         }
     }
 
-    //public async Task<Completion> GetChatCompletionAsync(string? sessionId, string userPrompt)
-    //{
-    //    try
-    //    {
-    //        ArgumentNullException.ThrowIfNull(sessionId);
-
-    //        // Retrieve conversation, including latest prompt.
-    //        // If you put this after the vector search it doesn't take advantage of previous information given so harder to chain prompts together.
-    //        // However if you put this before the vector search it can get stuck on previous answers and not pull additional information. Worth experimenting
-
-    //        // Retrieve conversation, including latest prompt.
-    //        var messages = await _cosmosDbService.GetSessionMessagesAsync(sessionId);
-    //        var messageHistoryList = messages
-    //            .Select(message => new MessageHistory(message.Sender, message.Text))
-    //            .ToList();
-
-    //        // Generate the completion to return to the user
-    //        var result = await GetLLMOrchestrationService().GetResponse(userPrompt, messageHistoryList);
-
-    //        // Add to prompt and completion to cache, then persist in Cosmos as transaction 
-    //        var promptMessage = new Message(sessionId, nameof(Participants.User), result.UserPromptTokens, userPrompt, result.UserPromptEmbedding, null);
-    //        var completionMessage = new Message(sessionId, nameof(Participants.Assistant), result.ResponseTokens, result.Completion, null, null);
-    //        var completionPrompt = new CompletionPrompt(sessionId, completionMessage.Id, result.UserPrompt);
-    //        completionMessage.CompletionPromptId = completionPrompt.Id;
-
-    //        await AddPromptCompletionMessagesAsync(sessionId, promptMessage, completionMessage, completionPrompt);
-
-    //        return new Completion { Text = result.Completion };
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        _logger.LogError(ex, $"Error getting completion in session {sessionId} for user prompt [{userPrompt}].");
-    //        return new Completion { Text = "Could not generate a completion due to an internal error." };
-    //    }
-    //}
-
     /// <summary>
     /// Generate a name for a chat message, based on the passed in prompt.
     /// </summary>
@@ -203,7 +140,7 @@ public class CoreService : ICoreService
 
             await Task.CompletedTask;
 
-            var summary = await GetLLMOrchestrationService().Summarize(prompt);
+            var summary = await _gatekeeperAPIService.GetSummary(prompt);
 
             await RenameChatSessionAsync(sessionId, summary);
 
@@ -252,49 +189,11 @@ public class CoreService : ICoreService
         return await _cosmosDbService.UpdateMessageRatingAsync(id, sessionId, rating);
     }
 
-    public async Task AddProduct(Product product)
-    {
-        ArgumentNullException.ThrowIfNull(product);
-        ArgumentNullException.ThrowIfNullOrEmpty(product.id);
-        ArgumentNullException.ThrowIfNullOrEmpty(product.categoryId);
-
-        await _cosmosDbService.InsertProductAsync(product);
-    }
-
-    public async Task DeleteProduct(string productId, string categoryId)
-    {
-        ArgumentNullException.ThrowIfNullOrEmpty(productId);
-        ArgumentNullException.ThrowIfNullOrEmpty(categoryId);
-
-        await _cosmosDbService.DeleteProductAsync(productId, categoryId);
-
-        try
-        {
-            await _semanticKernelOrchestration.RemoveMemory(new Product { id = productId });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, $"Error attempting to remove memory for product id {productId} (category id {categoryId})");
-        }
-    }
-
     public async Task<CompletionPrompt> GetCompletionPrompt(string sessionId, string completionPromptId)
     {
         ArgumentNullException.ThrowIfNullOrEmpty(sessionId);
         ArgumentNullException.ThrowIfNullOrEmpty(completionPromptId);
 
         return await _cosmosDbService.GetCompletionPrompt(sessionId, completionPromptId);
-    }
-
-    private ILLMOrchestrationService GetLLMOrchestrationService()
-    {
-        switch (_llmOrchestrationService)
-        {
-            case LLMOrchestrationService.SemanticKernel: 
-                return _semanticKernelOrchestration as ILLMOrchestrationService;
-            case LLMOrchestrationService.LangChain: 
-            default:
-                return _langChainOrchestration as ILLMOrchestrationService;
-        }
     }
 }
