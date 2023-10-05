@@ -1,7 +1,9 @@
 using Asp.Versioning;
 using FoundationaLLM.AgentFactory.Core.Interfaces;
 using FoundationaLLM.AgentFactory.Core.Services;
+using FoundationaLLM.AgentFactory.Interfaces;
 using FoundationaLLM.AgentFactory.Models.ConfigurationOptions;
+using FoundationaLLM.AgentFactory.Services;
 using FoundationaLLM.Common.Constants;
 using FoundationaLLM.Common.OpenAPI;
 using Microsoft.Extensions.Options;
@@ -25,6 +27,8 @@ namespace FoundationaLLM.AgentFactory.API
             builder.Services.AddOptions<ChatServiceSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:Chat"));
 
+            builder.Services.AddSingleton<ISemanticKernelOrchestrationService, SemanticKernelOrchestrationService>();
+            builder.Services.AddSingleton<ILangChainOrchestrationService, LangChainOrchestrationService>();
             builder.Services.AddSingleton<IAgentFactoryService, AgentFactoryService>();
 
             builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
