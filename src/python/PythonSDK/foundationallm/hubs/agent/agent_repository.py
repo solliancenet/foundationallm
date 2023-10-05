@@ -8,7 +8,7 @@ class AgentRepository(Repository):
         # For simplicity, returning a static list
         agent_list = [
             AgentMetadata(name="DefaultAgent", description="The default agent for the system.", allowed_data_source_names=[]),
-            AgentMetadata(name="Coco", description="Agent that has access to CocoRahs weather data.", allowed_data_source_names=["cocorahs"])
+            AgentMetadata(name="Weather", description="Agent that has access to historical weather data.", allowed_data_source_names=["weatherdb"])
         ]
         
         return agent_list

@@ -9,5 +9,5 @@ class PromptRepository(Repository):
         # For simplicity, returning a static list
         return [
             PromptMetadata(name="DefaultAgent", prompt="Your name is Solli and you are here to assist employees with their questions."),
-            PromptMetadata(name="Coco", prompt="Your name is Coco, and you can answer questions about past weather reports.")
+            PromptMetadata(name="WeatherAgent", prompt="Your name is Bob, and you can answer questions about past weather reports.")
         ]
