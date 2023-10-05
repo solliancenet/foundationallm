@@ -27,20 +27,21 @@ app = FastAPI()
 
 @app.get('/')
 async def root():
-    
-    return { 'message': 'This is the Solliance AI Copilot powered by FoundationalLM!' }
+    return { 'message': 'This is the Solliance AI Copilot powered by FoundationaLLM!' }
 
 @app.get('/status', dependencies=[Depends(api_key_auth)])
-async def status():
-    
+async def get_status():
     return 'ready'
 
-@app.post('/run', dependencies=[Depends(api_key_auth)])
-async def run(prompt: PromptModel):
+@app.post('/orchestration/completion', dependencies=[Depends(api_key_auth)])
+async def get_completion(prompt: PromptModel):
     
     agent = CSVAgent(source_csv_file_url)
     return agent.run(prompt)
 
+@app.post('/orchestration/summary', dependencies=[Depends(api_key_auth)])
+async def get_summary(content: str) -> str:
+    pass
 
 
 if __name__ == '__main__':
