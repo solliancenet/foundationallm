@@ -130,7 +130,7 @@ public class CoreService : ICoreService
                 .ToList();
 
             // Generate the completion to return to the user
-            var result = await GetLLMOrchestrationService().GetResponse(userPrompt, messageHistoryList);
+            var result = await GetLLMOrchestrationService().GetCompletion(userPrompt, messageHistoryList);
 
             // Add to prompt and completion to cache, then persist in Cosmos as transaction 
             var promptMessage = new Message(sessionId, nameof(Participants.User), result.UserPromptTokens, userPrompt, result.UserPromptEmbedding, null);
@@ -160,7 +160,7 @@ public class CoreService : ICoreService
 
             await Task.CompletedTask;
 
-            var summary = await GetLLMOrchestrationService().Summarize(prompt);
+            var summary = await GetLLMOrchestrationService().GetSummary(prompt);
 
             await RenameChatSessionAsync(sessionId, summary);
 
