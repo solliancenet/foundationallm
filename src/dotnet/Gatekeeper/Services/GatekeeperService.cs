@@ -13,13 +13,13 @@ using FoundationaLLM.Common.Models.Orchestration;
 
 namespace FoundationaLLM.Gatekeeper.Core.Services
 {
-    public class AgentFactoryAPIService : IAgentFactoryAPIService
+    public class GatekeeperService : IGatekeeperService
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IRefinementService _refinementService;
         readonly JsonSerializerSettings _jsonSerializerSettings;
 
-        public AgentFactoryAPIService(IHttpClientFactory httpClientFactory,
+        public GatekeeperService(IHttpClientFactory httpClientFactory,
             IRefinementService refinementService)
         {
             _httpClientFactory = httpClientFactory;
