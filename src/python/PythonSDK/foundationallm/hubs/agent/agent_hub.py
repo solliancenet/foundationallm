@@ -1,7 +1,7 @@
 from foundationallm.hubs.agent import AgentRepository, AgentResolver
-from foundationallm.hubs import BaseHub
+from foundationallm.hubs import HubBase
 
-class AgentHub(BaseHub):
+class AgentHub(HubBase):
     def __init__(self):
         self.repository = AgentRepository()
         self.resolver = AgentResolver()

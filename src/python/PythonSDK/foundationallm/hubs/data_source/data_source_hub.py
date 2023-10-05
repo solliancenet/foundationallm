@@ -1,7 +1,7 @@
-from foundationallm.hubs import BaseHub
+from foundationallm.hubs import HubBase
 from foundationallm.hubs.data_source import DataSourceRepository, DataSourceResolver
 
-class DataSourceHub(BaseHub):
+class DataSourceHub(HubBase):
     def __init__(self):
         self.repository = DataSourceRepository()
         self.resolver = DataSourceResolver()

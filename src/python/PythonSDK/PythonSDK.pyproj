@@ -31,7 +31,7 @@
     <Compile Include="foundationallm\hubs\agent\agent_repository.py" />
     <Compile Include="foundationallm\hubs\agent\agent_resolver.py" />
     <Compile Include="foundationallm\hubs\agent\__init__.py" />
-    <Compile Include="foundationallm\hubs\base_hub.py" />
+    <Compile Include="foundationallm\hubs\hub_base.py" />
     <Compile Include="foundationallm\hubs\data_source\data_source_hub.py" />
     <Compile Include="foundationallm\hubs\data_source\data_source_metadata.py" />
     <Compile Include="foundationallm\hubs\data_source\data_source_repository.py" />

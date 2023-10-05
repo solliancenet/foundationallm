@@ -1,7 +1,7 @@
 from foundationallm.hubs.prompt import PromptRepository, PromptResolver
-from foundationallm.hubs import BaseHub
+from foundationallm.hubs import HubBase
 
-class PromptHub(BaseHub):
+class PromptHub(HubBase):
     """The PromptHub class is responsible for managing and resolving prompts."""
 
     def __init__(self):
