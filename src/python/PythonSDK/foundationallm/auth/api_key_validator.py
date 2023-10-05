@@ -8,7 +8,7 @@ class APIKeyValidator:
         self.api_key_value = Configuration.get_keyvault_value(api_key_secret_name)
         self.api_key_header = APIKeyHeader(name='X-API-Key')
 
-    def api_key_auth(self, x_api_key: str = Depends(self.api_key_header)):
+    def validate_api_key(self, x_api_key: str = Depends(self.api_key_header)):
         if x_api_key != self.api_key_value:
             raise HTTPException(
                 status_code = 401,
