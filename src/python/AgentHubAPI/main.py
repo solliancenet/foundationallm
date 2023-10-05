@@ -19,9 +19,8 @@ async def status():
     return 'ready'
 
 @app.post('/resolve_request') #, dependencies=[Depends(validator.api_key_auth)])
-async def resolve_request(request: Session):
-    ag = AgentHub().resolve_request(request)
-    return ag #AgentHub().resolve_request(request)
+async def resolve_request(request: Session):    
+    return AgentHub().resolve_request(request)
 
 if __name__ == '__main__':
     uvicorn.run('main:app', host='0.0.0.0', port=8742, reload=True)

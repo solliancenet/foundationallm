@@ -1,6 +1,6 @@
 from foundationallm.hubs import Repository
 from foundationallm.hubs.data_source import DataSourceMetadata, UnderlyingImplementation
-from foundationallm.datasources import SQLServerDataSourceMetadata, SQLAuthenticationMetadata, SQLAuthenticationType
+from foundationallm.datasources.sql_server import SQLServerDataSourceMetadata, SQLAuthenticationMetadata, SQLAuthenticationType
 from typing import List
 
 
