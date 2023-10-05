@@ -21,6 +21,9 @@ namespace FoundationaLLM.AgentFactory.API
             builder.Services.AddOptions<LangChainOrchestrationServiceSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:LangChainOrchestration"));
 
+            builder.Services.AddOptions<ChatServiceSettings>()
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:Chat"));
+
             builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 
             // Add services to the container.
