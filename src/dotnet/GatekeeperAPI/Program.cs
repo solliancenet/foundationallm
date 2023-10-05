@@ -1,6 +1,8 @@
+using FoundationaLLM.Common.Constants;
 using FoundationaLLM.Gatekeeper.Core.Interfaces;
 using FoundationaLLM.Gatekeeper.Core.Models.ConfigurationOptions;
 using FoundationaLLM.Gatekeeper.Core.Services;
+using Polly;
 
 namespace FoundationaLLM.Gatekeeper.API
 {
@@ -19,6 +21,19 @@ namespace FoundationaLLM.Gatekeeper.API
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddSingleton<IAgentFactoryAPIService, AgentFactoryAPIService>();
+
+            builder.Services
+                .AddHttpClient(HttpClients.AgentFactoryAPIClient,
+                    httpClient =>
+                    {
+                        httpClient.BaseAddress = new Uri(builder.Configuration["FoundationaLLM:GatekeeperApi:APIUrl"]);
+                        httpClient.DefaultRequestHeaders.Add("X-API-KEY", builder.Configuration["FoundationaLLM:GatekeeperApi:APIKey"]);
+                    })
+                .AddTransientHttpErrorPolicy(policyBuilder =>
+                    policyBuilder.WaitAndRetryAsync(
+                        3, retryNumber => TimeSpan.FromMilliseconds(600)));
 
             builder.Services.AddOptions<RefinementServiceSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:Refinement"));

@@ -13,7 +13,7 @@ using FoundationaLLM.Common.Models.Orchestration;
 
 namespace FoundationaLLM.Gatekeeper.Core.Services
 {
-    public class AgentFactoryAPIService
+    public class AgentFactoryAPIService : IAgentFactoryAPIService
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IRefinementService _refinementService;
@@ -32,9 +32,9 @@ namespace FoundationaLLM.Gatekeeper.Core.Services
             // TODO: Call RefinementService to refine userPrompt
             // await _refinementService.RefineUserPrompt(completionRequest);
 
-            var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.GatekeeperApiClient);
-            var request = new HttpRequestMessage(HttpMethod.Post, "completion");
-            var responseMessage = await client.PostAsync("completion",
+            var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.AgentFactoryAPIClient);
+
+            var responseMessage = await client.PostAsync("orchestration/completion",
             new StringContent(
                     JsonConvert.SerializeObject(completionRequest, _jsonSerializerSettings),
                     Encoding.UTF8, "application/json"));
@@ -55,6 +55,29 @@ namespace FoundationaLLM.Gatekeeper.Core.Services
                 ResponseTokens = 0,
                 UserPromptEmbedding = new float[] { 0 }
             };
+        }
+
+        public async Task<string> GetSummary(string content)
+        {
+            // TODO: Call RefinementService to refine userPrompt
+            // await _refinementService.RefineUserPrompt(content);
+
+            var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.AgentFactoryAPIClient);
+
+            var responseMessage = await client.PostAsync("orchestration/summarize",
+                new StringContent(
+                    JsonConvert.SerializeObject(new SummarizeRequestBase { Prompt = content }, _jsonSerializerSettings),
+                    Encoding.UTF8, "application/json"));
+
+            if (responseMessage.IsSuccessStatusCode)
+            {
+                var responseContent = await responseMessage.Content.ReadAsStringAsync();
+                var summarizeResponse = JsonConvert.DeserializeObject<SummarizeResponseBase>(responseContent);
+
+                return summarizeResponse?.Info;
+            }
+            else
+                return "A problem on my side prevented me from responding.";
         }
     }
 }
