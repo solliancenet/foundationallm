@@ -1,4 +1,5 @@
 using Asp.Versioning;
+using FoundationaLLM.AgentFactory.Core.Interfaces;
 using FoundationaLLM.AgentFactory.Core.Services;
 using FoundationaLLM.AgentFactory.Models.ConfigurationOptions;
 using FoundationaLLM.Common.Constants;
@@ -23,6 +24,8 @@ namespace FoundationaLLM.AgentFactory.API
 
             builder.Services.AddOptions<ChatServiceSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:Chat"));
+
+            builder.Services.AddSingleton<IAgentFactoryService, AgentFactoryService>();
 
             builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 
