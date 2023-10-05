@@ -28,8 +28,8 @@ namespace FoundationaLLM.Gatekeeper.API
                 .AddHttpClient(HttpClients.AgentFactoryAPIClient,
                     httpClient =>
                     {
-                        httpClient.BaseAddress = new Uri(builder.Configuration["FoundationaLLM:GatekeeperApi:APIUrl"]);
-                        httpClient.DefaultRequestHeaders.Add("X-API-KEY", builder.Configuration["FoundationaLLM:GatekeeperApi:APIKey"]);
+                        httpClient.BaseAddress = new Uri(builder.Configuration["FoundationaLLM:AgentFactoryAPI:APIUrl"]);
+                        httpClient.DefaultRequestHeaders.Add("X-API-KEY", builder.Configuration["FoundationaLLM:AgentFactoryAPI:APIKey"]);
                     })
                 .AddTransientHttpErrorPolicy(policyBuilder =>
                     policyBuilder.WaitAndRetryAsync(
@@ -37,7 +37,7 @@ namespace FoundationaLLM.Gatekeeper.API
 
             builder.Services.AddOptions<RefinementServiceSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:Refinement"));
-            builder.Services.AddScoped<IRefinementService, RefinementService>();
+            builder.Services.AddSingleton<IRefinementService, RefinementService>();
 
             builder.Services
                 .AddApiVersioning(options =>
