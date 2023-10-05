@@ -1,5 +1,6 @@
 using Asp.Versioning;
 using FoundationaLLM.Common.OpenAPI;
+using FoundationaLLM.Common.Constants;
 using FoundationaLLM.Core.Interfaces;
 using FoundationaLLM.Core.Models.ConfigurationOptions;
 using FoundationaLLM.Core.Services;
@@ -35,7 +36,7 @@ namespace FoundationaLLM.Core.API
             builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 
             builder.Services
-                .AddHttpClient(FoundationaLLM.Core.Constants.HttpClients.LangChainApiClient,
+                .AddHttpClient(HttpClients.LangChainApiClient,
                     httpClient =>
                     {
                         httpClient.BaseAddress = new Uri(builder.Configuration["FoundationaLLM:LangChainOrchestration:APIUrl"]);
@@ -45,7 +46,7 @@ namespace FoundationaLLM.Core.API
                     policyBuilder.WaitAndRetryAsync(
                         3, retryNumber => TimeSpan.FromMilliseconds(600)));
             builder.Services
-                .AddHttpClient(FoundationaLLM.Core.Constants.HttpClients.SemanticKernelApiClient,
+                .AddHttpClient(HttpClients.SemanticKernelApiClient,
                     httpClient =>
                     {
                         httpClient.BaseAddress = new Uri(builder.Configuration["FoundationaLLM:SemanticKernelOrchestration:APIUrl"]);
@@ -55,7 +56,7 @@ namespace FoundationaLLM.Core.API
                     policyBuilder.WaitAndRetryAsync(
                         3, retryNumber => TimeSpan.FromMilliseconds(600)));
             builder.Services
-                .AddHttpClient(FoundationaLLM.Core.Constants.HttpClients.GatekeeperApiClient,
+                .AddHttpClient(HttpClients.GatekeeperApiClient,
                     httpClient =>
                     {
                         httpClient.BaseAddress = new Uri(builder.Configuration["FoundationaLLM:GatekeeperApi:APIUrl"]);
