@@ -8,6 +8,7 @@ using FoundationaLLM.AgentFactory.Models.ConfigurationOptions;
 using FoundationaLLM.Common.Constants;
 using FoundationaLLM.Common.Models.Chat;
 using FoundationaLLM.Common.Models.Orchestration;
+using FoundationaLLM.Common.Models.Orchestration.SemanticKernel;
 
 namespace FoundationaLLM.AgentFactory.Core.Services;
 
@@ -91,18 +92,24 @@ public class AgentFactoryService : IAgentFactoryService
     /// <summary>
     /// Retrieve a summarization for the passed in prompt from the orchestration service.
     /// </summary>
-    public async Task<string> GetSummary(string content)
+    public async Task<SummarizeResponseBase> GetSummary(SummarizeRequestBase content)
     {
         try
         {
-            var summary = await GetLLMOrchestrationService().Summarize(content);
+            var summary = await GetLLMOrchestrationService().Summarize(content.Prompt);
 
-            return summary;
+            return new SummarizeResponseBase
+            {
+                Info = summary
+            };
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, $"Error retrieving summarization for {content}.");
-            return "[No Summary]";
+            return new SummarizeResponseBase
+            {
+                Info = "[No Summary]"
+            };
         }
     }
 

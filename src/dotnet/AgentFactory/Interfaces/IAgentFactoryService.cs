@@ -1,4 +1,5 @@
 ﻿using FoundationaLLM.Common.Models.Orchestration;
+using FoundationaLLM.Common.Models.Orchestration.SemanticKernel;
 
 namespace FoundationaLLM.AgentFactory.Core.Interfaces;
 
@@ -15,5 +16,5 @@ public interface IAgentFactoryService
     /// <summary>
     /// Retrieve a summarization for the passed in prompt from the orchestration service.
     /// </summary>
-    Task<string> GetSummary(string content);
+    Task<SummarizeResponseBase> GetSummary(SummarizeRequestBase content);
 }

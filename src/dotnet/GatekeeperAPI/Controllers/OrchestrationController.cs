@@ -1,5 +1,6 @@
 ﻿using Asp.Versioning;
 using FoundationaLLM.Common.Models.Orchestration;
+using FoundationaLLM.Common.Models.Orchestration.SemanticKernel;
 using FoundationaLLM.Gatekeeper.Core.Interfaces;
 using FoundationaLLM.Gatekeeper.Core.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -29,7 +30,7 @@ namespace FoundationaLLM.Gatekeeper.API.Controllers
         }
 
         [HttpPost("summarize")]
-        public async Task<string> GetSummary([FromBody] string content)
+        public async Task<SummarizeResponseBase> GetSummary([FromBody] SummarizeRequestBase content)
         {
             return await _agentFactoryApiService.GetSummary(content);
         }

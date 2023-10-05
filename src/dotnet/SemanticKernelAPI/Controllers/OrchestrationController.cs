@@ -30,11 +30,11 @@ namespace FoundationaLLM.SemanticKernel.API.Controllers
         }
 
         [HttpPost("summarize")]
-        public async Task<SemanticKernelSummarizeResponse> Summarize([FromBody] SemanticKernelSummarizeRequest request)
+        public async Task<SummarizeResponseBase> Summarize([FromBody] SemanticKernelSummarizeRequest request)
         {
             var info = await _semanticKernelService.Summarize(request.Prompt);
 
-            return new SemanticKernelSummarizeResponse() { Info = info };
+            return new SummarizeResponseBase { Info = info };
         }
 
         [HttpPost("memory/add")]

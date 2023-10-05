@@ -57,7 +57,7 @@ namespace FoundationaLLM.Gatekeeper.Core.Services
             };
         }
 
-        public async Task<string> GetSummary(string content)
+        public async Task<SummarizeResponseBase> GetSummary(SummarizeRequestBase content)
         {
             // TODO: Call RefinementService to refine userPrompt
             // await _refinementService.RefineUserPrompt(content);
@@ -66,7 +66,7 @@ namespace FoundationaLLM.Gatekeeper.Core.Services
 
             var responseMessage = await client.PostAsync("orchestration/summarize",
                 new StringContent(
-                    JsonConvert.SerializeObject(new SummarizeRequestBase { Prompt = content }, _jsonSerializerSettings),
+                    JsonConvert.SerializeObject(content, _jsonSerializerSettings),
                     Encoding.UTF8, "application/json"));
 
             if (responseMessage.IsSuccessStatusCode)
@@ -74,10 +74,13 @@ namespace FoundationaLLM.Gatekeeper.Core.Services
                 var responseContent = await responseMessage.Content.ReadAsStringAsync();
                 var summarizeResponse = JsonConvert.DeserializeObject<SummarizeResponseBase>(responseContent);
 
-                return summarizeResponse?.Info;
+                return summarizeResponse;
             }
-            else
-                return "A problem on my side prevented me from responding.";
+            
+            return new SummarizeResponseBase
+            {
+                Info = "[No Summary]"
+            };
         }
 
         public async Task<bool> SetLLMOrchestrationPreference(string orchestrationService)
