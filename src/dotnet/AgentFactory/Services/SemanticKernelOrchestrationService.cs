@@ -34,7 +34,7 @@ namespace FoundationaLLM.AgentFactory.Services
 
         public bool IsInitialized => GetServiceStatus();
 
-        public async Task<CompletionResponseBase> GetResponse(string userPrompt, List<MessageHistory> messageHistory)
+        public async Task<CompletionResponseBase> GetResponse(string userPrompt, List<MessageHistoryItem> messageHistory)
         {
             var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.SemanticKernelAPIClient);
 

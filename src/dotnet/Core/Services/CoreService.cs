@@ -100,7 +100,7 @@ public class CoreService : ICoreService
             // Retrieve conversation, including latest prompt.
             var messages = await _cosmosDbService.GetSessionMessagesAsync(sessionId);
             var messageHistoryList = messages
-                .Select(message => new MessageHistory(message.Sender, message.Text))
+                .Select(message => new MessageHistoryItem(message.Sender, message.Text))
                 .ToList();
 
             var completionRequest = new CompletionRequestBase
