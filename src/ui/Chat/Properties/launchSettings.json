@@ -7,7 +7,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "dotnetRunMessages": true,
-      "applicationUrl": "http://localhost:8100",
+      "applicationUrl": "https://localhost:7258;http://localhost:8100",
       "hotReloadProfile": "blazorwasm"
     }
   }
