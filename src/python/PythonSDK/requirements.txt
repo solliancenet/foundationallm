@@ -11,3 +11,4 @@ sqlalchemy==2.0.21
 fastapi==0.103.2
 tenacity
 typing
+azure-storage-blob==12.18.2
