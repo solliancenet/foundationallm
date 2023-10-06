@@ -16,16 +16,15 @@ namespace FoundationaLLM.Common.Services
     public class KeyVaultConfiguration : IConfiguration
     {
         private readonly SecretClient _secretClient;
-        private readonly ILogger<KeyVaultConfiguration> _logger;
 
         /// <summary>
         /// Creates a new instance of the <see cref="KeyVaultConfiguration"/> class.
         /// </summary>
         /// <param name="keyVaultUri">The URI of the deployed Key Vault service.</param>
-        public KeyVaultConfiguration(string keyVaultUri,
-            ILogger<KeyVaultConfiguration> logger)
+        public KeyVaultConfiguration(string keyVaultUri)
         {
-            _logger = logger;
+            if (string.IsNullOrEmpty(keyVaultUri))
+                throw new ArgumentNullException(nameof(keyVaultUri));
             _secretClient = new SecretClient(
                 new Uri(keyVaultUri),
                 new DefaultAzureCredential());
@@ -47,10 +46,7 @@ namespace FoundationaLLM.Common.Services
             }
             catch (Exception ex)
             {
-                var description = $"Error retrieving secret: {key}";
-                _logger.LogError(ex, description);
-                // Handle exceptions accordingly
-                throw new InvalidOperationException(description, ex);
+                throw new InvalidOperationException($"Error retrieving secret: {key}", ex);
             }
         }
     }
