@@ -6,6 +6,8 @@ import fnmatch
 
 
 class BlobStorageManager(StorageManagerBase):
+    """ The BlobStorageManager class is responsible for managing files in Azure Blob Storage."""
+
     blob_connection_string: str = None
     container_name: str = None
     root_path: str = None

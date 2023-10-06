@@ -2,6 +2,7 @@ import abc
 
 
 class StorageManagerBase(metaclass=abc.ABCMeta):
+    """ The StorageManagerBase class is responsible for defining how to interact with a storage account."""
     @abc.abstractmethod
     def file_exists(self, path) -> bool:
         pass

@@ -3,6 +3,7 @@ from foundationallm.storage import BlobStorageManager
 from typing import List
 
 class PromptStorageManager(BlobStorageManager):
+     """The PromptStorageManager class is responsible for fetching available prompt values from Azure Blob Storage."""
      def __init__(self, container_name="system-prompt", root_path="RetailAssistant"):
          connection_string = Configuration().get_value("fllm-storage-connection-string")
          super().__init__(blob_connection_string=connection_string,
