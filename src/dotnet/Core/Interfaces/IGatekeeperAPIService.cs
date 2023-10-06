@@ -4,7 +4,7 @@ namespace FoundationaLLM.Core.Interfaces;
 
 public interface IGatekeeperAPIService
 {
-    Task<CompletionResponseBase> GetCompletion(CompletionRequestBase completionRequest);
+    Task<CompletionResponse> GetCompletion(CompletionRequest completionRequest);
     Task<string> GetSummary(string content);
     Task<bool> SetLLMOrchestrationPreference(string orchestrationService);
     Task AddMemory(object item, string itemName, Action<object, float[]> vectorizer);

@@ -1,16 +1,13 @@
 ﻿using Asp.Versioning;
 using FoundationaLLM.Common.Models.Orchestration;
-using FoundationaLLM.Common.Models.Orchestration.SemanticKernel;
 using FoundationaLLM.SemanticKernel.Core.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FoundationaLLM.SemanticKernel.API.Controllers
 {
-    //[Authorize]
     [ApiVersion(1.0)]
     [ApiController]
-    [Route("orchestration")]
+    [Route("[controller]")]
     public class OrchestrationController : ControllerBase
     {
         private readonly ISemanticKernelService _semanticKernelService;
@@ -22,19 +19,19 @@ namespace FoundationaLLM.SemanticKernel.API.Controllers
         }
 
         [HttpPost("completion")]
-        public async Task<SemanticKernelCompletionResponse> GetCompletion([FromBody] SemanticKernelCompletionRequest request)
+        public async Task<CompletionResponse> GetCompletion([FromBody] CompletionRequest request)
         {
-            var info = await _semanticKernelService.GetCompletion(request.Prompt, request.MessageHistory);
+            var completionResponse = await _semanticKernelService.GetCompletion(request.Prompt, request.MessageHistory);
 
-            return completionResponse;
+            return new CompletionResponse() { Completion = completionResponse };
         }
 
         [HttpPost("summary")]
-        public async Task<SemanticKernelSummaryResponse> GetSummary([FromBody] SemanticKernelSummaryRequest request)
+        public async Task<SummaryResponse> GetSummary([FromBody] SummaryRequest request)
         {
             var info = await _semanticKernelService.GetSummary(request.Prompt);
 
-            return new SemanticKernelSummaryResponse() { Info = info };
+            return new SummaryResponse() { Info = info };
         }
 
         [HttpPost("memory/add")]

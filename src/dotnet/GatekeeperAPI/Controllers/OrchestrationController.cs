@@ -1,15 +1,10 @@
 ﻿using Asp.Versioning;
 using FoundationaLLM.Common.Models.Orchestration;
-using FoundationaLLM.Common.Models.Orchestration.SemanticKernel;
 using FoundationaLLM.Gatekeeper.Core.Interfaces;
-using FoundationaLLM.Gatekeeper.Core.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace FoundationaLLM.Gatekeeper.API.Controllers
 {
-    //[Authorize]
     [ApiVersion(1.0)]
     [ApiController]
     [Route("[controller]")]
@@ -24,13 +19,13 @@ namespace FoundationaLLM.Gatekeeper.API.Controllers
         }
 
         [HttpPost("completion")]
-        public async Task<CompletionResponseBase> GetCompletion([FromBody] CompletionRequestBase completionRequest)
+        public async Task<CompletionResponse> GetCompletion([FromBody] CompletionRequest completionRequest)
         {
             return await _agentFactoryApiService.GetCompletion(completionRequest);
         }
 
         [HttpPost("summarize")]
-        public async Task<SummarizeResponseBase> GetSummary([FromBody] SummarizeRequestBase content)
+        public async Task<SummaryResponse> GetSummary([FromBody] SummaryRequest content)
         {
             return await _agentFactoryApiService.GetSummary(content);
         }

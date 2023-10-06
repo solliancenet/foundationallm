@@ -165,8 +165,10 @@ public class SemanticKernelService : ISemanticKernelService
         var reply = await completionResults[0].GetChatMessageAsync();
         var rawResult = (completionResults[0] as ITextResult).ModelResult.GetOpenAIChatResult();
 
-        return new CompletionResponseBase(reply.Content, chatHistory[0].Content, rawResult.Usage.PromptTokens,
+        var completion = new CompletionResponse(reply.Content, chatHistory[0].Content, rawResult.Usage.PromptTokens,
             rawResult.Usage.CompletionTokens, userPromptEmbedding);
+
+        return completion.Completion;
     }
 
     public async Task<string> GetSummary(string userPrompt)

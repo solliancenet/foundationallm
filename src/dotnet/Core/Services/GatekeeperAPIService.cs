@@ -21,7 +21,7 @@ namespace FoundationaLLM.Core.Services
             _jsonSerializerSettings = CommonJsonSerializerSettings.GetJsonSerializerSettings();
         }
 
-        public async Task<CompletionResponseBase> GetCompletion(CompletionRequestBase completionRequest)
+        public async Task<CompletionResponse> GetCompletion(CompletionRequest completionRequest)
         {
             // TODO: Call RefinementService to refine userPrompt
             // await _refinementService.RefineUserPrompt(completionRequest);
@@ -36,12 +36,12 @@ namespace FoundationaLLM.Core.Services
             if (responseMessage.IsSuccessStatusCode)
             {
                 var responseContent = await responseMessage.Content.ReadAsStringAsync();
-                var completionResponse = JsonConvert.DeserializeObject<CompletionResponseBase>(responseContent);
+                var completionResponse = JsonConvert.DeserializeObject<CompletionResponse>(responseContent);
 
                 return completionResponse;
             }
 
-            return new CompletionResponseBase
+            return new CompletionResponse
             {
                 Completion = "A problem on my side prevented me from responding.",
                 UserPrompt = completionRequest.Prompt,
@@ -60,13 +60,13 @@ namespace FoundationaLLM.Core.Services
 
             var responseMessage = await client.PostAsync("orchestration/summarize",
                 new StringContent(
-                    JsonConvert.SerializeObject(new SummarizeRequestBase { Prompt = content }, _jsonSerializerSettings),
+                    JsonConvert.SerializeObject(new SummaryRequest { Prompt = content }, _jsonSerializerSettings),
                     Encoding.UTF8, "application/json"));
 
             if (responseMessage.IsSuccessStatusCode)
             {
                 var responseContent = await responseMessage.Content.ReadAsStringAsync();
-                var summarizeResponse = JsonConvert.DeserializeObject<SummarizeResponseBase>(responseContent);
+                var summarizeResponse = JsonConvert.DeserializeObject<SummaryResponse>(responseContent);
 
                 return summarizeResponse?.Info;
             }

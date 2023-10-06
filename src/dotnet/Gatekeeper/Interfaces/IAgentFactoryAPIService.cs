@@ -4,7 +4,7 @@ namespace FoundationaLLM.Gatekeeper.Core.Interfaces;
 
 public interface IAgentFactoryAPIService
 {
-    Task<CompletionResponseBase> GetCompletion(CompletionRequestBase completionRequest);
-    Task<SummarizeResponseBase> GetSummary(SummarizeRequestBase content);
+    Task<CompletionResponse> GetCompletion(CompletionRequest completionRequest);
+    Task<SummaryResponse> GetSummary(SummaryRequest content);
     Task<bool> SetLLMOrchestrationPreference(string orchestrationService);
 }
