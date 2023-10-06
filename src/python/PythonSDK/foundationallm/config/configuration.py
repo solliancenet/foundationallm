@@ -1,9 +1,9 @@
 import os
 from azure.keyvault.secrets import SecretClient
-from azure.identity import DefaultAzureCredential
 from tenacity import (retry, wait_random_exponential,
                       stop_after_attempt, RetryError)
 import logging
+from foundationallm.auth.credential import Credential
 
 
 class Configuration():
@@ -15,7 +15,7 @@ class Configuration():
 
     def get_value(self, name: str, default: str = None) -> str:
         """
-        Retrieves the value from a variable, and if not found attempts 
+        Retrieves the value from a variable, and if not found attempts
         to get the default config value.
 
         Parameters
@@ -84,7 +84,7 @@ class Configuration():
         vault_url = f"https://{self.keyvault_name}.vault.azure.net"
 
         if self.__secret_client is None:
-            credential = DefaultAzureCredential()
+            credential = Credential().get_credential()
             self.__secret_client = SecretClient(
                                         vault_url=vault_url,
                                         credential=credential
