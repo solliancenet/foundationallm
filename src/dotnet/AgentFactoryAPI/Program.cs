@@ -27,9 +27,13 @@ namespace FoundationaLLM.AgentFactory.API
             builder.Services.AddOptions<ChatServiceSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:Chat"));
 
+            builder.Services.AddOptions<AgentHubSettings>()
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:AgentHub"));
+
             builder.Services.AddSingleton<ISemanticKernelOrchestrationService, SemanticKernelOrchestrationService>();
             builder.Services.AddSingleton<ILangChainOrchestrationService, LangChainOrchestrationService>();
             builder.Services.AddSingleton<IAgentFactoryService, AgentFactoryService>();
+            builder.Services.AddSingleton<IAgentHubService, AgentHubService>();
 
             builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 
@@ -37,6 +41,16 @@ namespace FoundationaLLM.AgentFactory.API
             builder.Services.AddApplicationInsightsTelemetry();
             builder.Services.AddControllers();
 
+            builder.Services
+                .AddHttpClient(HttpClients.AgentHubAPIClient,
+                    httpClient =>
+                    {
+                        httpClient.BaseAddress = new Uri(builder.Configuration["FoundationaLLM:AgentHub:APIUrl"]);
+                        httpClient.DefaultRequestHeaders.Add("X-API-KEY", builder.Configuration["FoundationaLLM:AgentHub:APIKey"]);
+                    })
+                .AddTransientHttpErrorPolicy(policyBuilder =>
+                    policyBuilder.WaitAndRetryAsync(
+                        3, retryNumber => TimeSpan.FromMilliseconds(600)));
             builder.Services
                 .AddHttpClient(HttpClients.LangChainAPIClient,
                     httpClient =>

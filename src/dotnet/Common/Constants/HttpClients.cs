@@ -11,4 +11,5 @@ public static class HttpClients
     public const string SemanticKernelAPIClient = "SemanticKernelAPIClient";
     public const string GatekeeperAPIClient = "GatekeeperAPIClient";
     public const string AgentFactoryAPIClient = "AgentFactoryAPIClient";
+    public const string AgentHubAPIClient = "AgentHubAPIClient";
 }
