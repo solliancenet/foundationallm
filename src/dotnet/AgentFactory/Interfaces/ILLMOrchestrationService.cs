@@ -7,8 +7,8 @@ namespace FoundationaLLM.AgentFactory.Interfaces
     {
         bool IsInitialized { get; }
 
-        Task<CompletionResponseBase> GetResponse(string userPrompt, List<MessageHistoryItem> messageHistory);
+        Task<CompletionResponse> GetResponse(string userPrompt, List<MessageHistoryItem> messageHistory);
 
-        Task<string> Summarize(string content);
+        Task<string> GetSummary(string content);
     }
 }

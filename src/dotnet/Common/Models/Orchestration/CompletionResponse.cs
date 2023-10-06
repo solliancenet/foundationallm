@@ -1,6 +1,6 @@
 ﻿namespace FoundationaLLM.Common.Models.Orchestration;
 
-public class CompletionResponseBase
+public class CompletionResponse
 {
     public string Completion { get; set; }
     public string UserPrompt { get; set; }
@@ -8,7 +8,7 @@ public class CompletionResponseBase
     public int ResponseTokens { get; set; }
     public float[]? UserPromptEmbedding { get; set; }
 
-    public CompletionResponseBase(string completion, string userPrompt, int userPromptTokens, int responseTokens,
+    public CompletionResponse(string completion, string userPrompt, int userPromptTokens, int responseTokens,
         float[]? userPromptEmbedding)
     {
         Completion = completion;
@@ -18,7 +18,7 @@ public class CompletionResponseBase
         UserPromptEmbedding = userPromptEmbedding;
     }
 
-    public CompletionResponseBase()
+    public CompletionResponse()
     {
     }
 }

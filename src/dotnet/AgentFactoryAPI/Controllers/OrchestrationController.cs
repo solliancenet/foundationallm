@@ -1,7 +1,6 @@
 ﻿using Asp.Versioning;
 using FoundationaLLM.AgentFactory.Core.Interfaces;
 using FoundationaLLM.Common.Models.Orchestration;
-using FoundationaLLM.Common.Models.Orchestration.SemanticKernel;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FoundationaLLM.AgentFactory.API.Controllers
@@ -23,13 +22,13 @@ namespace FoundationaLLM.AgentFactory.API.Controllers
         }
 
         [HttpPost("completion")]
-        public async Task<CompletionResponseBase> GetCompletion([FromBody] CompletionRequestBase completionRequest)
+        public async Task<CompletionResponse> GetCompletion([FromBody] CompletionRequest completionRequest)
         {
             return await _agentFactoryService.GetCompletion(completionRequest);
         }
 
         [HttpPost("summarize")]
-        public async Task<SummarizeResponseBase> GetSummary([FromBody] SummarizeRequestBase content)
+        public async Task<SummaryResponse> GetSummary([FromBody] SummaryRequest content)
         {
             return await _agentFactoryService.GetSummary(content);
         }

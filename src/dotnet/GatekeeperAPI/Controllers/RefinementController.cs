@@ -1,14 +1,12 @@
 ﻿using Asp.Versioning;
 using FoundationaLLM.Gatekeeper.Core.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FoundationaLLM.SemanticKernel.API.Controllers
 {
-    //[Authorize]
     [ApiVersion(1.0)]
     [ApiController]
-    [Route("api/refinement")]
+    [Route("[controller]")]
     public class RefinementController : ControllerBase
     {
         private readonly IRefinementService _gatekeeperService;

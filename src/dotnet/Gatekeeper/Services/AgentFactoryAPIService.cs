@@ -1,15 +1,8 @@
-﻿using FoundationaLLM.Common.Models.Chat;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FoundationaLLM.Common;
-using FoundationaLLM.Gatekeeper.Core.Interfaces;
-using FoundationaLLM.Common.Models.Orchestration.SemanticKernel;
-using Newtonsoft.Json;
+﻿using FoundationaLLM.Common.Models.Orchestration;
 using FoundationaLLM.Common.Settings;
-using FoundationaLLM.Common.Models.Orchestration;
+using FoundationaLLM.Gatekeeper.Core.Interfaces;
+using Newtonsoft.Json;
+using System.Text;
 
 namespace FoundationaLLM.Gatekeeper.Core.Services
 {
@@ -27,7 +20,7 @@ namespace FoundationaLLM.Gatekeeper.Core.Services
             _jsonSerializerSettings = CommonJsonSerializerSettings.GetJsonSerializerSettings();
         }
 
-        public async Task<CompletionResponseBase> GetCompletion(CompletionRequestBase completionRequest)
+        public async Task<CompletionResponse> GetCompletion(CompletionRequest completionRequest)
         {
             // TODO: Call RefinementService to refine userPrompt
             // await _refinementService.RefineUserPrompt(completionRequest);
@@ -42,12 +35,12 @@ namespace FoundationaLLM.Gatekeeper.Core.Services
             if (responseMessage.IsSuccessStatusCode)
             {
                 var responseContent = await responseMessage.Content.ReadAsStringAsync();
-                var completionResponse = JsonConvert.DeserializeObject<CompletionResponseBase>(responseContent);
+                var completionResponse = JsonConvert.DeserializeObject<CompletionResponse>(responseContent);
 
                 return completionResponse;
             }
 
-            return new CompletionResponseBase
+            return new CompletionResponse
             {
                 Completion = "A problem on my side prevented me from responding.",
                 UserPrompt = completionRequest.Prompt,
@@ -57,7 +50,7 @@ namespace FoundationaLLM.Gatekeeper.Core.Services
             };
         }
 
-        public async Task<SummarizeResponseBase> GetSummary(SummarizeRequestBase content)
+        public async Task<SummaryResponse> GetSummary(SummaryRequest content)
         {
             // TODO: Call RefinementService to refine userPrompt
             // await _refinementService.RefineUserPrompt(content);
@@ -72,12 +65,12 @@ namespace FoundationaLLM.Gatekeeper.Core.Services
             if (responseMessage.IsSuccessStatusCode)
             {
                 var responseContent = await responseMessage.Content.ReadAsStringAsync();
-                var summarizeResponse = JsonConvert.DeserializeObject<SummarizeResponseBase>(responseContent);
+                var summarizeResponse = JsonConvert.DeserializeObject<SummaryResponse>(responseContent);
 
                 return summarizeResponse;
             }
             
-            return new SummarizeResponseBase
+            return new SummaryResponse
             {
                 Info = "[No Summary]"
             };

@@ -1,14 +1,10 @@
 ﻿using FoundationaLLM.AgentFactory.Core.Interfaces;
 using FoundationaLLM.AgentFactory.Interfaces;
+using FoundationaLLM.AgentFactory.Models.ConfigurationOptions;
 using FoundationaLLM.AgentFactory.Models.Orchestration;
+using FoundationaLLM.Common.Models.Orchestration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Runtime;
-using FoundationaLLM.AgentFactory.Models.ConfigurationOptions;
-using FoundationaLLM.Common.Constants;
-using FoundationaLLM.Common.Models.Chat;
-using FoundationaLLM.Common.Models.Orchestration;
-using FoundationaLLM.Common.Models.Orchestration.SemanticKernel;
 
 namespace FoundationaLLM.AgentFactory.Core.Services;
 
@@ -65,7 +61,7 @@ public class AgentFactoryService : IAgentFactoryService
     /// <summary>
     /// Retrieve a completion from the configured orchestration service.
     /// </summary>
-    public async Task<CompletionResponseBase> GetCompletion(CompletionRequestBase completionRequest)
+    public async Task<CompletionResponse> GetCompletion(CompletionRequest completionRequest)
     {
         try
         {
@@ -78,7 +74,7 @@ public class AgentFactoryService : IAgentFactoryService
         catch (Exception ex)
         {
             _logger.LogError(ex, $"Error retrieving completion from the orchestration service for {completionRequest.Prompt}.");
-            return new CompletionResponseBase
+            return new CompletionResponse
             {
                 Completion = "A problem on my side prevented me from responding.",
                 UserPrompt = completionRequest.Prompt,
@@ -92,13 +88,13 @@ public class AgentFactoryService : IAgentFactoryService
     /// <summary>
     /// Retrieve a summarization for the passed in prompt from the orchestration service.
     /// </summary>
-    public async Task<SummarizeResponseBase> GetSummary(SummarizeRequestBase content)
+    public async Task<SummaryResponse> GetSummary(SummaryRequest content)
     {
         try
         {
-            var summary = await GetLLMOrchestrationService().Summarize(content.Prompt);
+            var summary = await GetLLMOrchestrationService().GetSummary(content.Prompt);
 
-            return new SummarizeResponseBase
+            return new SummaryResponse
             {
                 Info = summary
             };
@@ -106,7 +102,7 @@ public class AgentFactoryService : IAgentFactoryService
         catch (Exception ex)
         {
             _logger.LogError(ex, $"Error retrieving summarization for {content}.");
-            return new SummarizeResponseBase
+            return new SummaryResponse
             {
                 Info = "[No Summary]"
             };

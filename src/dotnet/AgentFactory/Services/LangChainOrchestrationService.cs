@@ -1,17 +1,12 @@
-﻿using FoundationaLLM.Common.Models.Chat;
-using FoundationaLLM.Common.Models.Orchestration.LangChain;
-using FoundationaLLM.AgentFactory.Interfaces;
+﻿using FoundationaLLM.AgentFactory.Interfaces;
 using FoundationaLLM.AgentFactory.Models.ConfigurationOptions;
+using FoundationaLLM.Common.Models.Chat;
 using FoundationaLLM.Common.Models.Orchestration;
+using FoundationaLLM.Common.Settings;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using System.Text;
-using System.Net.Http;
-using FoundationaLLM.Common.Settings;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace FoundationaLLM.AgentFactory.Services
 {
@@ -35,24 +30,24 @@ namespace FoundationaLLM.AgentFactory.Services
 
         public bool IsInitialized => GetServiceStatus();
 
-        public async Task<CompletionResponseBase> GetResponse(string userPrompt, List<MessageHistoryItem> messageHistory)
+        public async Task<CompletionResponse> GetResponse(string userPrompt, List<MessageHistoryItem> messageHistory)
         {
             var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.LangChainAPIClient);
 
             var responseMessage = await client.PostAsync("/orchestration/completion",
                 new StringContent(
-                    JsonConvert.SerializeObject(new LangChainCompletionRequest { Prompt = userPrompt }, _jsonSerializerSettings),
+                    JsonConvert.SerializeObject(new CompletionRequest { Prompt = userPrompt }, _jsonSerializerSettings),
                     Encoding.UTF8, "application/json"));
 
             if (responseMessage.IsSuccessStatusCode)
             {
                 var responseContent = await responseMessage.Content.ReadAsStringAsync();
-                var completionResponse = JsonConvert.DeserializeObject<CompletionResponseBase>(responseContent);
+                var completionResponse = JsonConvert.DeserializeObject<CompletionResponse>(responseContent);
 
                 return completionResponse;
             }
 
-            return new CompletionResponseBase
+            return new CompletionResponse
             {
                 Completion = "A problem on my side prevented me from responding.",
                 UserPrompt = userPrompt,

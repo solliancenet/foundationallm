@@ -103,7 +103,7 @@ public class CoreService : ICoreService
                 .Select(message => new MessageHistoryItem(message.Sender, message.Text))
                 .ToList();
 
-            var completionRequest = new CompletionRequestBase
+            var completionRequest = new CompletionRequest
             {
                 Prompt = userPrompt,
                 MessageHistory = messageHistoryList

@@ -1,6 +1,6 @@
 ﻿namespace FoundationaLLM.Common.Models.Orchestration;
 
-public class SummaryResponseBase
+public class SummaryResponse
 {
     public string Info { get; init; }
 }

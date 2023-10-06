@@ -4,10 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FoundationaLLM.AgentFactory.API.Controllers
 {
-    //[Authorize]
     [ApiVersion(1.0)]
     [ApiController]
-    [Route("api/agentfactory")]
+    [Route("[controller]")]
     public class AgentFactoryController : ControllerBase
     {
         private readonly IAgentFactoryService _agentFactoryService;

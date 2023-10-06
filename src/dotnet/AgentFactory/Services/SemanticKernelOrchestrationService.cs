@@ -1,13 +1,11 @@
 ﻿using FoundationaLLM.AgentFactory.Interfaces;
-using FoundationaLLM.Common.Models.Chat;
 using FoundationaLLM.AgentFactory.Models.ConfigurationOptions;
-using FoundationaLLM.Common.Models.Orchestration.SemanticKernel;
-using FoundationaLLM.Common.Settings;
+using FoundationaLLM.Common.Models.Chat;
 using FoundationaLLM.Common.Models.Orchestration;
+using FoundationaLLM.Common.Settings;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using System.Text;
 
 namespace FoundationaLLM.AgentFactory.Services
@@ -34,24 +32,24 @@ namespace FoundationaLLM.AgentFactory.Services
 
         public bool IsInitialized => GetServiceStatus();
 
-        public async Task<CompletionResponseBase> GetResponse(string userPrompt, List<MessageHistoryItem> messageHistory)
+        public async Task<CompletionResponse> GetResponse(string userPrompt, List<MessageHistoryItem> messageHistory)
         {
             var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.SemanticKernelAPIClient);
 
             var responseMessage = await client.PostAsync("/orchestration/completion",
                 new StringContent(
-                    JsonConvert.SerializeObject(new SemanticKernelCompletionRequest { Prompt = userPrompt, MessageHistory = messageHistory }, _jsonSerializerSettings),
+                    JsonConvert.SerializeObject(new CompletionRequest { Prompt = userPrompt, MessageHistory = messageHistory }, _jsonSerializerSettings),
                     Encoding.UTF8, "application/json"));
 
             if (responseMessage.IsSuccessStatusCode)
             {
                 var responseContent = await responseMessage.Content.ReadAsStringAsync();
-                var completionResponse = JsonConvert.DeserializeObject<CompletionResponseBase>(responseContent);
+                var completionResponse = JsonConvert.DeserializeObject<CompletionResponse>(responseContent);
 
                 return completionResponse;
             }
             
-            return new CompletionResponseBase
+            return new CompletionResponse
             {
                 Completion = "A problem on my side prevented me from responding.",
                 UserPrompt = userPrompt,
@@ -67,13 +65,13 @@ namespace FoundationaLLM.AgentFactory.Services
 
             var responseMessage = await client.PostAsync("/orchestration/summary",
                 new StringContent(
-                    JsonConvert.SerializeObject(new SemanticKernelSummaryRequest { Prompt = content }, _jsonSerializerSettings),
+                    JsonConvert.SerializeObject(new SummaryRequest { Prompt = content }, _jsonSerializerSettings),
                     Encoding.UTF8, "application/json"));
 
             if (responseMessage.IsSuccessStatusCode)
             {
                 var responseContent = await responseMessage.Content.ReadAsStringAsync();
-                var summaryResponse = JsonConvert.DeserializeObject<SemanticKernelSummaryResponse>(responseContent);
+                var summaryResponse = JsonConvert.DeserializeObject<SummaryResponse>(responseContent);
 
                 return summaryResponse?.Info;
             }
