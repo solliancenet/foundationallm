@@ -5,8 +5,7 @@
     <ProjectGuid>865a944e-76c4-4da9-b367-6d1cab66abcc</ProjectGuid>
     <ProjectHome>.</ProjectHome>
     <StartupFile>main.py</StartupFile>
-    <SearchPath>
-    </SearchPath>
+    <SearchPath>..\PythonSDK</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>AgentHubAPI</Name>
@@ -39,6 +38,13 @@
       <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
       <Architecture>X64</Architecture>
     </Interpreter>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PythonSDK\PythonSDK.pyproj">
+      <Name>PythonSDK</Name>
+      <Project>{2469cc23-7f26-4b84-8878-98d90604eee8}</Project>
+      <Private>True</Private>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

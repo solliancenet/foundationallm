@@ -22,11 +22,60 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="foundationallm\datasources\sql_server\sql_authentication_metadata.py" />
+    <Compile Include="foundationallm\datasources\sql_server\sql_authentication_type.py" />
+    <Compile Include="foundationallm\datasources\sql_server\sql_server_data_source_metadata.py" />
+    <Compile Include="foundationallm\datasources\sql_server\__init__.py" />
+    <Compile Include="foundationallm\hubs\agent\agent_hub.py" />
+    <Compile Include="foundationallm\hubs\agent\agent_metadata.py" />
+    <Compile Include="foundationallm\hubs\agent\agent_repository.py" />
+    <Compile Include="foundationallm\hubs\agent\agent_resolver.py" />
+    <Compile Include="foundationallm\hubs\agent\__init__.py" />
+    <Compile Include="foundationallm\hubs\hub_base.py" />
+    <Compile Include="foundationallm\hubs\data_source\data_source_hub.py" />
+    <Compile Include="foundationallm\hubs\data_source\data_source_metadata.py" />
+    <Compile Include="foundationallm\hubs\data_source\data_source_repository.py" />
+    <Compile Include="foundationallm\hubs\data_source\data_source_resolver.py" />
+    <Compile Include="foundationallm\hubs\data_source\underlying_implementation.py" />
+    <Compile Include="foundationallm\hubs\data_source\__init__.py" />
+    <Compile Include="foundationallm\hubs\metadata.py" />
+    <Compile Include="foundationallm\hubs\prompt\prompt_hub.py" />
+    <Compile Include="foundationallm\hubs\prompt\prompt_metadata.py" />
+    <Compile Include="foundationallm\hubs\prompt\prompt_repository.py" />
+    <Compile Include="foundationallm\hubs\prompt\prompt_resolver.py" />
+    <Compile Include="foundationallm\hubs\prompt\__init__.py" />
+    <Compile Include="foundationallm\hubs\repository.py" />
+    <Compile Include="foundationallm\hubs\resolver.py" />
+    <Compile Include="foundationallm\hubs\__init__.py" />
+    <Compile Include="foundationallm\models\message.py" />
+    <Compile Include="foundationallm\models\session.py" />
+    <Compile Include="foundationallm\models\__init__.py" />
+    <Compile Include="foundationallm\auth\api_key_validator.py" />
+    <Compile Include="foundationallm\auth\__init__.py" />
+    <Compile Include="foundationallm\config\configuration.py" />
+    <Compile Include="foundationallm\config\__init__.py" />
     <Compile Include="main.py" />
+    <Compile Include="foundationallm\__init__.py" />
+    <Compile Include="foundationallm\_version.py" />
   </ItemGroup>
   <ItemGroup>
     <Content Include=".gitignore" />
     <Content Include="requirements.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="foundationallm\" />
+    <Folder Include="foundationallm\datasources\sql_server\" />
+    <Folder Include="foundationallm\hubs\agent\" />
+    <Folder Include="foundationallm\hubs\data_source\" />
+    <Folder Include="foundationallm\hubs\prompt\" />
+    <Folder Include="foundationallm\models\" />
+    <Folder Include="foundationallm\hubs\" />
+    <Folder Include="foundationallm\datasources\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="foundationallm\" />
+    <Folder Include="foundationallm\auth\" />
+    <Folder Include="foundationallm\config\" />
   </ItemGroup>
   <ItemGroup>
     <Interpreter Include="env\">
