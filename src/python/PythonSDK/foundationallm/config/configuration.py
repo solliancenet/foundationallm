@@ -10,13 +10,13 @@ class Configuration():
     keyvault_name: str = None
     __secret_client: SecretClient = None
 
-    def __init__(self, keyvault_name: str):
+    def __init__(self, keyvault_name: str = None):
         self.keyvault_name = keyvault_name
 
     def get_value(self, name: str, default: str = None) -> str:
         """
-        Retrieves the value from a variable, and if not found attempts to get the default
-        config value.
+        Retrieves the value from a variable, and if not found attempts 
+        to get the default config value.
 
         Parameters
         ----------
@@ -29,6 +29,8 @@ class Configuration():
         The value of the environment variable if it exists, or the Key Vault
         value for the variable.
         """
+        if self.keyvault_name is None:
+            self.keyvault_name = os.environ.get('FLLM_KEYVAULT_NAME')
 
         try:
             value = self.__get_value(name)
@@ -63,8 +65,10 @@ class Configuration():
         else:
             logging.warning(message)
 
-    # Retry with jitter on transient errors. Initially up to 2^x * 1 seconds between each retry until
-    # the range reaches 30 seconds, then randomly up to 60 seconds afterwards. Ultimately, stop after 5 attempts.
+    # Retry with jitter on transient errors. Initially up to 2^x * 1 seconds
+    # between each retry until the range reaches 30 seconds,
+    # then randomly up to 60 seconds afterwards.
+    # Ultimately, stop after 5 attempts.
     @retry(
             wait=wait_random_exponential(multiplier=1, max=5),
             stop=stop_after_attempt(5),

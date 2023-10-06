@@ -147,6 +147,13 @@
 }
 ```
 
+## PythonSDK
+
+Environment variables:
+
+| Name | Description |
+| --- | --- |
+| FLLM_KEYVAULT_NAME | Name of the Key Vault service used to retrieve secrets in the application. |
 
 ## Agent Hub API
 
