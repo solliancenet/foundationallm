@@ -8,8 +8,6 @@ namespace FoundationaLLM.AgentFactory.Core.Models.Messages
 {
     public record AgentHubMessage
     {
-        public string? name { get; set; }
-        public string? body { get; set; }
         public string? user_prompt { get; set; }
         public string? user_context { get; set; }
 

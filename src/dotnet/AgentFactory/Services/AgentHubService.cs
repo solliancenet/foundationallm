@@ -71,20 +71,18 @@ public class AgentHubService : IAgentHubService
         return null;
     }
 
-    public async Task<List<AgentHubResponse>> ResolveRequest(string name, string body, string user_prompt, string user_context)
+    public async Task<List<AgentHubResponse>> ResolveRequest(string user_prompt, string user_context)
     {
         try
         {
             AgentHubMessage ahm = new AgentHubMessage();
-            ahm.name = name;
-            ahm.body = body;
             ahm.user_prompt = user_prompt;
             ahm.user_context = user_context;
 
             var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.AgentHubAPIClient);
 
             var responseMessage = await client.PostAsync("/resolve_request", new StringContent(
-                    JsonConvert.SerializeObject(ahm, _jsonSerializerSettings),
+                    JsonConvert.SerializeObject(ahm),
                     Encoding.UTF8, "application/json"));
 
             if (responseMessage.IsSuccessStatusCode)

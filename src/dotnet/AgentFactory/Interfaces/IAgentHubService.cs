@@ -9,5 +9,5 @@ public interface IAgentHubService
 
     Task<string> Status();
 
-    Task<List<AgentHubResponse>> ResolveRequest(string name, string body, string user_prompt, string user_context);
+    Task<List<AgentHubResponse>> ResolveRequest(string user_prompt, string user_context);
 }
