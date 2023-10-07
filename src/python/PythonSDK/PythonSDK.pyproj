@@ -22,6 +22,7 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="foundationallm\auth\credential.py" />
     <Compile Include="foundationallm\datasources\sql_server\sql_authentication_metadata.py" />
     <Compile Include="foundationallm\datasources\sql_server\sql_authentication_type.py" />
     <Compile Include="foundationallm\datasources\sql_server\sql_server_data_source_metadata.py" />
@@ -47,7 +48,16 @@
     <Compile Include="foundationallm\hubs\repository.py" />
     <Compile Include="foundationallm\hubs\resolver.py" />
     <Compile Include="foundationallm\hubs\__init__.py" />
+    <Compile Include="foundationallm\langchain\agents\csv_agent.py" />
+    <Compile Include="foundationallm\langchain\agents\summary_agent.py" />
+    <Compile Include="foundationallm\langchain\agents\__init__.py" />
+    <Compile Include="foundationallm\langchain\agent_factory.py" />
+    <Compile Include="foundationallm\langchain\datasources\__init__.py" />
+    <Compile Include="foundationallm\langchain\openai_models\azure_chat.py" />
+    <Compile Include="foundationallm\langchain\openai_models\__init__.py" />
+    <Compile Include="foundationallm\langchain\__init__.py" />
     <Compile Include="foundationallm\models\message.py" />
+    <Compile Include="foundationallm\models\prompt.py" />
     <Compile Include="foundationallm\models\session.py" />
     <Compile Include="foundationallm\models\__init__.py" />
     <Compile Include="foundationallm\auth\api_key_validator.py" />
@@ -68,9 +78,13 @@
     <Folder Include="foundationallm\hubs\agent\" />
     <Folder Include="foundationallm\hubs\data_source\" />
     <Folder Include="foundationallm\hubs\prompt\" />
+    <Folder Include="foundationallm\langchain\agents\" />
+    <Folder Include="foundationallm\langchain\datasources\" />
+    <Folder Include="foundationallm\langchain\openai_models\" />
     <Folder Include="foundationallm\models\" />
     <Folder Include="foundationallm\hubs\" />
     <Folder Include="foundationallm\datasources\" />
+    <Folder Include="foundationallm\langchain\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="foundationallm\" />

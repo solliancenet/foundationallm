@@ -1,4 +1,4 @@
 from pydantic import BaseModel
 
-class PromptModel(BaseModel):
+class Prompt(BaseModel):
     prompt: str

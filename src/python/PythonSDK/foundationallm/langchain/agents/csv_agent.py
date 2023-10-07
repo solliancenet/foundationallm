@@ -4,11 +4,15 @@ from langchain.agents import create_csv_agent
 from langchain.llms import OpenAI
 from langchain.chat_models import ChatOpenAI
 from langchain.agents.agent_types import AgentType
+from pydantic import BaseModel
 
-from .prompt_model import PromptModel
+from foundationallm.models import Prompt
 
-class CSVAgent:
-
+class CSVAgent(BaseModel):
+    """
+    Create a LangChain CSV agent for querying the contents of a comma-separated values file.
+    """
+    
     def __init__(self, source_csv_file_url):
 
         self.source_csv_file = source_csv_file_url
@@ -26,7 +30,7 @@ You should use the tools below to answer the question posed of you:"""
             prefix = self.prompt_prefix
         )
 
-    def run(self, prompt: PromptModel):
+    def run(self, prompt: Prompt):
 
         return {
             "info": self.agent.run(prompt.prompt)
