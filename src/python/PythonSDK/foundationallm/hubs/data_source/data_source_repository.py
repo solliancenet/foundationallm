@@ -4,6 +4,8 @@ from foundationallm.datasources.sql_server import SQLServerDataSourceMetadata
 from typing import List
 
 class DataSourceRepository(Repository):
+    """ The DataSourceRepository is responsible for retrieving data source metadata from storage."""
+    
     def get_metadata_values(self) -> List[DataSourceMetadata]:        
         mgr = DataSourceStorageManager()
         config_files = mgr.list_blobs()
