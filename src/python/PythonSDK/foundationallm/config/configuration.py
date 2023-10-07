@@ -10,7 +10,9 @@ class Configuration():
         self.keyvault_name = keyvault_name
 
         if self.keyvault_name is None:            
-            self.keyvault_name = os.environ.get('FLLM_KEYVAULT_NAME')        
+            self.keyvault_name = os.environ.get('FLLM_KEYVAULT_NAME')
+            if self.keyvault_name is None:
+                raise Exception('Unable to resolve Key Vault: the keyvault_name parameter was not passed in and the environment variable FLLM_KEYVAULT_NAME is not configured.')
         
         vault_url = f"https://{self.keyvault_name}.vault.azure.net"
         credential = Credential().get_credential()
