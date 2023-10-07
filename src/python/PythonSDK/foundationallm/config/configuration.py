@@ -3,7 +3,7 @@ from tkinter import N
 from azure.keyvault.secrets import SecretClient
 from tenacity import (retry, wait_random_exponential, stop_after_attempt, RetryError)
 import logging
-from foundationallm.auth.credential import Credential
+from foundationallm.auth import Credential
 
 class Configuration():    
     def __init__(self, keyvault_name: str = None):
