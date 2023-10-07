@@ -1,17 +1,14 @@
 import os
+from tkinter import N
 from azure.keyvault.secrets import SecretClient
-from tenacity import (retry, wait_random_exponential,
-                      stop_after_attempt, RetryError)
+from tenacity import (retry, wait_random_exponential, stop_after_attempt, RetryError)
 import logging
 from foundationallm.auth.credential import Credential
 
-
-class Configuration():
-    keyvault_name: str = None
-    __secret_client: SecretClient = None
-
+class Configuration():    
     def __init__(self, keyvault_name: str = None):
         self.keyvault_name = keyvault_name
+        self.secret_client = None  
 
     def get_value(self, name: str, default: str = None) -> str:
         """
@@ -29,28 +26,30 @@ class Configuration():
         The value of the environment variable if it exists, or the Key Vault
         value for the variable.
         """
-        if self.keyvault_name is None:
+        
+        if self.keyvault_name is None:            
             self.keyvault_name = os.environ.get('FLLM_KEYVAULT_NAME')
 
-        try:
-            value = self.__get_value(name)
-            return value
+        if self.secret_client is None:
+            vault_url = f"https://{self.keyvault_name}.vault.azure.net"
+            credential = Credential().get_credential()
+            self.secret_client = SecretClient(vault_url=vault_url, credential=credential)
 
-        except Exception as e:
-            print(e)
+        try:
+            value = self.__get_secret_with_retry(name=name)
+            return value
+        except Exception as e:            
             pass
 
         value = os.environ.get(name)
-
         if value is not None:
             return value
-
         # If name not found as an env variable
         else:
             if default:
                 return default
             else:
-                return self.default_config_value(name)
+                raise Exception(f'The environment variable {name} does not exist.')
 
     def __retry_before_sleep(retry_state):
         # Log the outcome of each retry attempt.
@@ -76,20 +75,6 @@ class Configuration():
         )
     def __get_secret_with_retry(self, name):
         try:
-            return self.__secret_client.get_secret(name)
+            return self.secret_client.get_secret(name).value
         except RetryError:
             pass
-
-    def __get_value(self, name: str) -> str:
-        vault_url = f"https://{self.keyvault_name}.vault.azure.net"
-
-        if self.__secret_client is None:
-            credential = Credential().get_credential()
-            self.__secret_client = SecretClient(
-                                        vault_url=vault_url,
-                                        credential=credential
-                                    )
-
-        val = self.__get_secret_with_retry(name=name)
-
-        return val.value
