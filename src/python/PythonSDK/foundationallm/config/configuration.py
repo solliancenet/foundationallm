@@ -8,12 +8,18 @@ from foundationallm.auth.credential import Credential
 class Configuration():    
     def __init__(self, keyvault_name: str = None):
         self.keyvault_name = keyvault_name
-        self.secret_client = None  
+
+        if self.keyvault_name is None:            
+            self.keyvault_name = os.environ.get('FLLM_KEYVAULT_NAME')        
+        
+        vault_url = f"https://{self.keyvault_name}.vault.azure.net"
+        credential = Credential().get_credential()
+        self.secret_client = SecretClient(vault_url=vault_url, credential=credential)
 
     def get_value(self, name: str, default: str = None) -> str:
         """
-        Retrieves the value from a variable, and if not found attempts
-        to get the default config value.
+        Checks if the environment variable exists, if not, retrieves the value from Key Vault.
+        If both are not found, returns the default value if provided, otherwise raises an exception.
 
         Parameters
         ----------
@@ -27,21 +33,16 @@ class Configuration():
         value for the variable.
         """
         
-        if self.keyvault_name is None:            
-            self.keyvault_name = os.environ.get('FLLM_KEYVAULT_NAME')
-
-        if self.secret_client is None:
-            vault_url = f"https://{self.keyvault_name}.vault.azure.net"
-            credential = Credential().get_credential()
-            self.secret_client = SecretClient(vault_url=vault_url, credential=credential)
-
+        value = os.environ.get(name)
+        if value is not None:
+            return value
+        
         try:
             value = self.__get_secret_with_retry(name=name)
             return value
         except Exception as e:            
             pass
-
-        value = os.environ.get(name)
+        
         if value is not None:
             return value
         # If name not found as an env variable
