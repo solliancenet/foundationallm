@@ -21,14 +21,14 @@ class SqlDbConfig:
         if self.dialect == 'mssql':
             return f'{self.dialect}+{self.driver}://{self.username}:{parse.quote_plus(self.password)}@{self.host}:{self.port}/{self.database}?driver={parse.quote_plus("ODBC Driver 18 for SQL Server")}'
     
-    def _get_db_driver(self):
+    def __get_db_driver(self):
         match self.dialect:
             case 'mssql':
                 return 'pyodbc'
             case 'postgresql':
                 return 'pyscopg2'
         
-    def _get_db_default_port(self):
+    def __get_db_default_port(self):
         match self.dialect:
             case 'mssql':
                 return 1433
