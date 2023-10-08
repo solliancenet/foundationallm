@@ -17,7 +17,7 @@ router = APIRouter(
 @router.post('/completion')
 async def get_completion(content: CompletionRequest) -> CompletionResponse:
     app_config=Configuration()
-    # TODO: This should be passed in.
+    # TODO: This should be passed in via the completion request as DataSource metadata.
     sql_db_config = SqlDbConfig(
         dialect='mssql',
         host=f'{os.environ.get("SQL_DB_SERVER_NAME")}.database.windows.net',
@@ -25,7 +25,7 @@ async def get_completion(content: CompletionRequest) -> CompletionResponse:
         username=os.environ.get("SQL_DB_USERNAME"),
         password=app_config.get_value('sql-db-password'),
         include_tables=['DailyPrecipReport', 'HailReport', 'Observer', 'ObserverStatus', 'ObserverType', 'Station'],
-        # TODO: This value should be pulled received from the PromptHubAPI
+        # TODO: This value should be passed in via the completion request as PromptHub metadata.
         prompt_prefix="""You are a helpful agent named Coco designed to interact with a SQL database, which contains hail and precipitation reports.
 
             Given an input question, first create a syntactically correct {dialect} query to run, then look at the results of the query and return the answer to the input question.
@@ -52,7 +52,7 @@ async def get_completion(content: CompletionRequest) -> CompletionResponse:
     )
      # TODO: This needs to be swapped out with SDK calls to an agent factory that will return the appropriate object based the metadata object passed in.
     return SqlDbAgent(content=content, llm=llm, app_config=app_config, sql_db_config=sql_db_config).run()
-    #agent = CSVAgent(source_csv_file_url)
+    #return CSVAgent(content=content, llm=llm, app_config=app_config).run()
 
 @router.post('/summary')
 async def get_summary(content: SummaryRequest) -> SummaryResponse:
