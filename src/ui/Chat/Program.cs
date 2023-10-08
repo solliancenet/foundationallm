@@ -1,7 +1,11 @@
 using FoundationaLLM.Chat.Helpers;
+using FoundationaLLM.Common.Helpers.Authentication;
+using FoundationaLLM.Common.Interfaces;
+using FoundationaLLM.Common.Models.ConfigurationOptions.Authentication;
 using FoundationaLLM.Common.Services;
 using FoundationaLLM.Core.Interfaces;
 using FoundationaLLM.Core.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
@@ -18,6 +22,8 @@ builder.Services.AddHttpClient(FoundationaLLM.Common.Constants.HttpClients.Defau
         policyBuilder.WaitAndRetryAsync(
             3, retryNumber => TimeSpan.FromMilliseconds(600)));
 
+builder.Services.Configure<EntraSettings>(builder.Configuration.GetSection("FoundationaLLM:Entra"));
+
 var keyVaultUri = builder.Configuration["FoundationaLLM:Configuration:KeyVaultUri"];
 builder.Services.AddSingleton<FoundationaLLM.Common.Interfaces.IConfiguration>(new KeyVaultConfiguration(keyVaultUri));
 
@@ -32,9 +38,10 @@ builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
         options.Instance = builder.Configuration["FoundationaLLM:Entra:Instance"];
         options.TenantId = builder.Configuration["FoundationaLLM:Entra:TenantId"];
         options.ClientId = builder.Configuration["FoundationaLLM:Entra:ClientId"];
-        //options.Scope.Add(builder.Configuration["FoundationaLLM:Entra:Scopes"]);
         options.CallbackPath = builder.Configuration["FoundationaLLM:Entra:CallbackPath"];
-    });
+    })
+    .EnableTokenAcquisitionToCallDownstreamApi(new string[] { builder.Configuration["FoundationaLLM:Entra:Scopes"] })
+    .AddInMemoryTokenCaches();
 builder.Services.AddControllersWithViews()
     .AddMicrosoftIdentityUI();
 builder.Services.AddAuthorization(options =>
@@ -66,6 +73,12 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapRazorPages(); // If Razor pages
+    endpoints.MapControllers();
+});
+
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 
@@ -81,6 +94,7 @@ static class ProgramExtensions
 
     public static void RegisterServices(this IServiceCollection services)
     {
-        services.AddSingleton<IChatManager, ChatManager>();
+        services.AddScoped<IChatManager, ChatManager>();
+        services.AddScoped<IAuthenticatedHttpClientFactory, EntraAuthenticatedHttpClientFactory>();
     }
 }
