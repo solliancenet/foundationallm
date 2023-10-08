@@ -2,7 +2,7 @@ import json
 from urllib import parse
 
 class SqlDbConfig:
-    def __init__(self, dialect: str, host: str, database: str, username: str, password: str, prompt: str, include_tables: list[str] = [], exclude_tables: list[str] = []): # TODO: Allow port to be passed in and get default if empty.
+    def __init__(self, dialect: str, host: str, database: str, username: str, password: str, prompt_prefix: str, include_tables: list[str] = [], exclude_tables: list[str] = []): # TODO: Allow port to be passed in and get default if empty.
         self.dialect = dialect
         self.driver= self._get_db_driver()
         self.host = host
@@ -12,7 +12,7 @@ class SqlDbConfig:
         self.password = password
         self.include_tables = include_tables or []
         self.exclude_tables = exclude_tables or []
-        self.prompt = prompt
+        self.prompt_prefix = prompt_prefix
 
     def __str__(self):
         return json.dumps(self.__dict__)
