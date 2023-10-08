@@ -3,6 +3,7 @@ from langchain.agents.agent_toolkits import SQLDatabaseToolkit
 from langchain.agents.agent_types import AgentType
 from langchain.callbacks import get_openai_callback
 from langchain.prompts import PromptTemplate
+
 from foundationallm.langchain.datasources.sql import SqlDbConfig, MsSqlServer
 from foundationallm.langchain.openai_models import AzureChatLLM
 from foundationallm.models.orchestration import CompletionRequest, CompletionResponse
