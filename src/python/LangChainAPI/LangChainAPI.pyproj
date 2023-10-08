@@ -22,10 +22,8 @@
     <TestFramework>none</TestFramework>
     <UnitTestPattern>test*.py</UnitTestPattern>
     <UnitTestRootDirectory>.</UnitTestRootDirectory>
-    <Environment>FLLM_KEYVAULT_NAME=solliance-aicopilot
-SQL_DB_SERVER_NAME=cocorahs-ai
-SQL_DB_DATABASE_NAME=cocorahsdb
-SQL_DB_USERNAME=coco-admin</Environment>
+    <Environment>
+    </Environment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
