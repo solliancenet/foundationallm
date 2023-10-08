@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Asp.Versioning;
 using FoundationaLLM.Common.OpenAPI;
 using FoundationaLLM.Common.Constants;
@@ -7,6 +8,15 @@ using FoundationaLLM.Core.Services;
 using Microsoft.Extensions.Options;
 using Polly;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using FoundationaLLM.Common.Services;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.Identity.Web;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using FoundationaLLM.Common.Helpers.Authentication;
+using FoundationaLLM.Common.Interfaces;
+using Microsoft.Identity.Client;
 
 namespace FoundationaLLM.Core.API
 {
@@ -36,6 +46,9 @@ namespace FoundationaLLM.Core.API
                     policyBuilder.WaitAndRetryAsync(
                         3, retryNumber => TimeSpan.FromMilliseconds(600)));
 
+            // Register the authentication services
+            RegisterAuthConfiguration(builder);
+
             builder.Services.AddApplicationInsightsTelemetry();
             builder.Services.AddControllers();
             builder.Services.AddProblemDetails();
@@ -55,9 +68,6 @@ namespace FoundationaLLM.Core.API
                     // note: the specified format code will format the version as "'v'major[.minor][-status]"
                     options.GroupNameFormat = "'v'VVV";
                 });
-
-            // Add services to the container.
-            builder.Services.AddAuthorization();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -97,11 +107,50 @@ namespace FoundationaLLM.Core.API
                     }
                 });
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllers();
 
             app.Run();
+        }
+
+        public static void RegisterAuthConfiguration(WebApplicationBuilder builder)
+        {
+            var keyVaultUri = builder.Configuration["FoundationaLLM:Configuration:KeyVaultUri"];
+            builder.Services.AddSingleton<Common.Interfaces.IConfiguration>(new KeyVaultConfiguration(keyVaultUri));
+            var serviceProvider = builder.Services.BuildServiceProvider();
+            var kvConfig = serviceProvider.GetRequiredService<Common.Interfaces.IConfiguration>();
+            var azureAdSecret = kvConfig.GetValue(builder.Configuration["FoundationaLLM:Entra:ClientSecretKeyName"]);
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddMicrosoftIdentityWebApi(jwtOptions =>
+                    {
+
+                    },
+                    identityOptions =>
+                    {
+                        identityOptions.ClientSecret = azureAdSecret;
+                        identityOptions.Instance = builder.Configuration["FoundationaLLM:Entra:Instance"];
+                        identityOptions.TenantId = builder.Configuration["FoundationaLLM:Entra:TenantId"];
+                        identityOptions.ClientId = builder.Configuration["FoundationaLLM:Entra:ClientId"];
+                        identityOptions.CallbackPath = builder.Configuration["FoundationaLLM:Entra:CallbackPath"];
+                    });
+                //.EnableTokenAcquisitionToCallDownstreamApi()
+                //.AddInMemoryTokenCaches();
+
+            //builder.Services.AddScoped<IAuthenticatedHttpClientFactory, EntraAuthenticatedHttpClientFactory>();
+            builder.Services.AddScoped<IUserClaimsProvider, EntraUserClaimsProvider>();
+
+            // Configure the scope used by the API controllers:
+            var requiredScope = builder.Configuration["FoundationaLLM:Entra:Scopes"];
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy("RequiredScope", policyBuilder =>
+                {
+                    policyBuilder.RequireAuthenticatedUser();
+                    policyBuilder.RequireClaim("http://schemas.microsoft.com/identity/claims/scope", requiredScope.Split(' '));
+                });
+            });
         }
     }
 }
