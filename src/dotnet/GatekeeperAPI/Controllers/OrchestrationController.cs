@@ -1,4 +1,5 @@
 ﻿using Asp.Versioning;
+using FoundationaLLM.Common.Authorization;
 using FoundationaLLM.Common.Models.Orchestration;
 using FoundationaLLM.Gatekeeper.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +8,7 @@ namespace FoundationaLLM.Gatekeeper.API.Controllers
 {
     [ApiVersion(1.0)]
     [ApiController]
+    [ApiKeyAuthorization]
     [Route("[controller]")]
     public class OrchestrationController : ControllerBase
     {
@@ -34,6 +36,12 @@ namespace FoundationaLLM.Gatekeeper.API.Controllers
         public async Task<bool> SetLLMOrchestrationPreference([FromBody] string orchestrationService)
         {
             return await _agentFactoryApiService.SetLLMOrchestrationPreference(orchestrationService);
+        }
+
+        [HttpGet("test")]
+        public async Task<bool> Test()
+        {
+            return true;
         }
     }
 }

@@ -79,6 +79,9 @@
   "FoundationaLLM": {
     "AgentFactoryAPI": {
       "APIUrl": ""
+    },
+    "GatekeeperAPI": {
+      "APIKeyPath": "FoundationaLLM:GatekeeperAPI:APIKey"
     }
   }
 }
@@ -127,6 +130,9 @@
     },
     "SemanticKernelOrchestration": {
       "APIUrl": ""
+    },
+    "AgentFactoryAPI": {
+      "APIKeyPath": "FoundationaLLM:AgentFactoryAPI:APIKey"
     }
   }
 }
@@ -210,6 +216,9 @@
     "BlobStorageMemorySource": {
       "ConfigBlobStorageContainer": "memory-source",
       "ConfigFilePath": "BlobMemorySourceConfig.json"
+    },
+    "SemanticKernelOrchestration": {
+      "APIKeyPath": "FoundationaLLM:SemanticKernelOrchestration:APIKey"
     }
   }
 }

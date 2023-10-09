@@ -1,4 +1,5 @@
 ﻿using Asp.Versioning;
+using FoundationaLLM.Common.Authorization;
 using FoundationaLLM.Common.Models.Orchestration;
 using FoundationaLLM.SemanticKernel.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +8,7 @@ namespace FoundationaLLM.SemanticKernel.API.Controllers
 {
     [ApiVersion(1.0)]
     [ApiController]
+    [ApiKeyAuthorization]
     [Route("[controller]")]
     public class OrchestrationController : ControllerBase
     {

@@ -1,5 +1,7 @@
 using Asp.Versioning;
+using FoundationaLLM.Common.Authorization;
 using FoundationaLLM.Common.Constants;
+using FoundationaLLM.Common.Interfaces;
 using FoundationaLLM.Common.OpenAPI;
 using FoundationaLLM.Gatekeeper.Core.Interfaces;
 using FoundationaLLM.Gatekeeper.Core.Models.ConfigurationOptions;
@@ -19,6 +21,13 @@ namespace FoundationaLLM.Gatekeeper.API
             // Add services to the container.
             builder.Services.AddApplicationInsightsTelemetry();
             builder.Services.AddControllers();
+
+            // Add API Key Authorization
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.AddScoped<ApiKeyAuthorizationFilter>();
+            builder.Services.AddOptions<ApiKeyValidationSettings>()
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:GatekeeperAPI"));
+            builder.Services.AddTransient<IApiKeyValidation, ApiKeyValidation>();
 
             builder.Services.AddSingleton<IAgentFactoryAPIService, AgentFactoryAPIService>();
 
@@ -77,9 +86,9 @@ namespace FoundationaLLM.Gatekeeper.API
 
             var app = builder.Build();
 
-            app.UseExceptionHandler(exceptionHandlerApp
-                => exceptionHandlerApp.Run(async context
-                    => await Results.Problem().ExecuteAsync(context)));
+            //app.UseExceptionHandler(exceptionHandlerApp
+            //    => exceptionHandlerApp.Run(async context
+            //        => await Results.Problem().ExecuteAsync(context)));
 
             // Configure the HTTP request pipeline.
             app.UseSwagger();
