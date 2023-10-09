@@ -65,7 +65,7 @@ resource "azurerm_api_management" "openai_apim" {
   resource_group_name = azurerm_resource_group.rgs["OAI"].name
   publisher_name = "FoundationaLLM"
   publisher_email = "ciprian@solliance.net"
-  sku_name = "Standard_1"
+  sku_name = "Developer_1"
   virtual_network_type = "Internal"
 
   virtual_network_configuration {

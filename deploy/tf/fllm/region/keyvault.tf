@@ -5,7 +5,7 @@ resource "azurerm_key_vault" "openai_keyvault" {
   sku_name            = "standard"
   tenant_id           = data.azurerm_client_config.current.tenant_id
   enable_rbac_authorization = true
-  public_network_access_enabled = false
+  public_network_access_enabled = true
 }
 
 resource "azurerm_private_endpoint" "oai_kv_ple" {
