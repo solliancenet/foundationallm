@@ -25,16 +25,16 @@ resource "azurerm_cognitive_account" "openai" {
 resource "azurerm_key_vault_secret" "openai_primary_key" {
   for_each = azurerm_cognitive_account.openai
 
-  name = join("-", [local.resource_prefix, each.key, "primarykey"])
-  value = each.value.primary_access_key
+  name         = join("-", [local.resource_prefix, each.key, "primarykey"])
+  value        = each.value.primary_access_key
   key_vault_id = azurerm_key_vault.openai_keyvault.id
 }
 
 resource "azurerm_key_vault_secret" "openai_secondary_key" {
   for_each = azurerm_cognitive_account.openai
 
-  name = join("-", [local.resource_prefix, each.key, "secondarykey"])
-  value = each.value.secondary_access_key
+  name         = join("-", [local.resource_prefix, each.key, "secondarykey"])
+  value        = each.value.secondary_access_key
   key_vault_id = azurerm_key_vault.openai_keyvault.id
 }
 
@@ -60,12 +60,12 @@ resource "azurerm_private_endpoint" "openai_ple" {
 }
 
 resource "azurerm_api_management" "openai_apim" {
-  name = join("-", [local.resource_prefix, "OAI", "apim"])
-  location = local.location
-  resource_group_name = azurerm_resource_group.rgs["OAI"].name
-  publisher_name = "FoundationaLLM"
-  publisher_email = "ciprian@solliance.net"
-  sku_name = "Developer_1"
+  name                 = join("-", [local.resource_prefix, "OAI", "apim"])
+  location             = local.location
+  resource_group_name  = azurerm_resource_group.rgs["OAI"].name
+  publisher_name       = "FoundationaLLM"
+  publisher_email      = "ciprian@solliance.net"
+  sku_name             = "Developer_1"
   virtual_network_type = "Internal"
 
   virtual_network_configuration {
@@ -76,11 +76,11 @@ resource "azurerm_api_management" "openai_apim" {
 }
 
 resource "azurerm_api_management_api" "openai_api" {
-  name = join("-", [local.resource_prefix, "OAI", "api"])
+  name                = join("-", [local.resource_prefix, "OAI", "api"])
   resource_group_name = azurerm_resource_group.rgs["OAI"].name
   api_management_name = azurerm_api_management.openai_apim.name
-  revision = "1"
-  display_name = "HA OpenAI"
-  path = "openai"
-  protocols = ["https"]
+  revision            = "1"
+  display_name        = "HA OpenAI"
+  path                = "openai"
+  protocols           = ["https"]
 }

@@ -40,3 +40,86 @@ resource "azurerm_private_dns_zone_virtual_network_link" "dns_vnet_link" {
 
   tags = local.tags
 }
+
+resource "azurerm_network_security_group" "openai_nsg" {
+  name                = join("-", [local.resource_prefix, "OAI", "nsg"])
+  location            = local.location
+  resource_group_name = azurerm_resource_group.rgs["NET"].name
+
+  tags = local.tags
+}
+
+resource "azurerm_network_security_rule" "openai_nsr_1" {
+  access                      = "Allow"
+  direction                   = "Inbound"
+  name                        = "management"
+  network_security_group_name = azurerm_network_security_group.openai_nsg.name
+  priority                    = 1
+  protocol                    = "Tcp"
+  resource_group_name         = azurerm_resource_group.rgs["NET"].name
+  source_port_range           = "*"
+  destination_port_range      = "3443"
+  source_address_prefix       = "ApiManagement"
+  destination_address_prefix  = "VirtualNetwork"
+}
+
+resource "azurerm_network_security_rule" "openai_nsr_2" {
+  access                      = "Allow"
+  direction                   = "Inbound"
+  name                        = "loadbalancing"
+  network_security_group_name = azurerm_network_security_group.openai_nsg.name
+  priority                    = 2
+  protocol                    = "Tcp"
+  resource_group_name         = azurerm_resource_group.rgs["NET"].name
+  source_port_range           = "*"
+  destination_port_range      = "6390"
+  source_address_prefix       = "AzureLoadBalancer"
+  destination_address_prefix  = "VirtualNetwork"
+}
+
+resource "azurerm_network_security_rule" "openai_nsr_3" {
+  access                      = "Allow"
+  direction                   = "Outbound"
+  name                        = "storage"
+  network_security_group_name = azurerm_network_security_group.openai_nsg.name
+  priority                    = 3
+  protocol                    = "Tcp"
+  resource_group_name         = azurerm_resource_group.rgs["NET"].name
+  source_port_range           = "*"
+  destination_port_range      = "443"
+  source_address_prefix       = "VirtualNetwork"
+  destination_address_prefix  = "Storage"
+}
+
+resource "azurerm_network_security_rule" "openai_nsr_4" {
+  access                      = "Allow"
+  direction                   = "Outbound"
+  name                        = "sql"
+  network_security_group_name = azurerm_network_security_group.openai_nsg.name
+  priority                    = 4
+  protocol                    = "Tcp"
+  resource_group_name         = azurerm_resource_group.rgs["NET"].name
+  source_port_range           = "*"
+  destination_port_range      = "1443"
+  source_address_prefix       = "VirtualNetwork"
+  destination_address_prefix  = "SQL"
+}
+
+resource "azurerm_network_security_rule" "openai_nsr_5" {
+  access                      = "Allow"
+  direction                   = "Outbound"
+  name                        = "keyvault"
+  network_security_group_name = azurerm_network_security_group.openai_nsg.name
+  priority                    = 5
+  protocol                    = "Tcp"
+  resource_group_name         = azurerm_resource_group.rgs["NET"].name
+  source_port_range           = "*"
+  destination_port_range      = "443"
+  source_address_prefix       = "VirtualNetwork"
+  destination_address_prefix  = "AzureKeyVault"
+}
+
+resource "azurerm_subnet_network_security_group_association" "openai_nsg" {
+  subnet_id                 = azurerm_subnet.subnets["FLLMOpenAI"].id
+  network_security_group_id = azurerm_network_security_group.openai_nsg.id
+}

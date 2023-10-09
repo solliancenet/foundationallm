@@ -1,10 +1,10 @@
 resource "azurerm_key_vault" "openai_keyvault" {
-  location            = local.location
-  name                = join("-", [local.resource_prefix, "OAI", "kv"])
-  resource_group_name = azurerm_resource_group.rgs["OAI"].name
-  sku_name            = "standard"
-  tenant_id           = data.azurerm_client_config.current.tenant_id
-  enable_rbac_authorization = true
+  location                      = local.location
+  name                          = join("-", [local.resource_prefix, "OAI", "kv"])
+  resource_group_name           = azurerm_resource_group.rgs["OAI"].name
+  sku_name                      = "standard"
+  tenant_id                     = data.azurerm_client_config.current.tenant_id
+  enable_rbac_authorization     = true
   public_network_access_enabled = true
 }
 
@@ -15,10 +15,10 @@ resource "azurerm_private_endpoint" "oai_kv_ple" {
   subnet_id           = azurerm_subnet.subnets["FLLMOpenAI"].id
 
   private_service_connection {
-    is_manual_connection = false
-    name                 = join("-", [local.resource_prefix, "OAI", "kv", "psc"])
+    is_manual_connection           = false
+    name                           = join("-", [local.resource_prefix, "OAI", "kv", "psc"])
     private_connection_resource_id = azurerm_key_vault.openai_keyvault.id
-    subresource_names = ["vault"]
+    subresource_names              = ["vault"]
   }
 
   private_dns_zone_group {
