@@ -7,6 +7,8 @@ from foundationallm.langchain.openai_models import AzureChatLLM
 from foundationallm.langchain.agents import SqlDbAgent, SummaryAgent
 from foundationallm.langchain.datasources.sql import SqlDbConfig
 
+app_config=Configuration()
+
 router = APIRouter(
     prefix='/orchestration',
     tags=['orchestration'],
@@ -15,15 +17,14 @@ router = APIRouter(
 )
 
 @router.post('/completion')
-async def get_completion(content: CompletionRequest) -> CompletionResponse:
-    app_config=Configuration()
+async def get_completion(completion_request: CompletionRequest) -> CompletionResponse:
     # TODO: This should be passed in via the completion request as DataSource metadata.
     sql_db_config = SqlDbConfig(
         dialect='mssql',
-        host=f'{os.environ.get("SQL_DB_SERVER_NAME")}.database.windows.net',
-        database=os.environ.get("SQL_DB_DATABASE_NAME"),
-        username=os.environ.get("SQL_DB_USERNAME"),
-        password=app_config.get_value('sql-db-password'),
+        host=f'{os.environ.get("foundationallm-langchain-sqldb-testdb-server-name")}.database.windows.net',
+        database=os.environ.get("foundationallm-langchain-sqldb-testdb-database-name"),
+        username=os.environ.get("foundationallm-langchain-sqldb-testdb-database-username"),
+        password=app_config.get_value('foundationallm-langchain-sqldb-testdb-database-password'),
         include_tables=['DailyPrecipReport', 'HailReport', 'Observer', 'ObserverStatus', 'ObserverType', 'Station'],
         # TODO: This value should be passed in via the completion request as PromptHub metadata.
         prompt_prefix="""You are a helpful agent named Coco designed to interact with a SQL database, which contains hail and precipitation reports.
@@ -45,22 +46,11 @@ async def get_completion(content: CompletionRequest) -> CompletionResponse:
 
             If the question does not seem related to the database, politely answer with your name and details about the types of questions you can answer."""
     )
-    llm = AzureChatLLM(
-        base_url='https://foundationallm-01.openai.azure.com/',
-        deployment_name='completions',
-        config=app_config
-    )
+    
      # TODO: This needs to be swapped out with SDK calls to an agent factory that will return the appropriate object based the metadata object passed in.
-    return SqlDbAgent(content=content, llm=llm, app_config=app_config, sql_db_config=sql_db_config).run()
-    #return CSVAgent(content=content, llm=llm, app_config=app_config).run()
+    return SqlDbAgent(completion_request=completion_request, llm=AzureChatLLM(app_config=app_config), app_config=app_config, sql_db_config=sql_db_config).run()
+    #return CSVAgent(completion_request=completion_request, llm=AzureChatLLM(app_config=app_config), app_config=app_config).run()
 
 @router.post('/summary')
-async def get_summary(content: SummaryRequest) -> SummaryResponse:
-    config=Configuration()
-    llm = AzureChatLLM(
-        base_url='https://foundationallm-01.openai.azure.com/',
-        deployment_name='completions',
-        config=config
-    )
-    
-    return SummaryAgent(content=content, llm=llm).run()
+async def get_summary(summary_request: SummaryRequest) -> SummaryResponse:    
+    return SummaryAgent(summary_request=summary_request, llm=AzureChatLLM(app_config=app_config), app_config=app_config).run()

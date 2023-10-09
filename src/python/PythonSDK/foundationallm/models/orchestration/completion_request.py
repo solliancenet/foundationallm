@@ -1,5 +1,6 @@
-from .request_base import RequestBase
+from .orchestration_request_base import OrchestrationRequestBase
 from .message_history_item import MessageHistoryItem
+from typing import List
 
-class CompletionRequest(RequestBase):
-    message_history: list[MessageHistoryItem] = list()
+class CompletionRequest(OrchestrationRequestBase):
+    message_history: List[MessageHistoryItem] = List()

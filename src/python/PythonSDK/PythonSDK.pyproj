@@ -67,8 +67,8 @@
     <Compile Include="foundationallm\models\message.py" />
     <Compile Include="foundationallm\models\orchestration\completion_response.py" />
     <Compile Include="foundationallm\models\orchestration\message_history_item.py" />
+    <Compile Include="foundationallm\models\orchestration\orchestration_request_base.py" />
     <Compile Include="foundationallm\models\orchestration\__init__.py" />
-    <Compile Include="foundationallm\models\orchestration\request_base.py" />
     <Compile Include="foundationallm\models\orchestration\summary_request.py" />
     <Compile Include="foundationallm\models\session.py" />
     <Compile Include="foundationallm\models\orchestration\summary_response.py" />

@@ -13,10 +13,10 @@ class CSVAgent():
     Agent for querying the contents of delimited files (e.g., CSV).
     """
     
-    def __init__(self, content: CompletionRequest, llm: AzureChatLLM, app_config: Configuration):
-        self.user_prompt = content.prompt
+    def __init__(self, completion_request: CompletionRequest, llm: AzureChatLLM, app_config: Configuration):
+        self.user_prompt = completion_request.user_prompt
         self.llm = llm.get_chat_model()
-        self.source_csv_file = app_config.get_value('source-csv-file-url')
+        self.source_csv_file = app_config.get_value('foundationallm-langchain-csv-file-url')
         
         self.prompt_prefix = """
             You are an analytics agent named Khalil.

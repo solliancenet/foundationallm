@@ -1,5 +1,3 @@
-from pydantic import BaseModel
-
-class AgentFactory(BaseModel):
+class AgentFactory():
     pass
     

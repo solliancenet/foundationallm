@@ -14,8 +14,8 @@ class SqlDbAgent():
     Agent for interacting with SQL databases.
     """
 
-    def __init__(self, content: CompletionRequest, llm: AzureChatLLM, app_config: Configuration, sql_db_config: SqlDbConfig):
-        self.user_prompt = content.prompt
+    def __init__(self, completion_request: CompletionRequest, llm: AzureChatLLM, app_config: Configuration, sql_db_config: SqlDbConfig):
+        self.user_prompt = completion_request.user_prompt
         self.llm = llm.get_chat_model()
         self.sql_db_config = sql_db_config
         
