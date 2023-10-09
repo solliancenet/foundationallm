@@ -25,6 +25,6 @@ variable "tags" {
 }
 
 variable "vnet_address_space" {
-  type = string
+  type        = string
   description = "Address space of the regional VNET"
 }

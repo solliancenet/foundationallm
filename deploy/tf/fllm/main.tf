@@ -9,13 +9,20 @@ locals {
 
   regional_resource_groups = {
     "NET" = {
-      tags = {}
+      tags = {
+        "Purpose" = "Networking"
+      }
+    }
+    "OAI" = {
+      tags = {
+        "Purpose" = "OpenAI"
+      }
     }
   }
 
   regions = {
     "East US" = {
-      location_short = "EUS"
+      location_short     = "EUS"
       vnet_address_space = "10.0.0.0/16"
     }
   }
