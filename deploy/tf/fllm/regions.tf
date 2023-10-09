@@ -8,5 +8,5 @@ module "regions" {
   resource_prefix    = local.resource_prefix
   tags               = local.tags
   vnet_address_space = each.value.vnet_address_space
-  private_dns_zones = module.global.private_dns_zones
+  private_dns_zones  = module.global.private_dns_zones
 }

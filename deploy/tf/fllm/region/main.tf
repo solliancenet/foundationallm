@@ -5,5 +5,5 @@ locals {
   resource_prefix    = upper(join("-", [local.location_short, var.resource_prefix]))
   tags               = var.tags
   vnet_address_space = var.vnet_address_space
-  private_dns_zones = var.private_dns_zones
+  private_dns_zones  = var.private_dns_zones
 }
