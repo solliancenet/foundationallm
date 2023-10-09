@@ -11,17 +11,17 @@ using Microsoft.Extensions.Logging;
 namespace FoundationaLLM.Common.Services
 {
     /// <summary>
-    /// Implements the <see cref="IConfiguration"/> interface using Azure Key Vault.
+    /// Implements the <see cref="IConfigurationService"/> interface using Azure Key Vault.
     /// </summary>
-    public class KeyVaultConfiguration : IConfiguration
+    public class KeyVaultConfigurationService : IConfigurationService
     {
         private readonly SecretClient _secretClient;
 
         /// <summary>
-        /// Creates a new instance of the <see cref="KeyVaultConfiguration"/> class.
+        /// Creates a new instance of the <see cref="KeyVaultConfigurationService"/> class.
         /// </summary>
         /// <param name="keyVaultUri">The URI of the deployed Key Vault service.</param>
-        public KeyVaultConfiguration(string keyVaultUri)
+        public KeyVaultConfigurationService(string keyVaultUri)
         {
             if (string.IsNullOrEmpty(keyVaultUri))
                 throw new ArgumentNullException(nameof(keyVaultUri));
@@ -36,13 +36,14 @@ namespace FoundationaLLM.Common.Services
         /// <param name="key">The Key Vault secret name used to retrieve the secret.</param>
         /// <returns>The Key Vault secret.</returns>
         /// <exception cref="InvalidOperationException"></exception>
-        public string GetValue(string key)
+        public T GetValue<T>(string key)
         {
             try
             {
                 // Retrieve the secret value
                 var secret = _secretClient.GetSecret(key);
-                return secret.Value.Value;
+                // Cast the secret value to the provided type.
+                return (T)Convert.ChangeType(secret.Value.Value, typeof(T));
             }
             catch (Exception ex)
             {

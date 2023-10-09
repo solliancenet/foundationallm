@@ -25,12 +25,12 @@ builder.Services.AddHttpClient(FoundationaLLM.Common.Constants.HttpClients.Defau
 builder.Services.Configure<EntraSettings>(builder.Configuration.GetSection("FoundationaLLM:Entra"));
 
 var keyVaultUri = builder.Configuration["FoundationaLLM:Configuration:KeyVaultUri"];
-builder.Services.AddSingleton<FoundationaLLM.Common.Interfaces.IConfiguration>(new KeyVaultConfiguration(keyVaultUri));
+builder.Services.AddSingleton<FoundationaLLM.Common.Interfaces.IConfigurationService>(new KeyVaultConfigurationService(keyVaultUri));
 
 var serviceProvider = builder.Services.BuildServiceProvider();
-var kvConfig = serviceProvider.GetRequiredService<FoundationaLLM.Common.Interfaces.IConfiguration>();
+var kvConfig = serviceProvider.GetRequiredService<FoundationaLLM.Common.Interfaces.IConfigurationService>();
 
-var azureAdSecret = kvConfig.GetValue(builder.Configuration["FoundationaLLM:Entra:ClientSecretKeyName"]);
+var azureAdSecret = kvConfig.GetValue<string>(builder.Configuration["FoundationaLLM:Entra:ClientSecretKeyName"]);
 builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
     .AddMicrosoftIdentityWebApp(options =>
     {

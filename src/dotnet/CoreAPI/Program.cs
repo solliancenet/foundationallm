@@ -118,10 +118,10 @@ namespace FoundationaLLM.Core.API
         public static void RegisterAuthConfiguration(WebApplicationBuilder builder)
         {
             var keyVaultUri = builder.Configuration["FoundationaLLM:Configuration:KeyVaultUri"];
-            builder.Services.AddSingleton<Common.Interfaces.IConfiguration>(new KeyVaultConfiguration(keyVaultUri));
+            builder.Services.AddSingleton<Common.Interfaces.IConfigurationService>(new KeyVaultConfigurationService(keyVaultUri));
             var serviceProvider = builder.Services.BuildServiceProvider();
-            var kvConfig = serviceProvider.GetRequiredService<Common.Interfaces.IConfiguration>();
-            var azureAdSecret = kvConfig.GetValue(builder.Configuration["FoundationaLLM:Entra:ClientSecretKeyName"]);
+            var kvConfig = serviceProvider.GetRequiredService<Common.Interfaces.IConfigurationService>();
+            var azureAdSecret = kvConfig.GetValue<string>(builder.Configuration["FoundationaLLM:Entra:ClientSecretKeyName"]);
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddMicrosoftIdentityWebApi(jwtOptions =>
                     {
