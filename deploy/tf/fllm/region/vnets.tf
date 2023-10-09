@@ -54,7 +54,7 @@ resource "azurerm_network_security_rule" "openai_nsr_1" {
   direction                   = "Inbound"
   name                        = "management"
   network_security_group_name = azurerm_network_security_group.openai_nsg.name
-  priority                    = 1
+  priority                    = 100
   protocol                    = "Tcp"
   resource_group_name         = azurerm_resource_group.rgs["NET"].name
   source_port_range           = "*"
@@ -68,7 +68,7 @@ resource "azurerm_network_security_rule" "openai_nsr_2" {
   direction                   = "Inbound"
   name                        = "loadbalancing"
   network_security_group_name = azurerm_network_security_group.openai_nsg.name
-  priority                    = 2
+  priority                    = 101
   protocol                    = "Tcp"
   resource_group_name         = azurerm_resource_group.rgs["NET"].name
   source_port_range           = "*"
@@ -82,7 +82,7 @@ resource "azurerm_network_security_rule" "openai_nsr_3" {
   direction                   = "Outbound"
   name                        = "storage"
   network_security_group_name = azurerm_network_security_group.openai_nsg.name
-  priority                    = 3
+  priority                    = 102
   protocol                    = "Tcp"
   resource_group_name         = azurerm_resource_group.rgs["NET"].name
   source_port_range           = "*"
@@ -96,7 +96,7 @@ resource "azurerm_network_security_rule" "openai_nsr_4" {
   direction                   = "Outbound"
   name                        = "sql"
   network_security_group_name = azurerm_network_security_group.openai_nsg.name
-  priority                    = 4
+  priority                    = 103
   protocol                    = "Tcp"
   resource_group_name         = azurerm_resource_group.rgs["NET"].name
   source_port_range           = "*"
@@ -110,7 +110,7 @@ resource "azurerm_network_security_rule" "openai_nsr_5" {
   direction                   = "Outbound"
   name                        = "keyvault"
   network_security_group_name = azurerm_network_security_group.openai_nsg.name
-  priority                    = 5
+  priority                    = 104
   protocol                    = "Tcp"
   resource_group_name         = azurerm_resource_group.rgs["NET"].name
   source_port_range           = "*"
