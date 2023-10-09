@@ -9,7 +9,7 @@ resource "azurerm_key_vault" "openai_keyvault" {
 }
 
 resource "azurerm_role_assignment" "openai_kv_sp_role" {
-  principal_id = data.azurerm_client_config.current.client_id
+  principal_id = data.azurerm_client_config.current.object_id
   scope        = azurerm_key_vault.openai_keyvault.id
   role_definition_name = "Key Vault Secrets Officer"
 }
