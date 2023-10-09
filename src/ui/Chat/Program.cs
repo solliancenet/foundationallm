@@ -1,5 +1,4 @@
 using FoundationaLLM.Chat.Helpers;
-using FoundationaLLM.Common.Helpers.Authentication;
 using FoundationaLLM.Common.Interfaces;
 using FoundationaLLM.Common.Models.Configuration;
 using FoundationaLLM.Common.Models.Configuration.Authentication;

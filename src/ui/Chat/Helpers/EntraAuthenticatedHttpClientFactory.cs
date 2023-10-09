@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
-using FoundationaLLM.Common.Interfaces;
+﻿using FoundationaLLM.Common.Interfaces;
 using Microsoft.Identity.Abstractions;
 
-namespace FoundationaLLM.Common.Helpers.Authentication
+namespace FoundationaLLM.Chat.Helpers
 {
     /// <summary>
     /// A helper class for producing authenticated HttpClient instances utilizing Entra authentication.
