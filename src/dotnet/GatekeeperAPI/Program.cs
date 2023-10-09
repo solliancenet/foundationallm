@@ -86,9 +86,9 @@ namespace FoundationaLLM.Gatekeeper.API
 
             var app = builder.Build();
 
-            //app.UseExceptionHandler(exceptionHandlerApp
-            //    => exceptionHandlerApp.Run(async context
-            //        => await Results.Problem().ExecuteAsync(context)));
+            app.UseExceptionHandler(exceptionHandlerApp
+                => exceptionHandlerApp.Run(async context
+                    => await Results.Problem().ExecuteAsync(context)));
 
             // Configure the HTTP request pipeline.
             app.UseSwagger();

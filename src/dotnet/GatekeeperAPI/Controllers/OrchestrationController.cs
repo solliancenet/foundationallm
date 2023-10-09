@@ -37,11 +37,5 @@ namespace FoundationaLLM.Gatekeeper.API.Controllers
         {
             return await _agentFactoryApiService.SetLLMOrchestrationPreference(orchestrationService);
         }
-
-        [HttpGet("test")]
-        public async Task<bool> Test()
-        {
-            return true;
-        }
     }
 }
