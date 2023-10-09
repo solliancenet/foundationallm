@@ -10,7 +10,7 @@
     <OutputPath>.</OutputPath>
     <Name>AgentHubAPI</Name>
     <RootNamespace>AgentHubAPI</RootNamespace>
-    <InterpreterId>Global|VisualStudio|Python 3.11</InterpreterId>
+    <InterpreterId>MSBuild|env|$(MSBuildProjectFullPath)</InterpreterId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -29,14 +29,22 @@
     <Content Include="startup.sh" />
   </ItemGroup>
   <ItemGroup>
+    <Interpreter Include="env\">
+      <Id>env</Id>
+      <Version>3.11</Version>
+      <Description>env (Python 3.11 (64-bit))</Description>
+      <InterpreterPath>Scripts\python.exe</InterpreterPath>
+      <WindowsInterpreterPath>Scripts\pythonw.exe</WindowsInterpreterPath>
+      <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
+      <Architecture>X64</Architecture>
+    </Interpreter>
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\PythonSDK\PythonSDK.pyproj">
       <Name>PythonSDK</Name>
       <Project>{2469cc23-7f26-4b84-8878-98d90604eee8}</Project>
       <Private>True</Private>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <InterpreterReference Include="Global|VisualStudio|Python 3.11" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
