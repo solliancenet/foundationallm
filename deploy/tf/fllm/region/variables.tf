@@ -31,7 +31,7 @@ variable "vnet_address_space" {
 
 variable "private_dns_zones" {
   type = map(object({
-    id = string
+    id                  = string
     resource_group_name = string
   }))
 }

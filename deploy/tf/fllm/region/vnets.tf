@@ -1,12 +1,14 @@
 locals {
   subnets = {
-    "AppGateway"    = { address_prefix = cidrsubnet(local.vnet_address_space, 8, 0) }
-    "Services"      = { address_prefix = cidrsubnet(local.vnet_address_space, 8, 1) }
-    "Datasources"   = { address_prefix = cidrsubnet(local.vnet_address_space, 8, 2) }
-    "FLLMServices"  = { address_prefix = cidrsubnet(local.vnet_address_space, 8, 3) }
-    "FLLMStorage"   = { address_prefix = cidrsubnet(local.vnet_address_space, 8, 4) }
-    "FLLMOpenAI"    = { address_prefix = cidrsubnet(local.vnet_address_space, 8, 5) }
-    "Vectorization" = { address_prefix = cidrsubnet(local.vnet_address_space, 8, 6) }
+    "AppGateway"    = { address_prefix = cidrsubnet(local.vnet_address_space, 4, 0) }
+    "Services"      = { address_prefix = cidrsubnet(local.vnet_address_space, 4, 1) }
+    "Datasources"   = { address_prefix = cidrsubnet(local.vnet_address_space, 4, 2) }
+    "FLLMServices"  = { address_prefix = cidrsubnet(local.vnet_address_space, 4, 3) }
+    "FLLMStorage"   = { address_prefix = cidrsubnet(local.vnet_address_space, 4, 4) }
+    "FLLMOpenAI"    = { address_prefix = cidrsubnet(local.vnet_address_space, 4, 5) }
+    "Vectorization" = { address_prefix = cidrsubnet(local.vnet_address_space, 4, 6) }
+    "Jumpbox"       = { address_prefix = cidrsubnet(local.vnet_address_space, 4, 7) }
+    "Gateway"       = { address_prefix = cidrsubnet(local.vnet_address_space, 4, 8) }
   }
 }
 
