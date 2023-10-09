@@ -22,6 +22,7 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="foundationallm\auth\credential.py" />
     <Compile Include="foundationallm\datasources\sql_server\sql_authentication_metadata.py" />
     <Compile Include="foundationallm\datasources\sql_server\sql_authentication_type.py" />
     <Compile Include="foundationallm\datasources\sql_server\sql_server_data_source_metadata.py" />
@@ -47,8 +48,30 @@
     <Compile Include="foundationallm\hubs\repository.py" />
     <Compile Include="foundationallm\hubs\resolver.py" />
     <Compile Include="foundationallm\hubs\__init__.py" />
+    <Compile Include="foundationallm\langchain\agents\agent_base.py" />
+    <Compile Include="foundationallm\langchain\agents\csv_agent.py" />
+    <Compile Include="foundationallm\langchain\agents\sql_db_agent.py" />
+    <Compile Include="foundationallm\langchain\agents\summary_agent.py" />
+    <Compile Include="foundationallm\langchain\agents\__init__.py" />
+    <Compile Include="foundationallm\langchain\agents\agent_factory.py" />
+    <Compile Include="foundationallm\langchain\datasources\sql\mssql.py" />
+    <Compile Include="foundationallm\langchain\datasources\sql\mysql.py" />
+    <Compile Include="foundationallm\langchain\datasources\sql\postgresql.py" />
+    <Compile Include="foundationallm\langchain\datasources\sql\sql_db_config.py" />
+    <Compile Include="foundationallm\langchain\datasources\sql\__init__.py" />
+    <Compile Include="foundationallm\langchain\datasources\__init__.py" />
+    <Compile Include="foundationallm\langchain\openai_models\azure_chat_llm.py" />
+    <Compile Include="foundationallm\langchain\openai_models\__init__.py" />
+    <Compile Include="foundationallm\langchain\__init__.py" />
+    <Compile Include="foundationallm\models\orchestration\completion_request.py" />
     <Compile Include="foundationallm\models\message.py" />
+    <Compile Include="foundationallm\models\orchestration\completion_response.py" />
+    <Compile Include="foundationallm\models\orchestration\message_history_item.py" />
+    <Compile Include="foundationallm\models\orchestration\orchestration_request_base.py" />
+    <Compile Include="foundationallm\models\orchestration\__init__.py" />
+    <Compile Include="foundationallm\models\orchestration\summary_request.py" />
     <Compile Include="foundationallm\models\session.py" />
+    <Compile Include="foundationallm\models\orchestration\summary_response.py" />
     <Compile Include="foundationallm\models\__init__.py" />
     <Compile Include="foundationallm\auth\api_key_validator.py" />
     <Compile Include="foundationallm\auth\__init__.py" />
@@ -68,9 +91,15 @@
     <Folder Include="foundationallm\hubs\agent\" />
     <Folder Include="foundationallm\hubs\data_source\" />
     <Folder Include="foundationallm\hubs\prompt\" />
+    <Folder Include="foundationallm\langchain\agents\" />
+    <Folder Include="foundationallm\langchain\datasources\" />
+    <Folder Include="foundationallm\langchain\datasources\sql\" />
+    <Folder Include="foundationallm\langchain\openai_models\" />
     <Folder Include="foundationallm\models\" />
     <Folder Include="foundationallm\hubs\" />
     <Folder Include="foundationallm\datasources\" />
+    <Folder Include="foundationallm\langchain\" />
+    <Folder Include="foundationallm\models\orchestration\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="foundationallm\" />

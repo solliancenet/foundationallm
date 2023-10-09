@@ -8,6 +8,6 @@ azure-keyvault-secrets==4.7.0
 pyodbc==4.0.39
 psycopg2==2.9.9
 sqlalchemy==2.0.21
-fastapi==0.103.2
-tenacity
-typing
+tiktoken==0.5.1
+tenacity==8.2.3
+typing==3.7.4.3
