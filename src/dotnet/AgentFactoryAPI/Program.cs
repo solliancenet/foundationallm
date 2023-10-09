@@ -1,4 +1,5 @@
 using Asp.Versioning;
+using Azure.Identity;
 using FoundationaLLM.AgentFactory.Core.Interfaces;
 using FoundationaLLM.AgentFactory.Core.Services;
 using FoundationaLLM.AgentFactory.Interfaces;
@@ -27,6 +28,10 @@ namespace FoundationaLLM.AgentFactory.API
             builder.Services.AddOptions<AgentHubSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:AgentHub"));
 
+            builder.Configuration.AddAzureKeyVault(
+                new Uri($"https://{builder.Configuration["FoundationaLLM:AzureKeyVaultName"]}.vault.azure.net/"),
+                new DefaultAzureCredential());
+            
             builder.Services.AddSingleton<ISemanticKernelOrchestrationService, SemanticKernelOrchestrationService>();
             builder.Services.AddSingleton<ILangChainOrchestrationService, LangChainOrchestrationService>();
             builder.Services.AddSingleton<IAgentFactoryService, AgentFactoryService>();
