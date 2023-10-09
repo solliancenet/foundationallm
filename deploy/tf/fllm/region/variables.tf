@@ -23,3 +23,8 @@ variable "tags" {
   type        = map(string)
   description = "A mapping of tags to assign to the resource"
 }
+
+variable "vnet_address_space" {
+  type = string
+  description = "Address space of the regional VNET"
+}

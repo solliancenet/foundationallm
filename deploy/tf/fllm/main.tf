@@ -16,6 +16,7 @@ locals {
   regions = {
     "East US" = {
       location_short = "EUS"
+      vnet_address_space = "10.0.0.0/16"
     }
   }
 
