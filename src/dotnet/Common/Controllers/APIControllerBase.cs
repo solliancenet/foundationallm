@@ -16,11 +16,11 @@ namespace FoundationaLLM.Common.Controllers
     public class APIControllerBase : ControllerBase
     {
         protected UnifiedUserIdentity? _userIdentity;
-        protected readonly IUserClaimsProvider _claimsProvider;
+        protected readonly IUserClaimsProviderService _claimsProviderService;
 
-        protected APIControllerBase(IUserClaimsProvider claimsProvider)
+        protected APIControllerBase(IUserClaimsProviderService claimsProviderService)
         {
-            _claimsProvider = claimsProvider;
+            _claimsProviderService = claimsProviderService;
         }
 
         protected UnifiedUserIdentity? UserIdentity
@@ -29,7 +29,7 @@ namespace FoundationaLLM.Common.Controllers
             {
                 if (_userIdentity == null && User != null)
                 {
-                    _userIdentity = _claimsProvider.GetUserIdentity(User);
+                    _userIdentity = _claimsProviderService.GetUserIdentity(User);
                 }
                 return _userIdentity;
             }

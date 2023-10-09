@@ -22,7 +22,7 @@ namespace FoundationaLLM.Core.API.Controllers
 
         public SessionsController(ICoreService coreService,
             ILogger<SessionsController> logger,
-            IUserClaimsProvider claimsProvider) : base(claimsProvider)
+            IUserClaimsProviderService claimsProviderService) : base(claimsProviderService)
         {
             _coreService = coreService;
             _logger = logger;

@@ -13,7 +13,6 @@ using Microsoft.Identity.Web;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using FoundationaLLM.Common.Helpers.Authentication;
 using FoundationaLLM.Common.Interfaces;
 using FoundationaLLM.Common.Models.Configuration;
 using Microsoft.Identity.Client;
@@ -141,7 +140,7 @@ namespace FoundationaLLM.Core.API
                 //.AddInMemoryTokenCaches();
 
             //builder.Services.AddScoped<IAuthenticatedHttpClientFactory, EntraAuthenticatedHttpClientFactory>();
-            builder.Services.AddScoped<IUserClaimsProvider, EntraUserClaimsProvider>();
+            builder.Services.AddScoped<IUserClaimsProviderService, EntraUserClaimsProviderService>();
 
             // Configure the scope used by the API controllers:
             var requiredScope = builder.Configuration["FoundationaLLM:Entra:Scopes"];

@@ -12,7 +12,7 @@ namespace FoundationaLLM.Common.Interfaces
     /// Provides a common interface for retrieving and resolving user claims
     /// to a <see cref="UnifiedUserIdentity"/> object.
     /// </summary>
-    public interface IUserClaimsProvider
+    public interface IUserClaimsProviderService
     {
         /// <summary>
         /// Returns a <see cref="UnifiedUserIdentity"/> object from the provided

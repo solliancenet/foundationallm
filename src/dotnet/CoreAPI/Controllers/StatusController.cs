@@ -21,7 +21,7 @@ namespace FoundationaLLM.Core.API.Controllers
 
         public StatusController(ICoreService coreService,
             ILogger<StatusController> logger,
-            IUserClaimsProvider claimsProvider) : base(claimsProvider)
+            IUserClaimsProviderService claimsProviderService) : base(claimsProviderService)
         {
             _coreService = coreService;
             _logger = logger;

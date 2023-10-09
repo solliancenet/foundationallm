@@ -22,7 +22,7 @@ namespace FoundationaLLM.Core.API.Controllers
 
         public OrchestrationController(IGatekeeperAPIService gatekeeperAPIService,
             ILogger<OrchestrationController> logger,
-            IUserClaimsProvider claimsProvider) : base(claimsProvider)
+            IUserClaimsProviderService claimsProviderService) : base(claimsProviderService)
         {
             _gatekeeperAPIService = gatekeeperAPIService;
             _logger = logger;
