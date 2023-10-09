@@ -4,9 +4,9 @@ from urllib import parse
 class SqlDbConfig:
     def __init__(self, dialect: str, host: str, database: str, username: str, password: str, prompt_prefix: str, include_tables: list[str] = [], exclude_tables: list[str] = []): # TODO: Allow port to be passed in and get default if empty.
         self.dialect = dialect
-        self.driver= self._get_db_driver()
+        self.driver= self.__get_db_driver()
         self.host = host
-        self.port = self._get_db_default_port()
+        self.port = self.__get_db_default_port()
         self.database = database
         self.username = username
         self.password = password
