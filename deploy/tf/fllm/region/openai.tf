@@ -42,3 +42,4 @@ resource "azurerm_private_endpoint" "openai_ple" {
     private_dns_zone_ids = [local.private_dns_zones["privatelink.openai.azure.com"].id]
   }
 }
+
