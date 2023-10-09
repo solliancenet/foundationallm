@@ -2,7 +2,7 @@
 using FoundationaLLM.Common.Interfaces;
 using Microsoft.Extensions.Options;
 using FoundationaLLM.Common.Models.Chat;
-using FoundationaLLM.Common.Models.ConfigurationOptions.Authentication;
+using FoundationaLLM.Common.Models.Configuration.Authentication;
 using Microsoft.Identity.Abstractions;
 using Microsoft.Identity.Web;
 

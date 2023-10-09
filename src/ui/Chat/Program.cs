@@ -1,7 +1,8 @@
 using FoundationaLLM.Chat.Helpers;
 using FoundationaLLM.Common.Helpers.Authentication;
 using FoundationaLLM.Common.Interfaces;
-using FoundationaLLM.Common.Models.ConfigurationOptions.Authentication;
+using FoundationaLLM.Common.Models.Configuration;
+using FoundationaLLM.Common.Models.Configuration.Authentication;
 using FoundationaLLM.Common.Services;
 using FoundationaLLM.Core.Interfaces;
 using FoundationaLLM.Core.Services;
@@ -23,9 +24,10 @@ builder.Services.AddHttpClient(FoundationaLLM.Common.Constants.HttpClients.Defau
             3, retryNumber => TimeSpan.FromMilliseconds(600)));
 
 builder.Services.Configure<EntraSettings>(builder.Configuration.GetSection("FoundationaLLM:Entra"));
+builder.Services.AddOptions<KeyVaultConfigurationServiceSettings>()
+    .Bind(builder.Configuration.GetSection("FoundationaLLM:Configuration"));
 
-var keyVaultUri = builder.Configuration["FoundationaLLM:Configuration:KeyVaultUri"];
-builder.Services.AddSingleton<FoundationaLLM.Common.Interfaces.IConfigurationService>(new KeyVaultConfigurationService(keyVaultUri));
+builder.Services.AddSingleton<IConfigurationService, KeyVaultConfigurationService>();
 
 var serviceProvider = builder.Services.BuildServiceProvider();
 var kvConfig = serviceProvider.GetRequiredService<FoundationaLLM.Common.Interfaces.IConfigurationService>();

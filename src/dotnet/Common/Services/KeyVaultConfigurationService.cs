@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using FoundationaLLM.Common.Interfaces;
+using FoundationaLLM.Common.Models.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace FoundationaLLM.Common.Services
 {
@@ -20,13 +22,13 @@ namespace FoundationaLLM.Common.Services
         /// <summary>
         /// Creates a new instance of the <see cref="KeyVaultConfigurationService"/> class.
         /// </summary>
-        /// <param name="keyVaultUri">The URI of the deployed Key Vault service.</param>
-        public KeyVaultConfigurationService(string keyVaultUri)
+        /// <param name="settings">The configuration settings for the deployed Key Vault service.</param>
+        public KeyVaultConfigurationService(IOptions<KeyVaultConfigurationServiceSettings> settings)
         {
-            if (string.IsNullOrEmpty(keyVaultUri))
-                throw new ArgumentNullException(nameof(keyVaultUri));
+            if (string.IsNullOrEmpty(settings.Value.KeyVaultUri))
+                throw new ArgumentNullException(nameof(settings.Value.KeyVaultUri));
             _secretClient = new SecretClient(
-                new Uri(keyVaultUri),
+                new Uri(settings.Value.KeyVaultUri),
                 new DefaultAzureCredential());
         }
 

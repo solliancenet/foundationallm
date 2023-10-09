@@ -1,7 +1,7 @@
 ﻿using Asp.Versioning;
 using FoundationaLLM.Common.Controllers;
 using FoundationaLLM.Common.Interfaces;
-using FoundationaLLM.Common.Models.ConfigurationOptions.Authentication;
+using FoundationaLLM.Common.Models.Configuration.Authentication;
 using FoundationaLLM.Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

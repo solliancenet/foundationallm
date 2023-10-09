@@ -3,7 +3,6 @@ using Asp.Versioning;
 using FoundationaLLM.Common.OpenAPI;
 using FoundationaLLM.Common.Constants;
 using FoundationaLLM.Core.Interfaces;
-using FoundationaLLM.Core.Models.ConfigurationOptions;
 using FoundationaLLM.Core.Services;
 using Microsoft.Extensions.Options;
 using Polly;
@@ -16,7 +15,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using FoundationaLLM.Common.Helpers.Authentication;
 using FoundationaLLM.Common.Interfaces;
+using FoundationaLLM.Common.Models.Configuration;
 using Microsoft.Identity.Client;
+using FoundationaLLM.Core.Models.Configuration;
 
 namespace FoundationaLLM.Core.API
 {
@@ -28,7 +29,10 @@ namespace FoundationaLLM.Core.API
 
             builder.Services.AddOptions<CosmosDbSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:CosmosDB"));
+            builder.Services.AddOptions<KeyVaultConfigurationServiceSettings>()
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:Configuration"));
 
+            builder.Services.AddSingleton<IConfigurationService, KeyVaultConfigurationService>();
             builder.Services.AddSingleton<ICosmosDbService, CosmosDbService>();
             builder.Services.AddSingleton<ICoreService, CoreService>();
             builder.Services.AddSingleton<IGatekeeperAPIService, GatekeeperAPIService>();
@@ -117,8 +121,6 @@ namespace FoundationaLLM.Core.API
 
         public static void RegisterAuthConfiguration(WebApplicationBuilder builder)
         {
-            var keyVaultUri = builder.Configuration["FoundationaLLM:Configuration:KeyVaultUri"];
-            builder.Services.AddSingleton<Common.Interfaces.IConfigurationService>(new KeyVaultConfigurationService(keyVaultUri));
             var serviceProvider = builder.Services.BuildServiceProvider();
             var kvConfig = serviceProvider.GetRequiredService<Common.Interfaces.IConfigurationService>();
             var azureAdSecret = kvConfig.GetValue<string>(builder.Configuration["FoundationaLLM:Entra:ClientSecretKeyName"]);
