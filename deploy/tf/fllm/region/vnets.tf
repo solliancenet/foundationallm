@@ -33,6 +33,8 @@ resource "azurerm_private_dns_zone_virtual_network_link" "dns_vnet_link" {
 
   name                  = each.key
   private_dns_zone_name = each.key
-  resource_group_name   = azurerm_virtual_network.vnet.resource_group_name
+  resource_group_name   = each.value.resource_group_name
   virtual_network_id    = azurerm_virtual_network.vnet.id
+
+  tags = local.tags
 }
