@@ -7,5 +7,6 @@ locals {
 
   private_dns_zones = {
     "privatelink.openai.azure.com" = {}
+    "privatelink.vaultcore.azure.com" = {}
   }
 }

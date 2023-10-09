@@ -22,6 +22,22 @@ resource "azurerm_cognitive_account" "openai" {
   tags = local.tags
 }
 
+resource "azurerm_key_vault_secret" "openai_primary_key" {
+  for_each = azurerm_cognitive_account.openai
+
+  name = join("-", [local.resource_prefix, each.key, "primarykey"])
+  value = each.value.primary_access_key
+  key_vault_id = azurerm_key_vault.openai_keyvault.id
+}
+
+resource "azurerm_key_vault_secret" "openai_secondary_key" {
+  for_each = azurerm_cognitive_account.openai
+
+  name = join("-", [local.resource_prefix, each.key, "secondarykey"])
+  value = each.value.secondary_access_key
+  key_vault_id = azurerm_key_vault.openai_keyvault.id
+}
+
 resource "azurerm_private_endpoint" "openai_ple" {
   for_each = azurerm_cognitive_account.openai
 
@@ -43,3 +59,28 @@ resource "azurerm_private_endpoint" "openai_ple" {
   }
 }
 
+resource "azurerm_api_management" "openai_apim" {
+  name = join("-", [local.resource_prefix, "OAI", "apim"])
+  location = local.location
+  resource_group_name = azurerm_resource_group.rgs["OAI"].name
+  publisher_name = "FoundationaLLM"
+  publisher_email = "ciprian@solliance.net"
+  sku_name = "Standard_1"
+  virtual_network_type = "Internal"
+
+  virtual_network_configuration {
+    subnet_id = azurerm_subnet.subnets["FLLMOpenAI"].id
+  }
+
+  tags = local.tags
+}
+
+resource "azurerm_api_management_api" "openai_api" {
+  name = join("-", [local.resource_prefix, "OAI", "api"])
+  resource_group_name = azurerm_resource_group.rgs["OAI"].name
+  api_management_name = azurerm_api_management.openai_apim.name
+  revision = "1"
+  display_name = "HA OpenAI"
+  path = "openai"
+  protocols = ["https"]
+}

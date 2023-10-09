@@ -7,3 +7,5 @@ locals {
   vnet_address_space = var.vnet_address_space
   private_dns_zones  = var.private_dns_zones
 }
+
+data "azurerm_client_config" "current" {}
