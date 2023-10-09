@@ -28,3 +28,9 @@ variable "vnet_address_space" {
   type        = string
   description = "Address space of the regional VNET"
 }
+
+variable "private_dns_zones" {
+  type = map(object({
+    id = string
+  }))
+}

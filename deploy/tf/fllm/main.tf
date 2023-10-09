@@ -5,6 +5,11 @@ locals {
   resource_prefix = join("-", [local.project_id, local.environment])
 
   global_resource_groups = {
+    "DNS" = {
+      tags = {
+        "Purpose" = "Networking"
+      }
+    }
   }
 
   regional_resource_groups = {
