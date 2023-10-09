@@ -33,21 +33,6 @@ public class AgentHubService : IAgentHubService
         _httpClientFactory = httpClientFactory;
     }
 
-    public async Task Ping()
-    {
-        try
-        {
-            var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.AgentHubAPIClient);
-
-            var responseMessage = await client.GetAsync("/");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, $"Error pinging agent hub.");
-            throw ex;
-        }
-    }
-
     public async Task<string> Status()
     {
         try

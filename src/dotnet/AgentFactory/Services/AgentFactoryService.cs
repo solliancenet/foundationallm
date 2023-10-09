@@ -14,7 +14,7 @@ public class AgentFactoryService : IAgentFactoryService
     private readonly ISemanticKernelOrchestrationService _semanticKernelOrchestration;
     private readonly ILangChainOrchestrationService _langChainOrchestration;
     private readonly IAgentHubService _agentHubService;
-    private readonly ChatServiceSettings _settings;
+    private readonly AgentHubSettings _settings;
     private readonly ILogger<AgentFactoryService> _logger;
 
     private LLMOrchestrationService _llmOrchestrationService = LLMOrchestrationService.LangChain;
@@ -23,13 +23,13 @@ public class AgentFactoryService : IAgentFactoryService
         ISemanticKernelOrchestrationService semanticKernelOrchestration,
         ILangChainOrchestrationService langChainOrchestration,
         IAgentHubService agentHubService,
-        IOptions<ChatServiceSettings> chatOptions,
+        IOptions<AgentHubSettings> settings,
         ILogger<AgentFactoryService> logger)
     {
         _semanticKernelOrchestration = semanticKernelOrchestration;
         _langChainOrchestration = langChainOrchestration;
         _agentHubService = agentHubService;
-        _settings = chatOptions.Value;
+        _settings = settings.Value;
         _logger = logger;
 
         SetLLMOrchestrationPreference(_settings.DefaultOrchestrationService);

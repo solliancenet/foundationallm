@@ -106,7 +106,7 @@ public class CoreService : ICoreService
             var completionRequest = new CompletionRequest
             {
                 Prompt = userPrompt,
-                MessageHistory = messageHistoryList,
+                MessageHistory = messageHistoryList
             };
 
             // Generate the completion to return to the user
