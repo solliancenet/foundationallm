@@ -60,10 +60,8 @@ public class AgentHubService : IAgentHubService
     {
         try
         {
-            AgentHubMessage ahm = new AgentHubMessage();
-            ahm.user_prompt = user_prompt;
-            ahm.user_context = user_context;
-
+            AgentHubMessage ahm = new AgentHubMessage { user_prompt = user_prompt, user_context = user_context };
+            
             var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.AgentHubAPIClient);
 
             var responseMessage = await client.PostAsync("/resolve_request", new StringContent(
