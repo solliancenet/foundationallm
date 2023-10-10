@@ -1,7 +1,7 @@
 import os
 from fastapi import APIRouter, Depends
 from app.dependencies import validate_api_key_header
-from foundationallm.auth import AzureCredential
+from foundationallm.credentials import AzureCredential
 from foundationallm.config import Configuration
 from foundationallm.models.orchestration import CompletionRequest, CompletionResponse, SummaryRequest, SummaryResponse
 from foundationallm.langchain.openai_models import AzureChatLLM

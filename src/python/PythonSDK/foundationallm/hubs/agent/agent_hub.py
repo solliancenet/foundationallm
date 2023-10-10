@@ -1,4 +1,4 @@
-from foundationallm.auth import AzureCredential
+from foundationallm.credentials import AzureCredential
 from foundationallm.config import Configuration
 from foundationallm.hubs.agent import AgentRepository, AgentResolver
 from foundationallm.hubs import HubBase

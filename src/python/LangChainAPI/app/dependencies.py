@@ -1,7 +1,7 @@
 from typing import Annotated
 from fastapi import Depends, HTTPException
 from fastapi.security import APIKeyHeader
-from foundationallm.auth import AzureCredential
+from foundationallm.credentials import AzureCredential
 from foundationallm.auth import APIKeyValidator
 from foundationallm.config import Configuration
    

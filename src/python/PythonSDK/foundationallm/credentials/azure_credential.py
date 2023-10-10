@@ -1,4 +1,4 @@
-from foundationallm.auth import Credential
+from foundationallm.credentials import Credential
 from azure.identity import DefaultAzureCredential
 
 class AzureCredential(Credential):
