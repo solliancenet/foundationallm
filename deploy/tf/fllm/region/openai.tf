@@ -165,7 +165,7 @@ resource "azurerm_api_management_api" "openai_api" {
   protocols           = ["https"]
 
   import {
-    content_format = "openapi"
+    content_format = "swagger-link-json"
     content_value  = "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/c183bb012de8e9e1d0d2e67a0994748df4747d2c/specification/cognitiveservices/data-plane/AzureOpenAI/authoring/stable/2022-12-01/azureopenai.json"
   }
 }
