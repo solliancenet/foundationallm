@@ -21,3 +21,18 @@ class DataSourceRepository(Repository):
             elif commonDatasourceMetadata.underlying_implementation == UnderlyingImplementation.SEARCH_SERVICE:
                 configs.append(SearchServiceDataSourceMetadata.model_validate_json(mgr.read_file_content(config_file)))
         return configs
+    
+    def get_metadata_by_name(self, name: str) -> DataSourceMetadata:
+        # The name parameter is the name of the data source as well as the name of the configuration file.
+        mgr = DataSourceHubStorageManager(config=self.config)
+        config_file = name + ".json"
+        commonDatasourceMetadata = DataSourceMetadata.model_validate_json(mgr.read_file_content(config_file))
+        config = None
+        if commonDatasourceMetadata.underlying_implementation == UnderlyingImplementation.SQL_SERVER:
+            config = SQLServerDataSourceMetadata.model_validate_json(mgr.read_file_content(config_file))
+        elif commonDatasourceMetadata.underlying_implementation == UnderlyingImplementation.BLOB_STORAGE:
+            config = BlobStorageDataSourceMetadata.model_validate_json(mgr.read_file_content(config_file))
+        elif commonDatasourceMetadata.underlying_implementation == UnderlyingImplementation.SEARCH_SERVICE:
+            config = SearchServiceDataSourceMetadata.model_validate_json(mgr.read_file_content(config_file))
+        return config
+      

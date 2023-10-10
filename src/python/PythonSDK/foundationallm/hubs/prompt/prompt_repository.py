@@ -11,3 +11,8 @@ class PromptRepository(Repository):
         prompt_files = mgr.list_blobs(path="")
         # Prepare the name so that it adheres to the prompt namespace, eg. AgentName.PromptName (AgentName is also the folder, PromptName is the file name without extension)
         return [PromptMetadata(name=prompt_file.split('.')[0].replace('/','.'), prompt=mgr.read_file_content(prompt_file)) for prompt_file in prompt_files]
+
+    def get_metadata_by_name(self, name: str) -> PromptMetadata:
+        mgr = PromptHubStorageManager(config=self.config)
+        prompt_file = mgr.read_file_content(name.replace('.', '/') + '.txt')
+        return PromptMetadata(name=name, prompt=prompt_file)

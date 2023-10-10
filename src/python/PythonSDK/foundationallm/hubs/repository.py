@@ -12,3 +12,7 @@ class Repository(ABC):
     @abstractmethod
     def get_metadata_values(self) -> List[Metadata]:
         pass
+    
+    @abstractmethod
+    def get_metadata_by_name(self, name: str) -> Metadata:
+        pass
