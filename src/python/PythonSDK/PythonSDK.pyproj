@@ -22,6 +22,7 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="foundationallm\auth\azure_credential.py" />
     <Compile Include="foundationallm\auth\credential.py" />
     <Compile Include="foundationallm\data_sources\sql_server\sql_authentication_metadata.py" />
     <Compile Include="foundationallm\data_sources\sql_server\sql_authentication_type.py" />
@@ -106,7 +107,7 @@
     <Folder Include="foundationallm\models\" />
     <Folder Include="foundationallm\models\orchestration\" />
     <Folder Include="foundationallm\hubs\" />
-    <Folder Include="foundationallm\storage\" />    
+    <Folder Include="foundationallm\storage\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="foundationallm\" />
