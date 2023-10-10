@@ -7,6 +7,8 @@
 
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
+    <AssemblyName>FoundationaLLM.Common.Tests</AssemblyName>
+    <RootNamespace>FoundationaLLM.Common.Tests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

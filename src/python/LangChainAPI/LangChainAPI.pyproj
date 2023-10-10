@@ -7,9 +7,8 @@
     <ProjectHome>
     </ProjectHome>
     <ProjectTypeGuids>{1b580a1a-fdb3-4b32-83e1-6407eb2722e6};{349c5851-65df-11da-9384-00065b846f21};{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
-    <StartupFile>main.py</StartupFile>
-    <SearchPath>
-    </SearchPath>
+    <StartupFile>app/main.py</StartupFile>
+    <SearchPath>..\PythonSDK</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <LaunchProvider>Standard Python launcher</LaunchProvider>
     <WebBrowserUrl>http://localhost</WebBrowserUrl>
@@ -40,14 +39,16 @@
     <Content Include="startup.sh" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="solliance\aicopilot\csv_agent.py" />
-    <Compile Include="main.py" />
-    <Compile Include="solliance\aicopilot\prompt_model.py" />
-    <Compile Include="solliance\aicopilot\__init__.py" />
+    <Compile Include="app\dependencies.py" />
+    <Compile Include="app\main.py" />
+    <Compile Include="app\routers\orchestration.py" />
+    <Compile Include="app\routers\status.py" />
+    <Compile Include="app\routers\__init__.py" />
+    <Compile Include="app\__init__.py" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="solliance\" />
-    <Folder Include="solliance\aicopilot\" />
+    <Folder Include="app\" />
+    <Folder Include="app\routers\" />
   </ItemGroup>
   <ItemGroup>
     <Interpreter Include="env\">
@@ -59,6 +60,13 @@
       <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
       <Architecture>X64</Architecture>
     </Interpreter>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PythonSDK\PythonSDK.pyproj">
+      <Name>PythonSDK</Name>
+      <Project>{2469cc23-7f26-4b84-8878-98d90604eee8}</Project>
+      <Private>True</Private>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.Web.targets" />
   <!-- Specify pre- and post-build commands in the BeforeBuild and 
