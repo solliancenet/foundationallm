@@ -22,6 +22,24 @@ resource "azurerm_cognitive_account" "openai" {
   tags = local.tags
 }
 
+resource "azurerm_cognitive_deployment" "completions" {
+  for_each = azurerm_cognitive_account.openai
+
+  name                 = "completions"
+  cognitive_account_id = each.value.id
+
+  model {
+    format  = "OpenAI"
+    name    = "gpt-35-turbo"
+    version = "0301"
+  }
+
+  scale {
+    type     = "Standard"
+    capacity = "60"
+  }
+}
+
 resource "azurerm_key_vault_secret" "openai_primary_key" {
   for_each = azurerm_cognitive_account.openai
 
