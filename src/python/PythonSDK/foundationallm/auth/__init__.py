@@ -1,5 +1,5 @@
 """ 
-Auth methods for FoundationAL LM Python SDK
+Auth methods for FoundationaLLM Python SDK
 """
 
 from .credential import Credential
