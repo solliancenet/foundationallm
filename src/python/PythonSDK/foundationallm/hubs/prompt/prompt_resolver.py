@@ -7,5 +7,5 @@ class PromptResolver(Resolver):
 
     def resolve(self, request, metadata_values)->List[PromptMetadata]:
         # This should use some logic to resolve the request to a metadata
-        # For simplicity, returning the Cocorahs metadata
-        return [metadata_values[1]]
+        # For simplicity, returning the Default metadata
+        return [metadata_values[0]]

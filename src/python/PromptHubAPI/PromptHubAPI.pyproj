@@ -4,9 +4,11 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>5d5fc907-72ad-4026-aa8d-db6ba578ae0d</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>main.py</StartupFile>
+    <StartupFile>app\main.py</StartupFile>
     <SearchPath>..\PythonSDK</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
+    <LaunchProvider>Standard Python launcher</LaunchProvider>
+    <WebBrowserUrl>http://localhost:8642/swagger</WebBrowserUrl>
     <OutputPath>.</OutputPath>
     <Name>PromptHubAPI</Name>
     <RootNamespace>PromptHubAPI</RootNamespace>
@@ -21,7 +23,12 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="main.py" />
+    <Compile Include="app\dependencies.py" />
+    <Compile Include="app\routers\resolve_request.py" />
+    <Compile Include="app\routers\status.py" />
+    <Compile Include="app\routers\__init__.py" />
+    <Compile Include="app\main.py" />
+    <Compile Include="app\__init__.py" />
   </ItemGroup>
   <ItemGroup>
     <Content Include=".gitignore" />
@@ -45,6 +52,10 @@
       <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
       <Architecture>X64</Architecture>
     </Interpreter>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="app\" />
+    <Folder Include="app\routers\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

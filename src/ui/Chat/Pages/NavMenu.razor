@@ -5,9 +5,7 @@
 @inject IChatManager chatManager
 @inject IJSRuntime JSRuntime
 
-
-<div class="h-100 d-flex flex-column" style="min-width: 275px;">
-
+<div class="h-100 d-flex flex-column" style="min-width: 309px;">
     <div class="flex-column navbar navbar-dark bg-gray" style="background-color: black">
         <div class="container-fluid justify-content-between">
             <div class="flex-fill">
@@ -19,19 +17,22 @@
         </div>
     </div>
 
+    @if (_loadingComplete == true)
+    {
+        <div class="nav-item py-2 d-grid">
+            <NavLink style="cursor:pointer" class="btn rounded-0 btn-sm mx-1 btn-secondary d-flex flex-row align-items start" Match="NavLinkMatch.All" @onclick="@(e => NewChat())">
+                <i class="bi bi-plus"></i>
+                <span class="flex-fill">
+                    Create New Chat
+                </span>
+            </NavLink>
+        </div>
+    }
     <div class="flex-grow-1 flex-column justify-content-center overflow-y-auto overflow-x-hidden" id="ChatSessionsDiv">
         @if (_loadingComplete == true)
         {
             <div>
                 <nav class="flex-column">
-                    <div class="nav-item py-2 d-grid">
-                        <NavLink style="cursor:pointer" class="btn rounded-0 btn-sm mx-1 btn-secondary d-flex flex-row align-items start" Match="NavLinkMatch.All" @onclick="@(e => NewChat())">
-                            <i class="bi bi-plus"></i>
-                            <span class="flex-fill">
-                                Create New Chat
-                            </span>
-                        </NavLink>
-                    </div>
                     <div class="row row-cols-1 g-2 px-2 d-flex flex-column align-items-start">
                         @foreach (var session in ChatSessions)
                         {

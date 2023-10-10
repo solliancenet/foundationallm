@@ -9,5 +9,7 @@ pyodbc==4.0.39
 psycopg2==2.9.9
 sqlalchemy==2.0.21
 fastapi==0.103.2
-tenacity
-typing
+tenacity==8.2.3
+azure-storage-blob==12.18.2
+tiktoken==0.5.1
+typing==3.7.4.3

@@ -22,15 +22,20 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="foundationallm\datasources\sql_server\sql_authentication_metadata.py" />
-    <Compile Include="foundationallm\datasources\sql_server\sql_authentication_type.py" />
-    <Compile Include="foundationallm\datasources\sql_server\sql_server_data_source_metadata.py" />
-    <Compile Include="foundationallm\datasources\sql_server\__init__.py" />
+    <Compile Include="foundationallm\credentials\azure_credential.py" />
+    <Compile Include="foundationallm\credentials\credential.py" />
+    <Compile Include="foundationallm\credentials\__init__.py" />
+    <Compile Include="foundationallm\data_sources\sql_server\sql_authentication_metadata.py" />
+    <Compile Include="foundationallm\data_sources\sql_server\sql_authentication_type.py" />
+    <Compile Include="foundationallm\data_sources\sql_server\sql_server_data_source_metadata.py" />
+    <Compile Include="foundationallm\data_sources\sql_server\__init__.py" />
     <Compile Include="foundationallm\hubs\agent\agent_hub.py" />
+    <Compile Include="foundationallm\hubs\agent\agent_hub_storage_manager.py" />
     <Compile Include="foundationallm\hubs\agent\agent_metadata.py" />
     <Compile Include="foundationallm\hubs\agent\agent_repository.py" />
     <Compile Include="foundationallm\hubs\agent\agent_resolver.py" />
     <Compile Include="foundationallm\hubs\agent\__init__.py" />
+    <Compile Include="foundationallm\hubs\data_source\data_source_hub_storage_manager.py" />
     <Compile Include="foundationallm\hubs\hub_base.py" />
     <Compile Include="foundationallm\hubs\data_source\data_source_hub.py" />
     <Compile Include="foundationallm\hubs\data_source\data_source_metadata.py" />
@@ -40,6 +45,7 @@
     <Compile Include="foundationallm\hubs\data_source\__init__.py" />
     <Compile Include="foundationallm\hubs\metadata.py" />
     <Compile Include="foundationallm\hubs\prompt\prompt_hub.py" />
+    <Compile Include="foundationallm\hubs\prompt\prompt_hub_storage_manager.py" />
     <Compile Include="foundationallm\hubs\prompt\prompt_metadata.py" />
     <Compile Include="foundationallm\hubs\prompt\prompt_repository.py" />
     <Compile Include="foundationallm\hubs\prompt\prompt_resolver.py" />
@@ -47,13 +53,38 @@
     <Compile Include="foundationallm\hubs\repository.py" />
     <Compile Include="foundationallm\hubs\resolver.py" />
     <Compile Include="foundationallm\hubs\__init__.py" />
+    <Compile Include="foundationallm\langchain\agents\agent_base.py" />
+    <Compile Include="foundationallm\langchain\agents\csv_agent.py" />
+    <Compile Include="foundationallm\langchain\agents\sql_db_agent.py" />
+    <Compile Include="foundationallm\langchain\agents\summary_agent.py" />
+    <Compile Include="foundationallm\langchain\agents\__init__.py" />
+    <Compile Include="foundationallm\langchain\agents\agent_factory.py" />
+    <Compile Include="foundationallm\langchain\datasources\sql\mssql.py" />
+    <Compile Include="foundationallm\langchain\datasources\sql\mysql.py" />
+    <Compile Include="foundationallm\langchain\datasources\sql\postgresql.py" />
+    <Compile Include="foundationallm\langchain\datasources\sql\sql_db_config.py" />
+    <Compile Include="foundationallm\langchain\datasources\sql\__init__.py" />
+    <Compile Include="foundationallm\langchain\datasources\__init__.py" />
+    <Compile Include="foundationallm\langchain\openai_models\azure_chat_llm.py" />
+    <Compile Include="foundationallm\langchain\openai_models\__init__.py" />
+    <Compile Include="foundationallm\langchain\__init__.py" />
+    <Compile Include="foundationallm\models\orchestration\completion_request.py" />
     <Compile Include="foundationallm\models\message.py" />
+    <Compile Include="foundationallm\models\orchestration\completion_response.py" />
+    <Compile Include="foundationallm\models\orchestration\message_history_item.py" />
+    <Compile Include="foundationallm\models\orchestration\orchestration_request_base.py" />
+    <Compile Include="foundationallm\models\orchestration\__init__.py" />
+    <Compile Include="foundationallm\models\orchestration\summary_request.py" />
     <Compile Include="foundationallm\models\session.py" />
+    <Compile Include="foundationallm\models\orchestration\summary_response.py" />
     <Compile Include="foundationallm\models\__init__.py" />
     <Compile Include="foundationallm\auth\api_key_validator.py" />
     <Compile Include="foundationallm\auth\__init__.py" />
     <Compile Include="foundationallm\config\configuration.py" />
     <Compile Include="foundationallm\config\__init__.py" />
+    <Compile Include="foundationallm\storage\blob_storage_manager.py" />
+    <Compile Include="foundationallm\storage\storage_manager_base.py" />
+    <Compile Include="foundationallm\storage\__init__.py" />
     <Compile Include="main.py" />
     <Compile Include="foundationallm\__init__.py" />
     <Compile Include="foundationallm\_version.py" />
@@ -64,13 +95,21 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="foundationallm\" />
-    <Folder Include="foundationallm\datasources\sql_server\" />
+    <Folder Include="foundationallm\data_sources\" />
+    <Folder Include="foundationallm\data_sources\sql_server\" />
     <Folder Include="foundationallm\hubs\agent\" />
     <Folder Include="foundationallm\hubs\data_source\" />
     <Folder Include="foundationallm\hubs\prompt\" />
+    <Folder Include="foundationallm\langchain\" />
+    <Folder Include="foundationallm\langchain\agents\" />
+    <Folder Include="foundationallm\langchain\openai_models\" />
+    <Folder Include="foundationallm\langchain\datasources\" />
+    <Folder Include="foundationallm\langchain\datasources\sql\" />
     <Folder Include="foundationallm\models\" />
+    <Folder Include="foundationallm\models\orchestration\" />
     <Folder Include="foundationallm\hubs\" />
-    <Folder Include="foundationallm\datasources\" />
+    <Folder Include="foundationallm\credentials\" />
+    <Folder Include="foundationallm\storage\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="foundationallm\" />

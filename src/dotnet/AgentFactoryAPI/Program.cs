@@ -4,7 +4,9 @@ using FoundationaLLM.AgentFactory.Core.Services;
 using FoundationaLLM.AgentFactory.Interfaces;
 using FoundationaLLM.AgentFactory.Models.ConfigurationOptions;
 using FoundationaLLM.AgentFactory.Services;
+using FoundationaLLM.Common.Authentication;
 using FoundationaLLM.Common.Constants;
+using FoundationaLLM.Common.Interfaces;
 using FoundationaLLM.Common.OpenAPI;
 using Microsoft.Extensions.Options;
 using Polly;
@@ -17,6 +19,17 @@ namespace FoundationaLLM.AgentFactory.API
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            // Add services to the container.
+            builder.Services.AddApplicationInsightsTelemetry();
+            builder.Services.AddControllers();
+
+            // Add API Key Authorization
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.AddScoped<APIKeyAuthenticationFilter>();
+            builder.Services.AddOptions<APIKeyValidationSettings>()
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:AgentFactoryAPI"));
+            builder.Services.AddTransient<IAPIKeyValidationService, APIKeyValidationService>();
 
             builder.Services.AddOptions<SemanticKernelOrchestrationServiceSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:SemanticKernelOrchestration"));
@@ -32,10 +45,6 @@ namespace FoundationaLLM.AgentFactory.API
             builder.Services.AddSingleton<IAgentFactoryService, AgentFactoryService>();
 
             builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
-
-            // Add services to the container.
-            builder.Services.AddApplicationInsightsTelemetry();
-            builder.Services.AddControllers();
 
             builder.Services
                 .AddHttpClient(HttpClients.LangChainAPIClient,

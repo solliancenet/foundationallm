@@ -1,5 +1,6 @@
 ﻿using Asp.Versioning;
 using FoundationaLLM.AgentFactory.Core.Interfaces;
+using FoundationaLLM.Common.Authentication;
 using FoundationaLLM.Common.Models.Orchestration;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,6 +8,7 @@ namespace FoundationaLLM.AgentFactory.API.Controllers
 {
     [ApiVersion(1.0)]
     [ApiController]
+    [APIKeyAuthentication]
     [Route("[controller]")]
     public class OrchestrationController : ControllerBase
     {

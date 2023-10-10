@@ -8,7 +8,7 @@ using FoundationaLLM.Common.Models;
 using FoundationaLLM.Common.Models.Search;
 using NSubstitute;
 
-namespace Common.Tests.Models
+namespace FoundationaLLM.Common.Tests.Models
 {
     public class ModelRegistryTests
     {
