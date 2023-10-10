@@ -110,6 +110,8 @@ resource "azurerm_api_management_named_value" "openai_primary_key" {
   resource_group_name = azurerm_api_management.openai_apim.resource_group_name
   api_management_name = azurerm_api_management.openai_apim.name
   display_name        = each.value.name
+  secret              = true
+
   value_from_key_vault {
     secret_id = each.value.id
   }
@@ -126,6 +128,8 @@ resource "azurerm_api_management_named_value" "openai_secondary_key" {
   resource_group_name = azurerm_api_management.openai_apim.resource_group_name
   api_management_name = azurerm_api_management.openai_apim.name
   display_name        = each.value.name
+  secret              = true
+
   value_from_key_vault {
     secret_id = each.value.id
   }
