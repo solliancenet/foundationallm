@@ -2,12 +2,70 @@
 
 ## Requirements
 
+## Chat
+
+#### Make sure the contents of the `appsettings.json` file has this structure and similar values:
+
+```json
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning",
+      "Microsoft.SemanticKernel": "Error"
+    },
+    "ApplicationInsights": {
+      "LogLevel": {
+        "Default": "Information",
+        "Microsoft.AspNetCore": "Warning",
+        "Microsoft.SemanticKernel": "Error"
+      }
+    }
+  },
+  "AllowedHosts": "*",
+  "FoundationaLLM": {
+    "ChatManager": {
+      "APIUrl": "https://localhost:63279",
+      "APIRoutePrefix": ""
+    },
+    "Configuration": {
+      "KeyVaultUri": ""
+    },
+    "Entra": {
+      "Instance": "https://login.microsoftonline.com/",
+      "TenantId": "",
+      "ClientId": "",
+      "CallbackPath": "/signin-oidc",
+      "ClientSecretKeyName": "",
+      "Scopes": ""
+    }
+  }
+}
+```
+
+#### Create the `appsettings.Development.json` file or update it with the following content and replace all `<...>` placeholders with the values from your deployment:
+
+```json
+{
+  "FoundationaLLM": {
+    "Configuration": {
+      "KeyVaultUri": "https://<...>.vault.azure.net/"
+    },
+    "Entra": {
+      "TenantId": "<...>",
+      "ClientId": "<...>",
+      "ClientSecretKeyName": "<...>",
+      "Scopes": "<...>"
+    }
+  }
+}
+```
 
 ## Core API
 
 #### Make sure the contents of the `appsettings.json` file has this structure and similar values:
 
-```
+```json
 {
   "Logging": {
     "LogLevel": {
@@ -32,7 +90,19 @@
       "ChangeFeedLeaseContainer": "leases"
     },
     "GatekeeperAPI": {
-      "APIUrl": ""
+      "APIUrl": "",
+      "APIKey": ""
+    },
+    "Configuration": {
+      "KeyVaultUri": ""
+    },
+    "Entra": {
+      "Instance": "https://login.microsoftonline.com/",
+      "TenantId": "",
+      "ClientId": "",
+      "CallbackPath": "/signin-oidc",
+      "ClientSecretKeyName": "",
+      "Scopes": ""
     }
   }
 }
@@ -40,7 +110,7 @@
 
 #### Create the `appsettings.Development.json` file or update it with the following content and replace all `<...>` placeholders with the values from your deployment:
 
-```
+```json
 {
   "FoundationaLLM": {
     "CosmosDB": {
@@ -48,18 +118,27 @@
       "Key": "<...>"
     },
     "GatekeeperAPI": {
-      "APIUrl": "<...>"
+      "APIUrl": "<...>",
+      "APIKey": "<...>"
+    },
+    "Configuration": {
+      "KeyVaultUri": "https://<...>-keyvault.vault.azure.net/"
+    },
+    "Entra": {
+      "TenantId": "<...>",
+      "ClientId": "<...>",
+      "ClientSecretKeyName": "<...>",
+      "Scopes": "<...>"
     }
   }
 }
 ```
 
-
 ## Gatekeeper API
 
 #### Make sure the contents of the `appsettings.json` file has this structure and similar values:
 
-```
+```json
 {
   "Logging": {
     "LogLevel": {
@@ -89,7 +168,7 @@
 
 #### Create the `appsettings.Development.json` file or update it with the following content and replace all `<...>` placeholders with the values from your deployment:
 
-```
+```json
 {
   "FoundationaLLM": {
     "AgentFactoryAPI": {
@@ -99,12 +178,11 @@
 }
 ```
 
-
 ## Agent Factory API
 
 #### Make sure the contents of the `appsettings.json` file has this structure and similar values:
 
-```
+```json
 {
   "Logging": {
     "LogLevel": {
@@ -140,7 +218,7 @@
 
 #### Create the `appsettings.Development.json` file or update it with the following content and replace all `<...>` placeholders with the values from your deployment:
 
-```
+```json
 {
   "FoundationaLLM": {
     "LangChainOrchestration": {
@@ -166,7 +244,7 @@
 
 #### Make sure the contents of the `appsettings.json` file has this structure and similar values:
 
-```
+```json
 {
   "Logging": {
     "LogLevel": {
@@ -226,7 +304,7 @@
 
 #### Create the `appsettings.Development.json` file or update it with the following content and replace all `<...>` placeholders with the values from your deployment:
 
-```
+```json
 {
   "FoundationaLLM": {
     "CognitiveSearch": {
