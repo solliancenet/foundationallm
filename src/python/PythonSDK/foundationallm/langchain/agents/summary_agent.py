@@ -22,7 +22,7 @@ class SummaryAgent():
 
     def run(self) -> SummaryResponse:
         model_name = self.model_name
-        max_tokens = self.max_tokens
+        max_tokens = int(self.max_tokens)
         
         text_splitter = CharacterTextSplitter()
         texts = text_splitter.split_text(self.text_to_summarize)
