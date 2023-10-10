@@ -59,6 +59,14 @@ resource "azurerm_private_endpoint" "openai_ple" {
   }
 }
 
+resource "azurerm_public_ip" "openai_apim_mgmt_ip" {
+  allocation_method   = "Static"
+  location            = local.location
+  name                = join("-", [local.resource_prefix, "OAI", "pip"])
+  resource_group_name = azurerm_resource_group.rgs["NET"].name
+  sku                 = "Standard"
+}
+
 resource "azurerm_api_management" "openai_apim" {
   name                 = join("-", [local.resource_prefix, "OAI", "apim"])
   location             = local.location
@@ -67,6 +75,7 @@ resource "azurerm_api_management" "openai_apim" {
   publisher_email      = "ciprian@solliance.net"
   sku_name             = "Developer_1"
   virtual_network_type = "Internal"
+  public_ip_address_id = azurerm_public_ip.openai_apim_mgmt_ip.id
 
   virtual_network_configuration {
     subnet_id = azurerm_subnet.subnets["FLLMOpenAI"].id
