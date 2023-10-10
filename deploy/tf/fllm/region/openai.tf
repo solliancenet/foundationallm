@@ -65,7 +65,7 @@ resource "azurerm_public_ip" "openai_apim_mgmt_ip" {
   name                = join("-", [local.resource_prefix, "OAI", "pip"])
   resource_group_name = azurerm_resource_group.rgs["NET"].name
   sku                 = "Standard"
-  domain_name_label   = "openai_apim_mgmt"
+  domain_name_label   = "openai-apim-mgmt"
 }
 
 resource "azurerm_api_management" "openai_apim" {
