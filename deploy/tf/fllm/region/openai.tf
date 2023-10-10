@@ -121,6 +121,25 @@ resource "azurerm_role_assignment" "openai_apim" {
   role_definition_name = "Key Vault Secrets User"
 }
 
+resource "azurerm_private_endpoint" "apim_ple" {
+  location            = local.location
+  name                = join("-", [local.resource_prefix, "OAI", "apim", "ple"])
+  resource_group_name = azurerm_resource_group.rgs["NET"].name
+  subnet_id           = azurerm_subnet.subnets["FLLMOpenAI"].id
+
+  private_service_connection {
+    is_manual_connection           = false
+    name                           = join("-", [local.resource_prefix, "OAI", "apim", "psc"])
+    private_connection_resource_id = azurerm_api_management.openai_apim.id
+    subresource_names              = ["gateway"]
+  }
+
+  private_dns_zone_group {
+    name                 = join("-", [local.resource_prefix, "OAI", "apim", "dsg"])
+    private_dns_zone_ids = [local.private_dns_zones["privatelink.azure-api.net"].id]
+  }
+}
+
 resource "azurerm_api_management_named_value" "openai_primary_key" {
   for_each = azurerm_key_vault_secret.openai_primary_key
 
