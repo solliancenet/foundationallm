@@ -44,6 +44,7 @@ Name | Default | Type | Area | Used by | Description
 `foundationallm-prompt-metadata-storage-container` | | Environment variable | PythonSDK | `PromptHubStorageManager`(SDK) | The name of the Azure Blob Storage container where prompt metadata is stored.
 `foundationallm-datasource-metadata-storage-container` | | Environment variable | PythonSDK | `DataSourceHubStorageManager`(SDK) | The name of the Azure Blob Storage container where data source metadata is stored.
 `foundationallm-agent-metadata-storage-container` | | Environment variable | PythonSDK | `AgentHubStorageManager`(SDK) | The name of the Azure Blob Storage container where agent metadata is stored.
+`foundationallm-search-service-admin-access-key` | | Key Vault Secret | PythonSDK | `DataSourceHubRepository`(SDK), `SearchServiceDataSourceMetadata`(Sdk) | The admin access key of the Azure Cognitive Search service to maintain an index.
 
 ## Temporary configuration settings used by the FoundationaLLM platform
 
