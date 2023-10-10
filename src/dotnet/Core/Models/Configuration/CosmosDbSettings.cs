@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FoundationaLLM.Core.Models.ConfigurationOptions
+namespace FoundationaLLM.Core.Models.Configuration
 {
     public record CosmosDbSettings
     {

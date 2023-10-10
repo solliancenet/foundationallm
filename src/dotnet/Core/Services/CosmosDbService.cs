@@ -2,7 +2,7 @@
 using FoundationaLLM.Common.Models.Chat;
 using FoundationaLLM.Common.Models.Search;
 using FoundationaLLM.Core.Interfaces;
-using FoundationaLLM.Core.Models.ConfigurationOptions;
+using FoundationaLLM.Core.Models.Configuration;
 using FoundationaLLM.Core.Utils;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Fluent;
