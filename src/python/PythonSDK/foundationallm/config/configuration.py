@@ -9,7 +9,7 @@ from foundationallm.credentials import Credential
 class Configuration():    
     def __init__(self, keyvault_name: str = None, credential: Credential = None):
         self.keyvault_name = keyvault_name
-        self.credential = credential        
+        self.credential = credential
             
     def get_value(self, key: str) -> str:
         """
@@ -45,7 +45,7 @@ class Configuration():
             
             if value is None and not (self.keyvault_name is None or self.credential is None):               
                 vault_url = f"https://{self.keyvault_name}.vault.azure.net"           
-                self.secret_client = SecretClient(vault_url=vault_url, credential=self.credential)
+                self.secret_client = SecretClient(vault_url=vault_url, credential=self.credential.get_credential())
                 try:
                     value = self.__get_secret_with_retry(name=key)                
                 except Exception as e:            
@@ -54,7 +54,7 @@ class Configuration():
             # future check for App Configuration, then KV 
             if not (self.keyvault_name is None or self.credential is None):                
                 vault_url = f"https://{self.keyvault_name}.vault.azure.net"           
-                self.secret_client = SecretClient(vault_url=vault_url, credential=self.credential)
+                self.secret_client = SecretClient(vault_url=vault_url, credential=self.credential.get_credential())
                 try:
                     value = self.__get_secret_with_retry(name=key)                
                 except Exception as e:            
