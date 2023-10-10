@@ -27,7 +27,7 @@ namespace FoundationaLLM.Gatekeeper.API
             builder.Services.AddScoped<APIKeyAuthenticationFilter>();
             builder.Services.AddOptions<APIKeyValidationSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:GatekeeperAPI"));
-            builder.Services.AddTransient<IAPIKeyValidation, APIKeyValidationService>();
+            builder.Services.AddTransient<IApiKeyValidationService, APIKeyValidationService>();
 
             builder.Services.AddSingleton<IAgentFactoryAPIService, AgentFactoryAPIService>();
 
