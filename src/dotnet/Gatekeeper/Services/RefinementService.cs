@@ -18,7 +18,7 @@ public class RefinementService : IRefinementService
         _logger = logger;
     }
 
-    public async Task RefineUserPrompt(string userPrompt)
+    public async Task<string> RefineUserPrompt(string userPrompt)
     {
         throw new NotImplementedException();
     }

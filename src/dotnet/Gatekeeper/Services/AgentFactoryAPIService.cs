@@ -9,22 +9,16 @@ namespace FoundationaLLM.Gatekeeper.Core.Services
     public class AgentFactoryAPIService : IAgentFactoryAPIService
     {
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly IRefinementService _refinementService;
         readonly JsonSerializerSettings _jsonSerializerSettings;
 
-        public AgentFactoryAPIService(IHttpClientFactory httpClientFactory,
-            IRefinementService refinementService)
+        public AgentFactoryAPIService(IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
-            _refinementService = refinementService;
             _jsonSerializerSettings = CommonJsonSerializerSettings.GetJsonSerializerSettings();
         }
 
         public async Task<CompletionResponse> GetCompletion(CompletionRequest completionRequest)
         {
-            // TODO: Call RefinementService to refine userPrompt
-            // await _refinementService.RefineUserPrompt(completionRequest);
-
             var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.AgentFactoryAPIClient);
 
             var responseMessage = await client.PostAsync("orchestration/completion",
@@ -50,16 +44,13 @@ namespace FoundationaLLM.Gatekeeper.Core.Services
             };
         }
 
-        public async Task<SummaryResponse> GetSummary(SummaryRequest content)
+        public async Task<SummaryResponse> GetSummary(SummaryRequest summaryRequest)
         {
-            // TODO: Call RefinementService to refine userPrompt
-            // await _refinementService.RefineUserPrompt(content);
-
             var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.AgentFactoryAPIClient);
 
             var responseMessage = await client.PostAsync("orchestration/summarize",
                 new StringContent(
-                    JsonConvert.SerializeObject(content, _jsonSerializerSettings),
+                    JsonConvert.SerializeObject(summaryRequest, _jsonSerializerSettings),
                     Encoding.UTF8, "application/json"));
 
             if (responseMessage.IsSuccessStatusCode)
