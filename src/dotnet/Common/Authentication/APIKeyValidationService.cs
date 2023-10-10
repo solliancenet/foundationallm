@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 
 namespace FoundationaLLM.Common.Authentication
 {
-    public class APIKeyValidationService : IApiKeyValidationService
+    public class APIKeyValidationService : IAPIKeyValidationService
     {
         private readonly IConfiguration _configuration;
         private readonly APIKeyValidationSettings _settings;

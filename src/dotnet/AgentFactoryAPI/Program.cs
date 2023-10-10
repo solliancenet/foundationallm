@@ -29,7 +29,7 @@ namespace FoundationaLLM.AgentFactory.API
             builder.Services.AddScoped<APIKeyAuthenticationFilter>();
             builder.Services.AddOptions<APIKeyValidationSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:AgentFactoryAPI"));
-            builder.Services.AddTransient<IApiKeyValidationService, APIKeyValidationService>();
+            builder.Services.AddTransient<IAPIKeyValidationService, APIKeyValidationService>();
 
             builder.Services.AddOptions<SemanticKernelOrchestrationServiceSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:SemanticKernelOrchestration"));

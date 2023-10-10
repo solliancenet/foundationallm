@@ -1,6 +1,6 @@
 ﻿namespace FoundationaLLM.Common.Interfaces
 {
-    public interface IApiKeyValidationService
+    public interface IAPIKeyValidationService
     {
         bool IsValid(string apiKey);
     }

@@ -6,10 +6,10 @@ namespace FoundationaLLM.Common.Authentication
 {
     public class APIKeyAuthenticationFilter : IAuthorizationFilter
     {
-        private readonly IApiKeyValidationService _apiKeyValidation;
+        private readonly IAPIKeyValidationService _apiKeyValidation;
         private const string API_KEY_HEADER_NAME = "X-API-Key";
 
-        public APIKeyAuthenticationFilter(IApiKeyValidationService apiKeyValidation)
+        public APIKeyAuthenticationFilter(IAPIKeyValidationService apiKeyValidation)
         {
             _apiKeyValidation = apiKeyValidation;
         }
