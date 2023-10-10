@@ -82,8 +82,42 @@ resource "azurerm_api_management" "openai_apim" {
     subnet_id = azurerm_subnet.subnets["FLLMOpenAI"].id
   }
 
+  identity {
+    type = "SystemAssigned"
+  }
+
   tags = local.tags
 }
+
+#resource "azurerm_role_assignment" "openai_apim" {
+#  principal_id         = azurerm_api_management.openai_apim.identity.0.principal_id
+#  scope                = azurerm_key_vault.openai_keyvault.id
+#  role_definition_name = "Key Vault Secrets User"
+#}
+#
+#resource "azurerm_api_management_named_value" "openai_primary_key" {
+#  for_each = azurerm_key_vault_secret.openai_primary_key
+#
+#  name                = each.value.name
+#  resource_group_name = azurerm_api_management.openai_apim.resource_group_name
+#  api_management_name = azurerm_api_management.openai_apim.name
+#  display_name        = each.value.name
+#  value_from_key_vault {
+#    secret_id = each.value.id
+#  }
+#}
+#
+#resource "azurerm_api_management_named_value" "openai_secondary_key" {
+#  for_each = azurerm_key_vault_secret.openai_secondary_key
+#
+#  name                = each.value.name
+#  resource_group_name = azurerm_api_management.openai_apim.resource_group_name
+#  api_management_name = azurerm_api_management.openai_apim.name
+#  display_name        = each.value.name
+#  value_from_key_vault {
+#    secret_id = each.value.id
+#  }
+#}
 
 resource "azurerm_api_management_api" "openai_api" {
   name                = join("-", [local.resource_prefix, "OAI", "api"])
