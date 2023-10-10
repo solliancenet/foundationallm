@@ -13,6 +13,11 @@ locals {
   }
 
   regional_resource_groups = {
+    "JBX" = {
+      tags = {
+        "Purpose" = "DevOps"
+      }
+    }
     "NET" = {
       tags = {
         "Purpose" = "Networking"
