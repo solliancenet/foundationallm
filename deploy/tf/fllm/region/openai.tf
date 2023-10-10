@@ -146,7 +146,7 @@ resource "azurerm_api_management_backend" "openai_backends" {
   name                = join("-", [local.resource_prefix, each.key, "apibackend"])
   protocol            = "http"
   resource_group_name = azurerm_api_management.openai_apim.resource_group_name
-  url                 = each.value.endpoint
+  url                 = join("", [each.value.endpoint, "openai"])
 
   credentials {
     header = {
@@ -163,4 +163,9 @@ resource "azurerm_api_management_api" "openai_api" {
   display_name        = "HA OpenAI"
   path                = "openai"
   protocols           = ["https"]
+
+  import {
+    content_format = "openapi"
+    content_value  = "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/c183bb012de8e9e1d0d2e67a0994748df4747d2c/specification/cognitiveservices/data-plane/AzureOpenAI/authoring/stable/2022-12-01/azureopenai.json"
+  }
 }
