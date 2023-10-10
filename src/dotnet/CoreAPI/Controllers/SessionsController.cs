@@ -1,21 +1,28 @@
 ﻿using Asp.Versioning;
 using Azure.AI.OpenAI;
+using FoundationaLLM.Common.Controllers;
 using FoundationaLLM.Core.Interfaces;
 using FoundationaLLM.Common.Models.Chat;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using FoundationaLLM.Common.Interfaces;
+using Microsoft.Identity.Web;
 
 namespace FoundationaLLM.Core.API.Controllers
 {
+    [Authorize]
+    [Authorize(Policy = "RequiredScope")]
     [ApiVersion(1.0)]
     [ApiController]
     [Route("[controller]")]
-    public class SessionsController : ControllerBase
+    public class SessionsController : APIControllerBase
     {
         private readonly ICoreService _coreService;
         private readonly ILogger<SessionsController> _logger;
 
         public SessionsController(ICoreService coreService,
-            ILogger<SessionsController> logger)
+            ILogger<SessionsController> logger,
+            IUserClaimsProviderService claimsProviderService) : base(claimsProviderService)
         {
             _coreService = coreService;
             _logger = logger;

@@ -1,5 +1,10 @@
-﻿using Microsoft.Extensions.Options;
+﻿using System.Net.Http.Headers;
+using FoundationaLLM.Common.Interfaces;
+using Microsoft.Extensions.Options;
 using FoundationaLLM.Common.Models.Chat;
+using FoundationaLLM.Common.Models.Configuration.Authentication;
+using Microsoft.Identity.Abstractions;
+using Microsoft.Identity.Web;
 
 namespace FoundationaLLM.Chat.Helpers
 {
@@ -11,14 +16,20 @@ namespace FoundationaLLM.Chat.Helpers
         private List<Session> _sessions { get; set; }
 
         private readonly ChatManagerSettings _settings;
-        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly EntraSettings _entraSettings;
+        private readonly IAuthenticatedHttpClientFactory _authenticatedHttpClientFactory;
+        private readonly MicrosoftIdentityConsentAndConditionalAccessHandler _consentHandler;
 
         public ChatManager(
             IOptions<ChatManagerSettings> settings,
-            IHttpClientFactory httpClientFactory)
+            IOptions<EntraSettings> entraSettings,
+            IAuthenticatedHttpClientFactory authenticatedHttpClientFactory,
+            MicrosoftIdentityConsentAndConditionalAccessHandler consentHandler)
         {
             _settings = settings.Value;
-            _httpClientFactory = httpClientFactory;
+            _entraSettings = entraSettings.Value;
+            _authenticatedHttpClientFactory = authenticatedHttpClientFactory;
+            _consentHandler = consentHandler;
         }
 
         /// <summary>
@@ -145,7 +156,7 @@ namespace FoundationaLLM.Chat.Helpers
 
         private async Task<T> SendRequest<T>(HttpMethod method, string requestUri, object payload = null)
         {
-            var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.DefaultHttpClient);
+            var client = await GetHttpClientAsync(Common.Constants.HttpClients.DefaultHttpClient, _entraSettings.Scopes);
             HttpResponseMessage responseMessage;
             switch (method)
             {
@@ -166,7 +177,7 @@ namespace FoundationaLLM.Chat.Helpers
 
         private async Task SendRequest(HttpMethod method, string requestUri)
         {
-            var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.DefaultHttpClient);
+            var client = await GetHttpClientAsync(Common.Constants.HttpClients.DefaultHttpClient, _entraSettings.Scopes);
             switch (method)
             {
                 case HttpMethod m when m == HttpMethod.Delete:
@@ -174,6 +185,20 @@ namespace FoundationaLLM.Chat.Helpers
                     break;
                 default:
                     throw new NotImplementedException($"The Http method {method.Method} is not supported.");
+            }
+        }
+
+        private async Task<HttpClient> GetHttpClientAsync(string clientName, string scopes)
+        {
+            try
+            {
+                var client = await _authenticatedHttpClientFactory.CreateClientAsync(clientName, scopes);
+                return client;
+            }
+            catch (Exception e)
+            {
+                _consentHandler.HandleException(e);
+                throw;
             }
         }
     }
