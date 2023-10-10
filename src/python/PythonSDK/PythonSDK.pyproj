@@ -22,16 +22,20 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="foundationallm\auth\credential.py" />
-    <Compile Include="foundationallm\datasources\sql_server\sql_authentication_metadata.py" />
-    <Compile Include="foundationallm\datasources\sql_server\sql_authentication_type.py" />
-    <Compile Include="foundationallm\datasources\sql_server\sql_server_data_source_metadata.py" />
-    <Compile Include="foundationallm\datasources\sql_server\__init__.py" />
+    <Compile Include="foundationallm\credentials\azure_credential.py" />
+    <Compile Include="foundationallm\credentials\credential.py" />
+    <Compile Include="foundationallm\credentials\__init__.py" />
+    <Compile Include="foundationallm\data_sources\sql_server\sql_authentication_metadata.py" />
+    <Compile Include="foundationallm\data_sources\sql_server\sql_authentication_type.py" />
+    <Compile Include="foundationallm\data_sources\sql_server\sql_server_data_source_metadata.py" />
+    <Compile Include="foundationallm\data_sources\sql_server\__init__.py" />
     <Compile Include="foundationallm\hubs\agent\agent_hub.py" />
+    <Compile Include="foundationallm\hubs\agent\agent_hub_storage_manager.py" />
     <Compile Include="foundationallm\hubs\agent\agent_metadata.py" />
     <Compile Include="foundationallm\hubs\agent\agent_repository.py" />
     <Compile Include="foundationallm\hubs\agent\agent_resolver.py" />
     <Compile Include="foundationallm\hubs\agent\__init__.py" />
+    <Compile Include="foundationallm\hubs\data_source\data_source_hub_storage_manager.py" />
     <Compile Include="foundationallm\hubs\hub_base.py" />
     <Compile Include="foundationallm\hubs\data_source\data_source_hub.py" />
     <Compile Include="foundationallm\hubs\data_source\data_source_metadata.py" />
@@ -41,6 +45,7 @@
     <Compile Include="foundationallm\hubs\data_source\__init__.py" />
     <Compile Include="foundationallm\hubs\metadata.py" />
     <Compile Include="foundationallm\hubs\prompt\prompt_hub.py" />
+    <Compile Include="foundationallm\hubs\prompt\prompt_hub_storage_manager.py" />
     <Compile Include="foundationallm\hubs\prompt\prompt_metadata.py" />
     <Compile Include="foundationallm\hubs\prompt\prompt_repository.py" />
     <Compile Include="foundationallm\hubs\prompt\prompt_resolver.py" />
@@ -77,6 +82,9 @@
     <Compile Include="foundationallm\auth\__init__.py" />
     <Compile Include="foundationallm\config\configuration.py" />
     <Compile Include="foundationallm\config\__init__.py" />
+    <Compile Include="foundationallm\storage\blob_storage_manager.py" />
+    <Compile Include="foundationallm\storage\storage_manager_base.py" />
+    <Compile Include="foundationallm\storage\__init__.py" />
     <Compile Include="main.py" />
     <Compile Include="foundationallm\__init__.py" />
     <Compile Include="foundationallm\_version.py" />
@@ -87,19 +95,21 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="foundationallm\" />
-    <Folder Include="foundationallm\datasources\sql_server\" />
+    <Folder Include="foundationallm\data_sources\" />
+    <Folder Include="foundationallm\data_sources\sql_server\" />
     <Folder Include="foundationallm\hubs\agent\" />
     <Folder Include="foundationallm\hubs\data_source\" />
     <Folder Include="foundationallm\hubs\prompt\" />
+    <Folder Include="foundationallm\langchain\" />
     <Folder Include="foundationallm\langchain\agents\" />
+    <Folder Include="foundationallm\langchain\openai_models\" />
     <Folder Include="foundationallm\langchain\datasources\" />
     <Folder Include="foundationallm\langchain\datasources\sql\" />
-    <Folder Include="foundationallm\langchain\openai_models\" />
     <Folder Include="foundationallm\models\" />
-    <Folder Include="foundationallm\hubs\" />
-    <Folder Include="foundationallm\datasources\" />
-    <Folder Include="foundationallm\langchain\" />
     <Folder Include="foundationallm\models\orchestration\" />
+    <Folder Include="foundationallm\hubs\" />
+    <Folder Include="foundationallm\credentials\" />
+    <Folder Include="foundationallm\storage\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="foundationallm\" />

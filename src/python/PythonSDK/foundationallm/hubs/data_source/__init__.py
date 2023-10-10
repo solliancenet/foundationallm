@@ -1,5 +1,6 @@
 from .underlying_implementation import UnderlyingImplementation
 from .data_source_metadata import DataSourceMetadata
+from .data_source_hub_storage_manager import DataSourceHubStorageManager
 from .data_source_repository import DataSourceRepository
 from .data_source_resolver import DataSourceResolver
 from .data_source_hub import DataSourceHub

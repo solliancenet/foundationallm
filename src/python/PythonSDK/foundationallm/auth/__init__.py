@@ -1,6 +1,4 @@
 """ 
-Auth methods for FoundationAL LM Python SDK
+Auth methods for FoundationaLLM Python SDK
 """
-
-from .credential import Credential
 from .api_key_validator import APIKeyValidator

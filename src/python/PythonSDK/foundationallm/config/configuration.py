@@ -1,58 +1,69 @@
 import os
+from re import A
 from tkinter import N
 from azure.keyvault.secrets import SecretClient
-from tenacity import (retry, wait_random_exponential, stop_after_attempt, RetryError)
+from tenacity import retry, wait_random_exponential, stop_after_attempt, RetryError
 import logging
-from foundationallm.auth import Credential
+from foundationallm.credentials import Credential
 
-class Configuration():
-    def __init__(self, keyvault_name: str = None):
+class Configuration():    
+    def __init__(self, keyvault_name: str = None, credential: Credential = None):
         self.keyvault_name = keyvault_name
-
-        if self.keyvault_name is None:            
-            self.keyvault_name = os.environ.get('foundationallm-langchain-api-keyvault-name')
-            if self.keyvault_name is None:
-                raise Exception('Unable to resolve Key Vault: the keyvault_name parameter was not passed in and the environment variable FLLM_KEYVAULT_NAME is not configured.')
-        
-        vault_url = f"https://{self.keyvault_name}.vault.azure.net"
-        credential = Credential().get_credential()
-        self.secret_client = SecretClient(vault_url=vault_url, credential=credential)
-
-    def get_value(self, name: str, default: str = None) -> str:
+        self.credential = credential        
+            
+    def get_value(self, key: str) -> str:
         """
-        Checks if the environment variable exists, if not, retrieves the value from Key Vault.
-        If both are not found, returns the default value if provided, otherwise raises an exception.
+        When prefer_secrets_store is true, retrieves the value from Key Vault.
+        Otherwise, retrieves the value from the environment variable.
+        If the value is not found the method raises an exception.
 
         Parameters
         ----------
         - name : str
-            The name of the env variable to retrieve.
-        - default : str
-            Default value if variable not found.
+            The name of the configuration variable to retrieve.
+        
         Returns
         -------
-        The value of the environment variable if it exists, or the Key Vault
-        value for the variable.
+        The configuration value
+
+        Raises an exception if the configuration value is not found.
         """
+        if key is None:
+            raise Exception('The key parameter is required for Configuration.get_value().')
         
-        value = os.environ.get(name)
-        if value is not None:
-            return value
+        value = None
         
-        try:
-            value = self.__get_secret_with_retry(name=name)
-            return value
-        except Exception as e:            
-            pass
-        
-        if value is not None:
-            return value
-        # If name not found as an env variable
+        # will have future usage with Azure App Configuration
+        # if foundationallm-configuration-allow-environment-variables exists and is True, then the environment variables will be checked first, then KV
+        # if foundationallm-configuration-allow-environment-variables does not exist OR foundationallm-configuration-allow-environment-variables is False, then check App config and then KV
+        allow_env_vars = False
+        if "foundationallm-configuration-allow-environment-variables" in os.environ:
+            allow_env_vars = bool(os.environ["foundationallm-configuration-allow-environment-variables"])
+               
+        if allow_env_vars == True:
+            value = os.environ.get(key)
+            
+            if value is None and not (self.keyvault_name is None or self.credential is None):               
+                vault_url = f"https://{self.keyvault_name}.vault.azure.net"           
+                self.secret_client = SecretClient(vault_url=vault_url, credential=self.credential)
+                try:
+                    value = self.__get_secret_with_retry(name=key)                
+                except Exception as e:            
+                    pass
         else:
-            if default:
-                return default
-            else:
-                raise Exception(f'The environment variable {name} does not exist.')
+            # future check for App Configuration, then KV 
+            if not (self.keyvault_name is None or self.credential is None):                
+                vault_url = f"https://{self.keyvault_name}.vault.azure.net"           
+                self.secret_client = SecretClient(vault_url=vault_url, credential=self.credential)
+                try:
+                    value = self.__get_secret_with_retry(name=key)                
+                except Exception as e:            
+                    pass
+
+        if value is not None:
+            return value        
+        else:           
+            raise Exception(f'The configuration variable {key} was not found.')
 
     def __retry_before_sleep(retry_state):
         # Log the outcome of each retry attempt.

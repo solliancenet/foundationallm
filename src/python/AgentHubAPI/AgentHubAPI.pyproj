@@ -4,9 +4,11 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>865a944e-76c4-4da9-b367-6d1cab66abcc</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>main.py</StartupFile>
+    <StartupFile>app\main.py</StartupFile>
     <SearchPath>..\PythonSDK</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
+    <LaunchProvider>Standard Python launcher</LaunchProvider>
+    <WebBrowserUrl>http://localhost:8742/swagger</WebBrowserUrl>
     <OutputPath>.</OutputPath>
     <Name>AgentHubAPI</Name>
     <RootNamespace>AgentHubAPI</RootNamespace>
@@ -21,12 +23,24 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="main.py" />
+    <Compile Include="app\dependencies.py" />
+    <Compile Include="app\main.py" />
+    <Compile Include="app\routers\resolve_request.py" />
+    <Compile Include="app\routers\status.py" />
+    <Compile Include="app\routers\__init__.py" />
+    <Compile Include="app\__init__.py" />
   </ItemGroup>
   <ItemGroup>
     <Content Include=".gitignore" />
     <Content Include="requirements.txt" />
     <Content Include="startup.sh" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PythonSDK\PythonSDK.pyproj">
+      <Name>PythonSDK</Name>
+      <Project>{2469cc23-7f26-4b84-8878-98d90604eee8}</Project>
+      <Private>True</Private>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Interpreter Include="env\">
@@ -40,11 +54,8 @@
     </Interpreter>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PythonSDK\PythonSDK.pyproj">
-      <Name>PythonSDK</Name>
-      <Project>{2469cc23-7f26-4b84-8878-98d90604eee8}</Project>
-      <Private>True</Private>
-    </ProjectReference>
+    <Folder Include="app\" />
+    <Folder Include="app\routers\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
