@@ -208,7 +208,10 @@ resource "azurerm_api_management_backend" "openai_backends" {
 
   credentials {
     header = {
-      "api-key" = join(",", [each.value.primary_access_key, each.value.secondary_access_key])
+      "api-key" = join(",", [
+        "{{${azurerm_api_management_named_value.openai_primary_key[each.key].name}}}",
+        "{{${azurerm_api_management_named_value.openai_secondary_key[each.key].name}}}"
+      ])
     }
   }
 
