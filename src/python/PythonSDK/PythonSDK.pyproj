@@ -25,6 +25,10 @@
     <Compile Include="foundationallm\credentials\azure_credential.py" />
     <Compile Include="foundationallm\credentials\credential.py" />
     <Compile Include="foundationallm\credentials\__init__.py" />
+    <Compile Include="foundationallm\data_sources\blob_storage\blob_storage_authentication_metadata.py" />
+    <Compile Include="foundationallm\data_sources\blob_storage\blob_storage_data_source_metadata.py" />
+    <Compile Include="foundationallm\data_sources\blob_storage\blob_storage_file_type.py" />
+    <Compile Include="foundationallm\data_sources\blob_storage\__init__.py" />
     <Compile Include="foundationallm\data_sources\sql_server\sql_authentication_metadata.py" />
     <Compile Include="foundationallm\data_sources\sql_server\sql_authentication_type.py" />
     <Compile Include="foundationallm\data_sources\sql_server\sql_server_data_source_metadata.py" />
@@ -91,11 +95,17 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include=".gitignore" />
+    <Content Include="foundationallm\data_sources\blob_storage\__pycache__\blob_storage_authentication_metadata.cpython-311.pyc" />
+    <Content Include="foundationallm\data_sources\blob_storage\__pycache__\blob_storage_data_source_metadata.cpython-311.pyc" />
+    <Content Include="foundationallm\data_sources\blob_storage\__pycache__\blob_storage_file_type.cpython-311.pyc" />
+    <Content Include="foundationallm\data_sources\blob_storage\__pycache__\__init__.cpython-311.pyc" />
     <Content Include="requirements.txt" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="foundationallm\" />
     <Folder Include="foundationallm\data_sources\" />
+    <Folder Include="foundationallm\data_sources\blob_storage\" />
+    <Folder Include="foundationallm\data_sources\blob_storage\__pycache__\" />
     <Folder Include="foundationallm\data_sources\sql_server\" />
     <Folder Include="foundationallm\hubs\agent\" />
     <Folder Include="foundationallm\hubs\data_source\" />
