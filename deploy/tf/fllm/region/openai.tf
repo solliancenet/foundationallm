@@ -242,7 +242,30 @@ resource "azurerm_api_management_api_policy" "openai_inbound_policy" {
 <policies>
   <inbound>
     <base/>
-    <set-backend-service backend-id="${azurerm_api_management_backend.openai_backends["OAI1"].name}"/>
+    <set-variable name="backendId" value="@(new Random(context.RequestId.GetHashCode()).Next(1, ${length(azurerm_cognitive_account.openai) + 1}))" />
+    <choose>
+      <when condition="@(context.Variables.GetValueOrDefault<int>("backendId") == 1)">
+        <set-backend-service backend-id="${azurerm_api_management_backend.openai_backends["OAI1"].name}"/>
+      </when>
+      <when condition="@(context.Variables.GetValueOrDefault<int>("backendId") == 2)">
+        <set-backend-service backend-id="${azurerm_api_management_backend.openai_backends["OAI2"].name}"/>
+      </when>
+      <when condition="@(context.Variables.GetValueOrDefault<int>("backendId") == 3)">
+        <set-backend-service backend-id="${azurerm_api_management_backend.openai_backends["OAI3"].name}"/>
+      </when>
+      <when condition="@(context.Variables.GetValueOrDefault<int>("backendId") == 4)">
+        <set-backend-service backend-id="${azurerm_api_management_backend.openai_backends["OAI4"].name}"/>
+      </when>
+      <!-- Should never happen, but you never know ;) -->
+        <return-response>
+          <set-status code="500" reason="InternalServerError" />
+          <set-header name="Microsoft-Azure-Api-Management-Correlation-Id" exists-action="override">
+            <value>@{return Guid.NewGuid().ToString();}</value>
+          </set-header>
+          <set-body>A gateway-related error occurred while processing the request.</set-body>
+        </return-response>
+      </otherwise>
+    </choose>
   </inbound>
   <backend>
     <base/>

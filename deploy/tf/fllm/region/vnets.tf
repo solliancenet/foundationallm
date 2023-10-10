@@ -1,41 +1,41 @@
 locals {
   subnets = {
-    "AppGateway"    = {
-      address_prefix = cidrsubnet(local.vnet_address_space, 8, 0)
+    "AppGateway" = {
+      address_prefix    = cidrsubnet(local.vnet_address_space, 8, 0)
       service_endpoints = []
     }
-    "Services"      = {
-      address_prefix = cidrsubnet(local.vnet_address_space, 8, 1)
+    "Services" = {
+      address_prefix    = cidrsubnet(local.vnet_address_space, 8, 1)
       service_endpoints = []
     }
-    "Datasources"   = {
-      address_prefix = cidrsubnet(local.vnet_address_space, 8, 2)
+    "Datasources" = {
+      address_prefix    = cidrsubnet(local.vnet_address_space, 8, 2)
       service_endpoints = []
     }
-    "FLLMServices"  = {
-      address_prefix = cidrsubnet(local.vnet_address_space, 8, 3)
+    "FLLMServices" = {
+      address_prefix    = cidrsubnet(local.vnet_address_space, 8, 3)
       service_endpoints = []
     }
-    "FLLMStorage"   = {
-      address_prefix = cidrsubnet(local.vnet_address_space, 8, 4)
+    "FLLMStorage" = {
+      address_prefix    = cidrsubnet(local.vnet_address_space, 8, 4)
       service_endpoints = []
     }
-    "FLLMOpenAI"    = {
+    "FLLMOpenAI" = {
       address_prefix = cidrsubnet(local.vnet_address_space, 8, 5)
       service_endpoints = [
         "Microsoft.CognitiveServices"
       ]
     }
     "Vectorization" = {
-      address_prefix = cidrsubnet(local.vnet_address_space, 8, 6)
+      address_prefix    = cidrsubnet(local.vnet_address_space, 8, 6)
       service_endpoints = []
     }
-    "Jumpbox"       = {
-      address_prefix = cidrsubnet(local.vnet_address_space, 8, 7)
+    "Jumpbox" = {
+      address_prefix    = cidrsubnet(local.vnet_address_space, 8, 7)
       service_endpoints = []
     }
-    "Gateway"       = {
-      address_prefix = cidrsubnet(local.vnet_address_space, 8, 8)
+    "Gateway" = {
+      address_prefix    = cidrsubnet(local.vnet_address_space, 8, 8)
       service_endpoints = []
     }
   }
@@ -57,7 +57,7 @@ resource "azurerm_subnet" "subnets" {
   name                 = each.key
   resource_group_name  = azurerm_resource_group.rgs["NET"].name
   virtual_network_name = azurerm_virtual_network.vnet.name
-  service_endpoints = each.value.service_endpoints
+  service_endpoints    = each.value.service_endpoints
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "dns_vnet_link" {
