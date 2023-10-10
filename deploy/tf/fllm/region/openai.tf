@@ -171,6 +171,11 @@ resource "azurerm_api_management_backend" "openai_backends" {
       "api-key" = join(",", [each.value.primary_access_key, each.value.secondary_access_key])
     }
   }
+
+  tls {
+    validate_certificate_chain = true
+    validate_certificate_name = true
+  }
 }
 
 resource "azurerm_api_management_api" "openai_api" {
