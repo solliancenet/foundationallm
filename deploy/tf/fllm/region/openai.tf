@@ -174,7 +174,7 @@ resource "azurerm_api_management_backend" "openai_backends" {
 
   tls {
     validate_certificate_chain = true
-    validate_certificate_name = true
+    validate_certificate_name  = true
   }
 }
 

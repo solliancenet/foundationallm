@@ -123,3 +123,31 @@ resource "azurerm_subnet_network_security_group_association" "openai_nsg" {
   subnet_id                 = azurerm_subnet.subnets["FLLMOpenAI"].id
   network_security_group_id = azurerm_network_security_group.openai_nsg.id
 }
+
+resource "azurerm_network_security_group" "jbx_nsg" {
+  name                = join("-", [local.resource_prefix, "JBX", "nsg"])
+  location            = local.location
+  resource_group_name = azurerm_resource_group.rgs["NET"].name
+
+  tags = local.tags
+}
+
+resource "azurerm_network_security_rule" "jbx_nsr_1" {
+  access                      = "Allow"
+  direction                   = "Inbound"
+  name                        = "rdp"
+  network_security_group_name = azurerm_network_security_group.openai_nsg.name
+  priority                    = 100
+  protocol                    = "Tcp"
+  resource_group_name         = azurerm_resource_group.rgs["NET"].name
+  source_port_range           = "*"
+  destination_port_range      = "3389"
+  source_address_prefix       = "Internet"
+  destination_address_prefix  = "VirtualNetwork"
+}
+
+resource "azurerm_subnet_network_security_group_association" "jbx_nsg" {
+  subnet_id                 = azurerm_subnet.subnets["Jumpbox"].id
+  network_security_group_id = azurerm_network_security_group.jbx_nsg.id
+}
+
