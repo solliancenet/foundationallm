@@ -1,5 +1,5 @@
 using Asp.Versioning;
-using FoundationaLLM.Common.Authorization;
+using FoundationaLLM.Common.Authentication;
 using FoundationaLLM.Common.Constants;
 using FoundationaLLM.Common.Interfaces;
 using FoundationaLLM.Common.OpenAPI;
@@ -24,10 +24,10 @@ namespace FoundationaLLM.Gatekeeper.API
 
             // Add API Key Authorization
             builder.Services.AddHttpContextAccessor();
-            builder.Services.AddScoped<ApiKeyAuthorizationFilter>();
-            builder.Services.AddOptions<ApiKeyValidationSettings>()
+            builder.Services.AddScoped<APIKeyAuthenticationFilter>();
+            builder.Services.AddOptions<APIKeyValidationSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:GatekeeperAPI"));
-            builder.Services.AddTransient<IApiKeyValidation, ApiKeyValidation>();
+            builder.Services.AddTransient<IAPIKeyValidation, APIKeyValidationService>();
 
             builder.Services.AddSingleton<IAgentFactoryAPIService, AgentFactoryAPIService>();
 

@@ -2,16 +2,16 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 
-namespace FoundationaLLM.Common.Authorization
+namespace FoundationaLLM.Common.Authentication
 {
-    public class ApiKeyValidation : IApiKeyValidation
+    public class APIKeyValidationService : IAPIKeyValidation
     {
         private readonly IConfiguration _configuration;
-        private readonly ApiKeyValidationSettings _settings;
+        private readonly APIKeyValidationSettings _settings;
 
-        public ApiKeyValidation(
+        public APIKeyValidationService(
             IConfiguration configuration, 
-            IOptions<ApiKeyValidationSettings> options)
+            IOptions<APIKeyValidationSettings> options)
         {
             _configuration = configuration;
             _settings = options.Value;
@@ -22,7 +22,7 @@ namespace FoundationaLLM.Common.Authorization
             if (string.IsNullOrWhiteSpace(apiKey))
                 return false;
 
-            string? validApiKey = _configuration.GetValue<string>(_settings.APIKeyPath);
+            string? validApiKey = _configuration.GetValue<string>(_settings.SecretName);
 
             if (validApiKey == null || validApiKey != apiKey)
                 return false;

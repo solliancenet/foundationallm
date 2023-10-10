@@ -1,4 +1,4 @@
-using FoundationaLLM.Common.Authorization;
+using FoundationaLLM.Common.Authentication;
 using FoundationaLLM.Common.Interfaces;
 using FoundationaLLM.SemanticKernel.Core.Interfaces;
 using FoundationaLLM.SemanticKernel.Core.Models.ConfigurationOptions;
@@ -21,10 +21,10 @@ namespace FoundationaLLM.SemanticKernel.API
 
             // Add API Key Authorization
             builder.Services.AddHttpContextAccessor();
-            builder.Services.AddScoped<ApiKeyAuthorizationFilter>();
-            builder.Services.AddOptions<ApiKeyValidationSettings>()
+            builder.Services.AddScoped<APIKeyAuthenticationFilter>();
+            builder.Services.AddOptions<APIKeyValidationSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:SemanticKernelOrchestration"));
-            builder.Services.AddTransient<IApiKeyValidation, ApiKeyValidation>();
+            builder.Services.AddTransient<IAPIKeyValidation, APIKeyValidationService>();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();

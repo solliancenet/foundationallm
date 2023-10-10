@@ -2,14 +2,14 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace FoundationaLLM.Common.Authorization
+namespace FoundationaLLM.Common.Authentication
 {
-    public class ApiKeyAuthorizationFilter : IAuthorizationFilter
+    public class APIKeyAuthenticationFilter : IAuthorizationFilter
     {
-        private readonly IApiKeyValidation _apiKeyValidation;
+        private readonly IAPIKeyValidation _apiKeyValidation;
         private const string API_KEY_HEADER_NAME = "X-API-Key";
 
-        public ApiKeyAuthorizationFilter(IApiKeyValidation apiKeyValidation)
+        public APIKeyAuthenticationFilter(IAPIKeyValidation apiKeyValidation)
         {
             _apiKeyValidation = apiKeyValidation;
         }

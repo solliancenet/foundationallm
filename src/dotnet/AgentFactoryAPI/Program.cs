@@ -4,7 +4,7 @@ using FoundationaLLM.AgentFactory.Core.Services;
 using FoundationaLLM.AgentFactory.Interfaces;
 using FoundationaLLM.AgentFactory.Models.ConfigurationOptions;
 using FoundationaLLM.AgentFactory.Services;
-using FoundationaLLM.Common.Authorization;
+using FoundationaLLM.Common.Authentication;
 using FoundationaLLM.Common.Constants;
 using FoundationaLLM.Common.Interfaces;
 using FoundationaLLM.Common.OpenAPI;
@@ -26,10 +26,10 @@ namespace FoundationaLLM.AgentFactory.API
 
             // Add API Key Authorization
             builder.Services.AddHttpContextAccessor();
-            builder.Services.AddScoped<ApiKeyAuthorizationFilter>();
-            builder.Services.AddOptions<ApiKeyValidationSettings>()
+            builder.Services.AddScoped<APIKeyAuthenticationFilter>();
+            builder.Services.AddOptions<APIKeyValidationSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:AgentFactoryAPI"));
-            builder.Services.AddTransient<IApiKeyValidation, ApiKeyValidation>();
+            builder.Services.AddTransient<IAPIKeyValidation, APIKeyValidationService>();
 
             builder.Services.AddOptions<SemanticKernelOrchestrationServiceSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:SemanticKernelOrchestration"));
