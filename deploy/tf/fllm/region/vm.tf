@@ -21,7 +21,7 @@ resource "azurerm_network_interface" "jumpbox" {
 }
 
 resource "azurerm_windows_virtual_machine" "jumpbox" {
-  name                  = lower(join("", concat(split("-", local.resource_prefix), ["JBX", "vm"])))
+  name                  = lower(join("", concat(split("-", local.resource_prefix), ["vm"])))
   resource_group_name   = azurerm_resource_group.rgs["JBX"].name
   location              = local.location
   size                  = "Standard_B2s"
