@@ -1,5 +1,5 @@
-from azure.identity import DefaultAzureCredential
+from abc import ABC
 
 class Credential:
     def get_credential(self):
-        return DefaultAzureCredential()
+        pass

@@ -2,12 +2,13 @@ from foundationallm.config import Configuration
 from foundationallm.storage import BlobStorageManager
 from typing import List
 
-class PromptStorageManager(BlobStorageManager):
-     """The PromptStorageManager class is responsible for fetching available prompt values from Azure Blob Storage."""
-     def __init__(self, container_name="system-prompt", root_path="RetailAssistant"):
-         connection_string = Configuration().get_value("fllm-storage-connection-string")
+class AgentHubStorageManager(BlobStorageManager):
+     """The AgentHubStorageManager class is responsible for fetching available agent values from Azure Blob Storage."""
+     def __init__(self, config: Configuration = None):
+         connection_string = config.get_value("foundationallm-storage-connection-string")
+         container_name = config.get_value("foundationallm-agent-metadata-storage-container")
          super().__init__(blob_connection_string=connection_string,
-                             container_name=container_name, root_path=root_path)
+                             container_name=container_name)
          
      def read_file_content(self, path) -> str:
           return super().read_file_content(path).decode()

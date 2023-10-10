@@ -23,15 +23,17 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="foundationallm\auth\credential.py" />
-    <Compile Include="foundationallm\datasources\sql_server\sql_authentication_metadata.py" />
-    <Compile Include="foundationallm\datasources\sql_server\sql_authentication_type.py" />
-    <Compile Include="foundationallm\datasources\sql_server\sql_server_data_source_metadata.py" />
-    <Compile Include="foundationallm\datasources\sql_server\__init__.py" />
+    <Compile Include="foundationallm\data_sources\sql_server\sql_authentication_metadata.py" />
+    <Compile Include="foundationallm\data_sources\sql_server\sql_authentication_type.py" />
+    <Compile Include="foundationallm\data_sources\sql_server\sql_server_data_source_metadata.py" />
+    <Compile Include="foundationallm\data_sources\sql_server\__init__.py" />
     <Compile Include="foundationallm\hubs\agent\agent_hub.py" />
+    <Compile Include="foundationallm\hubs\agent\agent_hub_storage_manager.py" />
     <Compile Include="foundationallm\hubs\agent\agent_metadata.py" />
     <Compile Include="foundationallm\hubs\agent\agent_repository.py" />
     <Compile Include="foundationallm\hubs\agent\agent_resolver.py" />
     <Compile Include="foundationallm\hubs\agent\__init__.py" />
+    <Compile Include="foundationallm\hubs\data_source\data_source_hub_storage_manager.py" />
     <Compile Include="foundationallm\hubs\hub_base.py" />
     <Compile Include="foundationallm\hubs\data_source\data_source_hub.py" />
     <Compile Include="foundationallm\hubs\data_source\data_source_metadata.py" />
@@ -41,10 +43,10 @@
     <Compile Include="foundationallm\hubs\data_source\__init__.py" />
     <Compile Include="foundationallm\hubs\metadata.py" />
     <Compile Include="foundationallm\hubs\prompt\prompt_hub.py" />
+    <Compile Include="foundationallm\hubs\prompt\prompt_hub_storage_manager.py" />
     <Compile Include="foundationallm\hubs\prompt\prompt_metadata.py" />
     <Compile Include="foundationallm\hubs\prompt\prompt_repository.py" />
     <Compile Include="foundationallm\hubs\prompt\prompt_resolver.py" />
-    <Compile Include="foundationallm\hubs\prompt\prompt_storage_manager.py" />
     <Compile Include="foundationallm\hubs\prompt\__init__.py" />
     <Compile Include="foundationallm\hubs\repository.py" />
     <Compile Include="foundationallm\hubs\resolver.py" />
@@ -69,13 +71,16 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="foundationallm\" />
-    <Folder Include="foundationallm\datasources\sql_server\" />
+    <Folder Include="foundationallm\data_sources\sql_server\" />
     <Folder Include="foundationallm\hubs\agent\" />
     <Folder Include="foundationallm\hubs\data_source\" />
     <Folder Include="foundationallm\hubs\prompt\" />
+    <Folder Include="foundationallm\langchain\" />
+    <Folder Include="foundationallm\langchain\agents\" />
+    <Folder Include="foundationallm\langchain\openai_models\" />
     <Folder Include="foundationallm\models\" />
     <Folder Include="foundationallm\hubs\" />
-    <Folder Include="foundationallm\datasources\" />
+    <Folder Include="foundationallm\data_sources\" />
     <Folder Include="foundationallm\storage\" />
   </ItemGroup>
   <ItemGroup>

@@ -9,6 +9,6 @@ pyodbc==4.0.39
 psycopg2==2.9.9
 sqlalchemy==2.0.21
 fastapi==0.103.2
-tenacity
+tenacity==8.2.3
 typing
 azure-storage-blob==12.18.2

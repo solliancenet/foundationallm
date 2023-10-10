@@ -1,5 +1,5 @@
 from typing import List, Optional
-from foundationallm.datasources.sql_server import SQLAuthenticationMetadata
+from foundationallm.data_sources.sql_server import SQLAuthenticationMetadata
 from foundationallm.hubs.data_source import DataSourceMetadata
 
 
