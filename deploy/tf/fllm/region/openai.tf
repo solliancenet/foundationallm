@@ -256,6 +256,7 @@ resource "azurerm_api_management_api_policy" "openai_inbound_policy" {
       <when condition="@(context.Variables.GetValueOrDefault<int>("backendId") == 4)">
         <set-backend-service backend-id="${azurerm_api_management_backend.openai_backends["OAI4"].name}"/>
       </when>
+      <otherwise>
       <!-- Should never happen, but you never know ;) -->
         <return-response>
           <set-status code="500" reason="InternalServerError" />
