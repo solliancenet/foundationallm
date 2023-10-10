@@ -28,6 +28,10 @@ resource "azurerm_key_vault_secret" "openai_primary_key" {
   name         = join("-", [local.resource_prefix, each.key, "primarykey"])
   value        = each.value.primary_access_key
   key_vault_id = azurerm_key_vault.openai_keyvault.id
+
+  depends_on = [
+    azurerm_role_assignment.openai_kv_sp_role
+  ]
 }
 
 resource "azurerm_key_vault_secret" "openai_secondary_key" {
@@ -36,6 +40,10 @@ resource "azurerm_key_vault_secret" "openai_secondary_key" {
   name         = join("-", [local.resource_prefix, each.key, "secondarykey"])
   value        = each.value.secondary_access_key
   key_vault_id = azurerm_key_vault.openai_keyvault.id
+
+  depends_on = [
+    azurerm_role_assignment.openai_kv_sp_role
+  ]
 }
 
 resource "azurerm_private_endpoint" "openai_ple" {
@@ -89,35 +97,43 @@ resource "azurerm_api_management" "openai_apim" {
   tags = local.tags
 }
 
-#resource "azurerm_role_assignment" "openai_apim" {
-#  principal_id         = azurerm_api_management.openai_apim.identity.0.principal_id
-#  scope                = azurerm_key_vault.openai_keyvault.id
-#  role_definition_name = "Key Vault Secrets User"
-#}
-#
-#resource "azurerm_api_management_named_value" "openai_primary_key" {
-#  for_each = azurerm_key_vault_secret.openai_primary_key
-#
-#  name                = each.value.name
-#  resource_group_name = azurerm_api_management.openai_apim.resource_group_name
-#  api_management_name = azurerm_api_management.openai_apim.name
-#  display_name        = each.value.name
-#  value_from_key_vault {
-#    secret_id = each.value.id
-#  }
-#}
-#
-#resource "azurerm_api_management_named_value" "openai_secondary_key" {
-#  for_each = azurerm_key_vault_secret.openai_secondary_key
-#
-#  name                = each.value.name
-#  resource_group_name = azurerm_api_management.openai_apim.resource_group_name
-#  api_management_name = azurerm_api_management.openai_apim.name
-#  display_name        = each.value.name
-#  value_from_key_vault {
-#    secret_id = each.value.id
-#  }
-#}
+resource "azurerm_role_assignment" "openai_apim" {
+  principal_id         = azurerm_api_management.openai_apim.identity.0.principal_id
+  scope                = azurerm_key_vault.openai_keyvault.id
+  role_definition_name = "Key Vault Secrets User"
+}
+
+resource "azurerm_api_management_named_value" "openai_primary_key" {
+  for_each = azurerm_key_vault_secret.openai_primary_key
+
+  name                = each.value.name
+  resource_group_name = azurerm_api_management.openai_apim.resource_group_name
+  api_management_name = azurerm_api_management.openai_apim.name
+  display_name        = each.value.name
+  value_from_key_vault {
+    secret_id = each.value.id
+  }
+
+  depends_on = [
+    azurerm_role_assignment.openai_apim
+  ]
+}
+
+resource "azurerm_api_management_named_value" "openai_secondary_key" {
+  for_each = azurerm_key_vault_secret.openai_secondary_key
+
+  name                = each.value.name
+  resource_group_name = azurerm_api_management.openai_apim.resource_group_name
+  api_management_name = azurerm_api_management.openai_apim.name
+  display_name        = each.value.name
+  value_from_key_vault {
+    secret_id = each.value.id
+  }
+
+  depends_on = [
+    azurerm_role_assignment.openai_apim
+  ]
+}
 
 resource "azurerm_api_management_api" "openai_api" {
   name                = join("-", [local.resource_prefix, "OAI", "api"])
