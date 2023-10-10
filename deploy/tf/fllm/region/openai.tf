@@ -123,7 +123,7 @@ resource "azurerm_role_assignment" "openai_apim" {
 
 resource "azurerm_private_dns_a_record" "apim_azure_api" {
   name                = lower(azurerm_api_management.openai_apim.name)
-  records             = [azurerm_public_ip.openai_apim_mgmt_ip.ip_address]
+  records             = azurerm_api_management.openai_apim.private_ip_addresses
   resource_group_name = local.private_dns_zones["azure-api.net"].resource_group_name
   ttl                 = 0
   zone_name           = local.private_dns_zones["azure-api.net"].name
@@ -131,7 +131,7 @@ resource "azurerm_private_dns_a_record" "apim_azure_api" {
 
 resource "azurerm_private_dns_a_record" "apim_portal_azure_api" {
   name                = lower(azurerm_api_management.openai_apim.name)
-  records             = [azurerm_public_ip.openai_apim_mgmt_ip.ip_address]
+  records             = azurerm_api_management.openai_apim.private_ip_addresses
   resource_group_name = local.private_dns_zones["portal.azure-api.net"].resource_group_name
   ttl                 = 0
   zone_name           = local.private_dns_zones["portal.azure-api.net"].name
@@ -139,7 +139,7 @@ resource "azurerm_private_dns_a_record" "apim_portal_azure_api" {
 
 resource "azurerm_private_dns_a_record" "apim_developer_azure_api" {
   name                = lower(azurerm_api_management.openai_apim.name)
-  records             = [azurerm_public_ip.openai_apim_mgmt_ip.ip_address]
+  records             = azurerm_api_management.openai_apim.private_ip_addresses
   resource_group_name = local.private_dns_zones["developer.azure-api.net"].resource_group_name
   ttl                 = 0
   zone_name           = local.private_dns_zones["developer.azure-api.net"].name
@@ -147,7 +147,7 @@ resource "azurerm_private_dns_a_record" "apim_developer_azure_api" {
 
 resource "azurerm_private_dns_a_record" "apim_management_azure_api" {
   name                = lower(azurerm_api_management.openai_apim.name)
-  records             = [azurerm_public_ip.openai_apim_mgmt_ip.ip_address]
+  records             = azurerm_api_management.openai_apim.private_ip_addresses
   resource_group_name = local.private_dns_zones["management.azure-api.net"].resource_group_name
   ttl                 = 0
   zone_name           = local.private_dns_zones["management.azure-api.net"].name
@@ -155,7 +155,7 @@ resource "azurerm_private_dns_a_record" "apim_management_azure_api" {
 
 resource "azurerm_private_dns_a_record" "apim_scm_azure_api" {
   name                = lower(azurerm_api_management.openai_apim.name)
-  records             = [azurerm_public_ip.openai_apim_mgmt_ip.ip_address]
+  records             = azurerm_api_management.openai_apim.private_ip_addresses
   resource_group_name = local.private_dns_zones["scm.azure-api.net"].resource_group_name
   ttl                 = 0
   zone_name           = local.private_dns_zones["scm.azure-api.net"].name
