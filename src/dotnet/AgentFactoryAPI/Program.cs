@@ -35,7 +35,7 @@ namespace FoundationaLLM.AgentFactory.API
             builder.Services.AddSingleton<ISemanticKernelOrchestrationService, SemanticKernelOrchestrationService>();
             builder.Services.AddSingleton<ILangChainOrchestrationService, LangChainOrchestrationService>();
             builder.Services.AddSingleton<IAgentFactoryService, AgentFactoryService>();
-            builder.Services.AddSingleton<IAgentHubService, AgentHubService>();
+            builder.Services.AddSingleton<IAgentHubService, AgentHubAPIService>();
 
             builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 

@@ -16,16 +16,16 @@ using System.Text;
 
 namespace FoundationaLLM.AgentFactory.Core.Services;
 
-public class AgentHubService : IAgentHubService
+public class AgentHubAPIService : IAgentHubService
 {
     readonly AgentHubSettings _settings;
-    readonly ILogger<AgentHubService> _logger;
+    readonly ILogger<AgentHubAPIService> _logger;
     private readonly IHttpClientFactory _httpClientFactory;
     readonly JsonSerializerSettings _jsonSerializerSettings;
 
-    public AgentHubService(
+    public AgentHubAPIService(
             IOptions<AgentHubSettings> options,
-            ILogger<AgentHubService> logger,
+            ILogger<AgentHubAPIService> logger,
             IHttpClientFactory httpClientFactory)
     {
         _settings = options.Value;
@@ -56,11 +56,11 @@ public class AgentHubService : IAgentHubService
         return null;
     }
 
-    public async Task<List<AgentHubResponse>> ResolveRequest(string user_prompt, string user_context)
+    public async Task<List<AgentHubResponse>> ResolveRequest(string userPrompt, string userContext)
     {
         try
         {
-            AgentHubMessage ahm = new AgentHubMessage { user_prompt = user_prompt, user_context = user_context };
+            AgentHubMessage ahm = new AgentHubMessage { UserPrompt = userPrompt, UserContext = userContext };
             
             var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.AgentHubAPIClient);
 
