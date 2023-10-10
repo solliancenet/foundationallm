@@ -9,5 +9,10 @@ locals {
     "privatelink.openai.azure.com"    = {}
     "privatelink.vaultcore.azure.com" = {}
     "privatelink.azure-api.net"       = {}
+    "azure-api.net"                   = {}
+    "portal.azure-api.net"            = {}
+    "developer.azure-api.net"         = {}
+    "management.azure-api.net"        = {}
+    "scm.azure-api.net"               = {}
   }
 }

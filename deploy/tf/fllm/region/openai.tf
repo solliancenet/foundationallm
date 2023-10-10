@@ -121,23 +121,44 @@ resource "azurerm_role_assignment" "openai_apim" {
   role_definition_name = "Key Vault Secrets User"
 }
 
-resource "azurerm_private_endpoint" "apim_ple" {
-  location            = local.location
-  name                = join("-", [local.resource_prefix, "OAI", "apim", "ple"])
-  resource_group_name = azurerm_resource_group.rgs["NET"].name
-  subnet_id           = azurerm_subnet.subnets["FLLMOpenAI"].id
+resource "azurerm_private_dns_a_record" "apim_azure_api" {
+  name                = lower(azurerm_api_management.openai_apim.name)
+  records             = [azurerm_public_ip.openai_apim_mgmt_ip.ip_address]
+  resource_group_name = local.private_dns_zones["azure-api.net"].resource_group_name
+  ttl                 = 0
+  zone_name           = local.private_dns_zones["azure-api.net"].name
+}
 
-  private_service_connection {
-    is_manual_connection           = false
-    name                           = join("-", [local.resource_prefix, "OAI", "apim", "psc"])
-    private_connection_resource_id = azurerm_api_management.openai_apim.id
-    subresource_names              = ["gateway"]
-  }
+resource "azurerm_private_dns_a_record" "apim_portal_azure_api" {
+  name                = lower(azurerm_api_management.openai_apim.name)
+  records             = [azurerm_public_ip.openai_apim_mgmt_ip.ip_address]
+  resource_group_name = local.private_dns_zones["portal.azure-api.net"].resource_group_name
+  ttl                 = 0
+  zone_name           = local.private_dns_zones["portal.azure-api.net"].name
+}
 
-  private_dns_zone_group {
-    name                 = join("-", [local.resource_prefix, "OAI", "apim", "dsg"])
-    private_dns_zone_ids = [local.private_dns_zones["privatelink.azure-api.net"].id]
-  }
+resource "azurerm_private_dns_a_record" "apim_developer_azure_api" {
+  name                = lower(azurerm_api_management.openai_apim.name)
+  records             = [azurerm_public_ip.openai_apim_mgmt_ip.ip_address]
+  resource_group_name = local.private_dns_zones["developer.azure-api.net"].resource_group_name
+  ttl                 = 0
+  zone_name           = local.private_dns_zones["developer.azure-api.net"].name
+}
+
+resource "azurerm_private_dns_a_record" "apim_management_azure_api" {
+  name                = lower(azurerm_api_management.openai_apim.name)
+  records             = [azurerm_public_ip.openai_apim_mgmt_ip.ip_address]
+  resource_group_name = local.private_dns_zones["management.azure-api.net"].resource_group_name
+  ttl                 = 0
+  zone_name           = local.private_dns_zones["management.azure-api.net"].name
+}
+
+resource "azurerm_private_dns_a_record" "apim_scm_azure_api" {
+  name                = lower(azurerm_api_management.openai_apim.name)
+  records             = [azurerm_public_ip.openai_apim_mgmt_ip.ip_address]
+  resource_group_name = local.private_dns_zones["scm.azure-api.net"].resource_group_name
+  ttl                 = 0
+  zone_name           = local.private_dns_zones["scm.azure-api.net"].name
 }
 
 resource "azurerm_api_management_named_value" "openai_primary_key" {
