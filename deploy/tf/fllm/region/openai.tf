@@ -169,3 +169,27 @@ resource "azurerm_api_management_api" "openai_api" {
     content_value  = "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/c183bb012de8e9e1d0d2e67a0994748df4747d2c/specification/cognitiveservices/data-plane/AzureOpenAI/authoring/stable/2022-12-01/azureopenai.json"
   }
 }
+
+resource "azurerm_api_management_api_policy" "openai_inbound_policy" {
+  api_name            = azurerm_api_management_api.openai_api.name
+  api_management_name = azurerm_api_management_api.openai_api.api_management_name
+  resource_group_name = azurerm_api_management_api.openai_api.resource_group_name
+
+  xml_content = <<XML
+<policies>
+  <inbound>
+    <base/>
+    <set-backend-service backend-id="${azurerm_api_management_backend.openai_backends["OAI1"].name}"/>
+  </inbound>
+  <backend>
+    <base/>
+  </backend>
+  <outbound>
+    <base/>
+  </outbound>
+  <on-error>
+    <base/>
+  </on-error>
+</policies>
+XML
+}
