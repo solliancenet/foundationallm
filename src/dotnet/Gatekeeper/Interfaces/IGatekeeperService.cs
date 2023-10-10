@@ -2,7 +2,7 @@
 
 namespace FoundationaLLM.Gatekeeper.Core.Interfaces;
 
-public interface IAgentFactoryAPIService
+public interface IGatekeeperService
 {
     Task<CompletionResponse> GetCompletion(CompletionRequest completionRequest);
     Task<SummaryResponse> GetSummary(SummaryRequest summaryRequest);

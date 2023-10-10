@@ -2,5 +2,5 @@
 
 public interface IRefinementService
 {
-    Task RefineUserPrompt(string userPrompt);
+    Task<string> RefineUserPrompt(string userPrompt);
 }
