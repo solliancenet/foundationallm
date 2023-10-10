@@ -136,7 +136,7 @@ resource "azurerm_network_security_rule" "jbx_nsr_1" {
   access                      = "Allow"
   direction                   = "Inbound"
   name                        = "rdp"
-  network_security_group_name = azurerm_network_security_group.openai_nsg.name
+  network_security_group_name = azurerm_network_security_group.jbx_nsg.name
   priority                    = 100
   protocol                    = "Tcp"
   resource_group_name         = azurerm_resource_group.rgs["NET"].name
