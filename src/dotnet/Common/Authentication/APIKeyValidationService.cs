@@ -22,7 +22,7 @@ namespace FoundationaLLM.Common.Authentication
             if (string.IsNullOrWhiteSpace(apiKey))
                 return false;
 
-            string? validApiKey = _configuration.GetValue<string>(_settings.SecretName);
+            string? validApiKey = _configuration.GetValue<string>(_settings.APIKeyPath);
 
             if (validApiKey == null || validApiKey != apiKey)
                 return false;
