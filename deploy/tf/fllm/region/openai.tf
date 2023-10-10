@@ -139,6 +139,22 @@ resource "azurerm_api_management_named_value" "openai_secondary_key" {
   ]
 }
 
+resource "azurerm_api_management_backend" "openai_backends" {
+  for_each = azurerm_cognitive_account.openai
+
+  api_management_name = azurerm_api_management.openai_apim.name
+  name                = join("-", [local.resource_prefix, each.key, "apibackend"])
+  protocol            = "http"
+  resource_group_name = azurerm_api_management.openai_apim.resource_group_name
+  url                 = each.value.endpoint
+
+  credentials {
+    header = {
+      "api-key" = join(",", [each.value.primary_access_key, each.value.secondary_access_key])
+    }
+  }
+}
+
 resource "azurerm_api_management_api" "openai_api" {
   name                = join("-", [local.resource_prefix, "OAI", "api"])
   resource_group_name = azurerm_resource_group.rgs["OAI"].name
