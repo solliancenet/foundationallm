@@ -17,6 +17,9 @@ using FoundationaLLM.Common.Interfaces;
 using FoundationaLLM.Common.Models.Configuration;
 using Microsoft.Identity.Client;
 using FoundationaLLM.Core.Models.Configuration;
+using FoundationaLLM.Common.Authentication;
+using FoundationaLLM.Common.Models.Authentication;
+using FoundationaLLM.Common.Middleware;
 
 namespace FoundationaLLM.Core.API
 {
@@ -30,20 +33,24 @@ namespace FoundationaLLM.Core.API
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:CosmosDB"));
             builder.Services.AddOptions<KeyVaultConfigurationServiceSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:Configuration"));
+            builder.Services.AddOptions<DownstreamAPIKeySettings>()
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:GatekeeperAPI"));
 
             builder.Services.AddSingleton<IConfigurationService, KeyVaultConfigurationService>();
-            builder.Services.AddSingleton<ICosmosDbService, CosmosDbService>();
-            builder.Services.AddSingleton<ICoreService, CoreService>();
-            builder.Services.AddSingleton<IGatekeeperAPIService, GatekeeperAPIService>();
+            builder.Services.AddScoped<ICosmosDbService, CosmosDbService>();
+            builder.Services.AddScoped<ICoreService, CoreService>();
+            builder.Services.AddScoped<IGatekeeperAPIService, GatekeeperAPIService>();
 
             builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
+            builder.Services.AddScoped<IUserIdentityContext, UserIdentityContext>();
+            builder.Services.AddScoped<IHttpClientFactoryService, HttpClientFactoryService>();
 
             builder.Services
                 .AddHttpClient(HttpClients.GatekeeperAPIClient,
                     httpClient =>
                     {
                         httpClient.BaseAddress = new Uri(builder.Configuration["FoundationaLLM:GatekeeperAPI:APIUrl"]);
-                        httpClient.DefaultRequestHeaders.Add("X-API-KEY", builder.Configuration["FoundationaLLM:GatekeeperAPI:APIKey"]);
+                        //httpClient.DefaultRequestHeaders.Add("X-API-KEY", builder.Configuration["FoundationaLLM:GatekeeperAPI:APIKey"]);
                     })
                 .AddTransientHttpErrorPolicy(policyBuilder =>
                     policyBuilder.WaitAndRetryAsync(
@@ -112,6 +119,9 @@ namespace FoundationaLLM.Core.API
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            // Register the middleware to set the user identity context.
+            app.UseMiddleware<UserIdentityMiddleware>();
 
             app.MapControllers();
 
