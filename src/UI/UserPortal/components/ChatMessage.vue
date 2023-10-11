@@ -8,8 +8,8 @@
 	>
 		<div class="message">
 			<div class="message__header">
-				<span>
-					<span class="icon"></span>
+				<span class="header__sender">
+					<img v-if="message.sender !== 'User'" class="avatar" src="~/assets/brain-royalty-free.png">
 					<span>{{ message.sender }}</span>
 				</span>
 
@@ -97,7 +97,7 @@ export default {
 }
 
 .message__header {
-	margin-bottom: 8px;
+	margin-bottom: 12px;
 	display: flex;
 	justify-content: space-between;
 }
@@ -108,8 +108,20 @@ export default {
 }
 
 .message__footer {
-	margin-top: 8px;
+	margin-top: 12px;
 	display: flex;
 	gap: 12px;
+}
+
+.header__sender {
+	display: flex;
+	align-items: center;
+}
+
+.avatar {
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	margin-right: 12px;
 }
 </style>
