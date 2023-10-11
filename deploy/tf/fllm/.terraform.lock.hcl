@@ -23,8 +23,10 @@ provider "registry.terraform.io/hashicorp/azurerm" {
 }
 
 provider "registry.terraform.io/hashicorp/tfe" {
-  version = "0.49.2"
+  version     = "0.49.2"
+  constraints = "~> 0.49"
   hashes = [
+    "h1:3k82LGhjJ2nAtiCPrxWzszixAaIM0Xt3qwHZFvCTQZg=",
     "h1:5PUEkfZ/mB2naISP60STV9mwVb0+O3N8sU3Y91mB6rk=",
     "zh:25cd271cbd1fad25555ebff14c437e2d8846b735404bc0f1b1b996396a73b749",
     "zh:29122cdb5e1be47cf3f8fde5e9e3df7357b3ca636bac22119e0996f49d85bf08",

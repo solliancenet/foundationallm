@@ -1,42 +1,233 @@
 locals {
+  default_nsg_rules = {
+    inbound = {
+      "deny-all" = {
+        access                     = "Deny"
+        destination_address_prefix = "*"
+        destination_port_range     = "*"
+        priority                   = 4096
+        protocol                   = "*"
+        source_address_prefix      = "*"
+        source_port_range          = "*"
+      }
+    }
+    outbound = {
+      "deny-all" = {
+        access                     = "Deny"
+        destination_address_prefix = "*"
+        destination_port_range     = "*"
+        priority                   = 4096
+        protocol                   = "*"
+        source_address_prefix      = "*"
+        source_port_range          = "*"
+      }
+    }
+  }
+
   subnets = {
     "AppGateway" = {
       address_prefix    = cidrsubnet(local.vnet_address_space, 8, 0)
       service_endpoints = []
+
+      nsg_rules = {
+        inbound = merge(local.default_nsg_rules.inbound, {
+
+        })
+
+        outbound = merge(local.default_nsg_rules.outbound, {
+
+        })
+      }
     }
     "Services" = {
       address_prefix    = cidrsubnet(local.vnet_address_space, 8, 1)
       service_endpoints = []
+
+      nsg_rules = {
+        inbound = merge(local.default_nsg_rules.inbound, {
+
+        })
+
+        outbound = merge(local.default_nsg_rules.outbound, {
+
+        })
+      }
     }
     "Datasources" = {
       address_prefix    = cidrsubnet(local.vnet_address_space, 8, 2)
       service_endpoints = []
+
+      nsg_rules = {
+        inbound = merge(local.default_nsg_rules.inbound, {
+
+        })
+
+        outbound = merge(local.default_nsg_rules.outbound, {
+
+        })
+      }
     }
     "FLLMServices" = {
       address_prefix    = cidrsubnet(local.vnet_address_space, 8, 3)
       service_endpoints = []
+
+      nsg_rules = {
+        inbound = merge(local.default_nsg_rules.inbound, {
+
+        })
+
+        outbound = merge(local.default_nsg_rules.outbound, {
+
+        })
+      }
     }
     "FLLMStorage" = {
       address_prefix    = cidrsubnet(local.vnet_address_space, 8, 4)
       service_endpoints = []
+
+      nsg_rules = {
+        inbound = merge(local.default_nsg_rules.inbound, {
+
+        })
+
+        outbound = merge(local.default_nsg_rules.outbound, {
+
+        })
+      }
     }
     "FLLMOpenAI" = {
       address_prefix = cidrsubnet(local.vnet_address_space, 8, 5)
       service_endpoints = [
         "Microsoft.CognitiveServices"
       ]
+
+      nsg_rules = {
+        inbound = merge(local.default_nsg_rules.inbound, {
+          "allow-apim" = {
+            access                     = "Allow"
+            destination_address_prefix = "VirtualNetwork"
+            destination_port_range     = "3443"
+            priority                   = 128
+            protocol                   = "Tcp"
+            source_address_prefix      = "ApiManagement"
+            source_port_range          = "*"
+          }
+          "allow-lb" = {
+            access                     = "Allow"
+            destination_address_prefix = "VirtualNetwork"
+            destination_port_range     = "6390"
+            priority                   = 192
+            protocol                   = "Tcp"
+            source_address_prefix      = "AzureLoadBalancer"
+            source_port_range          = "*"
+          }
+        })
+        outbound = merge(local.default_nsg_rules.outbound, {
+          "allow-storage" = {
+            access                     = "Allow"
+            destination_address_prefix = "Storage"
+            destination_port_range     = "443"
+            priority                   = 128
+            protocol                   = "Tcp"
+            source_address_prefix      = "VirtualNetwork"
+            source_port_range          = "*"
+          }
+          "allow-sql" = {
+            access                     = "Allow"
+            destination_address_prefix = "SQL"
+            destination_port_range     = "1443"
+            priority                   = 192
+            protocol                   = "Tcp"
+            source_address_prefix      = "VirtualNetwork"
+            source_port_range          = "*"
+          }
+          "allow-kv" = {
+            access                     = "Allow"
+            destination_address_prefix = "AzureKeyVault"
+            destination_port_range     = "443"
+            priority                   = 224
+            protocol                   = "Tcp"
+            source_address_prefix      = "VirtualNetwork"
+            source_port_range          = "*"
+          }
+          "allow-vnet" = {
+            access                     = "Allow"
+            destination_address_prefix = "VirtualNetwork"
+            destination_port_range     = "*"
+            priority                   = 4068
+            protocol                   = "*"
+            source_address_prefix      = "VirtualNetwork"
+            source_port_range          = "*"
+          }
+        })
+      }
     }
     "Vectorization" = {
       address_prefix    = cidrsubnet(local.vnet_address_space, 8, 6)
       service_endpoints = []
+
+      nsg_rules = {
+        inbound = merge(local.default_nsg_rules.inbound, {
+
+        })
+
+        outbound = merge(local.default_nsg_rules.outbound, {
+
+        })
+      }
     }
     "Jumpbox" = {
       address_prefix    = cidrsubnet(local.vnet_address_space, 8, 7)
       service_endpoints = []
+
+      nsg_rules = {
+        inbound = merge(local.default_nsg_rules.inbound, {
+          "allow-rdp" = {
+            access                     = "Allow"
+            destination_address_prefix = "VirtualNetwork"
+            destination_port_range     = "3389"
+            priority                   = 128
+            protocol                   = "Tcp"
+            source_address_prefix      = "Internet"
+            source_port_range          = "*"
+          }
+          "allow-vnet" = {
+            access                     = "Allow"
+            destination_address_prefix = "VirtualNetwork"
+            destination_port_range     = "*"
+            priority                   = 192
+            protocol                   = "*"
+            source_address_prefix      = "VirtualNetwork"
+            source_port_range          = "*"
+          }
+        })
+
+        outbound = merge(local.default_nsg_rules.outbound, {
+          "allow-vnet" = {
+            access                     = "Allow"
+            destination_address_prefix = "VirtualNetwork"
+            destination_port_range     = "*"
+            priority                   = 128
+            protocol                   = "*"
+            source_address_prefix      = "VirtualNetwork"
+            source_port_range          = "*"
+          }
+        })
+      }
     }
     "Gateway" = {
       address_prefix    = cidrsubnet(local.vnet_address_space, 8, 8)
       service_endpoints = []
+
+      nsg_rules = {
+        inbound = merge(local.default_nsg_rules.inbound, {
+
+        })
+
+        outbound = merge(local.default_nsg_rules.outbound, {
+
+        })
+      }
     }
     # Small networks at the end
     "tfc" = {
@@ -49,18 +240,10 @@ locals {
       }
 
       nsg_rules = {
-        inbound = {
-          "deny-all" = {
-            access                     = "Deny"
-            destination_address_prefix = "*"
-            destination_port_range     = "*"
-            priority                   = 4096
-            protocol                   = "*"
-            source_address_prefix      = "*"
-            source_port_range          = "*"
-          }
-        }
-        outbound = {
+        inbound = merge(local.default_nsg_rules.inbound, {
+
+        })
+        outbound = merge(local.default_nsg_rules.outbound, {
           "allow-tfc-api" = {
             access                       = "Allow"
             destination_address_prefixes = data.tfe_ip_ranges.tfc.api
@@ -115,16 +298,7 @@ locals {
             source_address_prefix      = "VirtualNetwork"
             source_port_range          = "*"
           }
-          "deny-all" = {
-            access                     = "Deny"
-            destination_address_prefix = "*"
-            destination_port_range     = "*"
-            priority                   = 4096
-            protocol                   = "*"
-            source_address_prefix      = "*"
-            source_port_range          = "*"
-          }
-        }
+        })
       }
     }
   }
@@ -154,90 +328,6 @@ resource "azurerm_subnet_network_security_group_association" "jbx_nsg" {
 resource "azurerm_subnet_network_security_group_association" "openai_nsg" {
   network_security_group_id = azurerm_network_security_group.openai_nsg.id
   subnet_id                 = azurerm_subnet.subnets["FLLMOpenAI"].id
-}
-
-resource "azurerm_network_security_rule" "jbx_nsr_1" {
-  access                      = "Allow"
-  destination_address_prefix  = "VirtualNetwork"
-  destination_port_range      = "3389"
-  direction                   = "Inbound"
-  name                        = "rdp"
-  network_security_group_name = azurerm_network_security_group.jbx_nsg.name
-  priority                    = 100
-  protocol                    = "Tcp"
-  resource_group_name         = azurerm_resource_group.rgs["NET"].name
-  source_address_prefix       = "Internet"
-  source_port_range           = "*"
-}
-
-resource "azurerm_network_security_rule" "openai_nsr_1" {
-  access                      = "Allow"
-  destination_address_prefix  = "VirtualNetwork"
-  destination_port_range      = "3443"
-  direction                   = "Inbound"
-  name                        = "management"
-  network_security_group_name = azurerm_network_security_group.openai_nsg.name
-  priority                    = 100
-  protocol                    = "Tcp"
-  resource_group_name         = azurerm_resource_group.rgs["NET"].name
-  source_address_prefix       = "ApiManagement"
-  source_port_range           = "*"
-}
-
-resource "azurerm_network_security_rule" "openai_nsr_2" {
-  access                      = "Allow"
-  destination_address_prefix  = "VirtualNetwork"
-  destination_port_range      = "6390"
-  direction                   = "Inbound"
-  name                        = "loadbalancing"
-  network_security_group_name = azurerm_network_security_group.openai_nsg.name
-  priority                    = 101
-  protocol                    = "Tcp"
-  resource_group_name         = azurerm_resource_group.rgs["NET"].name
-  source_address_prefix       = "AzureLoadBalancer"
-  source_port_range           = "*"
-}
-
-resource "azurerm_network_security_rule" "openai_nsr_3" {
-  access                      = "Allow"
-  destination_address_prefix  = "Storage"
-  destination_port_range      = "443"
-  direction                   = "Outbound"
-  name                        = "storage"
-  network_security_group_name = azurerm_network_security_group.openai_nsg.name
-  priority                    = 102
-  protocol                    = "Tcp"
-  resource_group_name         = azurerm_resource_group.rgs["NET"].name
-  source_address_prefix       = "VirtualNetwork"
-  source_port_range           = "*"
-}
-
-resource "azurerm_network_security_rule" "openai_nsr_4" {
-  access                      = "Allow"
-  destination_address_prefix  = "SQL"
-  destination_port_range      = "1443"
-  direction                   = "Outbound"
-  name                        = "sql"
-  network_security_group_name = azurerm_network_security_group.openai_nsg.name
-  priority                    = 103
-  protocol                    = "Tcp"
-  resource_group_name         = azurerm_resource_group.rgs["NET"].name
-  source_address_prefix       = "VirtualNetwork"
-  source_port_range           = "*"
-}
-
-resource "azurerm_network_security_rule" "openai_nsr_5" {
-  access                      = "Allow"
-  destination_address_prefix  = "AzureKeyVault"
-  destination_port_range      = "443"
-  direction                   = "Outbound"
-  name                        = "keyvault"
-  network_security_group_name = azurerm_network_security_group.openai_nsg.name
-  priority                    = 104
-  protocol                    = "Tcp"
-  resource_group_name         = azurerm_resource_group.rgs["NET"].name
-  source_address_prefix       = "VirtualNetwork"
-  source_port_range           = "*"
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "dns_vnet_link" {
@@ -281,12 +371,13 @@ resource "azurerm_virtual_network" "vnet" {
 }
 
 module "nsg_tfc" {
-  source = "./modules/nsg"
+  for_each = local.subnets
+  source   = "./modules/nsg"
 
   resource_group  = azurerm_resource_group.rgs["NET"]
-  resource_prefix = "${local.resource_prefix}-tfc"
-  rules_inbound   = local.subnets["tfc"].nsg_rules.inbound
-  rules_outbound  = local.subnets["tfc"].nsg_rules.outbound
-  subnet_id       = azurerm_subnet.subnets["tfc"].id
+  resource_prefix = "${local.resource_prefix}-${each.key}"
+  rules_inbound   = each.value.nsg_rules.inbound
+  rules_outbound  = each.value.nsg_rules.outbound
+  subnet_id       = azurerm_subnet.subnets[each.key].id
   tags            = local.tags
 }
