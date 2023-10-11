@@ -46,12 +46,122 @@ locals {
   }
 }
 
-resource "azurerm_virtual_network" "vnet" {
-  address_space       = [local.vnet_address_space]
+resource "azurerm_network_security_group" "jbx_nsg" {
   location            = local.location
-  name                = join("-", [local.resource_prefix, "vnet"])
+  name                = join("-", [local.resource_prefix, "JBX", "nsg"])
   resource_group_name = azurerm_resource_group.rgs["NET"].name
-  tags = local.tags
+  tags                = local.tags
+}
+
+resource "azurerm_network_security_group" "openai_nsg" {
+  location            = local.location
+  name                = join("-", [local.resource_prefix, "OAI", "nsg"])
+  resource_group_name = azurerm_resource_group.rgs["NET"].name
+  tags                = local.tags
+}
+
+resource "azurerm_subnet_network_security_group_association" "jbx_nsg" {
+  network_security_group_id = azurerm_network_security_group.jbx_nsg.id
+  subnet_id                 = azurerm_subnet.subnets["Jumpbox"].id
+}
+
+resource "azurerm_subnet_network_security_group_association" "openai_nsg" {
+  network_security_group_id = azurerm_network_security_group.openai_nsg.id
+  subnet_id                 = azurerm_subnet.subnets["FLLMOpenAI"].id
+}
+
+resource "azurerm_network_security_rule" "jbx_nsr_1" {
+  access                      = "Allow"
+  destination_address_prefix  = "VirtualNetwork"
+  destination_port_range      = "3389"
+  direction                   = "Inbound"
+  name                        = "rdp"
+  network_security_group_name = azurerm_network_security_group.jbx_nsg.name
+  priority                    = 100
+  protocol                    = "Tcp"
+  resource_group_name         = azurerm_resource_group.rgs["NET"].name
+  source_address_prefix       = "Internet"
+  source_port_range           = "*"
+}
+
+resource "azurerm_network_security_rule" "openai_nsr_1" {
+  access                      = "Allow"
+  destination_address_prefix  = "VirtualNetwork"
+  destination_port_range      = "3443"
+  direction                   = "Inbound"
+  name                        = "management"
+  network_security_group_name = azurerm_network_security_group.openai_nsg.name
+  priority                    = 100
+  protocol                    = "Tcp"
+  resource_group_name         = azurerm_resource_group.rgs["NET"].name
+  source_address_prefix       = "ApiManagement"
+  source_port_range           = "*"
+}
+
+resource "azurerm_network_security_rule" "openai_nsr_2" {
+  access                      = "Allow"
+  destination_address_prefix  = "VirtualNetwork"
+  destination_port_range      = "6390"
+  direction                   = "Inbound"
+  name                        = "loadbalancing"
+  network_security_group_name = azurerm_network_security_group.openai_nsg.name
+  priority                    = 101
+  protocol                    = "Tcp"
+  resource_group_name         = azurerm_resource_group.rgs["NET"].name
+  source_address_prefix       = "AzureLoadBalancer"
+  source_port_range           = "*"
+}
+
+resource "azurerm_network_security_rule" "openai_nsr_3" {
+  access                      = "Allow"
+  destination_address_prefix  = "Storage"
+  destination_port_range      = "443"
+  direction                   = "Outbound"
+  name                        = "storage"
+  network_security_group_name = azurerm_network_security_group.openai_nsg.name
+  priority                    = 102
+  protocol                    = "Tcp"
+  resource_group_name         = azurerm_resource_group.rgs["NET"].name
+  source_address_prefix       = "VirtualNetwork"
+  source_port_range           = "*"
+}
+
+resource "azurerm_network_security_rule" "openai_nsr_4" {
+  access                      = "Allow"
+  destination_address_prefix  = "SQL"
+  destination_port_range      = "1443"
+  direction                   = "Outbound"
+  name                        = "sql"
+  network_security_group_name = azurerm_network_security_group.openai_nsg.name
+  priority                    = 103
+  protocol                    = "Tcp"
+  resource_group_name         = azurerm_resource_group.rgs["NET"].name
+  source_address_prefix       = "VirtualNetwork"
+  source_port_range           = "*"
+}
+
+resource "azurerm_network_security_rule" "openai_nsr_5" {
+  access                      = "Allow"
+  destination_address_prefix  = "AzureKeyVault"
+  destination_port_range      = "443"
+  direction                   = "Outbound"
+  name                        = "keyvault"
+  network_security_group_name = azurerm_network_security_group.openai_nsg.name
+  priority                    = 104
+  protocol                    = "Tcp"
+  resource_group_name         = azurerm_resource_group.rgs["NET"].name
+  source_address_prefix       = "VirtualNetwork"
+  source_port_range           = "*"
+}
+
+resource "azurerm_private_dns_zone_virtual_network_link" "dns_vnet_link" {
+  for_each = local.private_dns_zones
+
+  name                  = each.key
+  private_dns_zone_name = each.key
+  resource_group_name   = each.value.resource_group_name
+  tags                  = local.tags
+  virtual_network_id    = azurerm_virtual_network.vnet.id
 }
 
 resource "azurerm_subnet" "subnets" {
@@ -64,124 +174,10 @@ resource "azurerm_subnet" "subnets" {
   virtual_network_name = azurerm_virtual_network.vnet.name
 }
 
-resource "azurerm_private_dns_zone_virtual_network_link" "dns_vnet_link" {
-  for_each = local.private_dns_zones
-
-  name                  = each.key
-  private_dns_zone_name = each.key
-  resource_group_name   = each.value.resource_group_name
-  virtual_network_id    = azurerm_virtual_network.vnet.id
-
-  tags = local.tags
-}
-
-resource "azurerm_network_security_group" "openai_nsg" {
-  name                = join("-", [local.resource_prefix, "OAI", "nsg"])
+resource "azurerm_virtual_network" "vnet" {
+  address_space       = [local.vnet_address_space]
   location            = local.location
+  name                = join("-", [local.resource_prefix, "vnet"])
   resource_group_name = azurerm_resource_group.rgs["NET"].name
-
-  tags = local.tags
+  tags                = local.tags
 }
-
-resource "azurerm_network_security_rule" "openai_nsr_1" {
-  access                      = "Allow"
-  direction                   = "Inbound"
-  name                        = "management"
-  network_security_group_name = azurerm_network_security_group.openai_nsg.name
-  priority                    = 100
-  protocol                    = "Tcp"
-  resource_group_name         = azurerm_resource_group.rgs["NET"].name
-  source_port_range           = "*"
-  destination_port_range      = "3443"
-  source_address_prefix       = "ApiManagement"
-  destination_address_prefix  = "VirtualNetwork"
-}
-
-resource "azurerm_network_security_rule" "openai_nsr_2" {
-  access                      = "Allow"
-  direction                   = "Inbound"
-  name                        = "loadbalancing"
-  network_security_group_name = azurerm_network_security_group.openai_nsg.name
-  priority                    = 101
-  protocol                    = "Tcp"
-  resource_group_name         = azurerm_resource_group.rgs["NET"].name
-  source_port_range           = "*"
-  destination_port_range      = "6390"
-  source_address_prefix       = "AzureLoadBalancer"
-  destination_address_prefix  = "VirtualNetwork"
-}
-
-resource "azurerm_network_security_rule" "openai_nsr_3" {
-  access                      = "Allow"
-  direction                   = "Outbound"
-  name                        = "storage"
-  network_security_group_name = azurerm_network_security_group.openai_nsg.name
-  priority                    = 102
-  protocol                    = "Tcp"
-  resource_group_name         = azurerm_resource_group.rgs["NET"].name
-  source_port_range           = "*"
-  destination_port_range      = "443"
-  source_address_prefix       = "VirtualNetwork"
-  destination_address_prefix  = "Storage"
-}
-
-resource "azurerm_network_security_rule" "openai_nsr_4" {
-  access                      = "Allow"
-  direction                   = "Outbound"
-  name                        = "sql"
-  network_security_group_name = azurerm_network_security_group.openai_nsg.name
-  priority                    = 103
-  protocol                    = "Tcp"
-  resource_group_name         = azurerm_resource_group.rgs["NET"].name
-  source_port_range           = "*"
-  destination_port_range      = "1443"
-  source_address_prefix       = "VirtualNetwork"
-  destination_address_prefix  = "SQL"
-}
-
-resource "azurerm_network_security_rule" "openai_nsr_5" {
-  access                      = "Allow"
-  direction                   = "Outbound"
-  name                        = "keyvault"
-  network_security_group_name = azurerm_network_security_group.openai_nsg.name
-  priority                    = 104
-  protocol                    = "Tcp"
-  resource_group_name         = azurerm_resource_group.rgs["NET"].name
-  source_port_range           = "*"
-  destination_port_range      = "443"
-  source_address_prefix       = "VirtualNetwork"
-  destination_address_prefix  = "AzureKeyVault"
-}
-
-resource "azurerm_subnet_network_security_group_association" "openai_nsg" {
-  subnet_id                 = azurerm_subnet.subnets["FLLMOpenAI"].id
-  network_security_group_id = azurerm_network_security_group.openai_nsg.id
-}
-
-resource "azurerm_network_security_group" "jbx_nsg" {
-  name                = join("-", [local.resource_prefix, "JBX", "nsg"])
-  location            = local.location
-  resource_group_name = azurerm_resource_group.rgs["NET"].name
-
-  tags = local.tags
-}
-
-resource "azurerm_network_security_rule" "jbx_nsr_1" {
-  access                      = "Allow"
-  direction                   = "Inbound"
-  name                        = "rdp"
-  network_security_group_name = azurerm_network_security_group.jbx_nsg.name
-  priority                    = 100
-  protocol                    = "Tcp"
-  resource_group_name         = azurerm_resource_group.rgs["NET"].name
-  source_port_range           = "*"
-  destination_port_range      = "3389"
-  source_address_prefix       = "Internet"
-  destination_address_prefix  = "VirtualNetwork"
-}
-
-resource "azurerm_subnet_network_security_group_association" "jbx_nsg" {
-  subnet_id                 = azurerm_subnet.subnets["Jumpbox"].id
-  network_security_group_id = azurerm_network_security_group.jbx_nsg.id
-}
-
