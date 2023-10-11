@@ -50,79 +50,79 @@ locals {
 
       nsg_rules = {
         inbound = {
-          4092 = {
-            access                       = "Deny"
-            destination_address_prefixes = "*"
-            destination_port_range       = "*"
-            name                         = "deny-all"
-            protocol                     = "*"
-            source_address_prefix        = "*"
-            source_port_range            = "*"
-          }
-        }
-        outbound = {
-          128 = {
-            access                       = "Allow"
-            destination_address_prefixes = data.tfe_ip_ranges.tfc.api
-            destination_port_range       = "443"
-            name                         = "allow-tfc-api"
-            protocol                     = "Tcp"
-            source_address_prefix        = "*"
-            source_port_range            = "*"
-          }
-          160 = {
-            access                       = "Allow"
-            destination_address_prefixes = data.tfe_ip_ranges.tfc.notifications
-            destination_port_range       = "443"
-            name                         = "allow-tfc-notifications"
-            protocol                     = "Tcp"
-            source_address_prefix        = "*"
-            source_port_range            = "*"
-          }
-          192 = {
-            access                       = "Allow"
-            destination_address_prefixes = data.tfe_ip_ranges.tfc.sentinel
-            destination_port_range       = "443"
-            name                         = "allow-tfc-sentinel"
-            protocol                     = "Tcp"
-            source_address_prefix        = "*"
-            source_port_range            = "*"
-          }
-          224 = {
-            access                       = "Allow"
-            destination_address_prefixes = data.tfe_ip_ranges.tfc.vcs
-            destination_port_range       = "443"
-            name                         = "allow-tfc-vcs"
-            protocol                     = "Tcp"
-            source_address_prefix        = "*"
-            source_port_range            = "*"
-          }
-          256 = {
-            access                     = "Allow"
-            destination_address_prefix = "Internet"
-            destination_port_range     = "443"
-            name                       = "allow-tfc-services"
-            protocol                   = "Tcp"
+          "deny-all" = {
+            access                     = "Deny"
+            destination_address_prefix = "*"
+            destination_port_range     = "*"
+            priority                   = 4096
+            protocol                   = "*"
             source_address_prefix      = "*"
             source_port_range          = "*"
           }
-          4068 = {
-            access                     = "Allow"
-            destination_address_prefix = "VirtualNetwork"
+        }
+        outbound = {
+          # 128 = {
+          #   access                       = "Allow"
+          #   destination_address_prefixes = data.tfe_ip_ranges.tfc.api
+          #   destination_port_range       = "443"
+          #   name                         = "allow-tfc-api"
+          #   protocol                     = "Tcp"
+          #   source_address_prefix        = "*"
+          #   source_port_range            = "*"
+          # }
+          # 160 = {
+          #   access                       = "Allow"
+          #   destination_address_prefixes = data.tfe_ip_ranges.tfc.notifications
+          #   destination_port_range       = "443"
+          #   name                         = "allow-tfc-notifications"
+          #   protocol                     = "Tcp"
+          #   source_address_prefix        = "*"
+          #   source_port_range            = "*"
+          # }
+          # 192 = {
+          #   access                       = "Allow"
+          #   destination_address_prefixes = data.tfe_ip_ranges.tfc.sentinel
+          #   destination_port_range       = "443"
+          #   name                         = "allow-tfc-sentinel"
+          #   protocol                     = "Tcp"
+          #   source_address_prefix        = "*"
+          #   source_port_range            = "*"
+          # }
+          # 224 = {
+          #   access                       = "Allow"
+          #   destination_address_prefixes = data.tfe_ip_ranges.tfc.vcs
+          #   destination_port_range       = "443"
+          #   name                         = "allow-tfc-vcs"
+          #   protocol                     = "Tcp"
+          #   source_address_prefix        = "*"
+          #   source_port_range            = "*"
+          # }
+          # 256 = {
+          #   access                     = "Allow"
+          #   destination_address_prefix = "Internet"
+          #   destination_port_range     = "443"
+          #   name                       = "allow-tfc-services"
+          #   protocol                   = "Tcp"
+          #   source_address_prefix      = "*"
+          #   source_port_range          = "*"
+          # }
+          # 4068 = {
+          #   access                     = "Allow"
+          #   destination_address_prefix = "VirtualNetwork"
+          #   destination_port_range     = "*"
+          #   name                       = "allow-vnet"
+          #   protocol                   = "*"
+          #   source_address_prefix      = "VirtualNetwork"
+          #   source_port_range          = "*"
+          # }
+          "deny-all" = {
+            access                     = "Deny"
+            destination_address_prefix = "*"
             destination_port_range     = "*"
-            name                       = "allow-vnet"
+            priority                   = 4096
             protocol                   = "*"
-            source_address_prefix      = "VirtualNetwork"
+            source_address_prefix      = "*"
             source_port_range          = "*"
-          }
-          4092 = {
-            access                       = "Deny"
-            destination_address_prefixes = "*"
-            destination_port_range       = "*"
-            name                         = "deny-all"
-            protocol                     = "*"
-            source_address_prefix        = "*"
-            source_port_range            = "*"
           }
         }
       }
@@ -285,6 +285,8 @@ module "nsg_tfc" {
 
   resource_group  = azurerm_resource_group.rgs["NET"]
   resource_prefix = "${local.resource_prefix}-tfc"
+  rules_inbound   = local.subnets["tfc"].nsg_rules.inbound
+  rules_outbound  = local.subnets["tfc"].nsg_rules.outbound
   subnet_id       = azurerm_subnet.subnets["tfc"].id
   tags            = local.tags
 }
