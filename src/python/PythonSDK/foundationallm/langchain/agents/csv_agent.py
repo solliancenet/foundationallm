@@ -1,35 +1,35 @@
-from tabnanny import verbose
 from langchain.agents import create_csv_agent
 from langchain.agents.agent_types import AgentType
 from langchain.callbacks import get_openai_callback
 from langchain.prompts import PromptTemplate
 
-from foundationallm.langchain.openai_models.azure_chat_llm import AzureChatLLM
 from foundationallm.config import Configuration
+from foundationallm.langchain.agents import AgentBase
+from foundationallm.langchain.data_sources.csv import CSVConfig
+from foundationallm.langchain.language_models.chat_models import AzureChatOpenAILanguageModel
 from foundationallm.models.orchestration import CompletionRequest, CompletionResponse
 
-class CSVAgent():
+class CSVAgent(AgentBase):
     """
-    Agent for querying the contents of delimited files (e.g., CSV).
+    Agent for analyzing the contents of delimited files (e.g., CSV).
     """
     
-    def __init__(self, completion_request: CompletionRequest, llm: AzureChatLLM, app_config: Configuration):
+    def __init__(self, completion_request: CompletionRequest, llm: AzureChatOpenAILanguageModel, app_config: Configuration):
+        self.agent_prompt_prefix = completion_request.agent.prompt_template #PromptTemplate.from_template(completion_request.agent.prompt_template)
         self.user_prompt = completion_request.user_prompt
-        self.llm = llm.get_chat_model()
-        self.source_csv_file = app_config.get_value('foundationallm-langchain-csv-file-url')
+        self.llm = llm.get_language_model()
+        self.data_source_config: CSVConfig = completion_request.data_source.configuration
+        if self.data_source_config.path_value_is_secret:
+            self.source_file_path = app_config.get_value(self.data_source_config.source_file_path)
+        else:
+            self.source_file_path = self.data_source_config.source_file_path
         
-        self.prompt_prefix = """
-            You are an analytics agent named Khalil.
-            You help users answer their questions about survey data. If the user asks you to answer any other question besides questions about the data, politely suggest that go ask a human as you are a very focused agent.
-            You are working with a pandas dataframe in Python that contains the survey data. The name of the dataframe is `df`.    
-            You should use the tools below to answer the question posed of you:"""
-
         self.agent = create_csv_agent(
             llm = self.llm,
-            path = self.source_csv_file, # TODO: Get from CompletionRequest? The class should have the metadata object on it with the object config.
+            path = self.source_file_path,
             verbose = True,
             agent_type = AgentType.ZERO_SHOT_REACT_DESCRIPTION,
-            prefix = PromptTemplate.from_template(self.prompt_prefix) # TODO: This should also come from CompletionRequest.
+            prefix = self.agent_prompt_prefix
         )
 
     @property

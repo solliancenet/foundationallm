@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from .orchestration_response_base import OrchestrationResponseBase
 
-class SummaryResponse(BaseModel):
+class SummaryResponse(OrchestrationResponseBase):
     summary: str
