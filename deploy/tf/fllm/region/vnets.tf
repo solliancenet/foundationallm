@@ -1,6 +1,17 @@
 locals {
+  tfc_address_prefix = cidrsubnet(local.vnet_address_space, 11, 2046)
+
   default_nsg_rules = {
     inbound = {
+      "allow-tfc-agents-inbound" = {
+        access                     = "Allow"
+        destination_address_prefix = "VirtualNetwork"
+        destination_port_range     = "*"
+        priority                   = 4095
+        protocol                   = "*"
+        source_address_prefix      = local.tfc_address_prefix
+        source_port_range          = "*"
+      }
       "deny-all-inbound" = {
         access                     = "Deny"
         destination_address_prefix = "*"
@@ -197,7 +208,7 @@ locals {
     }
     # Small networks at the end
     "tfc" = {
-      address_prefix    = cidrsubnet(local.vnet_address_space, 11, 2046)
+      address_prefix    = local.tfc_address_prefix
       service_endpoints = []
       delegation = {
         "Microsoft.ContainerInstance/containerGroups" = [
@@ -310,10 +321,6 @@ resource "azurerm_virtual_network" "vnet" {
   tags                = local.tags
 }
 
-moved {
-  from = module.nsg_tfc
-  to   = module.nsg
-}
 module "nsg" {
   for_each = local.subnets
   source   = "./modules/nsg"
