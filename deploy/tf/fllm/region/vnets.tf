@@ -1,26 +1,26 @@
 locals {
   default_nsg_rules = {
     inbound = {
-      "deny-all-inbound" = {
-        access                     = "Deny"
-        destination_address_prefix = "*"
-        destination_port_range     = "*"
-        priority                   = 4096
-        protocol                   = "*"
-        source_address_prefix      = "*"
-        source_port_range          = "*"
-      }
+      # "deny-all-inbound" = {
+      #   access                     = "Deny"
+      #   destination_address_prefix = "*"
+      #   destination_port_range     = "*"
+      #   priority                   = 4096
+      #   protocol                   = "*"
+      #   source_address_prefix      = "*"
+      #   source_port_range          = "*"
+      # }
     }
     outbound = {
-      "deny-all-outbound" = {
-        access                     = "Deny"
-        destination_address_prefix = "*"
-        destination_port_range     = "*"
-        priority                   = 4096
-        protocol                   = "*"
-        source_address_prefix      = "*"
-        source_port_range          = "*"
-      }
+      # "deny-all-outbound" = {
+      #   access                     = "Deny"
+      #   destination_address_prefix = "*"
+      #   destination_port_range     = "*"
+      #   priority                   = 4096
+      #   protocol                   = "*"
+      #   source_address_prefix      = "*"
+      #   source_port_range          = "*"
+      # }
     }
   }
 
