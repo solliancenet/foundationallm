@@ -17,6 +17,6 @@ namespace FoundationaLLM.Common.Interfaces
         /// The current <see cref="UnifiedUserIdentity"/> object resolved
         /// from one or more services.
         /// </summary>
-        UnifiedUserIdentity? CurrentUserIdentity { get; set; }
+        UnifiedUserIdentity CurrentUserIdentity { get; set; }
     }
 }
