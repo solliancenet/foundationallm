@@ -367,3 +367,4 @@ deploy/__values/
 
 **/env
 ***/.venv
+.DS_Store
