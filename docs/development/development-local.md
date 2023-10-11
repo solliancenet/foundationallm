@@ -231,13 +231,52 @@
 
 ## PythonSDK
 
+### Environment Variables
+
+| Name | Value | Description |
+| ---- | ----- | ----------- |
+| foundationallm-keyvault-name | REDACTED | Key Vault name |
+| foundationallm-configuration-allow-environment-variables | True | Allow environment variables |
+| foundationallm-agent-metadata-storage-container | agent | Agent metadata storage container name |
+| foundationallm-datasource-metadata-storage-container | data-sources | Datasource metadata storage container name |
+| foundationallm-prompt-metadata-storage-container | system-prompt | Prompt metadata storage container name |
+| foundationallm-azure-openai-api-url | REDACTED | Azure Open AI instance URL |
+| foundationallm-azure-openai-api-completions-deployment | completions | Azure Open AI completions deployment name |
+| foundationallm-azure-openai-api-completions-model-version | 0301 | Azure Open AI completions model version |
+| foundationallm-azure-openai-api-version | 2023-07-01-preview | Azure Open AI API version |
+| foundationallm-langchain-summary-model-name | gpt-35-turbo | LangChain summary model name |
+| foundationallm-langchain-summary-model-max-tokens | 4097 | LangChain summary model max tokens |
+| foundationallm-langchain-sqldb-testdb-server-name | REDACTED | Temporary SQL Server name for testing |
+| foundationallm-langchain-sqldb-testdb-database-name | REDACTED | Temporary SQL Database name for testing |
+| foundationallm-langchain-sqldb-testdb-username | REDACTED | Temporary SQL Database user name for testing |
+
 ## Agent Hub API
+
+### Environment Variables
+
+| Name | Value | Description |
+| ---- | ----- | ----------- |
 
 ## Data Source Hub API
 
+### Environment Variables
+
+| Name | Value | Description |
+| ---- | ----- | ----------- |
+
 ## Prompt Hub API
 
+### Environment Variables
+
+| Name | Value | Description |
+| ---- | ----- | ----------- |
+
 ## LangChain API
+
+### Environment Variables
+
+| Name | Value | Description |
+| ---- | ----- | ----------- |
 
 ## Semantic Kernel API
 
