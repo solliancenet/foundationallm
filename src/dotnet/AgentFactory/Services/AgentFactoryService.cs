@@ -67,7 +67,7 @@ public class AgentFactoryService : IAgentFactoryService
         try
         {
             //get all agents for prompt...
-            List<AgentHubResponse> agents = await _agentHubService.ResolveRequest(completionRequest.Prompt, "");
+            //List<AgentHubResponse> agents = await _agentHubService.ResolveRequest(completionRequest.Prompt, "");
 
             // Generate the completion to return to the user
             var result = await GetLLMOrchestrationService().GetResponse(completionRequest.Prompt,
