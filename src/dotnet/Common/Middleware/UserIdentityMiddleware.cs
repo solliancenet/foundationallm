@@ -42,7 +42,7 @@ namespace FoundationaLLM.Common.Middleware
         /// <returns></returns>
         public async Task InvokeAsync(HttpContext context, IUserClaimsProviderService claimsProviderService, IUserIdentityContext userIdentityContext)
         {
-            if (context.User != null)
+            if (context.User is {Identity.IsAuthenticated: true})
             {
                 // Extract from ClaimsPrincipal if available:
                 userIdentityContext.CurrentUserIdentity = claimsProviderService.GetUserIdentity(context.User);
