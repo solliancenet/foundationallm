@@ -42,6 +42,11 @@ locals {
     "tfc" = {
       address_prefix    = cidrsubnet(local.vnet_address_space, 11, 2046)
       service_endpoints = []
+      delegation = {
+        "Microsoft.ContainerInstance/containerGroups" = [
+          "Microsoft.Network/virtualNetworks/subnets/action"
+        ]
+      }
     }
   }
 }
@@ -172,6 +177,18 @@ resource "azurerm_subnet" "subnets" {
   resource_group_name  = azurerm_resource_group.rgs["NET"].name
   service_endpoints    = each.value.service_endpoints
   virtual_network_name = azurerm_virtual_network.vnet.name
+
+  dynamic "delegation" {
+    for_each = lookup(each.value, "delegation", {})
+    content {
+      name = "${delegation.key}-delegation"
+
+      service_delegation {
+        actions = delegation.value
+        name    = delegation.key
+      }
+    }
+  }
 }
 
 resource "azurerm_virtual_network" "vnet" {
