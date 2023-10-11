@@ -90,8 +90,7 @@
       "ChangeFeedLeaseContainer": "leases"
     },
     "GatekeeperAPI": {
-      "APIUrl": "",
-      "APIKey": ""
+      "APIUrl": ""
     },
     "Configuration": {
       "KeyVaultUri": ""
@@ -118,8 +117,7 @@
       "Key": "<...>"
     },
     "GatekeeperAPI": {
-      "APIUrl": "<...>",
-      "APIKey": "<...>"
+      "APIUrl": "<...>"
     },
     "Configuration": {
       "KeyVaultUri": "https://<...>-keyvault.vault.azure.net/"
@@ -160,7 +158,7 @@
       "APIUrl": ""
     },
     "GatekeeperAPI": {
-      "APIKeyPath": "FoundationaLLM:GatekeeperAPI:APIKey"
+      "APIKeySecretName": "foundationallm-gatekeeper-api-key"
     }
   }
 }
@@ -210,7 +208,7 @@
       "APIUrl": ""
     },
     "AgentFactoryAPI": {
-      "APIKeyPath": "FoundationaLLM:AgentFactoryAPI:APIKey"
+      "APIKeySecretName": "foundationallm-agentfactory-api-key"
     }
   }
 }
@@ -297,7 +295,7 @@
       "ConfigFilePath": "BlobMemorySourceConfig.json"
     },
     "SemanticKernelOrchestration": {
-      "APIKeyPath": "FoundationaLLM:SemanticKernelOrchestration:APIKey"
+      "APIKeySecretName": "foundationallm-semantickernel-api-key"
     }
   }
 }
