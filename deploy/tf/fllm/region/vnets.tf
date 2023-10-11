@@ -161,7 +161,7 @@ locals {
             source_address_prefix      = "Internet"
             source_port_range          = "*"
           }
-          "allow-vnet" = {
+          "allow-vnet-inbound" = {
             access                     = "Allow"
             destination_address_prefix = "VirtualNetwork"
             destination_port_range     = "*"
@@ -173,7 +173,7 @@ locals {
         })
 
         outbound = merge(local.default_nsg_rules.outbound, {
-          "allow-vnet" = {
+          "allow-vnet-outbound" = {
             access                     = "Allow"
             destination_address_prefix = "VirtualNetwork"
             destination_port_range     = "*"
