@@ -23,9 +23,7 @@ namespace FoundationaLLM.Common.Interfaces
         /// - X-USER-IDENTITY: The user identity information for the current user.
         /// </summary>
         /// <param name="clientName">The named <see cref="HttpClient"/> client configuration.</param>
-        /// <param name="userIdentity">The <see cref="UnifiedUserIdentity"/> object to add
-        /// to the X-USER-IDENTITY header.</param>
         /// <returns></returns>
-        HttpClient CreateClient(string clientName, UnifiedUserIdentity? userIdentity = null);
+        HttpClient CreateClient(string clientName);
     }
 }
