@@ -306,30 +306,6 @@ locals {
 
 data "tfe_ip_ranges" "tfc" {}
 
-resource "azurerm_network_security_group" "jbx_nsg" {
-  location            = local.location
-  name                = join("-", [local.resource_prefix, "JBX", "nsg"])
-  resource_group_name = azurerm_resource_group.rgs["NET"].name
-  tags                = local.tags
-}
-
-resource "azurerm_network_security_group" "openai_nsg" {
-  location            = local.location
-  name                = join("-", [local.resource_prefix, "OAI", "nsg"])
-  resource_group_name = azurerm_resource_group.rgs["NET"].name
-  tags                = local.tags
-}
-
-resource "azurerm_subnet_network_security_group_association" "jbx_nsg" {
-  network_security_group_id = azurerm_network_security_group.jbx_nsg.id
-  subnet_id                 = azurerm_subnet.subnets["Jumpbox"].id
-}
-
-resource "azurerm_subnet_network_security_group_association" "openai_nsg" {
-  network_security_group_id = azurerm_network_security_group.openai_nsg.id
-  subnet_id                 = azurerm_subnet.subnets["FLLMOpenAI"].id
-}
-
 resource "azurerm_private_dns_zone_virtual_network_link" "dns_vnet_link" {
   for_each = local.private_dns_zones
 
