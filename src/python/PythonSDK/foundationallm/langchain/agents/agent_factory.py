@@ -4,11 +4,11 @@ from langchain.llms.openai import OpenAIChat
 from foundationallm.config import Configuration
 from foundationallm.langchain.language_models.chat_models import AzureChatOpenAILanguageModel
 from foundationallm.models.orchestration import OrchestrationRequestBase
-from foundationallm.langchain.agents import AgentBase, SummaryAgent
+from foundationallm.langchain.agents import AgentBase, SqlDbAgent, SummaryAgent
 
 class AgentFactory:
     """
-    Factory to determine what agent to use.
+    Factory to determine which agent to use.
     """
     
     def __init__(self, request: OrchestrationRequestBase, config: Configuration):
@@ -31,7 +31,7 @@ class AgentFactory:
             case 'anomaly-detection':
                 pass
             case 'summary':
-                return SummaryAgent(self.request, llm=self.get_llm(), config=self.config)
+                return SummaryAgent(self.request, llm=self.get_llm(), app_config=self.config)
             case 'sql':
-                pass
+                return SqlDbAgent(self.request, llm=self.get_llm(), app_config=self.config)
     

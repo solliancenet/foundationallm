@@ -15,12 +15,12 @@ class SummaryAgent(AgentBase):
     Agent for summarizing input text.
     """
         
-    def __init__(self, summary_request: SummaryRequest, llm: AzureChatOpenAILanguageModel, config: Configuration):
+    def __init__(self, summary_request: SummaryRequest, llm: AzureChatOpenAILanguageModel, app_config: Configuration):
         self.summarizer_chain_prompt = PromptTemplate.from_template(summary_request.agent.prompt_template)
         self.user_prompt = summary_request.user_prompt
         self.llm = llm.get_language_model()
-        self.model_name = config.get_value('foundationallm-langchain-summary-model-name')
-        self.max_tokens = config.get_value('foundationallm-langchain-summary-model-max-tokens')
+        self.model_name = app_config.get_value('foundationallm-langchain-summary-model-name')
+        self.max_tokens = app_config.get_value('foundationallm-langchain-summary-model-max-tokens')
         
     def __get_text_as_documents(self):
         text_splitter = CharacterTextSplitter()

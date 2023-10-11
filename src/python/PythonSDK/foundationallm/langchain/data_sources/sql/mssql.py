@@ -1,18 +1,17 @@
-from langchain.sql_database import SQLDatabase
+from urllib import parse
 
-from foundationallm.langchain.data_sources.sql import SqlDbConfig
+from foundationallm.langchain.data_sources.sql import SqlDbDataSource
 
-class MsSqlServer():
+class MsSqlServer(SqlDbDataSource):
     """
-    Represents a connection to a Microsoft SQL Server database.
+    Generates a Microsoft SQL Server database connection.
     """
+    def get_connection_string(self) -> str:
+        # TODO: Driver in querystring should come from config.
+        return f'{self.dialect}+{self.driver}://{self.username}:{parse.quote_plus(self.password)}@{self.host}:{self.port}/{self.database_name}?driver={parse.quote_plus("ODBC Driver 18 for SQL Server")}'
     
-    def __init__(self, config: SqlDbConfig):
-        self.config = config
-
-    def get_database(self) -> SQLDatabase:
-        return SQLDatabase.from_uri(
-            self.config.get_connection_string(),
-            include_tables=self.config.include_tables,
-            sample_rows_in_table_info=2 # This should also be in the config object
-        )
+    def get_driver(self) -> str:
+        return 'pyodbc'
+    
+    def get_default_port(self) -> int:
+        return 1433

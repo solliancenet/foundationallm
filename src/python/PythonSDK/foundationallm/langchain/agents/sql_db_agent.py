@@ -1,34 +1,38 @@
-from langchain.agents import AgentExecutor, create_sql_agent
+from langchain.agents import create_sql_agent # AgentExecutor, 
 from langchain.agents.agent_toolkits import SQLDatabaseToolkit
 from langchain.agents.agent_types import AgentType
 from langchain.callbacks import get_openai_callback
 from langchain.prompts import PromptTemplate
 
-from foundationallm.langchain.data_sources.sql import SqlDbConfig, MsSqlServer
+from foundationallm.langchain.agents.agent_base import AgentBase
+from foundationallm.langchain.data_sources.sql import SqlDbConfig #, MsSqlServer
+from foundationallm.langchain.data_sources.sql import SqlDbFactory
 from foundationallm.langchain.language_models.chat_models import AzureChatOpenAILanguageModel
 from foundationallm.models.orchestration import CompletionRequest, CompletionResponse
 from foundationallm.config import Configuration
 
-class SqlDbAgent():
+class SqlDbAgent(AgentBase):
     """
     Agent for interacting with SQL databases.
     """
 
-    def __init__(self, completion_request: CompletionRequest, llm: AzureChatOpenAILanguageModel, app_config: Configuration, sql_db_config: SqlDbConfig):
+    def __init__(self, completion_request: CompletionRequest, llm: AzureChatOpenAILanguageModel, app_config: Configuration):
+        self.agent_prompt_prefix = PromptTemplate.from_template(completion_request.agent.prompt_template)
         self.user_prompt = completion_request.user_prompt
         self.llm = llm.get_language_model()
-        self.sql_db_config = sql_db_config
-        
+        self.sql_db_config: SqlDbConfig = completion_request.data_source.configuration
+        print(self.llm)
+
         self.agent = create_sql_agent(
             llm = self.llm,
-            toolkit = SQLDatabaseToolkit( #TODO: Swap out with overriden, secure toolkit.
-                db=MsSqlServer(self.sql_db_config).get_database(),
+            toolkit = SQLDatabaseToolkit( #TODO: Swap out with overridden, secure toolkit.
+                db = SqlDbFactory(sql_db_config = self.sql_db_config, app_config = app_config).get_sql_database(),
                 llm=self.llm,
                 reduce_k_below_max_tokens=True
             ),
             agent_type = AgentType.ZERO_SHOT_REACT_DESCRIPTION,
             verbose = True,
-            prefix = PromptTemplate.from_template(self.sql_db_config.prompt_prefix),
+            prefix = self.agent_prompt_prefix,
             agent_executor_kwargs={
                 'handle_parsing_errors': True
             }

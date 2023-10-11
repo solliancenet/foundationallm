@@ -67,6 +67,8 @@
     <Compile Include="foundationallm\langchain\data_sources\sql\mysql.py" />
     <Compile Include="foundationallm\langchain\data_sources\sql\postgresql.py" />
     <Compile Include="foundationallm\langchain\data_sources\sql\sql_db_config.py" />
+    <Compile Include="foundationallm\langchain\data_sources\sql\sql_db_datasource.py" />
+    <Compile Include="foundationallm\langchain\data_sources\sql\sql_db_factory.py" />
     <Compile Include="foundationallm\langchain\data_sources\sql\__init__.py" />
     <Compile Include="foundationallm\langchain\data_sources\__init__.py" />
     <Compile Include="foundationallm\langchain\language_models\chat_models\azure_chat_openai_language_model.py" />
