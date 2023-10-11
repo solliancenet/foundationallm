@@ -1,17 +1,17 @@
 resource "azurerm_key_vault" "openai_keyvault" {
+  enable_rbac_authorization     = true
   location                      = local.location
   name                          = join("-", [local.resource_prefix, "OAI", "kv"])
+  public_network_access_enabled = true
   resource_group_name           = azurerm_resource_group.rgs["OAI"].name
   sku_name                      = "standard"
   tenant_id                     = data.azurerm_client_config.current.tenant_id
-  enable_rbac_authorization     = true
-  public_network_access_enabled = true
 }
 
 resource "azurerm_role_assignment" "openai_kv_sp_role" {
   principal_id         = data.azurerm_client_config.current.object_id
-  scope                = azurerm_key_vault.openai_keyvault.id
   role_definition_name = "Key Vault Secrets Officer"
+  scope                = azurerm_key_vault.openai_keyvault.id
 }
 
 resource "azurerm_private_endpoint" "oai_kv_ple" {

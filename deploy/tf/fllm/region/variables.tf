@@ -1,11 +1,11 @@
 variable "location" {
-  type        = string
   description = "The location/region where the resource group is created"
+  type        = string
 }
 
 variable "location_short" {
-  type        = string
   description = "The location of the resource group"
+  type        = string
 }
 
 variable "resource_groups" {
@@ -15,24 +15,24 @@ variable "resource_groups" {
 }
 
 variable "resource_prefix" {
-  type        = string
   description = "The prefix used for all resources in this example"
+  type        = string
 }
 
 variable "tags" {
-  type        = map(string)
   description = "A mapping of tags to assign to the resource"
+  type        = map(string)
 }
 
 variable "vnet_address_space" {
-  type        = string
   description = "Address space of the regional VNET"
+  type        = string
 }
 
 variable "private_dns_zones" {
   type = map(object({
     id                  = string
-    resource_group_name = string
     name                = string
+    resource_group_name = string
   }))
 }
