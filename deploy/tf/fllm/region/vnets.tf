@@ -312,7 +312,7 @@ resource "azurerm_virtual_network" "vnet" {
 
 moved {
   from = module.nsg_tfc
-  to = module.nsg
+  to   = module.nsg
 }
 module "nsg" {
   for_each = local.subnets

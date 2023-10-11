@@ -10,12 +10,13 @@ locals {
 
 data "azurerm_client_config" "current" {}
 
-# module "logs" {
-#   source          = "./modules/log-analytics-workspace"
-#   resource_group  = local.resource_groups["OPS"]
-#   resource_prefix = local.resource_prefix
-#   tags            = local.tags
-# }
+resource "azurerm_monitor_action_group" "do_nothing" {
+  name                = "${local.resource_prefix}-ag"
+  resource_group_name = azurerm_resource_group.rgs["OPS"].name
+  short_name          = "do-nothing"
+  tags                = local.tags
+}
+
 
 # module "tfc_agent" {
 #   source = "./modules/tfc-agent"
@@ -24,7 +25,8 @@ data "azurerm_client_config" "current" {}
 # }
 
 module "ampls" {
-  source          = "./modules/monitor-private-link-scope"
+  source = "./modules/monitor-private-link-scope"
+
   resource_group  = azurerm_resource_group.rgs["OPS"]
   resource_prefix = local.resource_prefix
   tags            = local.tags
@@ -35,5 +37,19 @@ module "ampls" {
       var.private_dns_zones["privatelink.blob.core.windows.net"].id,
       var.private_dns_zones["privatelink.monitor.azure.com"].id,
     ]
+  }
+}
+
+module "logs" {
+  source = "./modules/log-analytics-workspace"
+
+  action_group_id = azurerm_monitor_action_group.do_nothing.id
+  resource_group  = azurerm_resource_group.rgs["OPS"]
+  resource_prefix = local.resource_prefix
+  tags            = local.tags
+
+  azure_monitor_private_link_scope = {
+    name                = module.ampls.name
+    resource_group_name = azurerm_resource_group.rgs["OPS"].name
   }
 }
