@@ -72,9 +72,10 @@ namespace FoundationaLLM.AgentFactory.Services
                     }
                 }
             };
+            var body = JsonConvert.SerializeObject(request, _jsonSerializerSettings);
             var responseMessage = await client.PostAsync("/orchestration/completion",
                 new StringContent(
-                    JsonConvert.SerializeObject(request, _jsonSerializerSettings),
+                    body,
                     Encoding.UTF8, "application/json"));
 
             if (responseMessage.IsSuccessStatusCode)
