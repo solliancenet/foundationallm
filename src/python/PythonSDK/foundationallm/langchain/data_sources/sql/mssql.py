@@ -1,6 +1,6 @@
 from langchain.sql_database import SQLDatabase
 
-from foundationallm.langchain.datasources.sql import SqlDbConfig
+from foundationallm.langchain.data_sources.sql import SqlDbConfig
 
 class MsSqlServer():
     """

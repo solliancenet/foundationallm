@@ -4,7 +4,7 @@ from langchain.agents.agent_types import AgentType
 from langchain.callbacks import get_openai_callback
 from langchain.prompts import PromptTemplate
 
-from foundationallm.langchain.openai_models.azure_chat_llm import AzureChatLLM
+from foundationallm.langchain.language_models.chat_models import AzureChatOpenAILanguageModel
 from foundationallm.config import Configuration
 from foundationallm.models.orchestration import CompletionRequest, CompletionResponse
 
@@ -13,9 +13,9 @@ class CSVAgent():
     Agent for querying the contents of delimited files (e.g., CSV).
     """
     
-    def __init__(self, completion_request: CompletionRequest, llm: AzureChatLLM, app_config: Configuration):
+    def __init__(self, completion_request: CompletionRequest, llm: AzureChatOpenAILanguageModel, app_config: Configuration):
         self.user_prompt = completion_request.user_prompt
-        self.llm = llm.get_chat_model()
+        self.llm = llm.get_language_model()
         self.source_csv_file = app_config.get_value('foundationallm-langchain-csv-file-url')
         
         self.prompt_prefix = """

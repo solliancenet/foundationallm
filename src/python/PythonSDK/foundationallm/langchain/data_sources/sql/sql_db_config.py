@@ -1,18 +1,30 @@
 import json
 from urllib import parse
+from foundationallm.langchain.data_sources import DataSourceConfiguration
 
-class SqlDbConfig:
-    def __init__(self, dialect: str, host: str, database: str, username: str, password: str, prompt_prefix: str, include_tables: list[str] = [], exclude_tables: list[str] = []): # TODO: Allow port to be passed in and get default if empty.
+class SqlDbConfig(DataSourceConfiguration):
+    dialect: str
+    driver: str
+    database_host: str
+    database_port: int
+    database_name: str
+    database_username: str
+    database_password: str
+    include_tables: list[str] = []
+    exclude_tables: list[str] = []
+    
+    
+    def __init__(self, dialect: str, host: str, database: str, username: str, password: str, prompt_template: str, include_tables: list[str] = [], exclude_tables: list[str] = []): # TODO: Allow port to be passed in and get default if empty.
         self.dialect = dialect
         self.driver= self.__get_db_driver()
-        self.host = host
-        self.port = self.__get_db_default_port()
-        self.database = database
-        self.username = username
-        self.password = password
+        self.database_host = host
+        self.database_port = self.__get_db_default_port()
+        self.database_name = database
+        self.database_username = username
+        self.database_password = password
         self.include_tables = include_tables or []
         self.exclude_tables = exclude_tables or []
-        self.prompt_prefix = prompt_prefix
+        self.prompt_tempate = prompt_template
 
     def __str__(self):
         return json.dumps(self.__dict__)

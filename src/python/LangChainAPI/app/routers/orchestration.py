@@ -1,11 +1,13 @@
 import os
+from urllib import request
 from fastapi import APIRouter, Depends
 from app.dependencies import get_config, validate_api_key_header
+
 from foundationallm.credentials import AzureCredential
-from foundationallm.models.orchestration import CompletionRequest, CompletionResponse, SummaryRequest, SummaryResponse
-from foundationallm.langchain.openai_models import AzureChatLLM
-from foundationallm.langchain.agents import SqlDbAgent, SummaryAgent
-from foundationallm.langchain.datasources.sql import SqlDbConfig
+from foundationallm.models.orchestration import * #CompletionRequest, CompletionResponse, SummaryRequest, SummaryResponse
+#from foundationallm.langchain.language_models.chat_models import AzureChatOpenAILanguageModel
+from foundationallm.langchain.agents import AgentFactory#, SummaryAgent #, SqlDbAgent
+from foundationallm.langchain.data_sources.sql import SqlDbConfig
 
 # Initialize config
 app_config = get_config(credential=AzureCredential())
@@ -50,9 +52,14 @@ async def get_completion(completion_request: CompletionRequest) -> CompletionRes
     )
     
      # TODO: This needs to be swapped out with SDK calls to an agent factory that will return the appropriate object based the metadata object passed in.
-    return SqlDbAgent(completion_request=completion_request, llm=AzureChatLLM(app_config=app_config), app_config=app_config, sql_db_config=sql_db_config).run()
-    #return CSVAgent(completion_request=completion_request, llm=AzureChatLLM(app_config=app_config), app_config=app_config).run()
+    #return SqlDbAgent(completion_request=completion_request, llm=AzureChatOpenAILanguageModel(config=app_config), app_config=app_config, sql_db_config=sql_db_config).run()
+    return CompletionResponse(
+        completion='test'
+    )
+    #return CSVAgent(completion_request=completion_request, llm=AzureChatOpenAILanguageModel(config=app_config), app_config=app_config).run()
 
 @router.post('/summary')
-async def get_summary(summary_request: SummaryRequest) -> SummaryResponse:    
-    return SummaryAgent(summary_request=summary_request, llm=AzureChatLLM(app_config=app_config), app_config=app_config).run()
+async def get_summary(summary_request: SummaryRequest) -> SummaryResponse:
+    agent = AgentFactory(request = summary_request, config = app_config).get_agent()
+    return agent.run()
+    #return SummaryAgent(summary_request=summary_request, llm=AzureChatOpenAILanguageModel(config=app_config), app_config=app_config).run()
