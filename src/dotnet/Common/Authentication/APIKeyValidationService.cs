@@ -6,11 +6,11 @@ namespace FoundationaLLM.Common.Authentication
 {
     public class APIKeyValidationService : IAPIKeyValidationService
     {
-        private readonly IConfiguration _configuration;
+        private readonly IConfigurationService _configuration;
         private readonly APIKeyValidationSettings _settings;
 
         public APIKeyValidationService(
-            IConfiguration configuration, 
+            IConfigurationService configuration, 
             IOptions<APIKeyValidationSettings> options)
         {
             _configuration = configuration;
@@ -22,7 +22,7 @@ namespace FoundationaLLM.Common.Authentication
             if (string.IsNullOrWhiteSpace(apiKey))
                 return false;
 
-            string? validApiKey = _configuration.GetValue<string>(_settings.APIKeyPath);
+            string? validApiKey = _configuration.GetValue<string>(_settings.APIKeySecretName);
 
             if (validApiKey == null || validApiKey != apiKey)
                 return false;

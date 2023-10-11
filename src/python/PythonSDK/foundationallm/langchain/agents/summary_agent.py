@@ -1,4 +1,4 @@
-import tiktoken
+woimport tiktoken
 from langchain.chains.summarize import load_summarize_chain
 from langchain.docstore.document import Document
 from langchain.text_splitter import CharacterTextSplitter
