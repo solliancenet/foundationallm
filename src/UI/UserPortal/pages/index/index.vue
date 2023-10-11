@@ -1,43 +1,59 @@
 <template>
 	<div class="chat-app">
-		<ChatSidebar :sessions="sessions" @session-chosen="sessionChosen" @add-chat="onAddChat" />
-		<ChatThread class="expand" :messages="messages" :session="selectedSession" />
+		<ChatSidebar
+			:sessions="sessions"
+			@session-selected="handleSessionSelected"
+			@add-session="handleAddSession"
+		/>
+		<ChatThread :messages="messages" :session="selectedSession" />
 	</div>
 </template>
 
-<script>
+<script lang="ts">
+import { Message, Session } from '@/js/types';
+
 export default {
 	name: 'Index',
 
 	data() {
 		return {
-			status: null,
-			sessions: null,
-			selectedSession: null,
-			messages: null,
+			sessions: [] as Array<Session>,
+			selectedSession: {} as Session,
+			messages: [] as Array<Message>,
 		};
 	},
+
+	async created() {
+		const data = await this.getSessions();
+		this.sessions = data;
+		this.selectedSession = data[0];
+		await this.handleSessionSelected(this.selectedSession);
+	},
+
 	methods: {
 		async getSessions() {
-			return await useFetch(`${this.$config.public.API_URL}/sessions`);
+			return await $fetch(`${this.$config.public.API_URL}/sessions`) as Array<Session>;
 		},
-		async sessionChosen(session) {
-			const {data} = await useFetch(`${this.$config.public.API_URL}/sessions/${session.id}/messages`);
+
+		async getMessages(sessionId: String) {
+			return await $fetch(`${this.$config.public.API_URL}/sessions/${sessionId}/messages`) as Array<Message>;
+		},
+
+		async addSession() {
+			return await $fetch(`${this.$config.public.API_URL}/sessions`, { method: 'POST' }) as Session;
+		},
+
+		async handleSessionSelected(session: Session) {
+			const data = await this.getMessages(session.id);
 			this.messages = data;
 			this.selectedSession = session;
-			console.log(this.messages);
 		},
-		async onAddChat() {
-			const data = await $fetch(`${this.$config.public.API_URL}/sessions`, {
-				method: 'POST',
-			});
+
+		async handleAddSession() {
+			const data = await this.addSession();
 			this.sessions.push(data);
-			this.sessionChosen(data);
+			this.handleSessionSelected(data);
 		},
-	},
-	async created() {
-		const {data} = await this.getSessions();
-		this.sessions = data;
 	},
 };
 </script>
@@ -55,10 +71,6 @@ body,
 <style lang="scss" scoped>
 .chat-app {
 	display: flex;
-	height: 100%;
-}
-
-.expand {
-	flex: 1;
+	height: 100vh;
 }
 </style>

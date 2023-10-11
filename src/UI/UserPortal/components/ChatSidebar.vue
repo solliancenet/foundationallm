@@ -1,53 +1,96 @@
 <template>
 	<div class="chat-sidebar">
-		<h1>ChatSidebar</h1>
-		<div class="add-chat" @click="$emit('addChat', true)">
-			<div class="icon"></div>
-			<div class="text">Add Chat</div>
+		<!-- Sidebar header -->
+		<div class="chat-sidebar__header">
+			<span>Sessions</span>
+			<button @click="handleAddSession">
+				<span class="text">+</span>
+			</button>
 		</div>
-		<div v-if="!sessions">No sessions</div>
-		<div v-else v-for="(session, index) in sessions" :key="index" @click="$emit('sessionChosen', session)" class="sidebar-sessions">
-			<h2>{{ session.name }}</h2>
-			<h3>Tokens: {{ session.tokensUsed }}</h3>
+
+		<!-- Chats -->
+		<div class="chat-sidebar__chats">
+			<div v-if="!sessions">No sessions</div>
+			<div
+				v-for="session in sessions"
+				:key="session.id"
+				class="chat-sidebar__chat"
+				@click="handleSessionSelected(session)"
+			>
+				<div
+					class="chat"
+					:class="{ 'chat--selected': currentSession?.id === session.id }"
+				>
+					<span class="chat__name">{{ session.name }}</span>
+				</div>
+			</div>
 		</div>
 	</div>
 </template>
 
 <script lang="ts">
+import { Session } from '@/js/types';
+
 export default {
 	name: 'ChatSidebar',
 
 	props: {
 		sessions: {
-			type: Array,
+			type: Array<Session>,
 			required: true,
+		},
+	},
+
+	emits: ['add-session', 'session-selected'],
+
+	data() {
+		return {
+			currentSession: null as Session | null,
+		};
+	},
+
+	methods: {
+		handleAddSession() {
+			this.$emit('add-session');
+		},
+
+		handleSessionSelected(session: Session) {
+			this.currentSession = session;
+			this.$emit('session-selected', session);
 		},
 	},
 };
 </script>
 
 <style lang="scss" scoped>
+
 .chat-sidebar {
-	width: 320px;
+	width: 300px;
 	height: 100%;
-	overflow: scroll;
 	border-right: 1px solid gray;
 	display: flex;
 	flex-direction: column;
 }
 
-.add-chat {
+.chat-sidebar__header {
+	padding: 24px;
+	border-bottom: 1px solid gray;
 	display: flex;
-	flex-direction: row;
-	align-items: center;
-	justify-content: center;
-	height: 50px;
-	border: 1px solid rgb(99, 255, 180);
-	cursor: pointer;
+	justify-content: space-between;
 }
 
-.sidebar-sessions {
-	border: 1px solid rgb(99, 255, 180);
-	cursor: pointer;
+.chat-sidebar__chats {
+	flex: 1;
+	overflow-y: auto;
+}
+
+.chat {
+	border-radius: 8px;
+	margin: 24px;
+	padding: 12px;
+}
+
+.chat--selected {
+	background-color: lightgray;
 }
 </style>

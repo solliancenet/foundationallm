@@ -5,7 +5,11 @@
 			<div class="text"></div>
 		</div>
 		<div class="input-container">
-			<input class="input" type="text" placeholder="What would you like to ask?"/>
+			<input
+				class="input"
+				type="text"
+				placeholder="What would you like to ask?"
+			/>
 		</div>
 		<div class="submit">
 			<div class="icon"></div>
@@ -52,5 +56,4 @@ export default {
 	border: 1px solid green;
 	text-align: center;
 }
-
 </style>
