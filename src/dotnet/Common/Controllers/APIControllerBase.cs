@@ -7,6 +7,7 @@ using FoundationaLLM.Common.Interfaces;
 using FoundationaLLM.Common.Models.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace FoundationaLLM.Common.Controllers
 {
@@ -23,13 +24,31 @@ namespace FoundationaLLM.Common.Controllers
             _claimsProviderService = claimsProviderService;
         }
 
+        /// <summary>
+        /// Gets the <see cref="UnifiedUserIdentity"/> of the current user. If there is an available
+        /// JWT token that contains the user's identity, it will be extracted and returned. Otherwise,
+        /// the user's identity will be extracted from the HTTP headers.
+        /// </summary>
         protected UnifiedUserIdentity? UserIdentity
         {
             get
             {
-                if (_userIdentity == null && User != null)
+                if (_userIdentity == null)
                 {
-                    _userIdentity = _claimsProviderService.GetUserIdentity(User);
+                    if (User != null)
+                    {
+                        // Extract from ClaimsPrincipal if available (e.g., in CoreAPI)
+                        _userIdentity = _claimsProviderService.GetUserIdentity(User);
+                    }
+                    else
+                    {
+                        // Extract from HTTP headers if available (e.g., in downstream APIs)
+                        string serializedIdentity = HttpContext.Request.Headers[Constants.HttpHeaders.UserIdentity].ToString();
+                        if (!string.IsNullOrEmpty(serializedIdentity))
+                        {
+                            _userIdentity = JsonConvert.DeserializeObject<UnifiedUserIdentity>(serializedIdentity);
+                        }
+                    }
                 }
                 return _userIdentity;
             }
