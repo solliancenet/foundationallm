@@ -15,26 +15,30 @@ variable "resource_prefix" {
 variable "rules_inbound" {
   description = "The inbound rules for the NSG."
   type = map(object({
-    access                     = string
-    destination_address_prefix = string
-    destination_port_range     = string
-    priority                   = number
-    protocol                   = string
-    source_address_prefix      = string
-    source_port_range          = string
+    access                       = string
+    destination_address_prefix   = optional(string)
+    destination_address_prefixes = optional(list(string))
+    destination_port_range       = string
+    priority                     = number
+    protocol                     = string
+    source_address_prefix        = optional(string)
+    source_address_prefixes      = optional(list(string))
+    source_port_range            = string
   }))
 }
 
 variable "rules_outbound" {
   description = "The outbound rules for the NSG."
   type = map(object({
-    access                     = string
-    destination_address_prefix = string
-    destination_port_range     = string
-    priority                   = number
-    protocol                   = string
-    source_address_prefix      = string
-    source_port_range          = string
+    access                       = string
+    destination_address_prefix   = optional(string)
+    destination_address_prefixes = optional(list(string))
+    destination_port_range       = string
+    priority                     = number
+    protocol                     = string
+    source_address_prefix        = optional(string)
+    source_address_prefixes      = optional(list(string))
+    source_port_range            = string
   }))
 }
 

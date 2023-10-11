@@ -61,60 +61,60 @@ locals {
           }
         }
         outbound = {
-          # 128 = {
-          #   access                       = "Allow"
-          #   destination_address_prefixes = data.tfe_ip_ranges.tfc.api
-          #   destination_port_range       = "443"
-          #   name                         = "allow-tfc-api"
-          #   protocol                     = "Tcp"
-          #   source_address_prefix        = "*"
-          #   source_port_range            = "*"
-          # }
-          # 160 = {
-          #   access                       = "Allow"
-          #   destination_address_prefixes = data.tfe_ip_ranges.tfc.notifications
-          #   destination_port_range       = "443"
-          #   name                         = "allow-tfc-notifications"
-          #   protocol                     = "Tcp"
-          #   source_address_prefix        = "*"
-          #   source_port_range            = "*"
-          # }
-          # 192 = {
-          #   access                       = "Allow"
-          #   destination_address_prefixes = data.tfe_ip_ranges.tfc.sentinel
-          #   destination_port_range       = "443"
-          #   name                         = "allow-tfc-sentinel"
-          #   protocol                     = "Tcp"
-          #   source_address_prefix        = "*"
-          #   source_port_range            = "*"
-          # }
-          # 224 = {
-          #   access                       = "Allow"
-          #   destination_address_prefixes = data.tfe_ip_ranges.tfc.vcs
-          #   destination_port_range       = "443"
-          #   name                         = "allow-tfc-vcs"
-          #   protocol                     = "Tcp"
-          #   source_address_prefix        = "*"
-          #   source_port_range            = "*"
-          # }
-          # 256 = {
-          #   access                     = "Allow"
-          #   destination_address_prefix = "Internet"
-          #   destination_port_range     = "443"
-          #   name                       = "allow-tfc-services"
-          #   protocol                   = "Tcp"
-          #   source_address_prefix      = "*"
-          #   source_port_range          = "*"
-          # }
-          # 4068 = {
-          #   access                     = "Allow"
-          #   destination_address_prefix = "VirtualNetwork"
-          #   destination_port_range     = "*"
-          #   name                       = "allow-vnet"
-          #   protocol                   = "*"
-          #   source_address_prefix      = "VirtualNetwork"
-          #   source_port_range          = "*"
-          # }
+          "allow-tfc-api" = {
+            access                       = "Allow"
+            destination_address_prefixes = data.tfe_ip_ranges.tfc.api
+            destination_port_range       = "443"
+            priority                     = 128
+            protocol                     = "Tcp"
+            source_address_prefix        = "*"
+            source_port_range            = "*"
+          }
+          "allow-tfc-notifications" = {
+            access                       = "Allow"
+            destination_address_prefixes = data.tfe_ip_ranges.tfc.notifications
+            destination_port_range       = "443"
+            priority                     = 160
+            protocol                     = "Tcp"
+            source_address_prefix        = "*"
+            source_port_range            = "*"
+          }
+          "allow-tfc-sentinel" = {
+            access                       = "Allow"
+            destination_address_prefixes = data.tfe_ip_ranges.tfc.sentinel
+            destination_port_range       = "443"
+            priority                     = 192
+            protocol                     = "Tcp"
+            source_address_prefix        = "*"
+            source_port_range            = "*"
+          }
+          "allow-tfc-vcs" = {
+            access                       = "Allow"
+            destination_address_prefixes = data.tfe_ip_ranges.tfc.vcs
+            destination_port_range       = "443"
+            priority                     = 224
+            protocol                     = "Tcp"
+            source_address_prefix        = "*"
+            source_port_range            = "*"
+          }
+          "allow-tfc-services" = {
+            access                     = "Allow"
+            destination_address_prefix = "Internet"
+            destination_port_range     = "443"
+            priority                   = 256
+            protocol                   = "Tcp"
+            source_address_prefix      = "*"
+            source_port_range          = "*"
+          }
+          "allow-vnet" = {
+            access                     = "Allow"
+            destination_address_prefix = "VirtualNetwork"
+            destination_port_range     = "*"
+            priority                   = 4068
+            protocol                   = "*"
+            source_address_prefix      = "VirtualNetwork"
+            source_port_range          = "*"
+          }
           "deny-all" = {
             access                     = "Deny"
             destination_address_prefix = "*"
