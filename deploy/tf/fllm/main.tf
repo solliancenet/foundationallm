@@ -28,6 +28,11 @@ locals {
         "Purpose" = "OpenAI"
       }
     }
+    "OPS" = {
+      tags = {
+        "Purpose" = "DevOps"
+      }
+    }
   }
 
   regions = {
