@@ -310,7 +310,11 @@ resource "azurerm_virtual_network" "vnet" {
   tags                = local.tags
 }
 
-module "nsg_tfc" {
+moved {
+  from = module.nsg_tfc
+  to = module.nsg
+}
+module "nsg" {
   for_each = local.subnets
   source   = "./modules/nsg"
 
