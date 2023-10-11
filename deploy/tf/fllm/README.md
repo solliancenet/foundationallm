@@ -9,6 +9,8 @@ The following requirements are needed by this module:
 
 - <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (3.65.0)
 
+- <a name="requirement_tfe"></a> [tfe](#requirement\_tfe) (~> 0.49)
+
 ## Providers
 
 No providers.

@@ -6,6 +6,10 @@ terraform {
       source  = "hashicorp/azurerm"
       version = "3.65.0"
     }
+    tfe = {
+      source  = "hashicorp/tfe"
+      version = "~> 0.49"
+    }
   }
 
   cloud {
@@ -16,6 +20,3 @@ terraform {
   }
 }
 
-provider "azurerm" {
-  features {}
-}
