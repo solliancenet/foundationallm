@@ -7,8 +7,7 @@ class PromptHub(HubBase):
     """The PromptHub class is responsible for resolving prompts."""
     
     def __init__(self):
-         # initialize config
-        credential = AzureCredential().get_credential()     
+         # initialize config            
         key_vault_name = Configuration().get_value(key="foundationallm-keyvault-name")        
-        self.config = Configuration(keyvault_name=key_vault_name, credential=credential)
+        self.config = Configuration(keyvault_name=key_vault_name, credential=AzureCredential())
         super().__init__(repository=PromptRepository(self.config), resolver=PromptResolver())

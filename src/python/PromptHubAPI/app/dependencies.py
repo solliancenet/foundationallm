@@ -24,7 +24,7 @@ async def validate_api_key_header(app_config: Annotated[Configuration, Depends(g
         The X-API-Key value in the request header.
     """
 
-    result = x_api_key == app_config.get_value('foundationallm-langchain-api-key')
+    result = x_api_key == app_config.get_value('foundationallm-prompthub-api-key')
     
     if not result:
         raise HTTPException(
