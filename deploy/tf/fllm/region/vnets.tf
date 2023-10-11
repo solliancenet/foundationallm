@@ -30,13 +30,8 @@ locals {
       service_endpoints = []
 
       nsg_rules = {
-        inbound = merge(local.default_nsg_rules.inbound, {
-
-        })
-
-        outbound = merge(local.default_nsg_rules.outbound, {
-
-        })
+        inbound  = merge(local.default_nsg_rules.inbound, {})
+        outbound = merge(local.default_nsg_rules.outbound, {})
       }
     }
     "Services" = {
@@ -44,13 +39,8 @@ locals {
       service_endpoints = []
 
       nsg_rules = {
-        inbound = merge(local.default_nsg_rules.inbound, {
-
-        })
-
-        outbound = merge(local.default_nsg_rules.outbound, {
-
-        })
+        inbound  = merge(local.default_nsg_rules.inbound, {})
+        outbound = merge(local.default_nsg_rules.outbound, {})
       }
     }
     "Datasources" = {
@@ -58,13 +48,8 @@ locals {
       service_endpoints = []
 
       nsg_rules = {
-        inbound = merge(local.default_nsg_rules.inbound, {
-
-        })
-
-        outbound = merge(local.default_nsg_rules.outbound, {
-
-        })
+        inbound  = merge(local.default_nsg_rules.inbound, {})
+        outbound = merge(local.default_nsg_rules.outbound, {})
       }
     }
     "FLLMServices" = {
@@ -72,13 +57,8 @@ locals {
       service_endpoints = []
 
       nsg_rules = {
-        inbound = merge(local.default_nsg_rules.inbound, {
-
-        })
-
-        outbound = merge(local.default_nsg_rules.outbound, {
-
-        })
+        inbound  = merge(local.default_nsg_rules.inbound, {})
+        outbound = merge(local.default_nsg_rules.outbound, {})
       }
     }
     "FLLMStorage" = {
@@ -86,13 +66,8 @@ locals {
       service_endpoints = []
 
       nsg_rules = {
-        inbound = merge(local.default_nsg_rules.inbound, {
-
-        })
-
-        outbound = merge(local.default_nsg_rules.outbound, {
-
-        })
+        inbound  = merge(local.default_nsg_rules.inbound, {})
+        outbound = merge(local.default_nsg_rules.outbound, {})
       }
     }
     "FLLMOpenAI" = {
@@ -167,13 +142,8 @@ locals {
       service_endpoints = []
 
       nsg_rules = {
-        inbound = merge(local.default_nsg_rules.inbound, {
-
-        })
-
-        outbound = merge(local.default_nsg_rules.outbound, {
-
-        })
+        inbound  = merge(local.default_nsg_rules.inbound, {})
+        outbound = merge(local.default_nsg_rules.outbound, {})
       }
     }
     "Jumpbox" = {
@@ -220,13 +190,9 @@ locals {
       service_endpoints = []
 
       nsg_rules = {
-        inbound = merge(local.default_nsg_rules.inbound, {
+        inbound = merge(local.default_nsg_rules.inbound, {})
 
-        })
-
-        outbound = merge(local.default_nsg_rules.outbound, {
-
-        })
+        outbound = merge(local.default_nsg_rules.outbound, {})
       }
     }
     # Small networks at the end
@@ -240,9 +206,7 @@ locals {
       }
 
       nsg_rules = {
-        inbound = merge(local.default_nsg_rules.inbound, {
-
-        })
+        inbound = merge(local.default_nsg_rules.inbound, {})
         outbound = merge(local.default_nsg_rules.outbound, {
           "allow-tfc-api" = {
             access                       = "Allow"
