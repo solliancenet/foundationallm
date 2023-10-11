@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FoundationaLLM.Common.Models.Chat;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -48,5 +49,6 @@ namespace FoundationaLLM.AgentFactory.Core.Models.Orchestration
         public string user_prompt;
         public LangChainAgent agent;
         public LangChainDataSource data_source;
+        public List<MessageHistoryItem> message_history;
     }
 }

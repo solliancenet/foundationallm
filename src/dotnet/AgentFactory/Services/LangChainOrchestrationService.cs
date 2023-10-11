@@ -59,7 +59,7 @@ namespace FoundationaLLM.AgentFactory.Services
                     description = "Azure SQL Database containing rum data.",
                     configuration = new LangChainSQLDataSourceConfiguration
                     {
-                        dialect = "msssql",
+                        dialect = "mssql",
                         host = "cocorahs-ai.database.windows.net",
                         port = 1433,
                         database_name = "cocorahsdb",
@@ -70,7 +70,8 @@ namespace FoundationaLLM.AgentFactory.Services
                         },
                         few_shot_example_count = 2
                     }
-                }
+                },
+                message_history = new List<MessageHistoryItem>()
             };
             var body = JsonConvert.SerializeObject(request, _jsonSerializerSettings);
             var responseMessage = await client.PostAsync("/orchestration/completion",
