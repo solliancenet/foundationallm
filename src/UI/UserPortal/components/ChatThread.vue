@@ -73,7 +73,7 @@ export default {
 	methods: {
 		async rateMessage(message, rating) {
 			message.rating === rating ? message.rating = null : message.rating = rating;
-			const data = await $fetch(`${this.$config.public.BASE_URL}/sessions/${message.sessionId}/message/${message.id}/rate${message.rating !== null ? '?rating=' + message.rating : ''}`, {
+			const data = await $fetch(`${this.$config.public.API_URL}/sessions/${message.sessionId}/message/${message.id}/rate${message.rating !== null ? '?rating=' + message.rating : ''}`, {
 				method: 'POST'
 			});
 			console.log(data);
