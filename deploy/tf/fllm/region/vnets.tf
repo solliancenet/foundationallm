@@ -1,7 +1,7 @@
 locals {
   default_nsg_rules = {
     inbound = {
-      "deny-all" = {
+      "deny-all-inbound" = {
         access                     = "Deny"
         destination_address_prefix = "*"
         destination_port_range     = "*"
@@ -12,7 +12,7 @@ locals {
       }
     }
     outbound = {
-      "deny-all" = {
+      "deny-all-outbound" = {
         access                     = "Deny"
         destination_address_prefix = "*"
         destination_port_range     = "*"
