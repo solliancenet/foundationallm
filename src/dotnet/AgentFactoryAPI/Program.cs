@@ -28,6 +28,7 @@ namespace FoundationaLLM.AgentFactory.API
 
             // Add API Key Authorization
             builder.Services.AddHttpContextAccessor();
+            builder.Services.AddScoped<IUserClaimsProviderService, NoOpUserClaimsProviderService>();
             builder.Services.AddScoped<APIKeyAuthenticationFilter>();
             builder.Services.AddOptions<APIKeyValidationSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:AgentFactoryAPI"));

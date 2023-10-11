@@ -97,6 +97,13 @@ namespace FoundationaLLM.Core.API
 
             var app = builder.Build();
 
+            // For the CoreAPI, we need to make sure that UseAuthentication is called before the UserIdentityMiddleware.
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            // Register the middleware to set the user identity context.
+            app.UseMiddleware<UserIdentityMiddleware>();
+
             app.UseExceptionHandler(exceptionHandlerApp
                     => exceptionHandlerApp.Run(async context
                         => await Results.Problem().ExecuteAsync(context)));
@@ -116,12 +123,6 @@ namespace FoundationaLLM.Core.API
                         options.SwaggerEndpoint(url, name);
                     }
                 });
-
-            app.UseAuthentication();
-            app.UseAuthorization();
-
-            // Register the middleware to set the user identity context.
-            app.UseMiddleware<UserIdentityMiddleware>();
 
             app.MapControllers();
 

@@ -38,11 +38,13 @@ namespace FoundationaLLM.Gatekeeper.API
             builder.Services.AddTransient<IAPIKeyValidationService, APIKeyValidationService>();
             builder.Services.AddSingleton<IConfigurationService, KeyVaultConfigurationService>();
 
-            builder.Services.AddSingleton<IAgentFactoryAPIService, AgentFactoryAPIService>();
+            builder.Services.AddScoped<IAgentFactoryAPIService, AgentFactoryAPIService>();
 
             builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
             builder.Services.AddScoped<IUserIdentityContext, UserIdentityContext>();
             builder.Services.AddScoped<IHttpClientFactoryService, HttpClientFactoryService>();
+            builder.Services.AddScoped<IUserClaimsProviderService, NoOpUserClaimsProviderService>();
+            builder.Services.AddScoped<IGatekeeperService, GatekeeperService>();
 
             builder.Services
                 .AddHttpClient(HttpClients.AgentFactoryAPIClient,
@@ -97,6 +99,9 @@ namespace FoundationaLLM.Gatekeeper.API
 
             var app = builder.Build();
 
+            // Register the middleware to set the user identity context.
+            app.UseMiddleware<UserIdentityMiddleware>();
+
             app.UseExceptionHandler(exceptionHandlerApp
                 => exceptionHandlerApp.Run(async context
                     => await Results.Problem().ExecuteAsync(context)));
@@ -119,9 +124,6 @@ namespace FoundationaLLM.Gatekeeper.API
 
             app.UseHttpsRedirection();
             app.UseAuthorization();
-            
-            // Register the middleware to set the user identity context.
-            app.UseMiddleware<UserIdentityMiddleware>();
 
             app.MapControllers();
 
