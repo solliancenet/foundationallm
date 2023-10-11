@@ -1,3 +1,4 @@
 from .sql_authentication_type import SQLAuthenticationType
+from .sql_dialect import SQLDialect
 from .sql_authentication_metadata import SQLAuthenticationMetadata
-from .sql_server_data_source_metadata import SQLServerDataSourceMetadata
+from .sql_data_source_metadata import SQLDataSourceMetadata

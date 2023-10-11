@@ -7,5 +7,4 @@ class DataSourceMetadata(Metadata):
     """The DataSourceMetadata class is used as a common base definition for data source metadata."""
     name: str
     description: str
-    underlying_implementation: UnderlyingImplementation
-    few_shot_examples: Optional[List[str]] = None
+    underlying_implementation: UnderlyingImplementation    
