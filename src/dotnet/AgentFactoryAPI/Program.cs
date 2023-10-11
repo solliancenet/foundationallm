@@ -36,28 +36,28 @@ namespace FoundationaLLM.AgentFactory.API
             builder.Services.AddTransient<IAPIKeyValidationService, APIKeyValidationService>();
 
             builder.Services.AddOptions<SemanticKernelOrchestrationServiceSettings>()
-                .Bind(builder.Configuration.GetSection("FoundationaLLM:SemanticKernelOrchestration"));
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:SemanticKernelAPI"));
 
             builder.Services.AddOptions<LangChainOrchestrationServiceSettings>()
-                .Bind(builder.Configuration.GetSection("FoundationaLLM:LangChainOrchestration"));
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:LangChainAPI"));
 
             builder.Services.AddOptions<AgentHubSettings>()
-                .Bind(builder.Configuration.GetSection("FoundationaLLM:AgentHub"));
-            builder.Services.AddOptions<ChatServiceSettings>()
-                .Bind(builder.Configuration.GetSection("FoundationaLLM:Chat"));
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:AgentHubAPI"));
+
             builder.Services.AddOptions<KeyVaultConfigurationServiceSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:Configuration"));
 
             builder.Services.AddSingleton<IConfigurationService, KeyVaultConfigurationService>();
+            
+            builder.Services.AddScoped<ISemanticKernelOrchestrationService, SemanticKernelOrchestrationService>();
+            builder.Services.AddScoped<ILangChainOrchestrationService, LangChainOrchestrationService>();
+            builder.Services.AddScoped<IAgentFactoryService, AgentFactoryService>();
+            builder.Services.AddScoped<IAgentHubService, AgentHubAPIService>();
 
             builder.Configuration.AddAzureKeyVault(
-                new Uri($"https://{builder.Configuration["FoundationaLLM:AzureKeyVaultName"]}.vault.azure.net/"),
+                new Uri(builder.Configuration["FoundationaLLM:Configuration:KeyVaultUri"]),
                 new DefaultAzureCredential());
-            
-            builder.Services.AddSingleton<ISemanticKernelOrchestrationService, SemanticKernelOrchestrationService>();
-            builder.Services.AddSingleton<ILangChainOrchestrationService, LangChainOrchestrationService>();
-            builder.Services.AddSingleton<IAgentFactoryService, AgentFactoryService>();
-            builder.Services.AddSingleton<IAgentHubService, AgentHubAPIService>();
+
 
             builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 
@@ -65,8 +65,9 @@ namespace FoundationaLLM.AgentFactory.API
                 .AddHttpClient(HttpClients.AgentHubAPIClient,
                     httpClient =>
                     {
-                        httpClient.BaseAddress = new Uri(builder.Configuration["FoundationaLLM:AgentHub:APIUrl"]);
-                        httpClient.DefaultRequestHeaders.Add("X-API-KEY", builder.Configuration["FoundationaLLM:AgentHub:APIKey"]);
+                        httpClient.BaseAddress = new Uri(builder.Configuration["FoundationaLLM:AgentHubAPI:APIUrl"]);
+                        httpClient.DefaultRequestHeaders.Add("X-API-KEY", builder.Configuration[
+                            builder.Configuration["FoundationaLLM:AgentHubAPI:APIKeySecretName"]]);
                     })
                 .AddTransientHttpErrorPolicy(policyBuilder =>
                     policyBuilder.WaitAndRetryAsync(
@@ -75,8 +76,9 @@ namespace FoundationaLLM.AgentFactory.API
                 .AddHttpClient(HttpClients.LangChainAPIClient,
                     httpClient =>
                     {
-                        httpClient.BaseAddress = new Uri(builder.Configuration["FoundationaLLM:LangChainOrchestration:APIUrl"]);
-                        httpClient.DefaultRequestHeaders.Add("X-API-KEY", builder.Configuration["FoundationaLLM:LangChainOrchestration:APIKey"]);
+                        httpClient.BaseAddress = new Uri(builder.Configuration["FoundationaLLM:LangChainAPI:APIUrl"]);
+                        httpClient.DefaultRequestHeaders.Add("X-API-KEY", builder.Configuration[
+                            builder.Configuration["FoundationaLLM:LangChainAPI:APIKeySecretName"]]);
                     })
                 .AddTransientHttpErrorPolicy(policyBuilder =>
                     policyBuilder.WaitAndRetryAsync(
@@ -85,8 +87,9 @@ namespace FoundationaLLM.AgentFactory.API
                 .AddHttpClient(HttpClients.SemanticKernelAPIClient,
                     httpClient =>
                     {
-                        httpClient.BaseAddress = new Uri(builder.Configuration["FoundationaLLM:SemanticKernelOrchestration:APIUrl"]);
-                        httpClient.DefaultRequestHeaders.Add("X-API-KEY", builder.Configuration["FoundationaLLM:SemanticKernelOrchestration:APIKey"]);
+                        httpClient.BaseAddress = new Uri(builder.Configuration["FoundationaLLM:SemanticKernelAPI:APIUrl"]);
+                        httpClient.DefaultRequestHeaders.Add("X-API-KEY", builder.Configuration[
+                            builder.Configuration["FoundationaLLM:SemanticKernelAPI:APIKeySecretName"]]);
                     })
                 .AddTransientHttpErrorPolicy(policyBuilder =>
                     policyBuilder.WaitAndRetryAsync(
