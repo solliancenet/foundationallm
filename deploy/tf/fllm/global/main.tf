@@ -6,13 +6,15 @@ locals {
   tags            = var.tags
 
   private_dns_zones = {
-    "privatelink.openai.azure.com"    = {}
-    "privatelink.vaultcore.azure.com" = {}
-    "privatelink.azure-api.net"       = {}
-    "azure-api.net"                   = {}
-    "portal.azure-api.net"            = {}
-    "developer.azure-api.net"         = {}
-    "management.azure-api.net"        = {}
-    "scm.azure-api.net"               = {}
+    "azure-api.net"                     = {}
+    "developer.azure-api.net"           = {}
+    "management.azure-api.net"          = {}
+    "portal.azure-api.net"              = {}
+    "privatelink.azure-api.net"         = {}
+    "privatelink.blob.core.windows.net" = {}
+    "privatelink.monitor.azure.com"     = {}
+    "privatelink.openai.azure.com"      = {}
+    "privatelink.vaultcore.azure.com"   = {}
+    "scm.azure-api.net"                 = {}
   }
 }
