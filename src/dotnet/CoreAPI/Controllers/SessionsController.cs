@@ -21,8 +21,7 @@ namespace FoundationaLLM.Core.API.Controllers
         private readonly ILogger<SessionsController> _logger;
 
         public SessionsController(ICoreService coreService,
-            ILogger<SessionsController> logger,
-            IUserClaimsProviderService claimsProviderService) : base(claimsProviderService)
+            ILogger<SessionsController> logger)
         {
             _coreService = coreService;
             _logger = logger;

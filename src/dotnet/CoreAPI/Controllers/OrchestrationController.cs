@@ -21,8 +21,7 @@ namespace FoundationaLLM.Core.API.Controllers
         private readonly ILogger<OrchestrationController> _logger;
 
         public OrchestrationController(IGatekeeperAPIService gatekeeperAPIService,
-            ILogger<OrchestrationController> logger,
-            IUserClaimsProviderService claimsProviderService) : base(claimsProviderService)
+            ILogger<OrchestrationController> logger)
         {
             _gatekeeperAPIService = gatekeeperAPIService;
             _logger = logger;
