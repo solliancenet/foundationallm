@@ -2,6 +2,6 @@
 {
     public record APIKeyValidationSettings
     {
-        public string APIKeyPath { get; init; }
+        public string APIKeySecretName { get; init; }
     }
 }
