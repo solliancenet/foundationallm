@@ -78,8 +78,11 @@ export default {
 }
 
 .chat-thread__header {
+	height: 70px;
 	padding: 24px;
 	border-bottom: 1px solid gray;
+	background-color: rgba(32, 32, 32, 1);
+	color: white;
 }
 
 .chat-thread__messages {

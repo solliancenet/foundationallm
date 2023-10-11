@@ -73,10 +73,13 @@ export default {
 }
 
 .chat-sidebar__header {
+	height: 70px;
 	padding: 24px;
 	border-bottom: 1px solid gray;
 	display: flex;
 	justify-content: space-between;
+	background-color: rgba(32, 32, 32, 1);
+	color: white;
 }
 
 .chat-sidebar__chats {

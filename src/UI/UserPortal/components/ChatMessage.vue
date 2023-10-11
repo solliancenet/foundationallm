@@ -80,18 +80,19 @@ export default {
 	padding: 16px;
 	border-radius: 8px;
 	width: 80%;
+	box-shadow: 0 5px 10px 0 rgba(27, 29, 33, 0.1);
 }
 
 .message--in {
 	.message {
-		background-color: lightblue;
+		background-color: rgba(250, 250, 250, 1);
 	}
 }
 
 .message--out {
 	flex-direction: row-reverse;
 	.message {
-		background-color: lightgray;
+		background-color: rgba(233, 235, 249, 1);
 	}
 }
 

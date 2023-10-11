@@ -2,7 +2,10 @@
 export default defineNuxtConfig({
 	devtools: { enabled: true },
 	components: true,
-	css: ['primevue/resources/themes/viva-light/theme.css'],
+	css: [
+		'primevue/resources/themes/viva-light/theme.css',
+		'~/styles/fonts.scss',
+	],
 	build: {
 		transpile: ['primevue'],
 	},

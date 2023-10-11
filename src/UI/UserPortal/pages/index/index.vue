@@ -65,6 +65,7 @@ body,
 #__layout {
 	height: 100%;
 	margin: 0;
+	font-family: 'Nunito', sans-serif;
 }
 </style>
 
@@ -72,5 +73,6 @@ body,
 .chat-app {
 	display: flex;
 	height: 100vh;
+	background-color: rgba(242, 242, 242, 1);
 }
 </style>
