@@ -1,4 +1,5 @@
 ﻿using FoundationaLLM.AgentFactory.Core.Interfaces;
+using FoundationaLLM.AgentFactory.Core.Models.Messages;
 using FoundationaLLM.AgentFactory.Interfaces;
 using FoundationaLLM.AgentFactory.Models.ConfigurationOptions;
 using FoundationaLLM.AgentFactory.Models.Orchestration;
@@ -12,7 +13,8 @@ public class AgentFactoryService : IAgentFactoryService
 {
     private readonly ISemanticKernelOrchestrationService _semanticKernelOrchestration;
     private readonly ILangChainOrchestrationService _langChainOrchestration;
-    private readonly ChatServiceSettings _settings;
+    private readonly IAgentHubService _agentHubService;
+    private readonly AgentHubSettings _settings;
     private readonly ILogger<AgentFactoryService> _logger;
 
     private LLMOrchestrationService _llmOrchestrationService = LLMOrchestrationService.LangChain;
@@ -20,12 +22,14 @@ public class AgentFactoryService : IAgentFactoryService
     public AgentFactoryService(
         ISemanticKernelOrchestrationService semanticKernelOrchestration,
         ILangChainOrchestrationService langChainOrchestration,
-        IOptions<ChatServiceSettings> options,
+        IAgentHubService agentHubService,
+        IOptions<AgentHubSettings> settings,
         ILogger<AgentFactoryService> logger)
     {
         _semanticKernelOrchestration = semanticKernelOrchestration;
         _langChainOrchestration = langChainOrchestration;
-        _settings = options.Value;
+        _agentHubService = agentHubService;
+        _settings = settings.Value;
         _logger = logger;
 
         SetLLMOrchestrationPreference(_settings.DefaultOrchestrationService);
@@ -41,22 +45,19 @@ public class AgentFactoryService : IAgentFactoryService
         else
             return false;
     }
-
     public string Status
     {
         get
         {
             if (_semanticKernelOrchestration.IsInitialized)
                 return "ready";
-
             var status = new List<string>();
-
             if (!_semanticKernelOrchestration.IsInitialized)
                 status.Add("SemanticKernelOrchestrationService: initializing");
-
             return string.Join(",", status);
         }
     }
+
 
     /// <summary>
     /// Retrieve a completion from the configured orchestration service.
@@ -65,6 +66,9 @@ public class AgentFactoryService : IAgentFactoryService
     {
         try
         {
+            //get all agents for prompt...
+            List<AgentHubResponse> agents = await _agentHubService.ResolveRequest(completionRequest.Prompt, "");
+
             // Generate the completion to return to the user
             var result = await GetLLMOrchestrationService().GetResponse(completionRequest.Prompt,
                 completionRequest.MessageHistory);
@@ -108,7 +112,6 @@ public class AgentFactoryService : IAgentFactoryService
             };
         }
     }
-
     private ILLMOrchestrationService GetLLMOrchestrationService()
     {
         switch (_llmOrchestrationService)
