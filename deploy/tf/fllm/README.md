@@ -37,7 +37,13 @@ No resources.
 
 ## Required Inputs
 
-No required inputs.
+The following input variables are required:
+
+### <a name="input_tfc_agent_token"></a> [tfc\_agent\_token](#input\_tfc\_agent\_token)
+
+Description: The token used by the agent to authenticate with Terraform Cloud.
+
+Type: `string`
 
 ## Optional Inputs
 

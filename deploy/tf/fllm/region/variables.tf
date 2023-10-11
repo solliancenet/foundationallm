@@ -8,6 +8,14 @@ variable "location_short" {
   type        = string
 }
 
+variable "private_dns_zones" {
+  type = map(object({
+    id                  = string
+    name                = string
+    resource_group_name = string
+  }))
+}
+
 variable "resource_groups" {
   type = map(object({
     tags = map(string)
@@ -19,20 +27,18 @@ variable "resource_prefix" {
   type        = string
 }
 
-variable "tags" {
-  description = "A mapping of tags to assign to the resource"
-  type        = map(string)
-}
-
 variable "vnet_address_space" {
   description = "Address space of the regional VNET"
   type        = string
 }
 
-variable "private_dns_zones" {
-  type = map(object({
-    id                  = string
-    name                = string
-    resource_group_name = string
-  }))
+variable "tfc_agent_token" {
+  description = "The token used by the agent to authenticate with Terraform Cloud."
+  sensitive   = true
+  type        = string
+}
+
+variable "tags" {
+  description = "A mapping of tags to assign to the resource"
+  type        = map(string)
 }

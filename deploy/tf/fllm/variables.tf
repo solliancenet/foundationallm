@@ -21,3 +21,9 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "tfc_agent_token" {
+  description = "The token used by the agent to authenticate with Terraform Cloud."
+  sensitive   = true
+  type        = string
+}

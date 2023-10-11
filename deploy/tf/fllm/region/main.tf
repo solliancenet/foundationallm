@@ -17,13 +17,6 @@ resource "azurerm_monitor_action_group" "do_nothing" {
   tags                = local.tags
 }
 
-
-# module "tfc_agent" {
-#   source = "./modules/tfc-agent"
-
-#   resource_prefix = "${local.resource_prefix}-tfca"
-# }
-
 module "ampls" {
   source = "./modules/monitor-private-link-scope"
 
@@ -52,4 +45,16 @@ module "logs" {
     name                = module.ampls.name
     resource_group_name = azurerm_resource_group.rgs["OPS"].name
   }
+}
+
+module "tfc_agent" {
+  source = "./modules/tfc-agent"
+
+  action_group_id         = azurerm_monitor_action_group.do_nothing.id
+  log_analytics_workspace = module.logs
+  resource_group          = azurerm_resource_group.rgs["OPS"]
+  resource_prefix         = "${local.resource_prefix}-tfca"
+  subnet_id               = azurerm_subnet.subnets["tfc"].id
+  tags                    = local.tags
+  tfc_agent_token         = var.tfc_agent_token
 }
