@@ -1,19 +1,23 @@
 variable "environment" {
-  type    = string
-  default = "DEMO"
+  description = "The environment name"
+  type        = string
+  default     = "DEMO"
 }
 
 variable "global_location" {
-  type    = string
-  default = "East US"
+  description = "The global location"
+  type        = string
+  default     = "East US"
 }
 
 variable "project_id" {
-  type    = string
-  default = "FLLM"
+  description = "The project id"
+  type        = string
+  default     = "FLLM"
 }
 
 variable "tags" {
-  type    = map(string)
-  default = {}
+  description = "The tags to use on each resource"
+  type        = map(string)
+  default     = {}
 }
