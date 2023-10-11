@@ -14,7 +14,7 @@ locals {
       window_duration                          = "P1D"
     }
 
-    rate_limit = {
+    rate-limit = {
       display_name                             = "Data ingestion is exceeding the ingestion rate limit - ${azurerm_log_analytics_workspace.workspace.name}"
       evaluation_frequency                     = "PT5M"
       minimum_failing_periods_to_trigger_alert = 1
@@ -28,7 +28,7 @@ locals {
       window_duration                          = "PT5M"
     }
 
-    ingestion_cap = {
+    ingestion-cap = {
       display_name                             = "Data ingestion has hit the daily cap - ${azurerm_log_analytics_workspace.workspace.name}"
       evaluation_frequency                     = "PT5M"
       minimum_failing_periods_to_trigger_alert = 1
@@ -123,7 +123,7 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "alert" {
   display_name         = each.value.display_name
   evaluation_frequency = each.value.evaluation_frequency
   location             = var.resource_group.location
-  name                 = "${var.resource_prefix}-la-${each.key}-alert}"
+  name                 = "${var.resource_prefix}-la-${each.key}-alert"
   resource_group_name  = var.resource_group.name
   scopes               = [azurerm_log_analytics_workspace.workspace.id]
   tags                 = var.tags
