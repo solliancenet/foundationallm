@@ -9,9 +9,9 @@ export default defineNuxtConfig({
 	build: {
 		transpile: ['primevue'],
 	},
-	runtimeConfig: {
-		public: {
-			API_URL: process.env.API_URL,
+	vite: {
+		define: {
+			API_URL: JSON.stringify(process.env.API_URL),
 		},
 	},
 });

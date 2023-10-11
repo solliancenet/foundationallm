@@ -11,6 +11,7 @@
 
 <script lang="ts">
 import { Message, Session } from '@/js/types';
+import api from '~/server/api';
 
 export default {
 	name: 'Index',
@@ -24,33 +25,21 @@ export default {
 	},
 
 	async created() {
-		const data = await this.getSessions();
+		const data = await api.getSessions();
 		this.sessions = data;
 		this.selectedSession = data[0];
 		await this.handleSessionSelected(this.selectedSession);
 	},
 
 	methods: {
-		async getSessions() {
-			return await $fetch(`${this.$config.public.API_URL}/sessions`) as Array<Session>;
-		},
-
-		async getMessages(sessionId: String) {
-			return await $fetch(`${this.$config.public.API_URL}/sessions/${sessionId}/messages`) as Array<Message>;
-		},
-
-		async addSession() {
-			return await $fetch(`${this.$config.public.API_URL}/sessions`, { method: 'POST' }) as Session;
-		},
-
 		async handleSessionSelected(session: Session) {
-			const data = await this.getMessages(session.id);
+			const data = await api.getMessages(session.id);
 			this.messages = data;
 			this.selectedSession = session;
 		},
 
 		async handleAddSession() {
-			const data = await this.addSession();
+			const data = await api.addSession();
 			this.sessions.push(data);
 			this.handleSessionSelected(data);
 		},

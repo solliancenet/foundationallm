@@ -21,13 +21,14 @@
 		</div>
 
 		<!-- Chat input -->
-		<ChatInput />
+		<ChatInput @send="handleSend" />
 	</div>
 </template>
 
 <script lang="ts">
 import type { PropType } from 'vue';
 import { Message, Session } from '@/js/types';
+import api from '~/server/api';
 
 export default {
 	name: 'ChatThread',
@@ -45,24 +46,14 @@ export default {
 	},
 
 	methods: {
-		async rateMessage(message: Message, rating: Message['rating']) {
-			message.rating === rating
-				? (message.rating = null)
-				: (message.rating = rating);
-
-			const data = (await $fetch(
-				`${this.$config.public.API_URL}/sessions/${message.sessionId}/message/${
-					message.id
-				}/rate${message.rating !== null ? '?rating=' + message.rating : ''}`,
-				{
-					method: 'POST',
-				},
-			)) as Message;
+		async handleRateMessage(messageIndex, { message, like }: { message: Message; like: boolean }) {
+			const data = await api.rateMessage(message, like);
+			this.messages[messageIndex] = data;
 		},
 
-		async handleRateMessage(messageIndex, { message, like }: { message: Message; like: boolean }) {
-			const data = await this.rateMessage(message, like);
-			this.messages[messageIndex] = data;
+		async handleSend(text: string) {
+			const data = api.sendMessage(this.session.id, text);
+			console.log(data);
 		},
 	},
 };
