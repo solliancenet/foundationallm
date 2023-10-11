@@ -15,8 +15,13 @@ namespace FoundationaLLM.Common.Services
     /// </summary>
     public class EntraUserClaimsProviderService : IUserClaimsProviderService
     {
-        public UnifiedUserIdentity GetUserIdentity(ClaimsPrincipal userPrincipal)
+        /// <inheritdoc/>
+        public UnifiedUserIdentity? GetUserIdentity(ClaimsPrincipal? userPrincipal)
         {
+            if (userPrincipal == null)
+            {
+                return null;
+            }
             return new UnifiedUserIdentity
             {
                 Name = userPrincipal.FindFirstValue("name"),

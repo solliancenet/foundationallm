@@ -7,7 +7,9 @@ using FoundationaLLM.AgentFactory.Services;
 using FoundationaLLM.Common.Authentication;
 using FoundationaLLM.Common.Constants;
 using FoundationaLLM.Common.Interfaces;
+using FoundationaLLM.Common.Models.Configuration;
 using FoundationaLLM.Common.OpenAPI;
+using FoundationaLLM.Common.Services;
 using Microsoft.Extensions.Options;
 using Polly;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -26,6 +28,7 @@ namespace FoundationaLLM.AgentFactory.API
 
             // Add API Key Authorization
             builder.Services.AddHttpContextAccessor();
+            builder.Services.AddScoped<IUserClaimsProviderService, NoOpUserClaimsProviderService>();
             builder.Services.AddScoped<APIKeyAuthenticationFilter>();
             builder.Services.AddOptions<APIKeyValidationSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:AgentFactoryAPI"));
@@ -39,6 +42,10 @@ namespace FoundationaLLM.AgentFactory.API
 
             builder.Services.AddOptions<ChatServiceSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:Chat"));
+            builder.Services.AddOptions<KeyVaultConfigurationServiceSettings>()
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:Configuration"));
+
+            builder.Services.AddSingleton<IConfigurationService, KeyVaultConfigurationService>();
 
             builder.Services.AddSingleton<ISemanticKernelOrchestrationService, SemanticKernelOrchestrationService>();
             builder.Services.AddSingleton<ILangChainOrchestrationService, LangChainOrchestrationService>();

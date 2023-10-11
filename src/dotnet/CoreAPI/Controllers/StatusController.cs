@@ -20,8 +20,7 @@ namespace FoundationaLLM.Core.API.Controllers
         private readonly ILogger<StatusController> _logger;
 
         public StatusController(ICoreService coreService,
-            ILogger<StatusController> logger,
-            IUserClaimsProviderService claimsProviderService) : base(claimsProviderService)
+            ILogger<StatusController> logger)
         {
             _coreService = coreService;
             _logger = logger;

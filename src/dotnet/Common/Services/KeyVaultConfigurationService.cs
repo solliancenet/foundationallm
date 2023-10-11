@@ -27,9 +27,29 @@ namespace FoundationaLLM.Common.Services
         {
             if (string.IsNullOrEmpty(settings.Value.KeyVaultUri))
                 throw new ArgumentNullException(nameof(settings.Value.KeyVaultUri));
+
+#if DEBUG
+            // Configure the below options to speed up initial call to Key Vault when debugging locally.
+            // You will need to exclude or include the appropriate credential types based on your local environment.
+            var credential = new DefaultAzureCredential(new DefaultAzureCredentialOptions
+            {
+                ExcludeEnvironmentCredential = true,
+                ExcludeInteractiveBrowserCredential = true,
+                ExcludeAzurePowerShellCredential = true,
+                ExcludeSharedTokenCacheCredential = true,
+                ExcludeVisualStudioCodeCredential = true,
+                ExcludeVisualStudioCredential = false,
+                ExcludeAzureCliCredential = true,
+                ExcludeManagedIdentityCredential = true
+            });
+#else
+            // This is required to allow the Key Vault service to be accessed from a deployed environment.
+            var credential = new DefaultAzureCredential();
+#endif
+
             _secretClient = new SecretClient(
                 new Uri(settings.Value.KeyVaultUri),
-                new DefaultAzureCredential());
+                credential);
         }
 
         /// <summary>

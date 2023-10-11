@@ -2,7 +2,11 @@ using Asp.Versioning;
 using FoundationaLLM.Common.Authentication;
 using FoundationaLLM.Common.Constants;
 using FoundationaLLM.Common.Interfaces;
+using FoundationaLLM.Common.Middleware;
+using FoundationaLLM.Common.Models.Authentication;
+using FoundationaLLM.Common.Models.Configuration;
 using FoundationaLLM.Common.OpenAPI;
+using FoundationaLLM.Common.Services;
 using FoundationaLLM.Gatekeeper.Core.Interfaces;
 using FoundationaLLM.Gatekeeper.Core.Models.ConfigurationOptions;
 using FoundationaLLM.Gatekeeper.Core.Services;
@@ -27,18 +31,27 @@ namespace FoundationaLLM.Gatekeeper.API
             builder.Services.AddScoped<APIKeyAuthenticationFilter>();
             builder.Services.AddOptions<APIKeyValidationSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:GatekeeperAPI"));
+            builder.Services.AddOptions<KeyVaultConfigurationServiceSettings>()
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:Configuration"));
+            builder.Services.AddOptions<DownstreamAPIKeySettings>()
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:AgentFactoryAPI"));
             builder.Services.AddTransient<IAPIKeyValidationService, APIKeyValidationService>();
+            builder.Services.AddSingleton<IConfigurationService, KeyVaultConfigurationService>();
 
-            builder.Services.AddSingleton<IAgentFactoryAPIService, AgentFactoryAPIService>();
+            builder.Services.AddScoped<IAgentFactoryAPIService, AgentFactoryAPIService>();
 
             builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
+            builder.Services.AddScoped<IUserIdentityContext, UserIdentityContext>();
+            builder.Services.AddScoped<IHttpClientFactoryService, HttpClientFactoryService>();
+            builder.Services.AddScoped<IUserClaimsProviderService, NoOpUserClaimsProviderService>();
+            builder.Services.AddScoped<IGatekeeperService, GatekeeperService>();
 
             builder.Services
                 .AddHttpClient(HttpClients.AgentFactoryAPIClient,
                     httpClient =>
                     {
                         httpClient.BaseAddress = new Uri(builder.Configuration["FoundationaLLM:AgentFactoryAPI:APIUrl"]);
-                        httpClient.DefaultRequestHeaders.Add("X-API-KEY", builder.Configuration["FoundationaLLM:AgentFactoryAPI:APIKey"]);
+                        //httpClient.DefaultRequestHeaders.Add("X-API-KEY", builder.Configuration["FoundationaLLM:AgentFactoryAPI:APIKey"]);
                     })
                 .AddTransientHttpErrorPolicy(policyBuilder =>
                     policyBuilder.WaitAndRetryAsync(
@@ -86,6 +99,9 @@ namespace FoundationaLLM.Gatekeeper.API
 
             var app = builder.Build();
 
+            // Register the middleware to set the user identity context.
+            app.UseMiddleware<UserIdentityMiddleware>();
+
             app.UseExceptionHandler(exceptionHandlerApp
                 => exceptionHandlerApp.Run(async context
                     => await Results.Problem().ExecuteAsync(context)));
@@ -108,6 +124,7 @@ namespace FoundationaLLM.Gatekeeper.API
 
             app.UseHttpsRedirection();
             app.UseAuthorization();
+
             app.MapControllers();
 
             app.Run();

@@ -1,4 +1,6 @@
-﻿using FoundationaLLM.Common.Models.Orchestration;
+﻿using FoundationaLLM.Common.Interfaces;
+using FoundationaLLM.Common.Models.Orchestration;
+using FoundationaLLM.Common.Services;
 using FoundationaLLM.Common.Settings;
 using FoundationaLLM.Core.Interfaces;
 using Newtonsoft.Json;
@@ -12,12 +14,12 @@ namespace FoundationaLLM.Core.Services
 {
     public class GatekeeperAPIService : IGatekeeperAPIService
     {
-        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IHttpClientFactoryService _httpClientFactoryService;
         readonly JsonSerializerSettings _jsonSerializerSettings;
 
-        public GatekeeperAPIService(IHttpClientFactory httpClientFactory)
+        public GatekeeperAPIService(IHttpClientFactoryService httpClientFactoryService, IUserIdentityContext userIdentityContext)
         {
-            _httpClientFactory = httpClientFactory;
+            _httpClientFactoryService = httpClientFactoryService;
             _jsonSerializerSettings = CommonJsonSerializerSettings.GetJsonSerializerSettings();
         }
 
@@ -26,7 +28,7 @@ namespace FoundationaLLM.Core.Services
             // TODO: Call RefinementService to refine userPrompt
             // await _refinementService.RefineUserPrompt(completionRequest);
 
-            var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.GatekeeperAPIClient);
+            var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.GatekeeperAPIClient);
 
             var responseMessage = await client.PostAsync("orchestration/completion",
             new StringContent(
@@ -56,7 +58,7 @@ namespace FoundationaLLM.Core.Services
             // TODO: Call RefinementService to refine userPrompt
             // await _refinementService.RefineUserPrompt(content);
 
-            var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.GatekeeperAPIClient);
+            var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.GatekeeperAPIClient);
 
             var responseMessage = await client.PostAsync("orchestration/summarize",
                 new StringContent(
@@ -76,7 +78,7 @@ namespace FoundationaLLM.Core.Services
 
         public async Task<bool> SetLLMOrchestrationPreference(string orchestrationService)
         {
-            var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.GatekeeperAPIClient);
+            var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.GatekeeperAPIClient);
 
             var responseMessage = await client.PostAsync("orchestration/preference",
                 new StringContent(orchestrationService));
