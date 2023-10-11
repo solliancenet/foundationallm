@@ -38,6 +38,11 @@ locals {
       address_prefix    = cidrsubnet(local.vnet_address_space, 8, 8)
       service_endpoints = []
     }
+    # Small networks at the end
+    "tfc" = {
+      address_prefix    = cidrsubnet(local.vnet_address_space, 11, 2046)
+      service_endpoints = []
+    }
   }
 }
 
@@ -46,7 +51,6 @@ resource "azurerm_virtual_network" "vnet" {
   location            = local.location
   name                = join("-", [local.resource_prefix, "vnet"])
   resource_group_name = azurerm_resource_group.rgs["NET"].name
-
   tags = local.tags
 }
 
@@ -56,8 +60,8 @@ resource "azurerm_subnet" "subnets" {
   address_prefixes     = [each.value.address_prefix]
   name                 = each.key
   resource_group_name  = azurerm_resource_group.rgs["NET"].name
-  virtual_network_name = azurerm_virtual_network.vnet.name
   service_endpoints    = each.value.service_endpoints
+  virtual_network_name = azurerm_virtual_network.vnet.name
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "dns_vnet_link" {
