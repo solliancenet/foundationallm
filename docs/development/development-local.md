@@ -198,14 +198,15 @@
     "Chat": {
       "DefaultOrchestrationService": "SemanticKernel"
     },
-    "LangChainOrchestration": {
-      "APIUrl": ""
+    "LangChainAPI": {
+      "APIUrl": "",
+      "APIKeySecretName": "foundationallm-langchain-api-key"
     },
     "SemanticKernelOrchestration": {
       "APIUrl": ""
     },
     "AgentFactoryAPI": {
-      "APIKeySecretName": "foundationallm-agentfactory-api-key"
+      "APIKeySecretName": "foundationallm-agent-factory-api-key"
     }
   }
 }
@@ -216,11 +217,14 @@
 ```json
 {
   "FoundationaLLM": {
-    "LangChainOrchestration": {
-      "APIUrl": "<...>"
+    "LangChainAPI": {
+      "APIUrl": "<...>"     
     },
     "SemanticKernelOrchestration": {
-      "APIUrl": "<...>"
+      "APIUrl": "<...>"      
+    },
+    "Configuration": {
+      "KeyVaultUri": "<...>"
     }
   }
 }
