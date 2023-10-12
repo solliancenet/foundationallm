@@ -14,7 +14,7 @@ locals {
     "privatelink.blob.core.windows.net" = {}
     "privatelink.monitor.azure.com"     = {}
     "privatelink.openai.azure.com"      = {}
-    "privatelink.vaultcore.azure.com"   = {}
+    "privatelink.vaultcore.azure.net"   = {}
     "scm.azure-api.net"                 = {}
   }
 }

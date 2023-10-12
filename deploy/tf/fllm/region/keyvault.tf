@@ -29,6 +29,6 @@ resource "azurerm_private_endpoint" "oai_kv_ple" {
 
   private_dns_zone_group {
     name                 = join("-", [local.resource_prefix, "OAI", "kv", "dzg"])
-    private_dns_zone_ids = [local.private_dns_zones["privatelink.vaultcore.azure.com"].id]
+    private_dns_zone_ids = [local.private_dns_zones["privatelink.vaultcore.azure.net"].id]
   }
 }
