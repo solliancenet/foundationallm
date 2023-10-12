@@ -17,5 +17,6 @@ locals {
     "privatelink.vaultcore.azure.net"   = {}
     "scm.azure-api.net"                 = {}
     "privatelink.search.windows.net"    = {}
+    "privatelink.azconfig.io"           = {}
   }
 }
