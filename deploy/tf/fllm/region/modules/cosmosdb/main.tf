@@ -1,5 +1,17 @@
 locals {
-  alert = {}
+  alert = {
+    availability = {
+      aggregation = "Average"
+      description = "Service availability less than 99% for 5 minutes"
+      frequency   = "PT1M"
+      metric_name = "ServiceAvailability"
+      operator    = "LessThan"
+      threshold   = 99
+      window_size = "PT5M"
+      severity    = 0
+    }
+  }
+
   container = {
     embedding = {
       partition_key_path = "/id"
@@ -25,11 +37,18 @@ locals {
 }
 
 resource "azurerm_cosmosdb_account" "main" {
-  kind                = "GlobalDocumentDB"
-  location            = var.resource_group.location
-  name                = lower("${var.resource_prefix}-cdb")
-  offer_type          = "Standard"
-  resource_group_name = var.resource_group.name
+  kind                          = "GlobalDocumentDB"
+  local_authentication_disabled = true
+  location                      = var.resource_group.location
+  name                          = lower("${var.resource_prefix}-cdb")
+  offer_type                    = "Standard"
+  public_network_access_enabled = false
+  resource_group_name           = var.resource_group.name
+  tags                          = var.tags
+
+  capacity {
+    total_throughput_limit = 5000
+  }
 
   consistency_policy {
     consistency_level = "Session"
