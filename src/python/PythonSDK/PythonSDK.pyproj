@@ -91,6 +91,8 @@
     <Compile Include="foundationallm\langchain\tools\query_pandas_dataframe_tool.py" />
     <Compile Include="foundationallm\langchain\tools\__init__.py" />
     <Compile Include="foundationallm\langchain\__init__.py" />
+    <Compile Include="foundationallm\models\hubs\prompt_hub_request.py" />
+    <Compile Include="foundationallm\models\hubs\prompt_hub_response.py" />
     <Compile Include="foundationallm\models\metadata\agent_metadata.py" />
     <Compile Include="foundationallm\langchain\data_sources\data_source_configuration.py" />
     <Compile Include="foundationallm\models\metadata\data_source_metadata.py" />
@@ -148,6 +150,7 @@
     <Folder Include="foundationallm\langchain\toolkits\" />
     <Folder Include="foundationallm\models\" />
     <Folder Include="foundationallm\models\metadata\" />
+    <Folder Include="foundationallm\models\hubs\" />
     <Folder Include="foundationallm\models\orchestration\" />
     <Folder Include="foundationallm\hubs\" />
     <Folder Include="foundationallm\credentials\" />
