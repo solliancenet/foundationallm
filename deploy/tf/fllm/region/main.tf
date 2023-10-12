@@ -2,7 +2,6 @@ locals {
   location           = var.location
   location_short     = var.location_short
   private_dns_zones  = var.private_dns_zones
-  resource_groups    = var.resource_groups
   resource_prefix    = upper(join("-", [local.location_short, var.resource_prefix]))
   tags               = merge(var.tags, { workspace = terraform.workspace })
   vnet_address_space = var.vnet_address_space
@@ -18,7 +17,7 @@ resource "azurerm_monitor_action_group" "do_nothing" {
 }
 
 resource "azurerm_resource_group" "rgs" {
-  for_each = local.resource_groups
+  for_each = var.resource_groups
 
   location = local.location
   name     = join("-", [local.resource_prefix, each.key, "rg"])
@@ -37,6 +36,23 @@ module "ampls" {
     private_dns_zone_ids = [
       var.private_dns_zones["privatelink.blob.core.windows.net"].id,
       var.private_dns_zones["privatelink.monitor.azure.com"].id,
+    ]
+  }
+}
+
+module "cosmosdb" {
+  source = "./modules/cosmosdb"
+
+  action_group_id            = azurerm_monitor_action_group.do_nothing.id
+  log_analytics_workspace_id = module.logs.id
+  resource_group             = azurerm_resource_group.rgs["OAI"]
+  resource_prefix            = local.resource_prefix
+  tags                       = local.tags
+
+  private_endpoint = {
+    subnet_id = azurerm_subnet.subnets["FLLMStorage"].id
+    private_dns_zone_ids = [
+      var.private_dns_zones["privatelink.documents.azure.com"].id,
     ]
   }
 }

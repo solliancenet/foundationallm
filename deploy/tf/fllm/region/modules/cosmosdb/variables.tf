@@ -3,11 +3,16 @@ variable "action_group_id" {
   type        = string
 }
 
-variable "azure_monitor_private_link_scope" {
-  description = "The Azure Monitor Private Link Scope."
+variable "log_analytics_workspace_id" {
+  description = "The ID of the Log Analytics workspace to send diagnostics data to."
+  type        = string
+}
+
+variable "private_endpoint" {
+  description = "The private endpoint configuration."
   type = object({
-    name                = string
-    resource_group_name = string
+    subnet_id            = string
+    private_dns_zone_ids = list(string)
   })
 }
 
@@ -23,16 +28,6 @@ variable "resource_group" {
 variable "resource_prefix" {
   description = "The name prefix for the Log Analytics workspace."
   type        = string
-}
-
-variable "solutions" {
-  description = "The Log Analytics solutions to add to the workspace."
-  default     = {}
-
-  type = map(object({
-    publisher = string
-    product   = string
-  }))
 }
 
 variable "tags" {

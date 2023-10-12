@@ -10,13 +10,14 @@ locals {
     "developer.azure-api.net"           = {}
     "management.azure-api.net"          = {}
     "portal.azure-api.net"              = {}
+    "privatelink.azconfig.io"           = {}
     "privatelink.azure-api.net"         = {}
     "privatelink.blob.core.windows.net" = {}
+    "privatelink.documents.azure.com"   = {}
     "privatelink.monitor.azure.com"     = {}
     "privatelink.openai.azure.com"      = {}
+    "privatelink.search.windows.net"    = {}
     "privatelink.vaultcore.azure.net"   = {}
     "scm.azure-api.net"                 = {}
-    "privatelink.search.windows.net"    = {}
-    "privatelink.azconfig.io"           = {}
   }
 }
