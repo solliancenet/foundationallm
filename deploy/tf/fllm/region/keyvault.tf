@@ -26,7 +26,7 @@ resource "azurerm_role_assignment" "openai_kv_sp_role" {
 
 resource "azurerm_role_assignment" "ops_kv_sp_role" {
   principal_id         = data.azurerm_client_config.current.object_id
-  role_definition_name = "Key Vault Secrets Officer"
+  role_definition_name = "Key Vault Crypto Officer"
   scope                = azurerm_key_vault.ops_keyvault.id
 }
 
