@@ -2,12 +2,12 @@ locals {
   alert = {
     availability = {
       aggregation = "Average"
-      description = "Service availability less than 99% for 5 minutes"
+      description = "Service availability less than 99% for 1 hour"
       frequency   = "PT1M"
       metric_name = "ServiceAvailability"
       operator    = "LessThan"
       threshold   = 99
-      window_size = "PT5M"
+      window_size = "PT1H"
       severity    = 0
     }
   }
