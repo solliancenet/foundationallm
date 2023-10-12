@@ -9,7 +9,7 @@ resource "azurerm_search_service" "cog_search" {
 resource "azurerm_private_endpoint" "cog_search_ple" {
   location            = local.location
   name                = join("-", [local.resource_prefix, "VEC", "cogsvc", "ple"])
-  resource_group_name = azurerm_resource_group.rgs["VEC"].name
+  resource_group_name = azurerm_resource_group.rgs["NET"].name
   subnet_id           = azurerm_subnet.subnets["Vectorization"].id
 
   private_service_connection {

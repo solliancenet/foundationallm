@@ -17,3 +17,22 @@ resource "azurerm_app_configuration" "app_config" {
 
   tags = local.tags
 }
+
+resource "azurerm_private_endpoint" "app_config_ple" {
+  location            = local.location
+  name                = join("-", [local.resource_prefix, "appconfig", "ple"])
+  resource_group_name = azurerm_resource_group.rgs["NET"].name
+  subnet_id           = azurerm_subnet.subnets["FLLMServices"].id
+
+  private_service_connection {
+    is_manual_connection           = false
+    name                           = join("-", [local.resource_prefix, "appconfig", "psc"])
+    private_connection_resource_id = azurerm_app_configuration.app_config.id
+    subresource_names              = ["configurationStores"]
+  }
+
+  private_dns_zone_group {
+    name                 = join("-", [local.resource_prefix, "appconfig", "dzg"])
+    private_dns_zone_ids = [local.private_dns_zones["privatelink.azconfig.io"].id]
+  }
+}

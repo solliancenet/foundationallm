@@ -54,3 +54,22 @@ resource "azurerm_private_endpoint" "oai_kv_ple" {
     private_dns_zone_ids = [local.private_dns_zones["privatelink.vaultcore.azure.net"].id]
   }
 }
+
+resource "azurerm_private_endpoint" "ops_kv_ple" {
+  location            = local.location
+  name                = join("-", [local.resource_prefix, "OPS", "kv", "ple"])
+  resource_group_name = azurerm_resource_group.rgs["NET"].name
+  subnet_id           = azurerm_subnet.subnets["FLLMServices"].id
+
+  private_service_connection {
+    is_manual_connection           = false
+    name                           = join("-", [local.resource_prefix, "OPS", "kv", "psc"])
+    private_connection_resource_id = azurerm_key_vault.ops_keyvault.id
+    subresource_names              = ["vault"]
+  }
+
+  private_dns_zone_group {
+    name                 = join("-", [local.resource_prefix, "OPS", "kv", "dzg"])
+    private_dns_zone_ids = [local.private_dns_zones["privatelink.vaultcore.azure.net"].id]
+  }
+}
