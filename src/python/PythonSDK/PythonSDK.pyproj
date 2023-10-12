@@ -86,6 +86,10 @@
     <Compile Include="foundationallm\langchain\language_models\openai\openai_model_base.py" />
     <Compile Include="foundationallm\langchain\language_models\openai\__init__.py" />
     <Compile Include="foundationallm\langchain\language_models\__init__.py" />
+    <Compile Include="foundationallm\langchain\toolkits\anomaly_detection_toolkit.py" />
+    <Compile Include="foundationallm\langchain\toolkits\__init__.py" />
+    <Compile Include="foundationallm\langchain\tools\query_pandas_dataframe_tool.py" />
+    <Compile Include="foundationallm\langchain\tools\__init__.py" />
     <Compile Include="foundationallm\langchain\__init__.py" />
     <Compile Include="foundationallm\models\metadata\agent_metadata.py" />
     <Compile Include="foundationallm\langchain\data_sources\data_source_configuration.py" />
@@ -140,6 +144,8 @@
     <Folder Include="foundationallm\langchain\language_models\openai\" />
     <Folder Include="foundationallm\langchain\data_sources\" />
     <Folder Include="foundationallm\langchain\data_sources\sql\" />
+    <Folder Include="foundationallm\langchain\tools\" />
+    <Folder Include="foundationallm\langchain\toolkits\" />
     <Folder Include="foundationallm\models\" />
     <Folder Include="foundationallm\models\metadata\" />
     <Folder Include="foundationallm\models\orchestration\" />

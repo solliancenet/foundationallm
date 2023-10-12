@@ -90,7 +90,8 @@
       "ChangeFeedLeaseContainer": "leases"
     },
     "GatekeeperAPI": {
-      "APIUrl": ""
+      "APIUrl": "",
+      "APIKeySecretName": "foundationallm-gatekeeper-api-key"
     },
     "Configuration": {
       "KeyVaultUri": ""
@@ -120,7 +121,7 @@
       "APIUrl": "<...>"
     },
     "Configuration": {
-      "KeyVaultUri": "https://<...>-keyvault.vault.azure.net/"
+      "KeyVaultUri": "https://<...>.vault.azure.net/"
     },
     "Entra": {
       "TenantId": "<...>",
@@ -141,14 +142,12 @@
   "Logging": {
     "LogLevel": {
       "Default": "Information",
-      "Microsoft.AspNetCore": "Warning",
-      "Microsoft.SemanticKernel": "Error"
+      "Microsoft.AspNetCore": "Warning"
     },
     "ApplicationInsights": {
       "LogLevel": {
         "Default": "Information",
-        "Microsoft.AspNetCore": "Warning",
-        "Microsoft.SemanticKernel": "Error"
+        "Microsoft.AspNetCore": "Warning"
       }
     }
   },
@@ -185,14 +184,12 @@
   "Logging": {
     "LogLevel": {
       "Default": "Information",
-      "Microsoft.AspNetCore": "Warning",
-      "Microsoft.SemanticKernel": "Error"
+      "Microsoft.AspNetCore": "Warning"
     },
     "ApplicationInsights": {
       "LogLevel": {
         "Default": "Information",
-        "Microsoft.AspNetCore": "Warning",
-        "Microsoft.SemanticKernel": "Error"
+        "Microsoft.AspNetCore": "Warning"
       }
     }
   },
@@ -201,14 +198,15 @@
     "Chat": {
       "DefaultOrchestrationService": "SemanticKernel"
     },
-    "LangChainOrchestration": {
-      "APIUrl": ""
+    "LangChainAPI": {
+      "APIUrl": "",
+      "APIKeySecretName": "foundationallm-langchain-api-key"
     },
     "SemanticKernelOrchestration": {
       "APIUrl": ""
     },
     "AgentFactoryAPI": {
-      "APIKeySecretName": "foundationallm-agentfactory-api-key"
+      "APIKeySecretName": "foundationallm-agent-factory-api-key"
     }
   }
 }
@@ -219,11 +217,14 @@
 ```json
 {
   "FoundationaLLM": {
-    "LangChainOrchestration": {
-      "APIUrl": "<...>"
+    "LangChainAPI": {
+      "APIUrl": "<...>"     
     },
     "SemanticKernelOrchestration": {
-      "APIUrl": "<...>"
+      "APIUrl": "<...>"      
+    },
+    "Configuration": {
+      "KeyVaultUri": "<...>"
     }
   }
 }

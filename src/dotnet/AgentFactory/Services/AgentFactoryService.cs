@@ -1,4 +1,5 @@
 ﻿using FoundationaLLM.AgentFactory.Core.Interfaces;
+using FoundationaLLM.AgentFactory.Core.Models.ConfigurationOptions;
 using FoundationaLLM.AgentFactory.Core.Models.Messages;
 using FoundationaLLM.AgentFactory.Interfaces;
 using FoundationaLLM.AgentFactory.Models.ConfigurationOptions;
@@ -14,7 +15,8 @@ public class AgentFactoryService : IAgentFactoryService
     private readonly ISemanticKernelOrchestrationService _semanticKernelOrchestration;
     private readonly ILangChainOrchestrationService _langChainOrchestration;
     private readonly IAgentHubService _agentHubService;
-    private readonly AgentHubSettings _settings;
+    private readonly AgentFactorySettings _agentFactorySettings;
+    private readonly AgentHubSettings _agentHubSettings;
     private readonly ILogger<AgentFactoryService> _logger;
 
     private LLMOrchestrationService _llmOrchestrationService = LLMOrchestrationService.LangChain;
@@ -23,16 +25,18 @@ public class AgentFactoryService : IAgentFactoryService
         ISemanticKernelOrchestrationService semanticKernelOrchestration,
         ILangChainOrchestrationService langChainOrchestration,
         IAgentHubService agentHubService,
-        IOptions<AgentHubSettings> settings,
+        IOptions<AgentFactorySettings> agentFactorySettings,
+        IOptions<AgentHubSettings> agentHubSettings,
         ILogger<AgentFactoryService> logger)
     {
         _semanticKernelOrchestration = semanticKernelOrchestration;
         _langChainOrchestration = langChainOrchestration;
         _agentHubService = agentHubService;
-        _settings = settings.Value;
+        _agentFactorySettings = agentFactorySettings.Value;
+        _agentHubSettings = agentHubSettings.Value;
         _logger = logger;
 
-        SetLLMOrchestrationPreference(_settings.DefaultOrchestrationService);
+        SetLLMOrchestrationPreference(_agentFactorySettings.DefaultOrchestrationService);
     }
 
     public bool SetLLMOrchestrationPreference(string orchestrationService)
@@ -67,7 +71,7 @@ public class AgentFactoryService : IAgentFactoryService
         try
         {
             //get all agents for prompt...
-            List<AgentHubResponse> agents = await _agentHubService.ResolveRequest(completionRequest.Prompt, "");
+            //List<AgentHubResponse> agents = await _agentHubService.ResolveRequest(completionRequest.Prompt, "");
 
             // Generate the completion to return to the user
             var result = await GetLLMOrchestrationService().GetResponse(completionRequest.Prompt,
