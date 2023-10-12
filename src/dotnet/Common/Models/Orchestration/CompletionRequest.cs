@@ -8,5 +8,5 @@ public class CompletionRequest
 
     //public string UserContext { get; init; }
 
-    public List<MessageHistoryItem> MessageHistory { get; init; }
+    public List<MessageHistoryItem>? MessageHistory { get; init; } = new List<MessageHistoryItem>();
 }
