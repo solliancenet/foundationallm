@@ -1,11 +1,8 @@
-resource "azurerm_cognitive_account" "cog_search" {
-
-  kind                          = "CognitiveServices"
+resource "azurerm_search_service" "cog_search" {
   location                      = local.location
-  name                          = join("-", [local.resource_prefix, "VEC", "cogsvc"])
+  name                          = lower(join("", concat(split("-", local.resource_prefix), ["VEC", "cogsvc"])))
   resource_group_name           = azurerm_resource_group.rgs["VEC"].name
-  sku_name                      = "S0"
-  custom_subdomain_name         = lower(join("-", [local.resource_prefix, "VEC"]))
+  sku                           = "standard"
   public_network_access_enabled = false
 }
 
@@ -18,13 +15,13 @@ resource "azurerm_private_endpoint" "cog_search_ple" {
   private_service_connection {
     is_manual_connection           = false
     name                           = join("-", [local.resource_prefix, "VEC", "cogsvc", "psc"])
-    private_connection_resource_id = azurerm_cognitive_account.cog_search.id
-    subresource_names              = ["account"]
+    private_connection_resource_id = azurerm_search_service.cog_search.id
+    subresource_names              = ["searchService"]
   }
 
   private_dns_zone_group {
     name                 = join("-", [local.resource_prefix, "VEC", "cogsvc", "dzg"])
-    private_dns_zone_ids = [local.private_dns_zones["privatelink.cognitiveservices.azure.com"].id]
+    private_dns_zone_ids = [local.private_dns_zones["privatelink.search.windows.net"].id]
   }
 }
 
