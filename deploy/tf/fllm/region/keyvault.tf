@@ -2,7 +2,7 @@ resource "azurerm_key_vault" "openai_keyvault" {
   enable_rbac_authorization     = true
   location                      = local.location
   name                          = join("-", [local.resource_prefix, "OAI", "kv"])
-  public_network_access_enabled = true
+  public_network_access_enabled = false
   resource_group_name           = azurerm_resource_group.rgs["OAI"].name
   sku_name                      = "standard"
   tenant_id                     = data.azurerm_client_config.current.tenant_id
