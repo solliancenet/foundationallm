@@ -108,7 +108,7 @@ locals {
             source_port_range          = "*"
           }
         })
-        outbound = merge(local.default_nsg_rules.outbound, {
+        outbound = merge({  }, {
           "allow-storage" = {
             access                     = "Allow"
             destination_address_prefix = "Storage"
