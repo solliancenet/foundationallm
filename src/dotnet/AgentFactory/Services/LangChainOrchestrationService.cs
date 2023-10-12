@@ -90,7 +90,7 @@ namespace FoundationaLLM.AgentFactory.Services
                     UserPrompt = completionResponse.user_prompt,
                     UserPromptTokens = completionResponse.prompt_tokens,
                     ResponseTokens = completionResponse.completion_tokens,
-                    UserPromptEmbedding = new float[0]
+                    UserPromptEmbedding = null
                 };
             }
 

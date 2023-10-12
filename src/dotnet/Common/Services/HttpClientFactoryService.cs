@@ -46,6 +46,7 @@ namespace FoundationaLLM.Common.Services
         public HttpClient CreateClient(string clientName)
         {
             var httpClient = _httpClientFactory.CreateClient(clientName);
+            httpClient.Timeout = TimeSpan.FromSeconds(600);
 
             // Add the API key header.
             var apiKey = _configurationService.GetValue<string>(_settings.APIKeySecretName);

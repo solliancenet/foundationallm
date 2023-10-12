@@ -1,6 +1,7 @@
 using Asp.Versioning;
 using Azure.Identity;
 using FoundationaLLM.AgentFactory.Core.Interfaces;
+using FoundationaLLM.AgentFactory.Core.Models.ConfigurationOptions;
 using FoundationaLLM.AgentFactory.Core.Services;
 using FoundationaLLM.AgentFactory.Interfaces;
 using FoundationaLLM.AgentFactory.Models.ConfigurationOptions;
@@ -43,6 +44,9 @@ namespace FoundationaLLM.AgentFactory.API
 
             builder.Services.AddOptions<AgentHubSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:AgentHubAPI"));
+
+            builder.Services.AddOptions<AgentFactorySettings>()
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:AgentFactory"));
 
             builder.Services.AddOptions<KeyVaultConfigurationServiceSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:Configuration"));
