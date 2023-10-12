@@ -33,6 +33,11 @@ locals {
         "Purpose" = "DevOps"
       }
     }
+    "VEC" = {
+      tags = {
+        "Purpose" = "Vectorization"
+      }
+    }
   }
 
   regions = {

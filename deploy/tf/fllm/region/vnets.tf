@@ -88,7 +88,7 @@ locals {
       ]
 
       nsg_rules = {
-        inbound = merge({  }, {
+        inbound = merge({}, {
           "allow-apim" = {
             access                     = "Allow"
             destination_address_prefix = "VirtualNetwork"
@@ -108,7 +108,7 @@ locals {
             source_port_range          = "*"
           }
         })
-        outbound = merge({  }, {
+        outbound = merge({}, {
           "allow-storage" = {
             access                     = "Allow"
             destination_address_prefix = "Storage"
@@ -162,7 +162,7 @@ locals {
       service_endpoints = []
 
       nsg_rules = {
-        inbound = merge({  }, {
+        inbound = merge({}, {
           "allow-rdp" = {
             access                     = "Allow"
             destination_address_prefix = "VirtualNetwork"
@@ -217,8 +217,8 @@ locals {
       }
 
       nsg_rules = {
-        inbound = merge({  }, {})
-        outbound = merge({  }, {
+        inbound = merge({}, {})
+        outbound = merge({}, {
           "allow-tfc-api" = {
             access                       = "Allow"
             destination_address_prefixes = data.tfe_ip_ranges.tfc.api
