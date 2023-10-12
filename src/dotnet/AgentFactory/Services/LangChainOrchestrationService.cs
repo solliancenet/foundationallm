@@ -87,9 +87,9 @@ namespace FoundationaLLM.AgentFactory.Services
                 return new CompletionResponse
                 {
                     Completion = completionResponse.completion,
-                    UserPrompt = userPrompt,
-                    UserPromptTokens = 0,
-                    ResponseTokens = 0,
+                    UserPrompt = completionResponse.user_prompt,
+                    UserPromptTokens = completionResponse.prompt_tokens,
+                    ResponseTokens = completionResponse.completion_tokens,
                     UserPromptEmbedding = new float[0]
                 };
             }
@@ -106,7 +106,41 @@ namespace FoundationaLLM.AgentFactory.Services
 
         public async Task<string> GetSummary(string content)
         {
-            throw new NotImplementedException();
+            var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.LangChainAPIClient);
+
+            var request = new LangChainSummaryRequest()
+            {
+                user_prompt = content,
+                agent = new LangChainAgent
+                {
+                    name = "summarizer",
+                    type = "summary",
+                    description = "Useful for summarizing input text based on a set of rules.",
+                    prompt_template = "Write a concise two-word summary of the following:\n\"{text}\"\nCONCISE SUMMARY IN TWO WORDS:",
+                    language_model = new LangChainLanguageModel
+                    {
+                        type = "openai",
+                        subtype = "chat",
+                        provider = "azure",
+                        temperature = 0.5f
+                    }
+                }           
+            };
+            var body = JsonConvert.SerializeObject(request, _jsonSerializerSettings);
+            var responseMessage = await client.PostAsync("/orchestration/summary",
+                new StringContent(
+                    body,
+                    Encoding.UTF8, "application/json"));
+
+            if (responseMessage.IsSuccessStatusCode)
+            {
+                var responseContent = await responseMessage.Content.ReadAsStringAsync();
+                var summaryResponse = JsonConvert.DeserializeObject<LangChainSummaryResponse>(responseContent);
+
+                return summaryResponse.summary;
+            }
+
+            return "A problem on my side prevented me from responding.";              
         }
 
         private bool GetServiceStatus()

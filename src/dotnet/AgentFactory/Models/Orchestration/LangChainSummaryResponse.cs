@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace FoundationaLLM.AgentFactory.Core.Models.Orchestration
 {
-    internal class LangChainCompletionResponse
+    internal class LangChainSummaryResponse
     {
         public string user_prompt;
         public int prompt_tokens;
-        public int completion_tokens;       
-        public string completion;
+        public int completion_tokens;
+        public string summary;
     }
 }
