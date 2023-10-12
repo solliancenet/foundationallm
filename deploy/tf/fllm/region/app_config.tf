@@ -11,9 +11,12 @@ resource "azurerm_app_configuration" "app_config" {
     type = "SystemAssigned"
   }
 
-#  encryption {
-#    key_vault_key_identifier = azurerm_key_vault_key.app_config_key.id
-#  }
+  # TODO - Consider using a user assigned MI to mitigate the
+  # resource contention that occurs when provisioning the App Configuration
+  # service with Azure KeyVault encryption
+  encryption {
+    key_vault_key_identifier = azurerm_key_vault_key.app_config_key.id
+  }
 
   tags = local.tags
 }
