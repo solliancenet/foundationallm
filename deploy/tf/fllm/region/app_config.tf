@@ -11,9 +11,9 @@ resource "azurerm_app_configuration" "app_config" {
     type = "SystemAssigned"
   }
 
-  encryption {
-    key_vault_key_identifier = azurerm_key_vault_key.app_config_key.id
-  }
+#  encryption {
+#    key_vault_key_identifier = azurerm_key_vault_key.app_config_key.id
+#  }
 
   tags = local.tags
 }
