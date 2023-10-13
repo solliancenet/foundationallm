@@ -28,7 +28,7 @@ resource "azurerm_app_configuration" "main" {
   location                   = var.resource_group.location
   name                       = "${var.resource_prefix}-appconfig"
   public_network_access      = "Disabled"
-  purge_protection_enabled   = false
+  purge_protection_enabled   = true
   resource_group_name        = var.resource_group.name
   soft_delete_retention_days = 1
   sku                        = "standard"
