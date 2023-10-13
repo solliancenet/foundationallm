@@ -9,6 +9,8 @@ using FoundationaLLM.AgentFactory.Services;
 using FoundationaLLM.Common.Authentication;
 using FoundationaLLM.Common.Constants;
 using FoundationaLLM.Common.Interfaces;
+using FoundationaLLM.Common.Middleware;
+using FoundationaLLM.Common.Models.Authentication;
 using FoundationaLLM.Common.Models.Configuration;
 using FoundationaLLM.Common.OpenAPI;
 using FoundationaLLM.Common.Services;
@@ -57,48 +59,15 @@ namespace FoundationaLLM.AgentFactory.API
             builder.Services.AddScoped<ILangChainOrchestrationService, LangChainOrchestrationService>();
             builder.Services.AddScoped<IAgentFactoryService, AgentFactoryService>();
             builder.Services.AddScoped<IAgentHubService, AgentHubAPIService>();
-
-            builder.Configuration.AddAzureKeyVault(
-                new Uri(builder.Configuration["FoundationaLLM:Configuration:KeyVaultUri"]),
-                new DefaultAzureCredential());
-
+            builder.Services.AddScoped<IUserIdentityContext, UserIdentityContext>();
+            builder.Services.AddScoped<IHttpClientFactoryService, HttpClientFactoryService>();
+            builder.Services.AddScoped<IUserClaimsProviderService, NoOpUserClaimsProviderService>();
 
             builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 
-            builder.Services
-                .AddHttpClient(HttpClients.AgentHubAPIClient,
-                    httpClient =>
-                    {
-                        httpClient.BaseAddress = new Uri(builder.Configuration["FoundationaLLM:AgentHubAPI:APIUrl"]);
-                        httpClient.DefaultRequestHeaders.Add("X-API-KEY", builder.Configuration[
-                            builder.Configuration["FoundationaLLM:AgentHubAPI:APIKeySecretName"]]);
-                    })
-                .AddTransientHttpErrorPolicy(policyBuilder =>
-                    policyBuilder.WaitAndRetryAsync(
-                        3, retryNumber => TimeSpan.FromMilliseconds(600)));
-            builder.Services
-                .AddHttpClient(HttpClients.LangChainAPIClient,
-                    httpClient =>
-                    {
-                        httpClient.BaseAddress = new Uri(builder.Configuration["FoundationaLLM:LangChainAPI:APIUrl"]);
-                        httpClient.DefaultRequestHeaders.Add("X-API-KEY", builder.Configuration[
-                            builder.Configuration["FoundationaLLM:LangChainAPI:APIKeySecretName"]]);
-                        httpClient.Timeout = TimeSpan.FromSeconds(600);
-                    })
-                .AddTransientHttpErrorPolicy(policyBuilder =>
-                    policyBuilder.WaitAndRetryAsync(
-                        3, retryNumber => TimeSpan.FromMilliseconds(600)));
-            builder.Services
-                .AddHttpClient(HttpClients.SemanticKernelAPIClient,
-                    httpClient =>
-                    {
-                        httpClient.BaseAddress = new Uri(builder.Configuration["FoundationaLLM:SemanticKernelAPI:APIUrl"]);
-                        httpClient.DefaultRequestHeaders.Add("X-API-KEY", builder.Configuration[
-                            builder.Configuration["FoundationaLLM:SemanticKernelAPI:APIKeySecretName"]]);
-                    })
-                .AddTransientHttpErrorPolicy(policyBuilder =>
-                    policyBuilder.WaitAndRetryAsync(
-                        3, retryNumber => TimeSpan.FromMilliseconds(600)));
+            // Register the downstream services and HTTP clients.
+            RegisterDownstreamServices(builder);
+
 
             builder.Services
                 .AddApiVersioning(options =>
@@ -138,6 +107,9 @@ namespace FoundationaLLM.AgentFactory.API
 
             var app = builder.Build();
 
+            // Register the middleware to set the user identity context.
+            app.UseMiddleware<UserIdentityMiddleware>();
+
             app.UseExceptionHandler(exceptionHandlerApp
                 => exceptionHandlerApp.Run(async context
                     => await Results.Problem().ExecuteAsync(context)));
@@ -163,6 +135,31 @@ namespace FoundationaLLM.AgentFactory.API
             app.MapControllers();
 
             app.Run();
+        }
+
+        /// <summary>
+        /// Bind the downstream API settings to the configuration and register the HTTP clients.
+        /// </summary>
+        /// <param name="builder"></param>
+        private static void RegisterDownstreamServices(WebApplicationBuilder builder)
+        {
+            var downstreamAPISettings = new DownstreamAPISettings
+            {
+                DownstreamAPIs = new Dictionary<string, DownstreamAPIKeySettings>()
+            };
+            foreach (var apiSetting in builder.Configuration.GetSection("FoundationaLLM:DownstreamAPIs").GetChildren())
+            {
+                var key = apiSetting.Key;
+                var settings = apiSetting.Get<DownstreamAPIKeySettings>();
+                downstreamAPISettings.DownstreamAPIs[key] = settings;
+                builder.Services
+                    .AddHttpClient(key, client => { client.BaseAddress = new Uri(settings.APIUrl); })
+                    .AddTransientHttpErrorPolicy(policyBuilder =>
+                        policyBuilder.WaitAndRetryAsync(
+                            3, retryNumber => TimeSpan.FromMilliseconds(600)));
+            }
+
+            builder.Services.AddSingleton<IDownstreamAPISettings>(downstreamAPISettings);
         }
     }
 }

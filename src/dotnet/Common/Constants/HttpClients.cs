@@ -6,10 +6,28 @@
 /// </summary>
 public static class HttpClients
 {
-    public const string DefaultHttpClient = "DefaultHttpClient";
-    public const string LangChainAPIClient = "LangChainAPIClient";
-    public const string SemanticKernelAPIClient = "SemanticKernelAPIClient";
-    public const string GatekeeperAPIClient = "GatekeeperAPIClient";
-    public const string AgentFactoryAPIClient = "AgentFactoryAPIClient";
-    public const string AgentHubAPIClient = "AgentHubAPIClient";
+    /// <summary>
+    /// Named client with matching configuration for the Core API.
+    /// </summary>
+    public const string CoreAPI = "CoreAPI";
+    /// <summary>
+    /// Named client with matching configuration for the Gatekeeper API.
+    /// </summary>
+    public const string GatekeeperAPI = "GatekeeperAPI";
+    /// <summary>
+    /// Named client with matching configuration for the Agent Factory API.
+    /// </summary>
+    public const string AgentFactoryAPI = "AgentFactoryAPI";
+    /// <summary>
+    /// Named client with matching configuration for the LangChain API.
+    /// </summary>
+    public const string LangChainAPI = "LangChainAPI";
+    /// <summary>
+    /// Named client with matching configuration for the Semantic Kernel API.
+    /// </summary>
+    public const string SemanticKernelAPI = "SemanticKernelAPI";
+    /// <summary>
+    /// Named client with matching configuration for the Agent Hub API.
+    /// </summary>
+    public const string AgentHubAPI = "AgentHubAPI";
 }

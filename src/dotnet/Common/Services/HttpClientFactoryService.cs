@@ -17,7 +17,7 @@ namespace FoundationaLLM.Common.Services
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IConfigurationService _configurationService;
         private readonly IUserIdentityContext _userIdentityContext;
-        private readonly DownstreamAPIKeySettings _settings;
+        private readonly IDownstreamAPISettings _apiSettings;
 
         /// <summary>
         /// Creates a new instance of the <see cref="HttpClientFactoryService"/> class.
@@ -28,18 +28,18 @@ namespace FoundationaLLM.Common.Services
         /// that standardizes accessing configuration values.</param>
         /// <param name="userIdentityContext">Stores a <see cref="UnifiedUserIdentity"/> object resolved from
         /// one or more services.</param>
-        /// <param name="options">An <see cref="DownstreamAPIKeySettings"/> class that
+        /// <param name="apiSettings">A <see cref="DownstreamAPISettings"/> class that
         /// contains the configured path to the desired API key.</param>
         /// <exception cref="ArgumentNullException"></exception>
         public HttpClientFactoryService(IHttpClientFactory httpClientFactory, 
             IConfigurationService configurationService,
             IUserIdentityContext userIdentityContext,
-            IOptions<DownstreamAPIKeySettings> options)
+            IDownstreamAPISettings apiSettings)
         {
             _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
             _configurationService = configurationService ?? throw new ArgumentNullException(nameof(configurationService));
             _userIdentityContext = userIdentityContext ?? throw new ArgumentNullException(nameof(userIdentityContext));
-            _settings = options.Value ?? throw new ArgumentNullException(nameof(options));
+            _apiSettings = apiSettings ?? throw new ArgumentNullException(nameof(apiSettings));
         }
 
         /// <inheritdoc/>
@@ -49,8 +49,11 @@ namespace FoundationaLLM.Common.Services
             httpClient.Timeout = TimeSpan.FromSeconds(600);
 
             // Add the API key header.
-            var apiKey = _configurationService.GetValue<string>(_settings.APIKeySecretName);
-            httpClient.DefaultRequestHeaders.Add(Constants.HttpHeaders.APIKey, apiKey);
+            if (_apiSettings.DownstreamAPIs.TryGetValue(clientName, out var settings))
+            {
+                var apiKey = _configurationService.GetValue<string>(settings.APIKeySecretName);
+                httpClient.DefaultRequestHeaders.Add(Constants.HttpHeaders.APIKey, apiKey);
+            }
 
             // Optionally add the user identity header.
             if (_userIdentityContext.CurrentUserIdentity != null)

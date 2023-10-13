@@ -1,10 +1,35 @@
 # Configure local development environment
 
+- [Configure local development environment](#configure-local-development-environment)
+  - [Requirements](#requirements)
+  - [Chat](#chat)
+    - [Chat app settings](#chat-app-settings)
+  - [Core API](#core-api)
+    - [Core API app settings](#core-api-app-settings)
+  - [Gatekeeper API](#gatekeeper-api)
+    - [Gatekeeper API app settings](#gatekeeper-api-app-settings)
+  - [Agent Factory API](#agent-factory-api)
+    - [Agent Factory API app settings](#agent-factory-api-app-settings)
+  - [PythonSDK](#pythonsdk)
+    - [PythonSDK Environment Variables](#pythonsdk-environment-variables)
+  - [Agent Hub API](#agent-hub-api)
+    - [Agent Hub API Environment Variables](#agent-hub-api-environment-variables)
+  - [Data Source Hub API](#data-source-hub-api)
+    - [Data Source Hub API Environment Variables](#data-source-hub-api-environment-variables)
+  - [Prompt Hub API](#prompt-hub-api)
+    - [Prompt Hub API Environment Variables](#prompt-hub-api-environment-variables)
+  - [LangChain API](#langchain-api)
+    - [LangChain API Environment Variables](#langchain-api-environment-variables)
+  - [Semantic Kernel API](#semantic-kernel-api)
+    - [Semantic Kernel API app settings](#semantic-kernel-api-app-settings)
+
 ## Requirements
 
 ## Chat
 
-#### Make sure the contents of the `appsettings.json` file has this structure and similar values:
+### Chat app settings
+
+> Make sure the contents of the `appsettings.json` file has this structure and similar values:
 
 ```json
 {
@@ -43,7 +68,7 @@
 }
 ```
 
-#### Create the `appsettings.Development.json` file or update it with the following content and replace all `<...>` placeholders with the values from your deployment:
+> Create the `appsettings.Development.json` file or update it with the following content and replace all `<...>` placeholders with the values from your deployment:
 
 ```json
 {
@@ -63,7 +88,9 @@
 
 ## Core API
 
-#### Make sure the contents of the `appsettings.json` file has this structure and similar values:
+### Core API app settings
+
+> Make sure the contents of the `appsettings.json` file has this structure and similar values:
 
 ```json
 {
@@ -89,9 +116,11 @@
       "Database": "database",
       "ChangeFeedLeaseContainer": "leases"
     },
-    "GatekeeperAPI": {
-      "APIUrl": "",
-      "APIKeySecretName": "foundationallm-gatekeeper-api-key"
+    "DownstreamAPIs": {    
+      "GatekeeperAPI": {
+        "APIUrl": "",
+        "APIKeySecretName": "foundationallm-gatekeeper-api-key"
+      }
     },
     "Configuration": {
       "KeyVaultUri": ""
@@ -108,7 +137,7 @@
 }
 ```
 
-#### Create the `appsettings.Development.json` file or update it with the following content and replace all `<...>` placeholders with the values from your deployment:
+> Create the `appsettings.Development.json` file or update it with the following content and replace all `<...>` placeholders with the values from your deployment:
 
 ```json
 {
@@ -117,8 +146,10 @@
       "Endpoint": "https://<...>-cosmos-nosql.documents.azure.com:443/",
       "Key": "<...>"
     },
-    "GatekeeperAPI": {
-      "APIUrl": "<...>"
+    "DownstreamAPIs": {
+      "GatekeeperAPI": {
+        "APIUrl": "<...>"
+      }
     },
     "Configuration": {
       "KeyVaultUri": "https://<...>.vault.azure.net/"
@@ -135,7 +166,9 @@
 
 ## Gatekeeper API
 
-#### Make sure the contents of the `appsettings.json` file has this structure and similar values:
+### Gatekeeper API app settings
+
+> Make sure the contents of the `appsettings.json` file has this structure and similar values:
 
 ```json
 {
@@ -153,23 +186,37 @@
   },
   "AllowedHosts": "*",
   "FoundationaLLM": {
-    "AgentFactoryAPI": {
-      "APIUrl": ""
+    "DownstreamAPIs": {
+      "AgentFactoryAPI": {
+        "APIUrl": ""
+      }
     },
     "GatekeeperAPI": {
       "APIKeySecretName": "foundationallm-gatekeeper-api-key"
+    },
+    "AzureContentSafety": {
+      "HateSeverity": 2,
+      "ViolenceSeverity": 2,
+      "SelfHarmSeverity": 2,
+      "SexualSeverity": 2
     }
   }
 }
 ```
 
-#### Create the `appsettings.Development.json` file or update it with the following content and replace all `<...>` placeholders with the values from your deployment:
+> Create the `appsettings.Development.json` file or update it with the following content and replace all `<...>` placeholders with the values from your deployment:
 
 ```json
 {
   "FoundationaLLM": {
-    "AgentFactoryAPI": {
-      "APIUrl": "<...>"
+    "DownstreamAPIs": {
+      "AgentFactoryAPI": {
+        "APIUrl": "<...>"
+      }
+    },
+    "AzureContentSafety": {
+      "Endpoint": "<...>",
+      "Key": "<...>"
     }
   }
 }
@@ -177,7 +224,9 @@
 
 ## Agent Factory API
 
-#### Make sure the contents of the `appsettings.json` file has this structure and similar values:
+### Agent Factory API app settings
+
+> Make sure the contents of the `appsettings.json` file has this structure and similar values:
 
 ```json
 {
@@ -198,12 +247,19 @@
     "Chat": {
       "DefaultOrchestrationService": "SemanticKernel"
     },
-    "LangChainAPI": {
-      "APIUrl": "",
-      "APIKeySecretName": "foundationallm-langchain-api-key"
-    },
-    "SemanticKernelOrchestration": {
-      "APIUrl": ""
+    "DownstreamAPIs": {
+      "LangChainAPI": {
+        "APIUrl": "",
+        "APIKeySecretName": "foundationallm-langchain-api-key"
+      },
+      "SemanticKernelAPI": {
+        "APIUrl": "",
+        "APIKeySecretName": "foundationallm-semantic-kernel-orchestration-api-key"
+      },
+      "AgentHubAPI": {
+        "APIUrl": "",
+        "APIKeySecretName": "foundationallm-agenthub-api-key"
+      }
     },
     "AgentFactoryAPI": {
       "APIKeySecretName": "foundationallm-agent-factory-api-key"
@@ -212,16 +268,18 @@
 }
 ```
 
-#### Create the `appsettings.Development.json` file or update it with the following content and replace all `<...>` placeholders with the values from your deployment:
+> Create the `appsettings.Development.json` file or update it with the following content and replace all `<...>` placeholders with the values from your deployment:
 
 ```json
 {
   "FoundationaLLM": {
-    "LangChainAPI": {
-      "APIUrl": "<...>"     
-    },
-    "SemanticKernelOrchestration": {
-      "APIUrl": "<...>"      
+    "DownstreamAPIs": {
+      "LangChainAPI": {
+        "APIUrl": "<...>"     
+      },
+      "SemanticKernelAPI": {
+        "APIUrl": "<...>"
+      }
     },
     "Configuration": {
       "KeyVaultUri": "<...>"
@@ -232,7 +290,7 @@
 
 ## PythonSDK
 
-### Environment Variables
+### PythonSDK Environment Variables
 
 | Name | Value | Description |
 | ---- | ----- | ----------- |
@@ -253,35 +311,37 @@
 
 ## Agent Hub API
 
-### Environment Variables
+### Agent Hub API Environment Variables
 
 | Name | Value | Description |
 | ---- | ----- | ----------- |
 
 ## Data Source Hub API
 
-### Environment Variables
+### Data Source Hub API Environment Variables
 
 | Name | Value | Description |
 | ---- | ----- | ----------- |
 
 ## Prompt Hub API
 
-### Environment Variables
+### Prompt Hub API Environment Variables
 
 | Name | Value | Description |
 | ---- | ----- | ----------- |
 
 ## LangChain API
 
-### Environment Variables
+### LangChain API Environment Variables
 
 | Name | Value | Description |
 | ---- | ----- | ----------- |
 
 ## Semantic Kernel API
 
-#### Make sure the contents of the `appsettings.json` file has this structure and similar values:
+### Semantic Kernel API app settings
+
+> Make sure the contents of the `appsettings.json` file has this structure and similar values:
 
 ```json
 {
@@ -341,7 +401,7 @@
 }
 ```
 
-#### Create the `appsettings.Development.json` file or update it with the following content and replace all `<...>` placeholders with the values from your deployment:
+> Create the `appsettings.Development.json` file or update it with the following content and replace all `<...>` placeholders with the values from your deployment:
 
 ```json
 {

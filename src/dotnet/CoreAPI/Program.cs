@@ -20,6 +20,7 @@ using FoundationaLLM.Core.Models.Configuration;
 using FoundationaLLM.Common.Authentication;
 using FoundationaLLM.Common.Models.Authentication;
 using FoundationaLLM.Common.Middleware;
+using Newtonsoft.Json;
 
 namespace FoundationaLLM.Core.API
 {
@@ -33,8 +34,10 @@ namespace FoundationaLLM.Core.API
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:CosmosDB"));
             builder.Services.AddOptions<KeyVaultConfigurationServiceSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:Configuration"));
-            builder.Services.AddOptions<DownstreamAPIKeySettings>()
-                .Bind(builder.Configuration.GetSection("FoundationaLLM:GatekeeperAPI"));
+            
+            // Register the downstream services and HTTP clients.
+            RegisterDownstreamServices(builder);
+
 
             builder.Services.AddSingleton<IConfigurationService, KeyVaultConfigurationService>();
             builder.Services.AddScoped<ICosmosDbService, CosmosDbService>();
@@ -44,17 +47,6 @@ namespace FoundationaLLM.Core.API
             builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
             builder.Services.AddScoped<IUserIdentityContext, UserIdentityContext>();
             builder.Services.AddScoped<IHttpClientFactoryService, HttpClientFactoryService>();
-
-            builder.Services
-                .AddHttpClient(HttpClients.GatekeeperAPIClient,
-                    httpClient =>
-                    {
-                        httpClient.BaseAddress = new Uri(builder.Configuration["FoundationaLLM:GatekeeperAPI:APIUrl"]);
-                        //httpClient.DefaultRequestHeaders.Add("X-API-KEY", builder.Configuration["FoundationaLLM:GatekeeperAPI:APIKey"]);
-                    })
-                .AddTransientHttpErrorPolicy(policyBuilder =>
-                    policyBuilder.WaitAndRetryAsync(
-                        3, retryNumber => TimeSpan.FromMilliseconds(600)));
 
             // Register the authentication services
             RegisterAuthConfiguration(builder);
@@ -127,6 +119,31 @@ namespace FoundationaLLM.Core.API
             app.MapControllers();
 
             app.Run();
+        }
+
+        /// <summary>
+        /// Bind the downstream API settings to the configuration and register the HTTP clients.
+        /// </summary>
+        /// <param name="builder"></param>
+        private static void RegisterDownstreamServices(WebApplicationBuilder builder)
+        {
+            var downstreamAPISettings = new DownstreamAPISettings
+            {
+                DownstreamAPIs = new Dictionary<string, DownstreamAPIKeySettings>()
+            };
+            foreach (var apiSetting in builder.Configuration.GetSection("FoundationaLLM:DownstreamAPIs").GetChildren())
+            {
+                var key = apiSetting.Key;
+                var settings = apiSetting.Get<DownstreamAPIKeySettings>();
+                downstreamAPISettings.DownstreamAPIs[key] = settings;
+                builder.Services
+                    .AddHttpClient(key, client => { client.BaseAddress = new Uri(settings.APIUrl); })
+                    .AddTransientHttpErrorPolicy(policyBuilder =>
+                        policyBuilder.WaitAndRetryAsync(
+                            3, retryNumber => TimeSpan.FromMilliseconds(600)));
+            }
+            
+            builder.Services.AddSingleton<IDownstreamAPISettings>(downstreamAPISettings);
         }
 
         public static void RegisterAuthConfiguration(WebApplicationBuilder builder)

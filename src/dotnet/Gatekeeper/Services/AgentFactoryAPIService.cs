@@ -20,7 +20,7 @@ namespace FoundationaLLM.Gatekeeper.Core.Services
 
         public async Task<CompletionResponse> GetCompletion(CompletionRequest completionRequest)
         {
-            var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.AgentFactoryAPIClient);
+            var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.AgentFactoryAPI);
 
             var responseMessage = await client.PostAsync("orchestration/completion",
             new StringContent(
@@ -47,7 +47,7 @@ namespace FoundationaLLM.Gatekeeper.Core.Services
 
         public async Task<SummaryResponse> GetSummary(SummaryRequest summaryRequest)
         {
-            var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.AgentFactoryAPIClient);
+            var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.AgentFactoryAPI);
 
             var responseMessage = await client.PostAsync("orchestration/summarize",
                 new StringContent(
@@ -70,7 +70,7 @@ namespace FoundationaLLM.Gatekeeper.Core.Services
 
         public async Task<bool> SetLLMOrchestrationPreference(string orchestrationService)
         {
-            var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.AgentFactoryAPIClient);
+            var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.AgentFactoryAPI);
 
             var responseMessage = await client.PostAsync("orchestration/preference",
                 new StringContent(orchestrationService));

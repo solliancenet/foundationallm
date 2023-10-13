@@ -2,13 +2,16 @@
 export default defineNuxtConfig({
 	devtools: { enabled: true },
 	components: true,
-	css: ['primevue/resources/themes/viva-light/theme.css'],
+	css: [
+		'primevue/resources/themes/viva-light/theme.css',
+		'~/styles/fonts.scss',
+	],
 	build: {
 		transpile: ['primevue'],
 	},
-	runtimeConfig: {
-		public: {
-			BASE_URL: process.env.BASE_URL
+	vite: {
+		define: {
+			API_URL: JSON.stringify(process.env.API_URL),
 		},
 	},
 });
