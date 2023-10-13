@@ -16,6 +16,12 @@ variable "project_id" {
   default     = "FLLM"
 }
 
+variable "public_domain" {
+  description = "Public DNS domain"
+  type        = string
+  default     = "internal.foundationallm.ai"
+}
+
 variable "tags" {
   description = "The tags to use on each resource"
   type        = map(string)

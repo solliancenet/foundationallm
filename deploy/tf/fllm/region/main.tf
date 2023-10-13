@@ -130,8 +130,8 @@ module "cosmosdb" {
 #  action_group_id            = azurerm_monitor_action_group.do_nothing.id
 #  instance_count             = 4
 #  log_analytics_workspace_id = module.logs.id
-#  resource_group             = azurerm_resource_group.rgs["OPS"]
-#  resource_prefix            = "${local.resource_prefix}-OPS"
+#  resource_group             = azurerm_resource_group.rgs["OAI"]
+#  resource_prefix            = "${local.resource_prefix}-OAI"
 #  tags                       = local.tags
 #
 #  private_endpoint = {
