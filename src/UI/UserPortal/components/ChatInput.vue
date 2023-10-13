@@ -9,6 +9,7 @@
 			class="input"
 			type="text"
 			placeholder="What would you like to ask?"
+			@keydown.enter="handleSend"
 		></InputText>
 		<div class="submit">
 			<div class="icon"></div>
@@ -32,6 +33,7 @@ export default {
 	methods: {
 		handleSend() {
 			this.$emit('send', this.text);
+			this.text = '';
 		},
 	},
 };
