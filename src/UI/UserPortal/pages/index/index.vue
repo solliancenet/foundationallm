@@ -18,7 +18,7 @@ export default {
 	},
 
 	methods: {
-		handleChangeSession(session) {
+		handleChangeSession(session: Session) {
 			this.currentSession = session;
 		},
 	},

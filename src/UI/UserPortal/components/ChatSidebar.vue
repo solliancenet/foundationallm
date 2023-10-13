@@ -70,12 +70,14 @@ export default {
 
 	methods: {
 		async getSessions() {
-			const data = await api.getSessions();
-			this.sessions = data;
+			const session = await api.getSessions();
+			this.sessions = session;
 		},
 
-		handleAddSession() {
-			console.log('add session');
+		async handleAddSession() {
+			const session = await api.addSession();
+			this.handleSessionSelected(session);
+			await this.getSessions();
 		},
 
 		handleSessionSelected(session: Session) {
