@@ -13,7 +13,7 @@
 					<span>{{ message.sender }}</span>
 				</span>
 
-				<span>{{ message.timeStamp }}</span>
+				<span>{{ $filters.timeAgo(new Date(message.timeStamp)) }}</span>
 			</div>
 
 			<div class="message__body">
