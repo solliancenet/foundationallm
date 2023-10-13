@@ -13,7 +13,7 @@ class AgentHubStorageManager(BlobStorageManager):
      def read_file_content(self, path) -> str:
           return super().read_file_content(path).decode()
      
-     def list_blobs(self):
-          blob_list: List[dict] = list(super().list_blobs(path=""))
+     def list_blobs(self, path):
+          blob_list: List[dict] = list(super().list_blobs(path=path))
           blob_names = [blob["name"].split('/')[-1] for blob in blob_list]
           return blob_names

@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends
 from app.dependencies import validate_api_key_header
-from foundationallm.models import Session
-from foundationallm.hubs.prompt import PromptHub
+from foundationallm.hubs.prompt import PromptHubRequest, PromptHubResponse, PromptHub
 
 router = APIRouter(
     prefix='/resolve_request',
@@ -11,5 +10,5 @@ router = APIRouter(
 )
 
 @router.post('/')
-async def resolve_request(request: Session):    
+async def resolve_request(request: PromptHubRequest) -> PromptHubResponse:
     return PromptHub().resolve_request(request)

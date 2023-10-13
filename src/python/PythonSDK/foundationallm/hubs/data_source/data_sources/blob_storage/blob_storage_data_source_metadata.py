@@ -1,5 +1,6 @@
 from typing import List, Optional
-from foundationallm.data_sources.blob_storage import BlobStorageFileType, BlobStorageAuthenticationMetadata
+from .blob_storage_file_type import BlobStorageFileType
+from .blob_storage_authentication_metadata import BlobStorageAuthenticationMetadata
 from foundationallm.hubs.data_source import DataSourceMetadata
 
 
