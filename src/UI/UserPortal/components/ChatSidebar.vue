@@ -64,12 +64,16 @@ export default {
 	},
 
 	async created() {
-		const data = await api.getSessions();
-		this.sessions = data;
-		this.handleSessionSelected(data[0]);
+		await this.getSessions();
+		this.handleSessionSelected(this.sessions[0]);
 	},
 
 	methods: {
+		async getSessions() {
+			const data = await api.getSessions();
+			this.sessions = data;
+		},
+
 		handleAddSession() {
 			console.log('add session');
 		},
@@ -82,6 +86,7 @@ export default {
 		async handleDeleteSession() {
 			await api.deleteSession(this.deleteSession!.id);
 			this.deleteSession = null;
+			await this.getSessions();
 		},
 	},
 };
