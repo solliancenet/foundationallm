@@ -320,7 +320,7 @@ resource "azurerm_monitor_metric_alert" "openai_alert" {
   criteria {
     aggregation      = each.value.aggregation
     metric_name      = each.value.metric_name
-    metric_namespace = "Microsoft.CognitiveServices/account"
+    metric_namespace = "Microsoft.CognitiveServices/accounts"
     operator         = each.value.operator
     threshold        = each.value.threshold
   }
