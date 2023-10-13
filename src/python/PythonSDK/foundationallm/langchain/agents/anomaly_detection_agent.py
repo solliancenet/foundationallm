@@ -8,7 +8,7 @@ from langchain.agents.agent_toolkits import SQLDatabaseToolkit
 from langchain.agents.agent_types import AgentType
 from langchain.callbacks import get_openai_callback
 from langchain.prompts import PromptTemplate
-#from langchain.document_loaders import DataFrameLoader
+
 from langchain.tools.python.tool import PythonREPLTool
 
 from foundationallm.config import Configuration
@@ -16,7 +16,7 @@ from foundationallm.langchain.agents import AgentBase
 from foundationallm.langchain.data_sources.sql import SqlDbConfig
 from foundationallm.langchain.data_sources.sql.mssql import MsSqlServer
 from foundationallm.langchain.data_sources.sql import SqlDbFactory
-from foundationallm.langchain.language_models.chat_models import AzureChatOpenAILanguageModel
+from foundationallm.langchain.language_models import LanguageModelBase
 from foundationallm.models.orchestration import CompletionRequest, CompletionResponse
 from foundationallm.langchain.toolkits import AnomalyDetectionToolkit
 
@@ -24,10 +24,21 @@ class AnomalyDetectionAgent(AgentBase):
     """
     Agent for performing anomaly detection.
     """
-    
-    # TODO: This is all very hardcoded for demo purposes.
 
-    def __init__(self, completion_request: CompletionRequest, llm: AzureChatOpenAILanguageModel, app_config: Configuration):
+    def __init__(self, completion_request: CompletionRequest, llm: LanguageModelBase, app_config: Configuration):
+        """
+        Initializes a SummaryAgent
+
+        Parameters
+        ----------
+        completion_request : CompletionRequest
+            The completion request object containing the user prompt to execute, message history,
+            and agent and data source metadata.
+        llm : LanguageModelBase
+            The language model to use for executing the completion request.
+        app_config : Configuration
+            Application configuration class for retrieving configuration settings.
+        """
         self.agent_prompt_prefix = completion_request.agent.prompt_template #PromptTemplate.from_template(completion_request.agent.prompt_template)
         self.user_prompt = completion_request.user_prompt
         self.llm = llm.get_language_model()
@@ -85,13 +96,7 @@ class AnomalyDetectionAgent(AgentBase):
                 func = self.sql_agent.run,
                 description = 'Useful for answering questions about anomalies in rum bottle volumes and prices.',
                 handle_tool_error = True
-            )#,
-            # Tool(
-            #     name = 'statistics_agent',
-            #     func = self.statistics_agent.run,
-            #     description = 'Tool for using a Pandas DataFrame for describing the features of a dataset.',
-            #     handle_tool_error = True
-            # )
+            )
         ]
         
         self.toolkit = AnomalyDetectionToolkit(df_agent=self.statistics_agent, py_agent=self.python_agent)
@@ -111,9 +116,25 @@ class AnomalyDetectionAgent(AgentBase):
         
     @property
     def prompt_template(self) -> str:
+        """
+        Property for viewing the agent's prompt template.
+        
+        Returns
+        str
+            Returns the prompt template for the agent.
+        """
         return self.agent.agent.llm_chain.prompt.template
         
     def run(self) -> CompletionResponse:
+        """
+        Executes an anomaly detection request.
+        
+        Returns
+        -------
+        CompletionResponse
+            Returns a CompletionResponse with the anomaly detection completion response, 
+            the user_prompt, and token utilization and execution cost details.
+        """
         with get_openai_callback() as cb:
             return CompletionResponse(
                 completion = self.agent.run(self.user_prompt),
