@@ -9,7 +9,7 @@
 			class="input"
 			type="text"
 			placeholder="What would you like to ask?"
-		/>
+		></textarea>
 		<div class="submit">
 			<div class="icon"></div>
 			<button @click="handleSend">Send</button>
@@ -17,7 +17,7 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
 export default {
 	name: 'ChatInput',
 
@@ -25,7 +25,7 @@ export default {
 
 	data() {
 		return {
-			text: ''
+			text: '' as string,
 		};
 	},
 
@@ -56,7 +56,7 @@ export default {
 }
 
 .input:focus {
-	height: 192px;
+	// height: 192px;
 }
 
 .submit {

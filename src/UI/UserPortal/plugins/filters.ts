@@ -4,9 +4,9 @@ TimeAgo.addDefaultLocale(en);
 const timeAgo = new TimeAgo('en-US');
 
 const filters = {
-	timeAgo(date) {
+	timeAgo(date: Date): string {
 		return timeAgo.format(date);
-	}
+	},
 };
 
 export default defineNuxtPlugin((nuxtApp) => {

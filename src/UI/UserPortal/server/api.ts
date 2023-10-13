@@ -1,12 +1,13 @@
 /* eslint-disable prettier/prettier */
 import { Message, Session } from '@/js/types';
+declare const API_URL: string;
 
 export default {
   async getSessions() {
     return await $fetch(`${API_URL}/sessions`) as Array<Session>;
   },
 
-  async getMessages(sessionId: string) {
+  async getMessages(sessionId: string): Promise<Array<Message>> {
     return await $fetch(`${API_URL}/sessions/${sessionId}/messages`) as Array<Message>;
   },
 
@@ -19,11 +20,11 @@ export default {
       ? (message.rating = null)
       : (message.rating = rating);
 
-    const data = (await $fetch(
+    return await $fetch(
       `${API_URL}/sessions/${message.sessionId}/message/${message.id}/rate${message.rating !== null ? '?rating=' + message.rating : ''}`, {
         method: 'POST',
       },
-    )) as Message;
+    ) as Message;
   },
 
   async sendMessage(sessionId: string, text: string) {

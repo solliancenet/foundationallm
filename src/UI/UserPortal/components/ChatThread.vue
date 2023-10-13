@@ -46,13 +46,13 @@ export default {
 	},
 
 	methods: {
-		async handleRateMessage(messageIndex, { message, like }: { message: Message; like: boolean }) {
+		async handleRateMessage(messageIndex: number, { message, like }: { message: Message; like: boolean }) {
 			const data = await api.rateMessage(message, like);
-			this.messages[messageIndex] = data;
+			console.log(messageIndex, data);
 		},
 
 		async handleSend(text: string) {
-			const data = api.sendMessage(this.session.id, text);
+			const data = await api.sendMessage(this.session.id, text);
 			console.log(data);
 		},
 	},
