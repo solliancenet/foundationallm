@@ -1,7 +1,7 @@
 from foundationallm.hubs import Repository
 from foundationallm.hubs.data_source import DataSourceMetadata, UnderlyingImplementation
-from foundationallm.data_sources.sql import SQLDataSourceMetadata
-from foundationallm.data_sources.blob_storage import BlobStorageDataSourceMetadata
+from .data_sources.sql import SQLDataSourceMetadata
+from .data_sources.blob_storage import BlobStorageDataSourceMetadata
 from foundationallm.hubs.data_source import DataSourceHubStorageManager
 from typing import List
 

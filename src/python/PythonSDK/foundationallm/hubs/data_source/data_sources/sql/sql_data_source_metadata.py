@@ -1,6 +1,7 @@
 from typing import List, Optional
 from foundationallm.hubs.data_source import DataSourceMetadata
-from foundationallm.data_sources.sql import SQLAuthenticationMetadata, SQLDatabaseDialect
+from .sql_authentication_metadata import SQLAuthenticationMetadata
+from .sql_database_dialects import SQLDatabaseDialect
 
 class SQLDataSourceMetadata(DataSourceMetadata):
     authentication: Optional[SQLAuthenticationMetadata] = None
