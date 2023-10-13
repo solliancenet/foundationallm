@@ -2,6 +2,7 @@ locals {
   environment     = var.environment
   global_location = var.global_location
   project_id      = var.project_id
+  public_domain   = var.public_domain
   resource_prefix = join("-", [local.project_id, local.environment])
 
   global_resource_groups = {

@@ -9,6 +9,10 @@ variable "location_short" {
   description = "The location of the resource group"
 }
 
+variable "public_domain" {
+  type = string
+}
+
 variable "resource_groups" {
   type = map(object({
     tags = map(string)
