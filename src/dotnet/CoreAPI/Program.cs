@@ -46,7 +46,7 @@ namespace FoundationaLLM.Core.API
             builder.Services.AddScoped<IHttpClientFactoryService, HttpClientFactoryService>();
 
             builder.Services
-                .AddHttpClient(HttpClients.GatekeeperAPIClient,
+                .AddHttpClient(HttpClients.GatekeeperAPI,
                     httpClient =>
                     {
                         httpClient.BaseAddress = new Uri(builder.Configuration["FoundationaLLM:GatekeeperAPI:APIUrl"]);

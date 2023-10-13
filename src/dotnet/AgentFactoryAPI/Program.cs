@@ -66,7 +66,7 @@ namespace FoundationaLLM.AgentFactory.API
             builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 
             builder.Services
-                .AddHttpClient(HttpClients.AgentHubAPIClient,
+                .AddHttpClient(HttpClients.AgentHubAPI,
                     httpClient =>
                     {
                         httpClient.BaseAddress = new Uri(builder.Configuration["FoundationaLLM:AgentHubAPI:APIUrl"]);
@@ -77,7 +77,7 @@ namespace FoundationaLLM.AgentFactory.API
                     policyBuilder.WaitAndRetryAsync(
                         3, retryNumber => TimeSpan.FromMilliseconds(600)));
             builder.Services
-                .AddHttpClient(HttpClients.LangChainAPIClient,
+                .AddHttpClient(HttpClients.LangChainAPI,
                     httpClient =>
                     {
                         httpClient.BaseAddress = new Uri(builder.Configuration["FoundationaLLM:LangChainAPI:APIUrl"]);
@@ -89,7 +89,7 @@ namespace FoundationaLLM.AgentFactory.API
                     policyBuilder.WaitAndRetryAsync(
                         3, retryNumber => TimeSpan.FromMilliseconds(600)));
             builder.Services
-                .AddHttpClient(HttpClients.SemanticKernelAPIClient,
+                .AddHttpClient(HttpClients.SemanticKernelAPI,
                     httpClient =>
                     {
                         httpClient.BaseAddress = new Uri(builder.Configuration["FoundationaLLM:SemanticKernelAPI:APIUrl"]);

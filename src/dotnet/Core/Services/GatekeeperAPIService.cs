@@ -28,7 +28,7 @@ namespace FoundationaLLM.Core.Services
             // TODO: Call RefinementService to refine userPrompt
             // await _refinementService.RefineUserPrompt(completionRequest);
 
-            var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.GatekeeperAPIClient);
+            var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.GatekeeperAPI);
 
             var responseMessage = await client.PostAsync("orchestration/completion",
             new StringContent(
@@ -58,7 +58,7 @@ namespace FoundationaLLM.Core.Services
             // TODO: Call RefinementService to refine userPrompt
             // await _refinementService.RefineUserPrompt(content);
 
-            var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.GatekeeperAPIClient);
+            var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.GatekeeperAPI);
 
             var responseMessage = await client.PostAsync("orchestration/summarize",
                 new StringContent(
@@ -78,7 +78,7 @@ namespace FoundationaLLM.Core.Services
 
         public async Task<bool> SetLLMOrchestrationPreference(string orchestrationService)
         {
-            var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.GatekeeperAPIClient);
+            var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.GatekeeperAPI);
 
             var responseMessage = await client.PostAsync("orchestration/preference",
                 new StringContent(orchestrationService));

@@ -34,7 +34,7 @@ namespace FoundationaLLM.AgentFactory.Services
 
         public async Task<CompletionResponse> GetResponse(string userPrompt, List<MessageHistoryItem> messageHistory)
         {
-            var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.SemanticKernelAPIClient);
+            var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.SemanticKernelAPI);
 
             var responseMessage = await client.PostAsync("/orchestration/completion",
                 new StringContent(
@@ -61,7 +61,7 @@ namespace FoundationaLLM.AgentFactory.Services
 
         public async Task<string> GetSummary(string content)
         {
-            var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.SemanticKernelAPIClient);
+            var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.SemanticKernelAPI);
 
             var responseMessage = await client.PostAsync("/orchestration/summary",
                 new StringContent(
@@ -92,7 +92,7 @@ namespace FoundationaLLM.AgentFactory.Services
 
         private bool GetServiceStatus()
         {
-            var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.SemanticKernelAPIClient);
+            var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.SemanticKernelAPI);
             var responseMessage = client.Send(
                 new HttpRequestMessage(HttpMethod.Get, "/status"));
 

@@ -33,7 +33,7 @@ namespace FoundationaLLM.AgentFactory.Services
 
         public async Task<CompletionResponse> GetResponse(string userPrompt, List<MessageHistoryItem> messageHistory)
         {
-            var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.LangChainAPIClient);
+            var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.LangChainAPI);
 
             var request = new LangChainCompletionRequest()
             {
@@ -106,7 +106,7 @@ namespace FoundationaLLM.AgentFactory.Services
 
         public async Task<string> GetSummary(string content)
         {
-            var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.LangChainAPIClient);
+            var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.LangChainAPI);
 
             var request = new LangChainSummaryRequest()
             {
@@ -145,7 +145,7 @@ namespace FoundationaLLM.AgentFactory.Services
 
         private bool GetServiceStatus()
         {
-            var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.LangChainAPIClient);
+            var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.LangChainAPI);
             var responseMessage = client.Send(
                 new HttpRequestMessage(HttpMethod.Get, "/status"));
 
