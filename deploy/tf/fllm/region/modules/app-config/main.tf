@@ -40,10 +40,10 @@ resource "azurerm_app_configuration" "main" {
     ]
   }
 
-#  encryption {
-#    key_vault_key_identifier = azurerm_key_vault_key.app_config_key.id
-#    identity_client_id       = azurerm_user_assigned_identity.app_config_mi.client_id
-#  }
+  #  encryption {
+  #    key_vault_key_identifier = azurerm_key_vault_key.app_config_key.id
+  #    identity_client_id       = azurerm_user_assigned_identity.app_config_mi.client_id
+  #  }
 
   tags = var.tags
 
