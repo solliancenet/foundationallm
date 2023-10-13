@@ -68,8 +68,8 @@ export default {
 		},
 
 		async handleSend(text: string) {
-			const data = await api.sendMessage(this.session.id, text);
-			console.log(data);
+			await api.sendMessage(this.session.id, text);
+			await this.getMessages();
 		},
 	},
 };
