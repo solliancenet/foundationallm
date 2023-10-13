@@ -62,8 +62,8 @@
 		>
 			<p>Do you want to delete the chat "{{ deleteSession.name }}" ?</p>
 			<template #footer>
-				<Button label="No" text @click="deleteSession = null" />
-				<Button label="Yes" severity="danger" @click="handleDeleteSession" />
+				<Button label="Cancel" text @click="deleteSession = null" />
+				<Button label="Delete" severity="danger" @click="handleDeleteSession" />
 			</template>
 		</Dialog>
 	</div>

@@ -55,7 +55,7 @@
 					>
 						<p>{{ prompt.prompt }}</p>
 						<template #footer>
-							<Button label="Ok" @click="viewPrompt = false" />
+							<Button label="Close" @click="viewPrompt = false" />
 						</template>
 					</Dialog>
 				</span>
