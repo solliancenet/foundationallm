@@ -7,7 +7,9 @@ The following requirements are needed by this module:
 
 - <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.6)
 
-- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (3.65.0)
+- <a name="requirement_acme"></a> [acme](#requirement\_acme) (~> 2.0)
+
+- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 3.65)
 
 - <a name="requirement_tfe"></a> [tfe](#requirement\_tfe) (~> 0.49)
 
@@ -72,6 +74,14 @@ Description: The project id
 Type: `string`
 
 Default: `"FLLM"`
+
+### <a name="input_public_domain"></a> [public\_domain](#input\_public\_domain)
+
+Description: Public DNS domain
+
+Type: `string`
+
+Default: `"internal.foundationallm.ai"`
 
 ### <a name="input_tags"></a> [tags](#input\_tags)
 

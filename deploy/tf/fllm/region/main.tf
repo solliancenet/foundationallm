@@ -84,6 +84,14 @@ module "appconfig" {
 #   tags                       = local.tags
 # }
 
+module "application_gateway_certificate" {
+  source = "./modules/keyvault-acme-certificate"
+
+  administrator_email = "tbd@solliance.net"
+  domain              = "www.internal.foundationallm.ai"
+  key_vault_id        = module.ops_keyvault.id
+}
+
 module "cosmosdb" {
   source = "./modules/cosmosdb"
 

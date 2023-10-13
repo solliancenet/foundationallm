@@ -50,7 +50,7 @@ locals {
       service_endpoints = []
 
       nsg_rules = {
-        inbound  = merge({}, {
+        inbound = merge({}, {
           "allow-vnet-inbound" = {
             access                     = "Allow"
             destination_address_prefix = "VirtualNetwork"
