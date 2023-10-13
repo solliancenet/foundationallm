@@ -6,7 +6,7 @@ export default {
     return await $fetch(`${API_URL}/sessions`) as Array<Session>;
   },
 
-  async getMessages(sessionId: String) {
+  async getMessages(sessionId: string) {
     return await $fetch(`${API_URL}/sessions/${sessionId}/messages`) as Array<Message>;
   },
 
@@ -20,15 +20,14 @@ export default {
       : (message.rating = rating);
 
     const data = (await $fetch(
-      `${this.$config.public.API_URL}/sessions/${message.sessionId}/message/${message.id}/rate${message.rating !== null ? '?rating=' + message.rating : ''}`, {
+      `${API_URL}/sessions/${message.sessionId}/message/${message.id}/rate${message.rating !== null ? '?rating=' + message.rating : ''}`, {
         method: 'POST',
       },
     )) as Message;
   },
 
   async sendMessage(sessionId: string, text: string) {
-    const body = text;
-    return (await $fetch(`${this.$config.public.API_URL}/sessions/${sessionId}/completion`, {
+    return (await $fetch(`${API_URL}/sessions/${sessionId}/completion`, {
       method: 'POST',
       body: JSON.stringify(text),
     })) as string;
