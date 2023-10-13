@@ -12,7 +12,7 @@
 		<div class="chat-sidebar__chats">
 			<div v-if="!sessions">No sessions</div>
 			<div
-				v-for="(session, index) in sessions"
+				v-for="session in sessions"
 				:key="session.id"
 				class="chat-sidebar__chat"
 				@click="handleSessionSelected(session)"
@@ -30,7 +30,7 @@
 						<button small @click="openRenameModal(session)">edit</button>
 
 						<!-- Delete session -->
-						<button small @click="deleteSession = session">x</button>
+						<button small @click="sessionToDelete = session">x</button>
 					</span>
 				</div>
 			</div>
@@ -58,15 +58,15 @@
 
 		<!-- Delete session dialog -->
 		<Dialog
-			:visible="deleteSession !== null"
+			:visible="sessionToDelete !== null"
 			modal
 			header="Delete a Chat"
 			:closable="false"
 			:style="{ width: '50vw' }"
 		>
-			<p>Do you want to delete the chat "{{ deleteSession.name }}" ?</p>
+			<p>Do you want to delete the chat "{{ sessionToDelete.name }}" ?</p>
 			<template #footer>
-				<Button label="Cancel" text @click="deleteSession = null" />
+				<Button label="Cancel" text @click="sessionToDelete = null" />
 				<Button label="Delete" severity="danger" @click="handleDeleteSession" />
 			</template>
 		</Dialog>
@@ -86,9 +86,9 @@ export default {
 		return {
 			sessions: [] as Array<Session>,
 			currentSession: null as Session | null,
-			deleteSession: null as Session | null,
 			sessionToRename: null as Session | null,
 			newSessionName: '' as string,
+			sessionToDelete: null as Session | null,
 		};
 	},
 
@@ -100,12 +100,10 @@ export default {
 	methods: {
 		openRenameModal(session: Session) {
 			this.sessionToRename = session;
-			// this.viewRenameSession = session.id;
 			this.newSessionName = session.name;
 		},
 
 		closeRenameModal() {
-			// this.viewRenameSession = null;
 			this.sessionToRename = null;
 			this.newSessionName = '';
 		},
@@ -116,7 +114,7 @@ export default {
 		},
 
 		async handleRenameSession() {
-			const updatedSession = await api.renameSession(this.sessionToRename.id, this.newSessionName);
+			const updatedSession = await api.renameSession(this.sessionToRename!.id, this.newSessionName);
 			const sessionIndex = this.sessions.findIndex(session => session.id === updatedSession.id);
 			this.sessions[sessionIndex] = updatedSession;
 			this.sessionToRename = null;
@@ -134,8 +132,8 @@ export default {
 		},
 
 		async handleDeleteSession() {
-			await api.deleteSession(this.deleteSession!.id);
-			this.deleteSession = null;
+			await api.deleteSession(this.sessionToDelete!.id);
+			this.sessionToDelete = null;
 			await this.getSessions();
 		},
 	},
