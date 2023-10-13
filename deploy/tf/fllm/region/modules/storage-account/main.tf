@@ -74,7 +74,7 @@ resource "azurerm_storage_account" "main" {
   name                              = "${local.resource_prefix_compact}sa"
   public_network_access_enabled     = false
   resource_group_name               = var.resource_group.name
-  shared_access_key_enabled         = false
+  shared_access_key_enabled         = true
   tags                              = var.tags
 
   blob_properties {
