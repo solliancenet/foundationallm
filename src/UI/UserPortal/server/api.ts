@@ -11,6 +11,15 @@ export default {
     return await $fetch(`${API_URL}/sessions`, { method: 'POST' }) as Session;
   },
 
+  async renameSession(sessionId: string, newChatSessionName: string) {
+    return await $fetch(`${API_URL}/sessions/${sessionId}/rename`, {
+      method: 'POST',
+      params: {
+        newChatSessionName
+      }
+    }) as Session;
+  },
+
   async deleteSession(sessionId: string) {
     return await $fetch(`${API_URL}/sessions/${sessionId}`, { method: 'DELETE' }) as Session;
   },

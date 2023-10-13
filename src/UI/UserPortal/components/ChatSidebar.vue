@@ -12,7 +12,7 @@
 		<div class="chat-sidebar__chats">
 			<div v-if="!sessions">No sessions</div>
 			<div
-				v-for="session in sessions"
+				v-for="(session, index) in sessions"
 				:key="session.id"
 				class="chat-sidebar__chat"
 				@click="handleSessionSelected(session)"
@@ -22,14 +22,37 @@
 					:class="{ 'chat--selected': currentSession?.id === session.id }"
 				>
 					<span class="chat__name">{{ session.name }}</span>
+
 					<span class="chat__icons">
+						<button small @click="openRenameModal(session)">edit</button>
+
+						<!-- Rename session dialog -->
+						<Dialog
+							:visible="viewRenameSession === session.id"
+							modal
+							:header="`Rename Chat ${session.name}`"
+							:closable="false"
+							:style="{ width: '50vw' }"
+						>
+							<InputText
+								v-model="newSessionName"
+								type="text"
+								placeholder="New chat name"
+								:style="{ width: '100%' }"
+							></InputText>
+							<template #footer>
+								<Button label="Cancel" text @click="closeRenameModal" />
+								<Button label="Rename" @click="handleRenameSession(session, index)" />
+							</template>
+						</Dialog>
+
 						<button small @click="deleteSession = session">x</button>
 					</span>
 				</div>
 			</div>
 		</div>
 
-		<!-- Delete dialog -->
+		<!-- Delete session dialog -->
 		<Dialog
 			:visible="deleteSession !== null"
 			modal
@@ -60,6 +83,8 @@ export default {
 			currentSession: null as Session | null,
 			deleteSession: null as Session | null,
 			sessions: [] as Array<Session>,
+			viewRenameSession: null as Session['id'] | null,
+			newSessionName: '' as string,
 		};
 	},
 
@@ -69,9 +94,25 @@ export default {
 	},
 
 	methods: {
+		openRenameModal(session: Session) {
+			this.viewRenameSession = session.id;
+			this.newSessionName = session.name;
+		},
+
+		closeRenameModal() {
+			this.viewRenameSession = null;
+			this.newSessionName = '';
+		},
+
 		async getSessions() {
 			const session = await api.getSessions();
 			this.sessions = session;
+		},
+
+		async handleRenameSession(session: Session, sessionIndex: number) {
+			const updatedSession = await api.renameSession(session.id, this.newSessionName);
+			this.sessions[sessionIndex] = updatedSession;
+			this.viewRenameSession = false;
 		},
 
 		async handleAddSession() {
@@ -134,5 +175,6 @@ export default {
 }
 
 .chat__icons {
+	flex-shrink: 0;
 }
 </style>
