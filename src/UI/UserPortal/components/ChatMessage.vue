@@ -8,35 +8,40 @@
 	>
 		<div class="message">
 			<div class="message__header">
+				<!-- Sender -->
 				<span class="header__sender">
 					<img v-if="message.sender !== 'User'" class="avatar" src="~/assets/brain-royalty-free.png">
 					<span>{{ message.sender }}</span>
 				</span>
 
+				<!-- Timestamp -->
 				<span>{{ $filters.timeAgo(new Date(message.timeStamp)) }}</span>
 			</div>
 
+			<!-- Message text -->
 			<div class="message__body">
 				{{ message.text }}
 			</div>
 
+			<!-- Rating -->
 			<div class="message__footer" v-if="message.sender !== 'User'">
-				<span
-					:class="message.rating ? 'selected like' : 'like'"
-					@click="handleRate(message, true)"
-				>
+				<!-- Like -->
+				<span>
 					<span class="icon"></span>
-					<button>Like</button>
+					<button @click="handleRate(message, true)">
+						{{ message.rating ? 'Message Liked!' : 'Like' }}
+					</button>
 				</span>
 
-				<span
-					:class="message.rating === false ? 'selected dislike' : 'dislike'"
-					@click="handleRate(message, false)"
-				>
+				<!-- Dislike -->
+				<span>
 					<span class="icon"></span>
-					<button>Dislike</button>
+					<button @click="handleRate(message, false)">
+						{{ !message.rating ? 'Message Disliked.' : 'Dislike' }}
+					</button>
 				</span>
 
+				<!-- View prompt -->
 				<span class="view-prompt">
 					<button @click="handleViewPrompt">View Prompt</button>
 
