@@ -34,7 +34,7 @@ export default {
 
   async rateMessage(message: Message, rating: Message['rating']) {
     return await $fetch(
-      `${API_URL}/sessions/${message.sessionId}/message/${message.id}/rate${message.rating !== null ? '?rating=' + message.rating : ''}`, {
+      `${API_URL}/sessions/${message.sessionId}/message/${message.id}/rate`, {
         method: 'POST',
         params: {
           rating
