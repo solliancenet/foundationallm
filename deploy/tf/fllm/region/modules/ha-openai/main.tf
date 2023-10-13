@@ -282,18 +282,18 @@ resource "azurerm_monitor_metric_alert" "apim_alert" {
 
 locals {
   openai_alert_map = flatten([
-    for index, account in azurerm_cognitive_account.openai: [
-      for key, alert in local.openai_alert: {
-        name = "openai${index}-${key}"
-        account = account
+    for index, account in azurerm_cognitive_account.openai : [
+      for key, alert in local.openai_alert : {
+        name        = "openai${index}-${key}"
+        account     = account
         aggregation = alert.aggregation
         description = alert.description
-        frequency = alert.frequency
+        frequency   = alert.frequency
         metric_name = alert.metric_name
-        operator = alert.operator
-        threshold = alert.threshold
+        operator    = alert.operator
+        threshold   = alert.threshold
         window_size = alert.window_size
-        severity = alert.severity
+        severity    = alert.severity
       }
     ]
   ])
