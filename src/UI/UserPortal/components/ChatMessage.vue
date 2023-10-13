@@ -23,7 +23,6 @@
 				{{ message.text }}
 			</div>
 
-			<!-- Rating -->
 			<div class="message__footer" v-if="message.sender !== 'User'">
 				<!-- Like -->
 				<span>
