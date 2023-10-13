@@ -109,7 +109,7 @@ module "ha_openai" {
   tags                       = local.tags
 
   private_endpoint = {
-    subnet_id = azurerm_subnet.subnets["Services"].id
+    subnet_id = azurerm_subnet.subnets["FLLMOpenAI"].id
     apim_private_dns_zones = [
       local.private_dns_zones["azure-api.net"],
       local.private_dns_zones["developer.azure-api.net"],
