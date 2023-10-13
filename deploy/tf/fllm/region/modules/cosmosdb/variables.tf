@@ -8,6 +8,14 @@ variable "log_analytics_workspace_id" {
   type        = string
 }
 
+variable "containers" {
+  description = "A map of containers to create in the CosmosDB account."
+  type = map(object({
+    partition_key_path = string
+    max_throughput     = number
+  }))
+}
+
 variable "private_endpoint" {
   description = "The private endpoint configuration."
   type = object({
@@ -26,7 +34,7 @@ variable "resource_group" {
 }
 
 variable "resource_prefix" {
-  description = "The name prefix for the Log Analytics workspace."
+  description = "The name prefix for the cosmosdb resources."
   type        = string
 }
 

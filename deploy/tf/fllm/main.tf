@@ -13,6 +13,11 @@ locals {
   }
 
   regional_resource_groups = {
+    "FLLMStorage" = {
+      tags = {
+        Purpose = "Storage"
+      }
+    }
     "JBX" = {
       tags = {
         "Purpose" = "DevOps"

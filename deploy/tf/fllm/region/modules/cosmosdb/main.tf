@@ -11,29 +11,6 @@ locals {
       severity    = 0
     }
   }
-
-  container = {
-    embedding = {
-      partition_key_path = "/id"
-      max_throughput     = 1000
-    }
-    completions = {
-      partition_key_path = "/sessionId"
-      max_throughput     = 1000
-    }
-    product = {
-      partition_key_path = "/categoryId"
-      max_throughput     = 1000
-    }
-    customer = {
-      partition_key_path = "/customerId"
-      max_throughput     = 1000
-    }
-    leases = {
-      partition_key_path = "/id"
-      max_throughput     = 1000
-    }
-  }
 }
 
 resource "azurerm_cosmosdb_account" "main" {
@@ -47,7 +24,7 @@ resource "azurerm_cosmosdb_account" "main" {
   tags                          = var.tags
 
   capacity {
-    total_throughput_limit = 5000
+    total_throughput_limit = max(sum(concat([0], [for c in var.containers : c.max_throughput])), 1000)
   }
 
   consistency_policy {
@@ -67,7 +44,7 @@ resource "azurerm_cosmosdb_sql_database" "db" {
 }
 
 resource "azurerm_cosmosdb_sql_container" "container" {
-  for_each = local.container
+  for_each = var.containers
 
   account_name          = azurerm_cosmosdb_account.main.name
   database_name         = azurerm_cosmosdb_sql_database.db.name

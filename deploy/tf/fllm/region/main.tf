@@ -45,9 +45,32 @@ module "cosmosdb" {
 
   action_group_id            = azurerm_monitor_action_group.do_nothing.id
   log_analytics_workspace_id = module.logs.id
-  resource_group             = azurerm_resource_group.rgs["OAI"]
-  resource_prefix            = local.resource_prefix
+  resource_group             = azurerm_resource_group.rgs["FLLMStorage"]
+  resource_prefix            = "${local.resource_prefix}-FLLM"
   tags                       = local.tags
+
+  containers = {
+    embedding = {
+      partition_key_path = "/id"
+      max_throughput     = 1000
+    }
+    completions = {
+      partition_key_path = "/sessionId"
+      max_throughput     = 1000
+    }
+    product = {
+      partition_key_path = "/categoryId"
+      max_throughput     = 1000
+    }
+    customer = {
+      partition_key_path = "/customerId"
+      max_throughput     = 1000
+    }
+    leases = {
+      partition_key_path = "/id"
+      max_throughput     = 1000
+    }
+  }
 
   private_endpoint = {
     subnet_id = azurerm_subnet.subnets["FLLMStorage"].id
