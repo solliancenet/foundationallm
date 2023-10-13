@@ -9,3 +9,4 @@ bracketSpacing: true
 bracketSameLine: false
 vueIndentScriptAndStyle: false
 singleAttributePerLine: false
+printWidth: 160

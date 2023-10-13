@@ -27,6 +27,7 @@
 		"vue-router": "^4.2.5"
 	},
 	"dependencies": {
+		"javascript-time-ago": "^2.5.9",
 		"primevue": "^3.35.0"
 	}
 }

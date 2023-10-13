@@ -1,43 +1,26 @@
 <template>
 	<div class="chat-app">
-		<ChatSidebar :sessions="sessions" @session-chosen="sessionChosen" @add-chat="onAddChat" />
-		<ChatThread class="expand" :messages="messages" :session="selectedSession" />
+		<ChatSidebar @change-session="handleChangeSession" />
+		<ChatThread :session="currentSession" />
 	</div>
 </template>
 
-<script>
+<script lang="ts">
+import { Session } from '@/js/types';
+
 export default {
 	name: 'Index',
 
 	data() {
 		return {
-			status: null,
-			sessions: null,
-			selectedSession: null,
-			messages: null,
+			currentSession: {} as Session,
 		};
 	},
+
 	methods: {
-		async getSessions() {
-			return await useFetch(`${this.$config.public.BASE_URL}/sessions`);
+		handleChangeSession(session: Session) {
+			this.currentSession = session;
 		},
-		async sessionChosen(session) {
-			const {data} = await useFetch(`${this.$config.public.BASE_URL}/sessions/${session.id}/messages`);
-			this.messages = data;
-			this.selectedSession = session;
-			console.log(this.messages);
-		},
-		async onAddChat() {
-			const data = await $fetch(`${this.$config.public.BASE_URL}/sessions`, {
-				method: 'POST',
-			});
-			this.sessions.push(data);
-			this.sessionChosen(data);
-		},
-	},
-	async created() {
-		const {data} = await this.getSessions();
-		this.sessions = data;
 	},
 };
 </script>
@@ -49,16 +32,14 @@ body,
 #__layout {
 	height: 100%;
 	margin: 0;
+	font-family: 'Nunito', sans-serif;
 }
 </style>
 
 <style lang="scss" scoped>
 .chat-app {
 	display: flex;
-	height: 100%;
-}
-
-.expand {
-	flex: 1;
+	height: 100vh;
+	background-color: rgba(242, 242, 242, 1);
 }
 </style>

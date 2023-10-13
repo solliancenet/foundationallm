@@ -4,22 +4,37 @@
 			<div class="icon"></div>
 			<div class="text"></div>
 		</div>
-		<div class="input-container">
-			<input class="input" type="text" placeholder="What would you like to ask?"/>
-		</div>
+		<InputText
+			v-model="text"
+			class="input"
+			type="text"
+			placeholder="What would you like to ask?"
+			@keydown.enter="handleSend"
+		></InputText>
 		<div class="submit">
 			<div class="icon"></div>
-			<div class="text">Submit</div>
+			<Button @click="handleSend">Send</Button>
 		</div>
 	</div>
 </template>
 
-<script>
+<script lang="ts">
 export default {
 	name: 'ChatInput',
 
+	emits: ['send'],
+
 	data() {
-		return {};
+		return {
+			text: '' as string,
+		};
+	},
+
+	methods: {
+		handleSend() {
+			this.$emit('send', this.text);
+			this.text = '';
+		},
 	},
 };
 </script>
@@ -27,30 +42,27 @@ export default {
 <style lang="scss" scoped>
 .chat-input {
 	display: flex;
-	height: 200px;
-	border: 1px solid blue;
-	flex: 0 0 50px;
+	background-color: white;
+	border-radius: 8px;
 }
 
 .pre-input {
 	flex: 0 0 10%;
-	border: 1px solid green;
-}
-
-.input-container {
-	flex: 0 0 80%;
-	border: 1px solid green;
 }
 
 .input {
 	width: 100%;
 	height: 100%;
+	height: 64px;
+	transition: height 0.25s ease-in-out;
+}
+
+.input:focus {
+	// height: 192px;
 }
 
 .submit {
 	flex: 0 0 10%;
-	border: 1px solid green;
 	text-align: center;
 }
-
 </style>
