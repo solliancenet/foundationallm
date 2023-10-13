@@ -23,18 +23,28 @@ namespace FoundationaLLM.AgentFactory.API.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Retrieves a completion from an orchestration service
+        /// </summary>
+        /// <param name="completionRequest"></param>
+        /// <returns></returns>
         [HttpPost("completion")]
         public async Task<CompletionResponse> GetCompletion([FromBody] CompletionRequest completionRequest)
         {
             return await _agentFactoryService.GetCompletion(completionRequest);
         }
 
-        [HttpPost("summarize")]
+        [HttpPost("summary")]
         public async Task<SummaryResponse> GetSummary([FromBody] SummaryRequest content)
         {
             return await _agentFactoryService.GetSummary(content);
         }
 
+        /// <summary>
+        /// Sets the orchestration service to use for executing completion requests.
+        /// </summary>
+        /// <param name="orchestrationService">Name of the orchestration service to use.</param>
+        /// <returns>Returns true if setting the preferred service was successful. Otherwise, returns false.</returns>
         [HttpPost("preference", Name = "SetOrchestratorChoice")]
         public async Task<bool> SetPreference([FromBody] string orchestrationService)
         {

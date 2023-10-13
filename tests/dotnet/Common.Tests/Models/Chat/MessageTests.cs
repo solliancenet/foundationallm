@@ -1,10 +1,4 @@
 ﻿using FoundationaLLM.Common.Models.Chat;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FoundationaLLM.Common.Tests.Models.Chat
 {
@@ -46,9 +40,41 @@ namespace FoundationaLLM.Common.Tests.Models.Chat
             Assert.Null(exception);
         }
 
-        public void CreateMessage(string sessionId, string sender, int? tokens, string text, float[]? vector, bool? rating)
+        [Fact]
+        public void Constructor_ShouldInitializeProperties()
         {
-            var message = new Message(sessionId, sender, tokens, text, vector, rating);
+            // Arrange
+            string expectedSessionId = "Session_1";
+            string expectedSender = "Sender_1";
+            int? expectedTokens = 10;
+            string expectedText = "Text";
+            float[] expectedVector = new float[] { 1,2,3 };
+            bool? expectedRating = true;
+
+            // Act
+            var message = CreateMessage(
+                expectedSessionId,
+                expectedSender,
+                expectedTokens,
+                expectedText,
+                expectedVector,
+                expectedRating
+            );
+
+            // Assert
+            Assert.NotEmpty(message.Id);
+            Assert.Equal("Message", message.Type);
+            Assert.Equal(expectedSessionId, message.SessionId);
+            Assert.Equal(expectedSender, message.Sender);
+            Assert.Equal(expectedTokens, message.Tokens);
+            Assert.Equal(expectedText, message.Text);
+            Assert.Equal(expectedRating, message.Rating);
+            Assert.Equal(expectedVector, message.Vector);
+        }
+
+        public Message CreateMessage(string sessionId, string sender, int? tokens, string text, float[]? vector, bool? rating)
+        {
+            return new Message(sessionId, sender, tokens, text, vector, rating);
         }
     }
 }

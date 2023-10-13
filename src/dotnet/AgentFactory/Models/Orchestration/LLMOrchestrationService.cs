@@ -1,14 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace FoundationaLLM.AgentFactory.Models.Orchestration
+﻿namespace FoundationaLLM.AgentFactory.Models.Orchestration
 {
+    /// <summary>
+    /// Orchestration service enumerator.
+    /// </summary>
     public enum LLMOrchestrationService
     {
+        /// <summary>
+        /// LangChain orchestration service
+        /// </summary>
         LangChain,
+        /// <summary>
+        /// SemanticKernel orchestration service
+        /// </summary>
         SemanticKernel
     }
 }
