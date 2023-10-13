@@ -58,7 +58,7 @@ namespace FoundationaLLM.Gatekeeper.API
             builder.Services.AddScoped<IGatekeeperService, GatekeeperService>();
 
             builder.Services
-                .AddHttpClient(HttpClients.AgentFactoryAPIClient,
+                .AddHttpClient(HttpClients.AgentFactoryAPI,
                     httpClient =>
                     {
                         httpClient.BaseAddress = new Uri(builder.Configuration["FoundationaLLM:AgentFactoryAPI:APIUrl"]);

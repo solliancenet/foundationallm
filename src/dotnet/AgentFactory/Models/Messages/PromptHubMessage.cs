@@ -7,10 +7,9 @@ using System.Threading.Tasks;
 
 namespace FoundationaLLM.AgentFactory.Core.Models.Messages
 {
-    public record AgentHubMessage
+    public record PromptHubMessage
     {
         [JsonPropertyName("agent_name")]
         public string? AgentName { get; set; }
-
     }
 }

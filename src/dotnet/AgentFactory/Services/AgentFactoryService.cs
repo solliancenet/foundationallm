@@ -24,16 +24,27 @@ public class AgentFactoryService : IAgentFactoryService
     public AgentFactoryService(
         ISemanticKernelOrchestrationService semanticKernelOrchestration,
         ILangChainOrchestrationService langChainOrchestration,
+        
         IAgentHubService agentHubService,
         IOptions<AgentFactorySettings> agentFactorySettings,
         IOptions<AgentHubSettings> agentHubSettings,
+
+        //IPromptHubService promptHubService,
+        //IOptions<PromptHubSettings> promptHubSettings,
+
         ILogger<AgentFactoryService> logger)
     {
         _semanticKernelOrchestration = semanticKernelOrchestration;
         _langChainOrchestration = langChainOrchestration;
+        
         _agentHubService = agentHubService;
         _agentFactorySettings = agentFactorySettings.Value;
         _agentHubSettings = agentHubSettings.Value;
+
+        //_promptHubService = promptHubService;
+        //_promptFactorySettings = promptFactorySettings.Value;
+        //_promptHubSettings = promptHubSettings.Value;
+
         _logger = logger;
 
         SetLLMOrchestrationPreference(_agentFactorySettings.DefaultOrchestrationService);
@@ -72,6 +83,10 @@ public class AgentFactoryService : IAgentFactoryService
         {
             //get all agents for prompt...
             //List<AgentHubResponse> agents = await _agentHubService.ResolveRequest(completionRequest.Prompt, "");
+
+            //get stuff from prompt hub
+            //List<PromptHubResponse> prompts = await _promptHubService.ResolveRequest(completionRequest.Prompt, "");
+
 
             // Generate the completion to return to the user
             var result = await GetLLMOrchestrationService().GetCompletion(

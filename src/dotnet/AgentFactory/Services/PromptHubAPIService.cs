@@ -17,16 +17,16 @@ using FoundationaLLM.Common.Interfaces;
 
 namespace FoundationaLLM.AgentFactory.Core.Services;
 
-public class AgentHubAPIService : IAgentHubService
+public class PromptHubAPIService : IPromptHubService
 {
-    readonly AgentHubSettings _settings;
-    readonly ILogger<AgentHubAPIService> _logger;
+    readonly PromptHubSettings _settings;
+    readonly ILogger<PromptHubAPIService> _logger;
     private readonly IHttpClientFactoryService _httpClientFactoryService;
     readonly JsonSerializerSettings _jsonSerializerSettings;
 
-    public AgentHubAPIService(
-            IOptions<AgentHubSettings> options,
-            ILogger<AgentHubAPIService> logger,
+    public PromptHubAPIService(
+            IOptions<PromptHubSettings> options,
+            ILogger<PromptHubAPIService> logger,
             IHttpClientFactoryService httpClientFactoryService)
     {
         _settings = options.Value;
@@ -61,12 +61,12 @@ public class AgentHubAPIService : IAgentHubService
     {
         try
         {
-            AgentHubMessage ahm = new AgentHubMessage { AgentName = "TODO : CHANGE ME" };
+            PromptHubMessage phm = new PromptHubMessage { AgentName = "TODO : SOME AGENT NAME" };
             
             var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.AgentHubAPI);
 
             var responseMessage = await client.PostAsync("/resolve_request", new StringContent(
-                    JsonConvert.SerializeObject(ahm),
+                    JsonConvert.SerializeObject(phm),
                     Encoding.UTF8, "application/json"));
 
             if (responseMessage.IsSuccessStatusCode)
