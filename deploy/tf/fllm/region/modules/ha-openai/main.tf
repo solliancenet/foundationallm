@@ -66,7 +66,7 @@ resource "azurerm_api_management" "apim" {
   publisher_email      = var.publisher.email
   publisher_name       = var.publisher.name
   resource_group_name  = var.resource_group.name
-  sku_name             = "Premium_1"
+  sku_name             = "Developer_1"
   virtual_network_type = "Internal"
   tags                 = var.tags
 

@@ -50,8 +50,37 @@ locals {
       service_endpoints = []
 
       nsg_rules = {
-        inbound  = merge(local.default_nsg_rules.inbound, {})
-        outbound = merge(local.default_nsg_rules.outbound, {})
+        inbound  = merge({}, {
+          "allow-vnet-inbound" = {
+            access                     = "Allow"
+            destination_address_prefix = "VirtualNetwork"
+            destination_port_range     = "*"
+            priority                   = 192
+            protocol                   = "*"
+            source_address_prefix      = "VirtualNetwork"
+            source_port_range          = "*"
+          }
+        })
+        outbound = merge({}, {
+          "allow-kv" = {
+            access                     = "Allow"
+            destination_address_prefix = "AzureKeyVault"
+            destination_port_range     = "443"
+            priority                   = 224
+            protocol                   = "Tcp"
+            source_address_prefix      = "VirtualNetwork"
+            source_port_range          = "*"
+          }
+          "allow-vnet" = {
+            access                     = "Allow"
+            destination_address_prefix = "VirtualNetwork"
+            destination_port_range     = "*"
+            priority                   = 4068
+            protocol                   = "*"
+            source_address_prefix      = "VirtualNetwork"
+            source_port_range          = "*"
+          }
+        })
       }
     }
     "Datasources" = {
