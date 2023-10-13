@@ -61,8 +61,8 @@ namespace FoundationaLLM.Gatekeeper.API
                 .AddHttpClient(HttpClients.AgentFactoryAPI,
                     httpClient =>
                     {
-                        httpClient.BaseAddress = new Uri(builder.Configuration["FoundationaLLM:AgentFactoryAPI:APIUrl"]);
-                        //httpClient.DefaultRequestHeaders.Add("X-API-KEY", builder.Configuration["FoundationaLLM:AgentFactoryAPI:APIKey"]);
+                        httpClient.BaseAddress = new Uri(builder.Configuration["FoundationaLLM:DownstreamAPIs:AgentFactoryAPI:APIUrl"]);
+                        //httpClient.DefaultRequestHeaders.Add("X-API-KEY", builder.Configuration["FoundationaLLM:DownstreamAPIs:AgentFactoryAPI:APIKey"]);
                     })
                 .AddTransientHttpErrorPolicy(policyBuilder =>
                     policyBuilder.WaitAndRetryAsync(
@@ -149,11 +149,16 @@ namespace FoundationaLLM.Gatekeeper.API
             };
             foreach (var apiSetting in builder.Configuration.GetSection("FoundationaLLM:DownstreamAPIs").GetChildren())
             {
+                var serviceProvider = builder.Services.BuildServiceProvider();
+                var kvConfig = serviceProvider.GetRequiredService<Common.Interfaces.IConfigurationService>();
                 var key = apiSetting.Key;
                 var settings = apiSetting.Get<DownstreamAPIKeySettings>();
+
+                var azureAdSecret = kvConfig.GetValue<string>(settings.APIKeySecretName);
+
                 downstreamAPISettings.DownstreamAPIs[key] = settings;
                 builder.Services
-                    .AddHttpClient(key, client => { client.BaseAddress = new Uri(settings.APIUrl); })
+                    .AddHttpClient(key, client => { client.BaseAddress = new Uri(settings.APIUrl); client.DefaultRequestHeaders.Add("X-API-KEY", azureAdSecret); })
                     .AddTransientHttpErrorPolicy(policyBuilder =>
                         policyBuilder.WaitAndRetryAsync(
                             3, retryNumber => TimeSpan.FromMilliseconds(600)));
