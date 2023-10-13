@@ -14,7 +14,7 @@ namespace FoundationaLLM.Common.Constants
         /// <summary>
         /// API key header used by APIs to authenticate requests.
         /// </summary>
-        public const string APIKey = "X-API-Key";
+        public const string APIKey = "X-API-KEY";
         /// <summary>
         /// User identity header used by APIs to pass user identity information.
         /// </summary>
