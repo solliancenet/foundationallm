@@ -27,10 +27,10 @@
 					<!-- Chat icons -->
 					<span class="chat__icons">
 						<!-- Rename session -->
-						<button small @click="openRenameModal(session)">edit</button>
+						<button small @click.stop="openRenameModal(session)">edit</button>
 
 						<!-- Delete session -->
-						<button small @click="sessionToDelete = session">x</button>
+						<button small @click.stop="sessionToDelete = session">x</button>
 					</span>
 				</div>
 			</div>
