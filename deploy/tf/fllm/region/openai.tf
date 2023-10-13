@@ -7,6 +7,23 @@ locals {
   }
 }
 
+module "openai_keyvault" {
+  source = "./modules/keyvault"
+
+  action_group_id            = azurerm_monitor_action_group.do_nothing.id
+  log_analytics_workspace_id = module.logs.id
+  resource_group             = azurerm_resource_group.rgs["OAI"]
+  resource_prefix            = "${local.resource_prefix}-OAI"
+  tags                       = local.tags
+
+  private_endpoint = {
+    subnet_id = azurerm_subnet.subnets["FLLMOpenAI"].id
+    private_dns_zone_ids = [
+      local.private_dns_zones["privatelink.vaultcore.azure.net"].id
+    ]
+  }
+}
+
 resource "azurerm_api_management" "openai_apim" {
   location             = local.location
   name                 = join("-", [local.resource_prefix, "OAI", "apim"])
@@ -184,25 +201,17 @@ resource "azurerm_cognitive_deployment" "completions" {
 resource "azurerm_key_vault_secret" "openai_primary_key" {
   for_each = azurerm_cognitive_account.openai
 
-  key_vault_id = azurerm_key_vault.openai_keyvault.id
+  key_vault_id = module.openai_keyvault.id
   name         = join("-", [local.resource_prefix, each.key, "primarykey"])
   value        = each.value.primary_access_key
-
-  depends_on = [
-    azurerm_role_assignment.openai_kv_sp_role
-  ]
 }
 
 resource "azurerm_key_vault_secret" "openai_secondary_key" {
   for_each = azurerm_cognitive_account.openai
 
-  key_vault_id = azurerm_key_vault.openai_keyvault.id
+  key_vault_id = module.openai_keyvault.id
   name         = join("-", [local.resource_prefix, each.key, "secondarykey"])
   value        = each.value.secondary_access_key
-
-  depends_on = [
-    azurerm_role_assignment.openai_kv_sp_role
-  ]
 }
 
 resource "azurerm_private_dns_a_record" "apim_azure_api" {
@@ -278,5 +287,5 @@ resource "azurerm_public_ip" "openai_apim_mgmt_ip" {
 resource "azurerm_role_assignment" "openai_apim" {
   principal_id         = azurerm_api_management.openai_apim.identity.0.principal_id
   role_definition_name = "Key Vault Secrets User"
-  scope                = azurerm_key_vault.openai_keyvault.id
+  scope                = module.openai_keyvault.id
 }
