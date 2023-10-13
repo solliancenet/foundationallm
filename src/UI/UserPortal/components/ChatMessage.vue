@@ -52,7 +52,7 @@
 						:closable="false"
 						:style="{ width: '50vw' }"
 					>
-						<p>{{ prompt.prompt }}</p>
+						<p class="prompt-text">{{ prompt.prompt }}</p>
 						<template #footer>
 							<Button label="Close" @click="viewPrompt = false" />
 						</template>
@@ -155,5 +155,10 @@ export default {
 	height: 32px;
 	border-radius: 50%;
 	margin-right: 12px;
+}
+
+.prompt-text {
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
 }
 </style>

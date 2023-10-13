@@ -2,7 +2,7 @@
 	<div class="chat-sidebar">
 		<!-- Sidebar header -->
 		<div class="chat-sidebar__header">
-			<span>Sessions</span>
+			<span>Chats</span>
 			<button @click="handleAddSession">
 				<span class="text">+</span>
 			</button>
