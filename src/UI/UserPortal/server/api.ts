@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Message, Session } from '@/js/types';
+import { Message, Session, CompletionPrompt } from '@/js/types';
 declare const API_URL: string;
 
 export default {
@@ -15,8 +15,12 @@ export default {
     return await $fetch(`${API_URL}/sessions/${sessionId}`, { method: 'DELETE' }) as Session;
   },
 
-  async getMessages(sessionId: string): Promise<Array<Message>> {
+  async getMessages(sessionId: string) {
     return await $fetch(`${API_URL}/sessions/${sessionId}/messages`) as Array<Message>;
+  },
+
+  async getPrompt(sessionId: string, promptId: string) {
+    return await $fetch(`${API_URL}/sessions/${sessionId}/completionprompts/${promptId}`) as CompletionPrompt;
   },
 
   async rateMessage(message: Message, rating: Message['rating']) {

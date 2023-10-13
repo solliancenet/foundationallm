@@ -38,7 +38,21 @@
 				</span>
 
 				<span class="view-prompt">
-					<button>View Prompt</button>
+					<button @click="handleViewPrompt">View Prompt</button>
+
+					<!-- Prompt dialog -->
+					<Dialog
+						:visible="viewPrompt"
+						modal
+						header="Completion Prompt"
+						:closable="false"
+						:style="{ width: '50vw' }"
+					>
+						<p>{{ prompt.prompt }}</p>
+						<template #footer>
+							<Button label="Ok" @click="viewPrompt = false" />
+						</template>
+					</Dialog>
 				</span>
 			</div>
 		</div>
@@ -47,7 +61,8 @@
 
 <script lang="ts">
 import type { PropType } from 'vue';
-import { Message } from '@/js/types';
+import { Message, CompletionPrompt } from '@/js/types';
+import api from '~/server/api';
 
 export default {
 	name: 'ChatMessage',
@@ -61,9 +76,22 @@ export default {
 
 	emits: ['rate'],
 
+	data() {
+		return {
+			prompt: {} as CompletionPrompt,
+			viewPrompt: false,
+		};
+	},
+
 	methods: {
 		handleRate(message: Message, like: Boolean) {
 			this.$emit('rate', { message, like });
+		},
+
+		async handleViewPrompt() {
+			const prompt = await api.getPrompt(this.message.sessionId, this.message.completionPromptId);
+			this.prompt = prompt;
+			this.viewPrompt = true;
 		}
 	},
 };
