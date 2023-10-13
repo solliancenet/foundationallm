@@ -98,33 +98,33 @@ module "cosmosdb" {
   }
 }
 
-#module "ha_openai" {
-#  source = "./modules/ha-openai"
-#
-#  action_group_id            = azurerm_monitor_action_group.do_nothing.id
-#  instance_count             = 4
-#  log_analytics_workspace_id = module.logs.id
-#  resource_group             = azurerm_resource_group.rgs["OAI"]
-#  resource_prefix            = "${local.resource_prefix}-OAI"
-#  tags                       = local.tags
-#
-#  private_endpoint = {
-#    subnet_id = azurerm_subnet.subnets["Services"].id
-#    apim_private_dns_zones = [
-#      local.private_dns_zones["azure-api.net"],
-#      local.private_dns_zones["developer.azure-api.net"],
-#      local.private_dns_zones["management.azure-api.net"],
-#      local.private_dns_zones["portal.azure-api.net"],
-#      local.private_dns_zones["scm.azure-api.net"]
-#    ]
-#    kv_private_dns_zone_ids = [
-#      local.private_dns_zones["privatelink.vaultcore.azure.net"].id
-#    ]
-#    openai_private_dns_zone_ids = [
-#      local.private_dns_zones["privatelink.openai.azure.com"].id
-#    ]
-#  }
-#}
+module "ha_openai" {
+  source = "./modules/ha-openai"
+
+  action_group_id            = azurerm_monitor_action_group.do_nothing.id
+  instance_count             = 4
+  log_analytics_workspace_id = module.logs.id
+  resource_group             = azurerm_resource_group.rgs["OAI"]
+  resource_prefix            = "${local.resource_prefix}-OAI"
+  tags                       = local.tags
+
+  private_endpoint = {
+    subnet_id = azurerm_subnet.subnets["Services"].id
+    apim_private_dns_zones = [
+      local.private_dns_zones["azure-api.net"],
+      local.private_dns_zones["developer.azure-api.net"],
+      local.private_dns_zones["management.azure-api.net"],
+      local.private_dns_zones["portal.azure-api.net"],
+      local.private_dns_zones["scm.azure-api.net"]
+    ]
+    kv_private_dns_zone_ids = [
+      local.private_dns_zones["privatelink.vaultcore.azure.net"].id
+    ]
+    openai_private_dns_zone_ids = [
+      local.private_dns_zones["privatelink.openai.azure.com"].id
+    ]
+  }
+}
 
 module "ops_keyvault" {
   source = "./modules/keyvault"

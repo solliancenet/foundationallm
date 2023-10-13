@@ -11,7 +11,7 @@ locals {
       severity    = 0
     }
     latency = {
-      aggregation = "Average"
+      aggregation = "Maximum"
       description = "Service request latency greater than 1000ms for 1 hour"
       frequency   = "PT1M"
       metric_name = "DailyStorageUsage"
