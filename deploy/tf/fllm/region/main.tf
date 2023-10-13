@@ -114,6 +114,28 @@ module "search" {
   }
 }
 
+module "storage" {
+  source = "./modules/storage-account"
+
+  action_group_id            = azurerm_monitor_action_group.do_nothing.id
+  log_analytics_workspace_id = module.logs.id
+  resource_group             = azurerm_resource_group.rgs["FLLMStorage"]
+  resource_prefix            = "${local.resource_prefix}-FLLM-prompt"
+  tags                       = local.tags
+
+  private_endpoint = {
+    subnet_id = azurerm_subnet.subnets["FLLMStorage"].id
+    private_dns_zone_ids = {
+      blob  = [var.private_dns_zones["privatelink.blob.core.windows.net"].id]
+      dfs   = [var.private_dns_zones["privatelink.dfs.core.windows.net"].id]
+      file  = [var.private_dns_zones["privatelink.file.core.windows.net"].id]
+      queue = [var.private_dns_zones["privatelink.queue.core.windows.net"].id]
+      table = [var.private_dns_zones["privatelink.table.core.windows.net"].id]
+      web   = [var.private_dns_zones["privatelink.azurewebsites.net"].id]
+    }
+  }
+}
+
 module "logs" {
   source = "./modules/log-analytics-workspace"
 
