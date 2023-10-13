@@ -32,5 +32,5 @@ async def get_completion(completion_request: CompletionRequest) -> CompletionRes
         Object containing the completion and token usage details
     """
     
-    completion_agent = AgentFactory(request = completion_request, config = app_config).get_agent()
+    completion_agent = AgentFactory(completion_request = completion_request, config = app_config).get_agent()
     return completion_agent.run()

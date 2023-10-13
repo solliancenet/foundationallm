@@ -28,7 +28,7 @@ class AgentFactory:
         app_config : Configuration
             Application configuration class for retrieving configuration settings.
         """
-        self.request = completion_request
+        self.completion_request = completion_request
         self.agent = completion_request.agent
         self.language_model = completion_request.language_model
         self.config = config
@@ -42,7 +42,7 @@ class AgentFactory:
         BaseLanguageModel
             Returns the language model to use for the completion.
         """
-        return LanguageModelFactory(completion_request=self.request, config=self.config).get_llm()
+        return LanguageModelFactory(completion_request=self.completion_request, config=self.config).get_llm()
                         
     def get_agent(self) -> AgentBase:
         """
@@ -57,12 +57,12 @@ class AgentFactory:
         """
         match self.agent.type:
             case 'anomaly':
-                return AnomalyDetectionAgent(self.request, llm=self.get_llm(), app_config=self.config)
+                return AnomalyDetectionAgent(self.completion_request, llm=self.get_llm(), app_config=self.config)
             case 'csv':
-                return CSVAgent(self.request, llm=self.get_llm(), app_config=self.config)
+                return CSVAgent(self.completion_request, llm=self.get_llm(), app_config=self.config)
             case 'sql':
-                return SqlDbAgent(self.request, llm=self.get_llm(), app_config=self.config)
+                return SqlDbAgent(self.completion_request, llm=self.get_llm(), app_config=self.config)
             case 'summary':
-                return SummaryAgent(self.request, llm=self.get_llm(), app_config=self.config)
+                return SummaryAgent(self.completion_request, llm=self.get_llm(), app_config=self.config)
             case _:
-                return ConversationalAgent(self.request, llm=self.get_llm(), app_config=self.config)
+                return ConversationalAgent(self.completion_request, llm=self.get_llm(), app_config=self.config)

@@ -1,5 +1,6 @@
 from langchain.base_language import BaseLanguageModel
 from foundationallm.config import Configuration
+import foundationallm.models.orchestration.completion_request as CompletionRequest
 from foundationallm.langchain.language_models import (
     AzureChatModel,
     AzureTextCompletionModel,
@@ -8,8 +9,6 @@ from foundationallm.langchain.language_models import (
     LanguageModelProviders,
     LanguageModelTypes
 )
-
-from foundationallm.models.orchestration import CompletionRequest
 
 class LanguageModelFactory:
     """
