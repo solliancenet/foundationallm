@@ -2,42 +2,67 @@ from langchain.base_language import BaseLanguageModel
 from langchain.llms.openai import OpenAIChat
 
 from foundationallm.config import Configuration
-from foundationallm.langchain.language_models.chat_models import AzureChatOpenAILanguageModel
-
-from foundationallm.models.orchestration import OrchestrationRequestBase
+from foundationallm.models.orchestration import CompletionRequest
+from foundationallm.langchain.language_models import LanguageModelFactory
 from foundationallm.langchain.agents import AgentBase
 from foundationallm.langchain.agents import AnomalyDetectionAgent
 from foundationallm.langchain.agents import CSVAgent
 from foundationallm.langchain.agents import SqlDbAgent
 from foundationallm.langchain.agents import SummaryAgent
+from foundationallm.langchain.agents import ConversationalAgent
 
 class AgentFactory:
     """
     Factory to determine which agent to use.
     """
     
-    def __init__(self, request: OrchestrationRequestBase, config: Configuration):
-        self.request = request
-        self.agent_type = request.agent.type
-        self.language_model = request.agent.language_model
+    def __init__(self, completion_request: CompletionRequest, config: Configuration):
+        """
+        Initializes an AgentFactory for selecting which agent to use for completion.
+
+        Parameters
+        ----------
+        completion_request : CompletionRequest
+            The completion request object containing the user prompt to execute, message history,
+            and agent and data source metadata.
+        app_config : Configuration
+            Application configuration class for retrieving configuration settings.
+        """
+        self.completion_request = completion_request
+        self.agent = completion_request.agent
+        self.language_model = completion_request.language_model
         self.config = config
     
-    def get_llm(self) -> BaseLanguageModel: # TODO: Move to LLMFactory
-        match self.language_model.type:
-            case 'openai':
-                if self.language_model.subtype == 'chat':
-                    if self.language_model.provider == 'azure':
-                        return AzureChatOpenAILanguageModel(config = self.config)
-                    else:
-                        return OpenAIChat
+    def get_llm(self) -> BaseLanguageModel:
+        """
+        Retrieves the language model to use for the completion.
+        
+        Returns
+        -------
+        BaseLanguageModel
+            Returns the language model to use for the completion.
+        """
+        return LanguageModelFactory(completion_request=self.completion_request, config=self.config).get_llm()
                         
     def get_agent(self) -> AgentBase:
-        match self.agent_type:
+        """
+        Retrieves the best agent for responding to the user prompt.
+        
+        Returns
+        -------
+        AgentBase
+            Returns the best agent for responding to the user prompt.
+            The default agent will be returned in cases where the other
+            available agents are not suited to respond to the user prompt.
+        """
+        match self.agent.type:
             case 'anomaly':
-                return AnomalyDetectionAgent(self.request, llm=self.get_llm(), app_config=self.config)
+                return AnomalyDetectionAgent(self.completion_request, llm=self.get_llm(), app_config=self.config)
             case 'csv':
-                return CSVAgent(self.request, llm=self.get_llm(), app_config=self.config)
+                return CSVAgent(self.completion_request, llm=self.get_llm(), app_config=self.config)
             case 'sql':
-                return SqlDbAgent(self.request, llm=self.get_llm(), app_config=self.config)
+                return SqlDbAgent(self.completion_request, llm=self.get_llm(), app_config=self.config)
             case 'summary':
-                return SummaryAgent(self.request, llm=self.get_llm(), app_config=self.config)
+                return SummaryAgent(self.completion_request, llm=self.get_llm(), app_config=self.config)
+            case _:
+                return ConversationalAgent(self.completion_request, llm=self.get_llm(), app_config=self.config)

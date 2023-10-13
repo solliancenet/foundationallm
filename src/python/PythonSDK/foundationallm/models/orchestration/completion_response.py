@@ -1,7 +1,11 @@
-from typing import Union
+from typing import List, Union
 
-from .orchestration_response_base import OrchestrationResponseBase
+from .orchestration_response import OrchestrationResponse
 
-class CompletionResponse(OrchestrationResponseBase):
+class CompletionResponse(OrchestrationResponse):
+    """
+    Response from a language model.
+    """
+    
     completion: Union[str, set]
-    #user_prompt_embedding: list(float) = None
+    user_prompt_embedding: List[float] = list()

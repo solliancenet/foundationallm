@@ -1,12 +1,11 @@
 from langchain.agents import create_csv_agent
 from langchain.agents.agent_types import AgentType
 from langchain.callbacks import get_openai_callback
-from langchain.prompts import PromptTemplate
 
 from foundationallm.config import Configuration
 from foundationallm.langchain.agents import AgentBase
-from foundationallm.langchain.data_sources.csv import CSVConfig
-from foundationallm.langchain.language_models.chat_models import AzureChatOpenAILanguageModel
+from foundationallm.langchain.data_sources.csv import CSVConfiguration
+from foundationallm.langchain.language_models import LanguageModelBase
 from foundationallm.models.orchestration import CompletionRequest, CompletionResponse
 
 class CSVAgent(AgentBase):
@@ -14,11 +13,24 @@ class CSVAgent(AgentBase):
     Agent for analyzing the contents of delimited files (e.g., CSV).
     """
     
-    def __init__(self, completion_request: CompletionRequest, llm: AzureChatOpenAILanguageModel, app_config: Configuration):
-        self.agent_prompt_prefix = completion_request.agent.prompt_template #PromptTemplate.from_template(completion_request.agent.prompt_template)
+    def __init__(self, completion_request: CompletionRequest, llm: LanguageModelBase, app_config: Configuration):
+        """
+        Initializes a CSV agent.
+
+        Parameters
+        ----------
+        completion_request : CompletionRequest
+            The completion request object containing the user prompt to execute, message history,
+            and agent and data source metadata.
+        llm : LanguageModelBase
+            The language model to use for executing the completion request.
+        app_config : Configuration
+            Application configuration class for retrieving configuration settings.
+        """
+        self.agent_prompt_prefix = completion_request.agent.prompt_template
         self.user_prompt = completion_request.user_prompt
         self.llm = llm.get_language_model()
-        self.data_source_config: CSVConfig = completion_request.data_source.configuration
+        self.data_source_config: CSVConfiguration = completion_request.data_source.configuration
         if self.data_source_config.path_value_is_secret:
             self.source_file_path = app_config.get_value(self.data_source_config.source_file_path)
         else:
@@ -34,9 +46,25 @@ class CSVAgent(AgentBase):
 
     @property
     def prompt_template(self) -> str:
+        """
+        Property for viewing the agent's prompt template.
+        
+        Returns
+        str
+            Returns the prompt template for the agent.
+        """
         return self.agent.agent.llm_chain.prompt.template
     
     def run(self) -> CompletionResponse:
+        """
+        Executes a query against the contents of a CSV file.
+        
+        Returns
+        -------
+        CompletionResponse
+            Returns a CompletionResponse with the CSV file query completion response, 
+            the user_prompt, and token utilization and execution cost details.
+        """
         with get_openai_callback() as cb:
             return CompletionResponse(
                 completion = self.agent.run(self.user_prompt),

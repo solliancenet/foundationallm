@@ -1,11 +1,11 @@
 from abc import abstractmethod
 from langchain.sql_database import SQLDatabase
 
-#from foundationallm.credentials import AzureCredential
 from foundationallm.config import Configuration
-from foundationallm.langchain.data_sources.sql import SqlDbConfig
+from foundationallm.langchain.data_sources.sql import SQLDatabaseConfiguration
 
-class SqlDbDataSource:
+class SQLDatabaseDataSource:
+    """Data source object for a SQL database."""
     dialect: str
     driver: str
     host: str
@@ -14,7 +14,17 @@ class SqlDbDataSource:
     username: str
     password: str
 
-    def __init__(self, sql_db_config: SqlDbConfig, app_config: Configuration):
+    def __init__(self, sql_db_config: SQLDatabaseConfiguration, app_config: Configuration):
+        """
+        Initializes a SQL database data source.
+
+        Parameters
+        ----------
+        sql_db_config : SqlDbConfig
+            SQL Database configuration class for providing settings to the database.
+        app_config : Configuration
+            Application configuration class for retrieving configuration settings.
+        """
         self.sql_db_config = sql_db_config
         self.dialect = sql_db_config.dialect
         self.driver = self.get_driver()
@@ -27,6 +37,14 @@ class SqlDbDataSource:
         self.sample_rows_in_table_info = sql_db_config.few_shot_example_count
     
     def get_database(self) -> SQLDatabase:
+        """
+        Retrieves a SQLDatabase object
+        
+        Returns
+        -------
+        SQLDatabase
+            Returns a connection to a SQL database.
+        """
         return SQLDatabase.from_uri(
             database_uri = self.get_connection_string(),
             include_tables=self.include_tables,
@@ -40,17 +58,7 @@ class SqlDbDataSource:
     @abstractmethod
     def get_driver(self) -> str:
         """Retrieves the driver to use for connecting to the database."""
-        # match self.dialect:
-        #     case 'mssql':
-        #         return 'pyodbc'
-        #     case 'postgresql':
-        #         return 'pyscopg2'
     
     @abstractmethod
     def get_default_port(self) -> int:
         """Retrieves the default port for the database."""
-        # match self.dialect:
-        #     case 'mssql':
-        #         return 1433
-        #     case 'postgresql':
-        #         return 5432

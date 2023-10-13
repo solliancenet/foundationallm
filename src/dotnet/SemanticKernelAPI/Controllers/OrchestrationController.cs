@@ -23,7 +23,7 @@ namespace FoundationaLLM.SemanticKernel.API.Controllers
         [HttpPost("completion")]
         public async Task<CompletionResponse> GetCompletion([FromBody] CompletionRequest request)
         {
-            var completionResponse = await _semanticKernelService.GetCompletion(request.Prompt, request.MessageHistory);
+            var completionResponse = await _semanticKernelService.GetCompletion(request.UserPrompt, request.MessageHistory);
 
             return new CompletionResponse() { Completion = completionResponse };
         }

@@ -46,9 +46,9 @@ namespace FoundationaLLM.Core.Services
             return new CompletionResponse
             {
                 Completion = "A problem on my side prevented me from responding.",
-                UserPrompt = completionRequest.Prompt,
-                UserPromptTokens = 0,
-                ResponseTokens = 0,
+                UserPrompt = completionRequest.UserPrompt,
+                PromptTokens = 0,
+                CompletionTokens = 0,
                 UserPromptEmbedding = new float[] { 0 }
             };
         }
