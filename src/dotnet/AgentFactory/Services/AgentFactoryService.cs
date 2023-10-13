@@ -74,20 +74,22 @@ public class AgentFactoryService : IAgentFactoryService
             //List<AgentHubResponse> agents = await _agentHubService.ResolveRequest(completionRequest.Prompt, "");
 
             // Generate the completion to return to the user
-            var result = await GetLLMOrchestrationService().GetResponse(completionRequest.Prompt,
-                completionRequest.MessageHistory);
+            var result = await GetLLMOrchestrationService().GetCompletion(
+                completionRequest.UserPrompt,
+                completionRequest.MessageHistory
+            );
 
             return result;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error retrieving completion from the orchestration service for {completionRequest.Prompt}.");
+            _logger.LogError(ex, $"Error retrieving completion from the orchestration service for {completionRequest.UserPrompt}.");
             return new CompletionResponse
             {
                 Completion = "A problem on my side prevented me from responding.",
-                UserPrompt = completionRequest.Prompt,
-                UserPromptTokens = 0,
-                ResponseTokens = 0,
+                UserPrompt = completionRequest.UserPrompt,
+                PromptTokens = 0,
+                CompletionTokens = 0,
                 UserPromptEmbedding = new float[] { 0 }
             };
         }

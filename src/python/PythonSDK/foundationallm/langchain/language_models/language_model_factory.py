@@ -33,12 +33,11 @@ class LanguageModelFactory:
             match self.language_model.provider:
                 case LanguageModelProviders.MICROSOFT:
                     if self.language_model.use_chat:
-                        return AzureChatModel(config = self.config)
+                        return AzureChatModel(language_model = self.language_model, config = self.config)
                     else:
-                        return AzureTextCompletionModel(config = self.config)
+                        return AzureTextCompletionModel(language_model = self.language_model,config = self.config)
                 case LanguageModelProviders.OPENAI:
                     if self.language_model.use_chat:
-                        return OpenAIChatModel(config = self.config)
+                        return OpenAIChatModel(language_model = self.language_model,config = self.config)
                     else:
-                        return OpenAITextCompletionModel(config = self.config)
-                
+                        return OpenAITextCompletionModel(language_model = self.language_model,config = self.config)

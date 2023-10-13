@@ -1,4 +1,6 @@
 ﻿using FoundationaLLM.AgentFactory.Core.Models.Orchestration;
+using FoundationaLLM.AgentFactory.Core.Models.Orchestration.DataSourceConfigurations;
+using FoundationaLLM.AgentFactory.Core.Models.Orchestration.Metadata;
 using FoundationaLLM.AgentFactory.Interfaces;
 using FoundationaLLM.AgentFactory.Models.ConfigurationOptions;
 using FoundationaLLM.Common.Models.Chat;
@@ -11,6 +13,9 @@ using System.Text;
 
 namespace FoundationaLLM.AgentFactory.Services
 {
+    /// <summary>
+    /// The LangChain orchestration service.
+    /// </summary>
     public class LangChainOrchestrationService : ILangChainOrchestrationService
     {
         readonly LangChainOrchestrationServiceSettings _settings;
@@ -18,6 +23,9 @@ namespace FoundationaLLM.AgentFactory.Services
         private readonly IHttpClientFactory _httpClientFactory;
         readonly JsonSerializerSettings _jsonSerializerSettings;
 
+        /// <summary>
+        /// LangChain Orchestration Service
+        /// </summary>
         public LangChainOrchestrationService(
             IOptions<LangChainOrchestrationServiceSettings> options,
             ILogger<LangChainOrchestrationService> logger,
@@ -29,50 +37,61 @@ namespace FoundationaLLM.AgentFactory.Services
             _jsonSerializerSettings = CommonJsonSerializerSettings.GetJsonSerializerSettings();
         }
 
+        /// <summary>
+        /// Flag indicating whether the orchestration service has been initialized.
+        /// </summary>
         public bool IsInitialized => GetServiceStatus();
 
-        public async Task<CompletionResponse> GetResponse(string userPrompt, List<MessageHistoryItem> messageHistory)
+        /// <summary>
+        /// Executes a completion request against the orchestration service.
+        /// </summary>
+        /// <param name="userPrompt">The user entered prompt.</param>
+        /// <param name="messageHistory">List of previous user prompts.</param>
+        /// <returns>Returns a completion response from the orchestration engine.</returns>
+        public async Task<CompletionResponse> GetCompletion(string userPrompt, List<MessageHistoryItem> messageHistory)
         {
             var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.LangChainAPIClient);
 
-            var request = new LangChainCompletionRequest()
+            // TODO: This should be created and then populated by calls to the Hub APIs.
+            var request = new LLMOrchestrationCompletionRequest()
             {
-                user_prompt = userPrompt,
-                agent = new LangChainAgent
+                UserPrompt = userPrompt,
+                Agent = new Agent
                 {
-                    name = "anomaly-detector",
-                    type = "anomaly",
-                    description = "Useful for detecting anomalies in a dataset.",
-                    prompt_template = "You are an anomaly detection agent tasked with inspecting an input product description for anomalies.\n\nYou should attempt to identify difference in the bottle volume and price by comparing the input text to similar records. Flag the record as an anomaly if its data points deviate significantly from these patterns.\nAdditionally, you should provide explanations for why certain data points are flagged as anomalies, allowing for further investigation and potential corrective action.\n\nHere are some statistics you can use to guide your detection of anomalies.\nYou are looking at descriptions of various rum products.\nRum bottles are typically 500ml and 700ml in volume. Volumes like 512ml and 523ml probably represent anomalies and might indicate a data entry error.\nBottle volumes not divisible by 10 are typically anomalies.\nThe price of a bottle of rum typically ranges between $25.00 and $50.00.\n\nYou can use the following tools to help answer questions:",
-                    language_model = new LangChainLanguageModel
-                    {
-                        type = "openai",
-                        subtype = "chat",
-                        provider = "azure",
-                        temperature = 0f
-                    }
+                    Name = "anomaly-detector",
+                    Type = "anomaly",
+                    Description = "Useful for detecting anomalies in a dataset.",
+                    PromptTemplate = "You are an anomaly detection agent tasked with inspecting an input product description for anomalies.\n\nYou should attempt to identify difference in the bottle volume and price by comparing the input text to similar records. Flag the record as an anomaly if its data points deviate significantly from these patterns.\nAdditionally, you should provide explanations for why certain data points are flagged as anomalies, allowing for further investigation and potential corrective action.\n\nHere are some statistics you can use to guide your detection of anomalies.\nYou are looking at descriptions of various rum products.\nRum bottles are typically 500ml and 700ml in volume. Volumes like 512ml and 523ml probably represent anomalies and might indicate a data entry error.\nBottle volumes not divisible by 10 are typically anomalies.\nThe price of a bottle of rum typically ranges between $25.00 and $50.00.\n\nYou can use the following tools to help answer questions:"
                 },
-                data_source = new LangChainDataSource
+                DataSource = new SQLDatabaseDataSource
                 {
-                    name = "rumdb",
-                    type = "sql",
-                    description = "Azure SQL Database containing rum data.",
-                    configuration = new LangChainSQLDataSourceConfiguration
+                    Name = "rumdb",
+                    Type = "sql",
+                    Description = "Azure SQL Database containing rum data.",
+                    Configuration = new SQLDatabaseConfiguration
                     {
-                        dialect = "mssql",
-                        host = "cocorahs-ai.database.windows.net",
-                        port = 1433,
-                        database_name = "cocorahsdb",
-                        username = "coco-admin",
-                        password_secret_name = "foundationallm-langchain-sqldb-testdb-database-password",
-                        include_tables = new string[] {
+                        Dialect = "mssql",
+                        Host = "cocorahs-ai.database.windows.net",
+                        Port = 1433,
+                        DatabaseName = "cocorahsdb",
+                        Username = "coco-admin",
+                        PasswordSecretName = "foundationallm-langchain-sqldb-testdb-database-password",
+                        IncludeTables = new List<string> {
                             "RumInventory"
                         },
-                        few_shot_example_count = 2
+                        FewShotExampleCount = 2
                     }
                 },
-                message_history = new List<MessageHistoryItem>()
+                LanguageModel = new LanguageModel
+                {
+                    Type = LanguageModelTypes.OPENAI,
+                    Provider = LanguageModelProviders.MICROSOFT,
+                    Temperature = 0f,
+                    UseChat = true
+                },
+                MessageHistory = new List<MessageHistoryItem>()
             };
+
             var body = JsonConvert.SerializeObject(request, _jsonSerializerSettings);
             var responseMessage = await client.PostAsync("/orchestration/completion",
                 new StringContent(
@@ -82,14 +101,14 @@ namespace FoundationaLLM.AgentFactory.Services
             if (responseMessage.IsSuccessStatusCode)
             {
                 var responseContent = await responseMessage.Content.ReadAsStringAsync();
-                var completionResponse = JsonConvert.DeserializeObject<LangChainCompletionResponse>(responseContent);
+                var completionResponse = JsonConvert.DeserializeObject<LLMOrchestrationCompletionResponse>(responseContent);
 
                 return new CompletionResponse
                 {
-                    Completion = completionResponse.completion,
-                    UserPrompt = completionResponse.user_prompt,
-                    UserPromptTokens = completionResponse.prompt_tokens,
-                    ResponseTokens = completionResponse.completion_tokens,
+                    Completion = completionResponse.Completion,
+                    UserPrompt = completionResponse.UserPrompt,
+                    PromptTokens = completionResponse.PromptTokens,
+                    CompletionTokens = completionResponse.CompletionTokens,
                     UserPromptEmbedding = null
                 };
             }
@@ -98,36 +117,42 @@ namespace FoundationaLLM.AgentFactory.Services
             {
                 Completion = "A problem on my side prevented me from responding.",
                 UserPrompt = userPrompt,
-                UserPromptTokens = 0,
-                ResponseTokens = 0,
-                UserPromptEmbedding = new float[0]
+                PromptTokens = 0,
+                CompletionTokens = 0,
+                UserPromptEmbedding = Array.Empty<float>()
             };
         }
 
-        public async Task<string> GetSummary(string content)
+        /// <summary>
+        /// Summarizes the input text.
+        /// </summary>
+        /// <param name="userPrompt">Text to summarize.</param>
+        /// <returns>Returns a summary of the input text.</returns>
+        public async Task<string> GetSummary(string userPrompt)
         {
             var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.LangChainAPIClient);
 
-            var request = new LangChainSummaryRequest()
+            var request = new LLMOrchestrationCompletionRequest()
             {
-                user_prompt = content,
-                agent = new LangChainAgent
+                UserPrompt = userPrompt,
+                Agent = new Agent
                 {
-                    name = "summarizer",
-                    type = "summary",
-                    description = "Useful for summarizing input text based on a set of rules.",
-                    prompt_template = "Write a concise two-word summary of the following:\n\"{text}\"\nCONCISE SUMMARY IN TWO WORDS:",
-                    language_model = new LangChainLanguageModel
-                    {
-                        type = "openai",
-                        subtype = "chat",
-                        provider = "azure",
-                        temperature = 0.5f
-                    }
-                }           
+                    Name = "summarizer",
+                    Type = "summary",
+                    Description = "Useful for summarizing input text based on a set of rules.",
+                    PromptTemplate = "Write a concise two-word summary of the following:\n\"{text}\"\nCONCISE SUMMARY IN TWO WORDS:"
+                },
+                LanguageModel = new LanguageModel
+                {
+                    Type = LanguageModelTypes.OPENAI,
+                    Provider = LanguageModelProviders.MICROSOFT,
+                    Temperature = 0f,
+                    UseChat = true
+                }
             };
+
             var body = JsonConvert.SerializeObject(request, _jsonSerializerSettings);
-            var responseMessage = await client.PostAsync("/orchestration/summary",
+            var responseMessage = await client.PostAsync("/orchestration/completion",
                 new StringContent(
                     body,
                     Encoding.UTF8, "application/json"));
@@ -135,14 +160,17 @@ namespace FoundationaLLM.AgentFactory.Services
             if (responseMessage.IsSuccessStatusCode)
             {
                 var responseContent = await responseMessage.Content.ReadAsStringAsync();
-                var summaryResponse = JsonConvert.DeserializeObject<LangChainSummaryResponse>(responseContent);
-
-                return summaryResponse.summary;
+                var summaryResponse = JsonConvert.DeserializeObject<LLMOrchestrationCompletionResponse>(responseContent);
+                return summaryResponse.Completion;
             }
 
             return "A problem on my side prevented me from responding.";              
         }
 
+        /// <summary>
+        /// Retrieves the status of the orchestration service.
+        /// </summary>
+        /// <returns>True if the service is ready. Otherwise, returns false.</returns>
         private bool GetServiceStatus()
         {
             var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.LangChainAPIClient);

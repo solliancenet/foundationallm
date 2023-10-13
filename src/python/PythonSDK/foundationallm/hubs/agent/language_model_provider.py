@@ -1,4 +1,5 @@
-from enum import Enum, auto
+from enum import Enum
 
-class LanguageModelProvider(Enum):
-    AZURE = auto()
+class LanguageModelProvider(str, Enum):
+    MICROSOFT = "microsoft"
+    OPENAI = "openai"

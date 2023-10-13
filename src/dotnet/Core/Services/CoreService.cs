@@ -105,7 +105,7 @@ public class CoreService : ICoreService
 
             var completionRequest = new CompletionRequest
             {
-                Prompt = userPrompt,
+                UserPrompt = userPrompt,
                 MessageHistory = messageHistoryList
             };
 
@@ -113,8 +113,8 @@ public class CoreService : ICoreService
             var result = await _gatekeeperAPIService.GetCompletion(completionRequest);
 
             // Add to prompt and completion to cache, then persist in Cosmos as transaction 
-            var promptMessage = new Message(sessionId, nameof(Participants.User), result.UserPromptTokens, userPrompt, result.UserPromptEmbedding, null);
-            var completionMessage = new Message(sessionId, nameof(Participants.Assistant), result.ResponseTokens, result.Completion, null, null);
+            var promptMessage = new Message(sessionId, nameof(Participants.User), result.PromptTokens, userPrompt, result.UserPromptEmbedding, null);
+            var completionMessage = new Message(sessionId, nameof(Participants.Assistant), result.CompletionTokens, result.Completion, null, null);
             var completionPrompt = new CompletionPrompt(sessionId, completionMessage.Id, result.UserPrompt);
             completionMessage.CompletionPromptId = completionPrompt.Id;
 

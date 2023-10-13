@@ -1,8 +1,13 @@
-from foundationallm.models.orchestration import MessageHistoryItem, OrchestrationRequestBase
-from foundationallm.models.metadata import DataSourceMetadata
-
 from typing import List
 
-class CompletionRequest(OrchestrationRequestBase):
-    data_source: DataSourceMetadata
+from foundationallm.models.orchestration import (Agent, DataSource, LanguageModel, 
+                                                 MessageHistoryItem, OrchestrationRequest)
+
+class CompletionRequest(OrchestrationRequest):
+    """
+    Orchestration completion request.
+    """
+    agent: Agent
+    data_source: DataSource
+    language_model: LanguageModel
     message_history: List[MessageHistoryItem] = list()

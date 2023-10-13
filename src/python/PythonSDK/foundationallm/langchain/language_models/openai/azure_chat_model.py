@@ -3,6 +3,7 @@ from langchain.chat_models import AzureChatOpenAI
 from foundationallm.config import Configuration
 
 from foundationallm.langchain.language_models.openai import OpenAIModelBase, AzureOpenAIAPIType
+from foundationallm.models.orchestration.metadata import LanguageModel
 
 class AzureChatModel(OpenAIModelBase):
     """Azure OpenAI chat model."""
@@ -10,12 +11,14 @@ class AzureChatModel(OpenAIModelBase):
     deployment_name: str
     model_version: str
     
-    def __init__(self, config: Configuration):
+    def __init__(self, language_model: LanguageModel, config: Configuration):
         """
         Initializes the Azure Open AI chat model.
 
         Parameters
         ----------
+        language_model: LanguageModel
+            The language model metadata class.
         config : Configuration
             Application configuration class for retrieving configuration settings.
         """
@@ -26,6 +29,7 @@ class AzureChatModel(OpenAIModelBase):
         self.openai_api_version = self.config.get_value(f'{self.config_value_base_name}-version')
         self.deployment_name = self.config.get_value(f'{self.config_value_base_name}-completions-deployment')
         self.model_version = self.config.get_value(f'{self.config_value_base_name}-completions-model-version')
+        self.temperature = language_model.temperature
          
     def get_language_model(self) -> BaseLanguageModel:
         """

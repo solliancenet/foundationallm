@@ -3,18 +3,21 @@ from langchain.llms import AzureOpenAI
 from foundationallm.config import Configuration
 
 from foundationallm.langchain.language_models.openai import OpenAIModelBase, AzureOpenAIAPIType
+from foundationallm.models.orchestration.metadata import LanguageModel
 
 class AzureTextCompletionModel(OpenAIModelBase):
     """Azure OpenAI text completion model."""
     config_value_base_name: str = 'foundationallm-azure-openai-api'
     deployment_name: str
     
-    def __init__(self, config: Configuration):
+    def __init__(self, language_model: LanguageModel, config: Configuration):
         """
         Initializes the Azure Open AI text completion model.
 
         Parameters
         ----------
+        language_model: LanguageModel
+            The language model metadata class.
         config : Configuration
             Application configuration class for retrieving configuration settings.
         """
@@ -24,6 +27,7 @@ class AzureTextCompletionModel(OpenAIModelBase):
         self.openai_api_type = AzureOpenAIAPIType.AZURE
         self.openai_api_version = self.config.get_value(f'{self.config_value_base_name}-version')
         self.deployment_name = self.config.get_value(f'{self.config_value_base_name}-completions-deployment')
+        self.temperature = language_model.temperature
          
     def get_language_model(self) -> BaseLanguageModel:
         """

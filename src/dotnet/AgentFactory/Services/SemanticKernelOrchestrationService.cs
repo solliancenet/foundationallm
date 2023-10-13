@@ -32,13 +32,13 @@ namespace FoundationaLLM.AgentFactory.Services
 
         public bool IsInitialized => GetServiceStatus();
 
-        public async Task<CompletionResponse> GetResponse(string userPrompt, List<MessageHistoryItem> messageHistory)
+        public async Task<CompletionResponse> GetCompletion(string userPrompt, List<MessageHistoryItem> messageHistory)
         {
             var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.SemanticKernelAPIClient);
 
             var responseMessage = await client.PostAsync("/orchestration/completion",
                 new StringContent(
-                    JsonConvert.SerializeObject(new CompletionRequest { Prompt = userPrompt, MessageHistory = messageHistory }, _jsonSerializerSettings),
+                    JsonConvert.SerializeObject(new CompletionRequest { UserPrompt = userPrompt, MessageHistory = messageHistory }, _jsonSerializerSettings),
                     Encoding.UTF8, "application/json"));
 
             if (responseMessage.IsSuccessStatusCode)
@@ -53,8 +53,8 @@ namespace FoundationaLLM.AgentFactory.Services
             {
                 Completion = "A problem on my side prevented me from responding.",
                 UserPrompt = userPrompt,
-                UserPromptTokens = 0,
-                ResponseTokens = 0,
+                PromptTokens = 0,
+                CompletionTokens = 0,
                 UserPromptEmbedding = new float[] { 0 }
             };
         }
