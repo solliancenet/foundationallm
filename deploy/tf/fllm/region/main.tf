@@ -24,6 +24,19 @@ resource "azurerm_resource_group" "rgs" {
   tags     = merge(each.value.tags, local.tags)
 }
 
+resource "azurerm_role_assignment" "keyvault_secrets_user_agw" {
+  principal_id         = azurerm_user_assigned_identity.agw.principal_id
+  role_definition_name = "Key Vault Secrets User"
+  scope                = azurerm_resource_group.rgs["OPS"].id
+}
+
+resource "azurerm_user_assigned_identity" "agw" {
+  location            = azurerm_resource_group.rgs["AppGateway"].location
+  name                = "${var.resource_prefix}-agw-uai"
+  resource_group_name = azurerm_resource_group.rgs["AppGateway"].name
+  tags                = local.tags
+}
+
 module "ampls" {
   source = "./modules/monitor-private-link-scope"
 
@@ -57,6 +70,19 @@ module "appconfig" {
     ]
   }
 }
+
+# module "application_gateway" {
+#   source     = "./modules/application-gateway"
+#   depends_on = [azurerm_role_assignment.keyvault_secrets_user_agw]
+
+#   action_group_id            = azurerm_monitor_action_group.do_nothing.id
+#   identity_id                = azurerm_user_assigned_identity.agw.id
+#   log_analytics_workspace_id = module.logs.id
+#   resource_group             = azurerm_resource_group.rgs["AppGateway"]
+#   resource_prefix            = local.resource_prefix
+#   subnet_id                  = azurerm_subnet.subnets["AppGateway"].id
+#   tags                       = local.tags
+# }
 
 module "cosmosdb" {
   source = "./modules/cosmosdb"

@@ -13,6 +13,11 @@ locals {
   }
 
   regional_resource_groups = {
+    "AppGateway" = {
+      tags = {
+        "Purpose" = "Networking"
+      }
+    }
     "FLLMStorage" = {
       tags = {
         Purpose = "Storage"

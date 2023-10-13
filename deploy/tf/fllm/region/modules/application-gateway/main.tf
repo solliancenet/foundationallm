@@ -1,0 +1,149 @@
+locals {
+
+}
+
+
+
+resource "azurerm_application_gateway" "main" {
+  location            = var.resource_group.location
+  name                = "${var.resource_prefix}-agw"
+  resource_group_name = var.resource_group.name
+  tags                = var.tags
+
+  autoscale_configuration {
+    max_capacity = 3
+    min_capacity = 0
+  }
+
+  backend_address_pool {
+    ip_addresses = var.backend_pool_ip_addresses
+    name         = "default"
+  }
+
+  backend_http_settings {
+    cookie_based_affinity = "Disabled"
+    name                  = "http"
+    path                  = "/"
+    port                  = 80
+    protocol              = "Http"
+    request_timeout       = 60
+  }
+
+  backend_http_settings {
+    cookie_based_affinity = "Disabled"
+    name                  = "https"
+    path                  = "/"
+    port                  = 443
+    probe_name            = "https"
+    protocol              = "Https"
+    request_timeout       = 180
+  }
+
+  frontend_ip_configuration {
+    name                 = "default"
+    public_ip_address_id = azurerm_public_ip.pip.id
+  }
+
+  frontend_port {
+    name = "https"
+    port = 443
+  }
+
+  frontend_port {
+    name = "http"
+    port = 80
+  }
+
+  gateway_ip_configuration {
+    name      = "default"
+    subnet_id = var.subnet_id
+  }
+
+  http_listener {
+    frontend_ip_configuration_name = "http"
+    frontend_port_name             = "http"
+    hostname                       = var.hostname
+    name                           = "http"
+    protocol                       = "Http"
+  }
+
+  http_listener {
+    frontend_ip_configuration_name = "https"
+    frontend_port_name             = "https"
+    hostname                       = var.hostname
+    name                           = "https"
+    protocol                       = "Https"
+    require_sni                    = true
+    ssl_certificate_name           = local.ssl_certificate_name
+  }
+
+  identity {
+    identity_ids = [var.identity_id]
+    type         = "UserAssigned"
+  }
+
+  probe {
+    host                = var.hostname
+    interval            = 30
+    name                = "https"
+    path                = "/"
+    protocol            = "Https"
+    timeout             = 1
+    unhealthy_threshold = 3
+  }
+
+  redirect_configuration {
+    name                 = "http-to-https"
+    redirect_type        = "Permanent"
+    target_listener_name = "https"
+  }
+
+  request_routing_rule {
+    backend_address_pool_name  = "default"
+    backend_http_settings_name = "https"
+    http_listener_name         = "https"
+    name                       = "https"
+    priority                   = 100
+    rule_type                  = "Basic"
+  }
+
+  request_routing_rule {
+    http_listener_name          = "http"
+    name                        = "http"
+    priority                    = 200
+    redirect_configuration_name = "http-to-https"
+    rule_type                   = "Basic"
+  }
+
+  sku {
+    name = "WAF_v2"
+    tier = "WAF_v2"
+  }
+
+  ssl_certificate {
+    key_vault_secret_id = var.key_vault_secret_id
+    name                = local.ssl_certificate_name
+  }
+
+  ssl_policy {
+    policy_name = "AppGwSslPolicy20170401S"
+    policy_type = "Predefined"
+  }
+
+  waf_configuration {
+    enabled          = true
+    firewall_mode    = "Prevention"
+    rule_set_type    = "OWASP"
+    rule_set_version = "3.1"
+  }
+}
+
+resource "azurerm_public_ip" "pip" {
+  allocation_method   = "Static"
+  location            = var.resource_group.location
+  name                = "${var.resource_prefix}-pip"
+  resource_group_name = var.resource_group.name
+  sku                 = "Standard"
+  tags                = var.tags
+}
+
