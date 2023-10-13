@@ -38,6 +38,14 @@ namespace FoundationaLLM.Gatekeeper.API
             builder.Services.AddTransient<IAPIKeyValidationService, APIKeyValidationService>();
             builder.Services.AddSingleton<IConfigurationService, KeyVaultConfigurationService>();
 
+            builder.Services.AddOptions<RefinementServiceSettings>()
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:Refinement"));
+            builder.Services.AddScoped<IRefinementService, RefinementService>();
+
+            builder.Services.AddOptions<AzureContentSafetySettings>()
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:AzureContentSafety"));
+            builder.Services.AddScoped<IContentSafetyService, AzureContentSafetyService>();
+
             builder.Services.AddScoped<IAgentFactoryAPIService, AgentFactoryAPIService>();
 
             builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
@@ -56,10 +64,6 @@ namespace FoundationaLLM.Gatekeeper.API
                 .AddTransientHttpErrorPolicy(policyBuilder =>
                     policyBuilder.WaitAndRetryAsync(
                         3, retryNumber => TimeSpan.FromMilliseconds(600)));
-
-            builder.Services.AddOptions<RefinementServiceSettings>()
-                .Bind(builder.Configuration.GetSection("FoundationaLLM:Refinement"));
-            builder.Services.AddSingleton<IRefinementService, RefinementService>();
 
             builder.Services
                 .AddApiVersioning(options =>
