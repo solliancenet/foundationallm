@@ -27,11 +27,6 @@ resource "azurerm_monitor_diagnostic_setting" "setting" {
 
     content {
       category = enabled_log.value
-
-      retention_policy {
-        days    = 0
-        enabled = false
-      }
     }
   }
 
@@ -41,11 +36,6 @@ resource "azurerm_monitor_diagnostic_setting" "setting" {
     content {
       category = metric.value
       enabled  = true
-
-      retention_policy {
-        days    = 0
-        enabled = false
-      }
     }
   }
 

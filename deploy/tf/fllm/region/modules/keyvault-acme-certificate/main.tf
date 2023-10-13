@@ -40,16 +40,16 @@ resource "azurerm_key_vault_certificate" "certificate" {
   }
 }
 
-resource "azurerm_key_vault_secret" "certificate" {
-  name         = "${replace(acme_certificate.main.common_name, ".", "-")}-cert"
-  key_vault_id = var.key_vault_id
-  value        = "${acme_certificate.main.certificate_pem}${acme_certificate.main.issuer_pem}"
-}
-
 resource "azurerm_key_vault_secret" "ca" {
   name         = "${replace(acme_certificate.main.common_name, ".", "-")}-ca"
   key_vault_id = var.key_vault_id
   value        = acme_certificate.main.issuer_pem
+}
+
+resource "azurerm_key_vault_secret" "certificate" {
+  name         = "${replace(acme_certificate.main.common_name, ".", "-")}-cert"
+  key_vault_id = var.key_vault_id
+  value        = "${acme_certificate.main.certificate_pem}${acme_certificate.main.issuer_pem}"
 }
 
 resource "azurerm_key_vault_secret" "key" {
