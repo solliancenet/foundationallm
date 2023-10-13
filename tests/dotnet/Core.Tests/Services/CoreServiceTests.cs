@@ -1,19 +1,10 @@
 ﻿using FoundationaLLM.Common.Models.Chat;
+using FoundationaLLM.Common.Models.Orchestration;
 using FoundationaLLM.Core.Interfaces;
 using FoundationaLLM.Core.Services;
 using Microsoft.Extensions.Logging;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection;
-using Newtonsoft.Json.Linq;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
-using static System.Net.Mime.MediaTypeNames;
-using System.Numerics;
-using System.Reflection;
-using Microsoft.Azure.Cosmos;
-using FoundationaLLM.Common.Constants;
-using FoundationaLLM.Common.Models.Orchestration;
-using Microsoft.AspNetCore.SignalR.Protocol;
-using System.Runtime.Intrinsics;
 
 namespace FoundationaLLM.Core.Tests.Services
 {
@@ -30,6 +21,8 @@ namespace FoundationaLLM.Core.Tests.Services
             _coreService = new CoreService(_cosmosDbService, _gatekeeperAPIService, _logger);
         }
 
+        #region GetAllChatSessionsAsync
+
         [Fact]
         public async Task GetAllChatSessionsAsync_ShouldReturnAllChatSessions()
         {
@@ -44,6 +37,9 @@ namespace FoundationaLLM.Core.Tests.Services
             Assert.Equivalent(expectedSessions, actualSessions);
         }
 
+        #endregion
+
+        #region GetChatSessionMessagesAsync
 
         [Fact]
         public async Task GetChatSessionMessagesAsync_ShouldReturnAllChatSessionMessages()
@@ -75,6 +71,10 @@ namespace FoundationaLLM.Core.Tests.Services
             });
         }
 
+        #endregion
+
+        #region CreateNewChatSessionAsync
+
         [Fact]
         public async Task CreateNewChatSessionAsync_ShouldReturnANewChatSession()
         {
@@ -88,6 +88,10 @@ namespace FoundationaLLM.Core.Tests.Services
             // Assert
             Assert.Equivalent(expectedSession, actualSession);
         }
+
+        #endregion
+
+        #region RenameChatSessionAsync
 
         [Fact]
         public async Task RenameChatSessionAsync_ShouldReturnTheRenamedChatSession()
@@ -146,6 +150,10 @@ namespace FoundationaLLM.Core.Tests.Services
             });
         }
 
+        #endregion
+
+        #region DeleteChatSessionAsync
+
         [Fact]
         public async Task DeleteChatSessionAsync_ShouldSucceed()
         {
@@ -173,6 +181,10 @@ namespace FoundationaLLM.Core.Tests.Services
             });
         }
 
+        #endregion
+
+        #region GetChatCompletionAsync
+
         [Fact]
         public async Task GetChatCompletionAsync_ShouldReturnACompletion()
         {
@@ -198,27 +210,21 @@ namespace FoundationaLLM.Core.Tests.Services
             Assert.Equal(expectedCompletion.Text, actualCompletion.Text);
         }
 
-        public async Task GetChatCompletionAsync_ShouldReturnAnErrorMessageWhenParametersAreNull()
+        [Fact]
+        public async Task GetChatCompletionAsync_ShouldReturnAnErrorMessageWhenSessionIdIsNull()
         {
             // Arrange
             var sessionId = Guid.NewGuid().ToString();
+            var userPrompt = "Prompt";
             var expectedCompletion = new Completion { Text = "Could not generate a completion due to an internal error." };
 
-            var expectedMessages = new List<Message>();
-            _cosmosDbService.GetSessionMessagesAsync(sessionId).Returns(expectedMessages);
-
-            var completionResponse = new CompletionResponse() { Completion = "Completion" };
-            _gatekeeperAPIService.GetCompletion(Arg.Any<CompletionRequest>()).Returns(completionResponse);
-
-            _cosmosDbService.GetSessionAsync(sessionId).Returns(new Session());
-
-            _cosmosDbService.UpsertSessionBatchAsync().Returns(Task.CompletedTask);
-
             // Act
-            var actualCompletion = await _coreService.GetChatCompletionAsync(null, null);
+            var actualCompletion = await _coreService.GetChatCompletionAsync(null, userPrompt);
 
             // Assert
             Assert.Equal(expectedCompletion.Text, actualCompletion.Text);
+
+            //_logger.Received(1).LogError($"Error getting completion in session {sessionId} for user prompt [{userPrompt}].");
         }
 
         [Fact]
@@ -247,7 +253,74 @@ namespace FoundationaLLM.Core.Tests.Services
             Assert.Null(exception);
         }
 
-        //SummarizeChatSessionNameAsync
+        #endregion
+
+        #region SummarizeChatSessionNameAsync
+
+        [Fact]
+        public async Task SummarizeChatSessionNameAsync_ShouldReturnACompletion()
+        {
+            // Arrange
+            var sessionId = Guid.NewGuid().ToString();
+            var prompt = "Prompt";
+            var summary = "Summary";
+            var expectedCompletion = new Completion() { Text = summary };
+
+            _gatekeeperAPIService.GetSummary(prompt).Returns(summary);
+            _cosmosDbService.UpdateSessionNameAsync(sessionId, summary).Returns(new Session());
+
+            // Act
+            var actualCompletion = await _coreService.SummarizeChatSessionNameAsync(sessionId, prompt);
+
+            // Assert
+            Assert.Equal(expectedCompletion.Text, actualCompletion.Text);
+        }
+
+        [Fact]
+        public async Task SummarizeChatSessionNameAsync_ShouldReturnAnErrorMessageWhenSessionIdIsNull()
+        {
+            // Arrange
+            var prompt = "Prompt";
+            var expectedCompletion = new Completion { Text = "[No Summary]" };
+
+            // Act
+            var actualSummary = await _coreService.SummarizeChatSessionNameAsync(null, prompt);
+
+            // Assert
+            Assert.Equal(expectedCompletion.Text, actualSummary.Text);
+
+            //_logger.Received(1).LogError($"Error getting a summary in session {sessionId} for user prompt [{prompt}].");
+        }
+
+        [Fact]
+        public async Task SummarizeChatSessionNameAsync_ShouldNotThrowExceptionWhenPromptIsNull()
+        {
+            // Arrange
+            var sessionId = Guid.NewGuid().ToString();
+
+            // Act
+            var exception = Record.Exception(() => _coreService.SummarizeChatSessionNameAsync(sessionId, null).Result);
+
+            // Assert
+            Assert.Null(exception);
+        }
+
+        [Fact]
+        public async Task SummarizeChatSessionNameAsync_ShouldNotThrowExceptionWhenSessionIdIsNull()
+        {
+            // Arrange
+            var prompt = "Prompt";
+
+            // Act
+            var exception = Record.Exception(() => _coreService.SummarizeChatSessionNameAsync(null, prompt).Result);
+
+            // Assert
+            Assert.Null(exception);
+        }
+
+        #endregion
+
+        #region RateMessageAsync
 
         [Fact]
         public async Task RateMessageAsync_ShouldReturnARatedMessage()
@@ -308,6 +381,10 @@ namespace FoundationaLLM.Core.Tests.Services
             });
         }
 
+        #endregion
+
+        #region GetCompletionPrompt
+
         [Fact]
         public async Task GetCompletionPrompt_ShouldReturnACompletionPrompt()
         {
@@ -350,5 +427,7 @@ namespace FoundationaLLM.Core.Tests.Services
                 await _coreService.GetCompletionPrompt(sessionId, null);
             });
         }
+
+        #endregion
     }
 }
