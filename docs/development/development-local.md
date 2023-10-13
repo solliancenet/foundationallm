@@ -193,6 +193,12 @@
     },
     "GatekeeperAPI": {
       "APIKeySecretName": "foundationallm-gatekeeper-api-key"
+    },
+    "AzureContentSafety": {
+      "HateSeverity": 2,
+      "ViolenceSeverity": 2,
+      "SelfHarmSeverity": 2,
+      "SexualSeverity": 2
     }
   }
 }
@@ -207,6 +213,10 @@
       "AgentFactoryAPI": {
         "APIUrl": "<...>"
       }
+    },
+    "AzureContentSafety": {
+      "Endpoint": "<...>",
+      "Key": "<...>"
     }
   }
 }
