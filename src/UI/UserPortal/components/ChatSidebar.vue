@@ -21,36 +21,40 @@
 					class="chat"
 					:class="{ 'chat--selected': currentSession?.id === session.id }"
 				>
+					<!-- Chat name -->
 					<span class="chat__name">{{ session.name }}</span>
 
+					<!-- Chat icons -->
 					<span class="chat__icons">
+						<!-- Rename session -->
 						<button small @click="openRenameModal(session)">edit</button>
 
-						<!-- Rename session dialog -->
-						<Dialog
-							:visible="viewRenameSession === session.id"
-							modal
-							:header="`Rename Chat ${session.name}`"
-							:closable="false"
-							:style="{ width: '50vw' }"
-						>
-							<InputText
-								v-model="newSessionName"
-								type="text"
-								placeholder="New chat name"
-								:style="{ width: '100%' }"
-							></InputText>
-							<template #footer>
-								<Button label="Cancel" text @click="closeRenameModal" />
-								<Button label="Rename" @click="handleRenameSession(session, index)" />
-							</template>
-						</Dialog>
-
+						<!-- Delete session -->
 						<button small @click="deleteSession = session">x</button>
 					</span>
 				</div>
 			</div>
 		</div>
+
+		<!-- Rename session dialog -->
+		<Dialog
+			:visible="sessionToRename !== null"
+			modal
+			:header="`Rename Chat ${sessionToRename?.name}`"
+			:closable="false"
+			:style="{ width: '50vw' }"
+		>
+			<InputText
+				v-model="newSessionName"
+				type="text"
+				placeholder="New chat name"
+				:style="{ width: '100%' }"
+			></InputText>
+			<template #footer>
+				<Button label="Cancel" text @click="closeRenameModal" />
+				<Button label="Rename" @click="handleRenameSession" />
+			</template>
+		</Dialog>
 
 		<!-- Delete session dialog -->
 		<Dialog
@@ -80,10 +84,10 @@ export default {
 
 	data() {
 		return {
+			sessions: [] as Array<Session>,
 			currentSession: null as Session | null,
 			deleteSession: null as Session | null,
-			sessions: [] as Array<Session>,
-			viewRenameSession: null as Session['id'] | null,
+			sessionToRename: null as Session | null,
 			newSessionName: '' as string,
 		};
 	},
@@ -95,12 +99,14 @@ export default {
 
 	methods: {
 		openRenameModal(session: Session) {
-			this.viewRenameSession = session.id;
+			this.sessionToRename = session;
+			// this.viewRenameSession = session.id;
 			this.newSessionName = session.name;
 		},
 
 		closeRenameModal() {
-			this.viewRenameSession = null;
+			// this.viewRenameSession = null;
+			this.sessionToRename = null;
 			this.newSessionName = '';
 		},
 
@@ -109,10 +115,11 @@ export default {
 			this.sessions = session;
 		},
 
-		async handleRenameSession(session: Session, sessionIndex: number) {
-			const updatedSession = await api.renameSession(session.id, this.newSessionName);
+		async handleRenameSession() {
+			const updatedSession = await api.renameSession(this.sessionToRename.id, this.newSessionName);
+			const sessionIndex = this.sessions.findIndex(session => session.id === updatedSession.id);
 			this.sessions[sessionIndex] = updatedSession;
-			this.viewRenameSession = false;
+			this.sessionToRename = null;
 		},
 
 		async handleAddSession() {
