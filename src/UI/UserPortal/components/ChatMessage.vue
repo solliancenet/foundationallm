@@ -37,7 +37,7 @@
 				<span>
 					<span class="icon"></span>
 					<button @click="handleRate(message, false)">
-						{{ !message.rating ? 'Message Disliked.' : 'Dislike' }}
+						{{ message.rating === false ? 'Message Disliked.' : 'Dislike' }}
 					</button>
 				</span>
 
