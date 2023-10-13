@@ -11,13 +11,23 @@
 		</div>
 
 		<!-- Messages -->
-		<div class="chat-thread__messages">
+		<div :class="messages.length !== 0 ? 'chat-thread__messages' : 'chat-thread__messages empty'">
 			<ChatMessage
+				v-if="messages.length !== 0"
 				v-for="(message, index) in messages.slice().reverse()"
 				:key="message.id"
 				:message="message"
 				@rate="handleRateMessage(index, $event)"
 			/>
+			<div v-else class="new-chat-alert">
+				<div class="alert-header">
+					<i class="pi pi-exclamation-circle"></i>
+					<span class="alert-header-text">Get Started</span>
+				</div>
+				<div class="alert-body">
+					<span class="alert-body-text">How can I help?</span>
+				</div>
+			</div>
 		</div>
 
 		<!-- Chat input -->
@@ -84,5 +94,29 @@ export default {
 	overscroll-behavior: auto;
 	scrollbar-gutter: stable;
 	padding: 24px;
+}
+
+.empty {
+	flex-direction: column;
+}
+.new-chat-alert {
+	background-color: #d9f0d1;
+	margin: 10px;
+	padding: 10px;
+	border-radius: 6px;
+}
+.alert-header, .alert-header > i {
+	display: flex;
+	align-items: center;
+	font-size: 1.5rem;
+}
+.alert-header-text {
+	font-weight: 500;
+	margin-left: 8px;
+}
+.alert-body-text {
+	font-size: 1.2rem;
+	font-weight: 300;
+	font-style: italic;
 }
 </style>

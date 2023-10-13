@@ -21,25 +21,28 @@
 			</div>
 
 			<div class="message__footer" v-if="message.sender !== 'User'">
-				<span
-					:class="message.rating ? 'selected like' : 'like'"
-					@click="handleRate(message, true)"
-				>
-					<span class="icon"></span>
-					<button>Like</button>
-				</span>
+				<div class="message__votes">
+					<span
+						:class="message.rating ? 'selected like' : 'like'"
+						@click="handleRate(message, true)"
+					>
+						<i :class="message.rating ? 'icon pi pi-thumbs-up-fill' : 'icon pi pi-thumbs-up'"></i>
+						<span>Like</span>
+					</span>
 
-				<span
-					:class="message.rating === false ? 'selected dislike' : 'dislike'"
-					@click="handleRate(message, false)"
-				>
-					<span class="icon"></span>
-					<button>Dislike</button>
-				</span>
+					<span
+						:class="message.rating === false ? 'selected dislike' : 'dislike'"
+						@click="handleRate(message, false)"
+					>
+						<i :class="message.rating === false ? 'icon pi pi-thumbs-down-fill' : 'icon pi pi-thumbs-down'"></i>
+						<span>Dislike</span>
+					</span>
+				</div>
 
-				<span class="view-prompt">
-					<button>View Prompt</button>
-				</span>
+				<div class="view-prompt">
+					<i class="icon pi pi-book"></i>
+					<span>View Prompt</span>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -110,7 +113,7 @@ export default {
 .message__footer {
 	margin-top: 12px;
 	display: flex;
-	gap: 12px;
+	justify-content: space-between;
 }
 
 .header__sender {
@@ -123,5 +126,22 @@ export default {
 	height: 32px;
 	border-radius: 50%;
 	margin-right: 12px;
+}
+
+.view-prompt {
+	cursor: pointer;
+}
+
+.icon {
+	margin-right: 4px;
+}
+
+.dislike {
+	margin-left: 12px;
+	cursor: pointer;
+}
+
+.like {
+	cursor: pointer;
 }
 </style>

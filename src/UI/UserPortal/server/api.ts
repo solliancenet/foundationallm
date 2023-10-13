@@ -19,8 +19,8 @@ export default {
       ? (message.rating = null)
       : (message.rating = rating);
 
-    const data = (await $fetch(
-      `${this.$config.public.API_URL}/sessions/${message.sessionId}/message/${message.id}/rate${message.rating !== null ? '?rating=' + message.rating : ''}`, {
+    return (await $fetch(
+      `${API_URL}/sessions/${message.sessionId}/message/${message.id}/rate${message.rating !== null ? '?rating=' + message.rating : ''}`, {
         method: 'POST',
       },
     )) as Message;

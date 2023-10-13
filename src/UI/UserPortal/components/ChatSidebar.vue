@@ -22,6 +22,14 @@
 					:class="{ 'chat--selected': currentSession?.id === session.id }"
 				>
 					<span class="chat__name">{{ session.name }}</span>
+					<div class="chat-options">
+						<span class="option edit">
+							<i class="icon pi pi-pencil"></i>
+						</span>
+						<span class="option delete">
+							<i class="icon pi pi-trash"></i>
+						</span>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -91,9 +99,38 @@ export default {
 	border-radius: 8px;
 	margin: 24px;
 	padding: 12px;
+	display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chat-options {
+	display: flex;
 }
 
 .chat--selected {
 	background-color: lightgray;
+}
+
+.chat--selected .option {
+	background-color: rgba(245, 245, 245, 1);
+}
+.option {
+	background-color: rgba(220, 220, 220, 1);
+	padding: 4px;
+    border-radius: 3px;
+}
+
+.option:hover {
+	background-color: rgba(200, 200, 200, 1);
+	cursor: pointer;
+}
+
+.delete {
+	margin-left: 8px;
+}
+
+.chat--selected .option:hover {
+	background-color: rgba(180, 180, 180, 1);
 }
 </style>

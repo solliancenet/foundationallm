@@ -5,6 +5,7 @@ export default defineNuxtConfig({
 	css: [
 		'primevue/resources/themes/viva-light/theme.css',
 		'~/styles/fonts.scss',
+		'primeicons/primeicons.css',
 	],
 	build: {
 		transpile: ['primevue'],
