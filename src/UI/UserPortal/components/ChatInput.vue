@@ -4,15 +4,15 @@
 			<div class="icon"></div>
 			<div class="text"></div>
 		</div>
-		<textarea
+		<InputText
 			v-model="text"
 			class="input"
 			type="text"
 			placeholder="What would you like to ask?"
-		></textarea>
+		></InputText>
 		<div class="submit">
 			<div class="icon"></div>
-			<button @click="handleSend">Send</button>
+			<Button @click="handleSend">Send</Button>
 		</div>
 	</div>
 </template>
