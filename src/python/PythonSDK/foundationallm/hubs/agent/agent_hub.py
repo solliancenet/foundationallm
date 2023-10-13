@@ -9,5 +9,5 @@ class AgentHub(HubBase):
         # initialize config       
         key_vault_name = Configuration().get_value(key="foundationallm-keyvault-name")        
         self.config = Configuration(keyvault_name=key_vault_name, credential=AzureCredential())
-        super().__init__(repository=AgentRepository(self.config), resolver=AgentResolver())
+        super().__init__(resolver=AgentResolver(AgentRepository(self.config)))
      

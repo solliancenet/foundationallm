@@ -35,6 +35,8 @@
     <Compile Include="foundationallm\data_sources\sql\sql_dialect.py" />
     <Compile Include="foundationallm\data_sources\sql\__init__.py" />
     <Compile Include="foundationallm\hubs\agent\agent_hub.py" />
+    <Compile Include="foundationallm\hubs\agent\agent_hub_request.py" />
+    <Compile Include="foundationallm\hubs\agent\agent_hub_response.py" />
     <Compile Include="foundationallm\hubs\agent\agent_hub_storage_manager.py" />
     <Compile Include="foundationallm\hubs\agent\agent_metadata.py" />
     <Compile Include="foundationallm\hubs\agent\agent_repository.py" />

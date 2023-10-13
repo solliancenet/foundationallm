@@ -5,7 +5,7 @@ from foundationallm.hubs.agent import LanguageModelSubtype
 from foundationallm.hubs.agent import LanguageModelProvider
 
 class LanguageModelMetadata(Metadata):
-    model_type: LanguageModelType
-    model_subtype: LanguageModelSubtype
+    language_model_type: LanguageModelType
+    language_model_subtype: LanguageModelSubtype
     provider: LanguageModelProvider
     temperature: float = 0.0
