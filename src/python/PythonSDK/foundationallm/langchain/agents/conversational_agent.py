@@ -41,13 +41,16 @@ class ConversationalAgent(AgentBase):
             ),
         ]
         
-        self.memory = ConversationBufferMemory(memory_key="default_agent_chat_history")
+        #self.memory = ConversationBufferMemory(memory_key="default_agent_chat_history")
         self.agent = initialize_agent(
             tools = self.tools,
             llm = self.llm,
             agent = AgentType.CONVERSATIONAL_REACT_DESCRIPTION,
             verbose = True,
-            memory = self.memory
+            agent_kwargs={
+                'prefix': self.agent_prompt_prefix
+            }
+            #memory = self.memory
         )
 
     @property
