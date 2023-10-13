@@ -8,6 +8,11 @@ app = FastAPI(
     summary='API for interacting with language models using LangChain.',
     description='The FoundationaLLM LangChainAPI is a wrapper around LangChain functionality contained in the foundationallm.core Python SDK.',
     version='0.1.0', # TODO: Figure out how to make this configurable
+    contact={
+        'name':'Sollaince, Inc.',
+        'email':'contact@solliance.net',
+        'url':'https://solliance.net/' 
+    },
     openapi_url='/swagger/v1/swagger.json',
     docs_url='/swagger',
     redoc_url=None

@@ -13,3 +13,4 @@ tenacity==8.2.3
 azure-storage-blob==12.18.2
 tiktoken==0.5.1
 typing==3.7.4.3
+numpy==1.26.0
