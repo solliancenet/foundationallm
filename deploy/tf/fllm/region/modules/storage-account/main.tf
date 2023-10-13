@@ -66,6 +66,7 @@ resource "azurerm_storage_account" "main" {
   account_replication_type          = "LRS"
   account_tier                      = "Standard"
   allow_nested_items_to_be_public   = false
+  default_to_oauth_authentication   = true
   enable_https_traffic_only         = true
   infrastructure_encryption_enabled = true
   location                          = var.resource_group.location
@@ -73,6 +74,7 @@ resource "azurerm_storage_account" "main" {
   name                              = "${local.resource_prefix_compact}sa"
   public_network_access_enabled     = false
   resource_group_name               = var.resource_group.name
+  shared_access_key_enabled         = false
   tags                              = var.tags
 
   blob_properties {
@@ -88,6 +90,14 @@ resource "azurerm_storage_account" "main" {
   network_rules {
     bypass         = ["AzureServices", "Logging", "Metrics"]
     default_action = "Deny"
+  }
+
+  sas_policy {
+    expiration_period = "00.04:00:00"
+  }
+
+  share_properties {
+    retention_policy { days = 30 }
   }
 }
 
