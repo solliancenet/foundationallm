@@ -89,9 +89,11 @@
       "Database": "database",
       "ChangeFeedLeaseContainer": "leases"
     },
-    "GatekeeperAPI": {
-      "APIUrl": "",
-      "APIKeySecretName": "foundationallm-gatekeeper-api-key"
+    "DownstreamAPIs": {    
+      "GatekeeperAPI": {
+        "APIUrl": "",
+        "APIKeySecretName": "foundationallm-gatekeeper-api-key"
+      }
     },
     "Configuration": {
       "KeyVaultUri": ""
@@ -117,8 +119,10 @@
       "Endpoint": "https://<...>-cosmos-nosql.documents.azure.com:443/",
       "Key": "<...>"
     },
-    "GatekeeperAPI": {
-      "APIUrl": "<...>"
+    "DownstreamAPIs": {
+      "GatekeeperAPI": {
+        "APIUrl": "<...>"
+      }
     },
     "Configuration": {
       "KeyVaultUri": "https://<...>.vault.azure.net/"
@@ -153,8 +157,10 @@
   },
   "AllowedHosts": "*",
   "FoundationaLLM": {
-    "AgentFactoryAPI": {
-      "APIUrl": ""
+    "DownstreamAPIs": {
+      "AgentFactoryAPI": {
+        "APIUrl": ""
+      }
     },
     "GatekeeperAPI": {
       "APIKeySecretName": "foundationallm-gatekeeper-api-key"
@@ -168,8 +174,10 @@
 ```json
 {
   "FoundationaLLM": {
-    "AgentFactoryAPI": {
-      "APIUrl": "<...>"
+    "DownstreamAPIs": {
+      "AgentFactoryAPI": {
+        "APIUrl": "<...>"
+      }
     }
   }
 }
@@ -198,12 +206,14 @@
     "Chat": {
       "DefaultOrchestrationService": "SemanticKernel"
     },
-    "LangChainAPI": {
-      "APIUrl": "",
-      "APIKeySecretName": "foundationallm-langchain-api-key"
-    },
-    "SemanticKernelOrchestration": {
-      "APIUrl": ""
+    "DownstreamAPIs": {
+      "LangChainAPI": {
+        "APIUrl": "",
+        "APIKeySecretName": "foundationallm-langchain-api-key"
+      },
+      "SemanticKernelAPI": {
+        "APIUrl": ""
+      }
     },
     "AgentFactoryAPI": {
       "APIKeySecretName": "foundationallm-agent-factory-api-key"
@@ -217,11 +227,13 @@
 ```json
 {
   "FoundationaLLM": {
-    "LangChainAPI": {
-      "APIUrl": "<...>"     
-    },
-    "SemanticKernelOrchestration": {
-      "APIUrl": "<...>"      
+    "DownstreamAPIs": {
+      "LangChainAPI": {
+        "APIUrl": "<...>"     
+      },
+      "SemanticKernelAPI": {
+        "APIUrl": "<...>"
+      }
     },
     "Configuration": {
       "KeyVaultUri": "<...>"
