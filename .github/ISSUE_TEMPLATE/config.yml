@@ -1,1 +1,8 @@
 blank_issues_enabled: false
+contact_links:
+  - name: Visit our website
+    url: https://www.foundationallm.ai
+    about: Learn more about FoundationaLLM, our product offerings, services, or sign up for our newsletter.
+  - name: Contact us
+    url: https://www.foundationallm.ai/contact
+    about: We'd love to hear from you! Contact us with any questions or comments about FoundationaLLM.
