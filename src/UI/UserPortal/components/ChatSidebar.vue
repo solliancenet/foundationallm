@@ -22,14 +22,33 @@
 					:class="{ 'chat--selected': currentSession?.id === session.id }"
 				>
 					<span class="chat__name">{{ session.name }}</span>
+					<span class="chat__icons">
+						<button small @click="deleteSession = session">x</button>
+					</span>
 				</div>
 			</div>
 		</div>
+
+		<!-- Delete dialog -->
+		<Dialog
+			:visible="deleteSession !== null"
+			modal
+			header="Delete a Chat"
+			:closable="false"
+			:style="{ width: '50vw' }"
+		>
+			<p>Do you want to delete the chat "{{ deleteSession.name }}" ?</p>
+			<template #footer>
+				<Button label="No" text @click="deleteSession = null" />
+				<Button label="Yes" severity="danger" @click="handleDeleteSession" />
+			</template>
+		</Dialog>
 	</div>
 </template>
 
 <script lang="ts">
 import { Session } from '@/js/types';
+import api from '~/server/api';
 
 export default {
 	name: 'ChatSidebar',
@@ -46,6 +65,7 @@ export default {
 	data() {
 		return {
 			currentSession: null as Session | null,
+			deleteSession: null as Session | null,
 		};
 	},
 
@@ -58,12 +78,16 @@ export default {
 			this.currentSession = session;
 			this.$emit('session-selected', session);
 		},
+
+		async handleDeleteSession() {
+			await api.deleteSession(this.deleteSession!.id);
+			this.deleteSession = null;
+		},
 	},
 };
 </script>
 
 <style lang="scss" scoped>
-
 .chat-sidebar {
 	width: 300px;
 	height: 100%;
@@ -91,9 +115,17 @@ export default {
 	border-radius: 8px;
 	margin: 24px;
 	padding: 12px;
+	display: flex;
+	justify-content: space-between;
 }
 
 .chat--selected {
 	background-color: lightgray;
+}
+
+.chat__name {
+}
+
+.chat__icons {
 }
 </style>

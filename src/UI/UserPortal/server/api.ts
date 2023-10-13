@@ -7,12 +7,16 @@ export default {
     return await $fetch(`${API_URL}/sessions`) as Array<Session>;
   },
 
-  async getMessages(sessionId: string): Promise<Array<Message>> {
-    return await $fetch(`${API_URL}/sessions/${sessionId}/messages`) as Array<Message>;
-  },
-
   async addSession() {
     return await $fetch(`${API_URL}/sessions`, { method: 'POST' }) as Session;
+  },
+
+  async deleteSession(sessionId: string) {
+    return await $fetch(`${API_URL}/sessions/${sessionId}`, { method: 'DELETE' }) as Session;
+  },
+
+  async getMessages(sessionId: string): Promise<Array<Message>> {
+    return await $fetch(`${API_URL}/sessions/${sessionId}/messages`) as Array<Message>;
   },
 
   async rateMessage(message: Message, rating: Message['rating']) {
@@ -23,7 +27,7 @@ export default {
     return await $fetch(
       `${API_URL}/sessions/${message.sessionId}/message/${message.id}/rate${message.rating !== null ? '?rating=' + message.rating : ''}`, {
         method: 'POST',
-      },
+      }
     ) as Message;
   },
 
