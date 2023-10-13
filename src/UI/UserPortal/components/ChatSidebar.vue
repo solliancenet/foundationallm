@@ -53,30 +53,30 @@ import api from '~/server/api';
 export default {
 	name: 'ChatSidebar',
 
-	props: {
-		sessions: {
-			type: Array<Session>,
-			required: true,
-		},
-	},
-
-	emits: ['add-session', 'session-selected'],
+	emits: ['change-session'],
 
 	data() {
 		return {
 			currentSession: null as Session | null,
 			deleteSession: null as Session | null,
+			sessions: [] as Array<Session>,
 		};
+	},
+
+	async created() {
+		const data = await api.getSessions();
+		this.sessions = data;
+		this.handleSessionSelected(data[0]);
 	},
 
 	methods: {
 		handleAddSession() {
-			this.$emit('add-session');
+			console.log('add session');
 		},
 
 		handleSessionSelected(session: Session) {
 			this.currentSession = session;
-			this.$emit('session-selected', session);
+			this.$emit('change-session', session);
 		},
 
 		async handleDeleteSession() {

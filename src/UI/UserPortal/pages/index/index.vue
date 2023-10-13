@@ -1,47 +1,25 @@
 <template>
 	<div class="chat-app">
-		<ChatSidebar
-			:sessions="sessions"
-			@session-selected="handleSessionSelected"
-			@add-session="handleAddSession"
-		/>
-		<ChatThread :messages="messages" :session="selectedSession" />
+		<ChatSidebar @change-session="handleChangeSession" />
+		<ChatThread :session="currentSession" />
 	</div>
 </template>
 
 <script lang="ts">
-import { Message, Session } from '@/js/types';
-import api from '~/server/api';
+import { Session } from '@/js/types';
 
 export default {
 	name: 'Index',
 
 	data() {
 		return {
-			sessions: [] as Array<Session>,
-			selectedSession: {} as Session,
-			messages: [] as Array<Message>,
+			currentSession: {} as Session,
 		};
 	},
 
-	async created() {
-		const data = await api.getSessions();
-		this.sessions = data;
-		this.selectedSession = data[0];
-		await this.handleSessionSelected(this.selectedSession);
-	},
-
 	methods: {
-		async handleSessionSelected(session: Session) {
-			const data = await api.getMessages(session.id);
-			this.messages = data;
-			this.selectedSession = session;
-		},
-
-		async handleAddSession() {
-			const data = await api.addSession();
-			this.sessions.push(data);
-			this.handleSessionSelected(data);
+		handleChangeSession(session) {
+			this.currentSession = session;
 		},
 	},
 };

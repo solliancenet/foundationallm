@@ -34,18 +34,34 @@ export default {
 	name: 'ChatThread',
 
 	props: {
-		messages: {
-			type: Array<Message>,
-			required: true,
-		},
-
 		session: {
 			type: Object as PropType<Session>,
 			required: true,
 		},
 	},
 
+	data() {
+		return {
+			messages: [] as Array<Message>,
+		};
+	},
+
+	watch: {
+		session() {
+			this.getMessages();
+		}
+	},
+
+	async created() {
+		await this.getMessages();
+	},
+
 	methods: {
+		async getMessages() {
+			const data = await api.getMessages(this.session.id);
+			this.messages = data;
+		},
+
 		async handleRateMessage(messageIndex: number, { message, like }: { message: Message; like: boolean }) {
 			const data = await api.rateMessage(message, like);
 			console.log(messageIndex, data);
