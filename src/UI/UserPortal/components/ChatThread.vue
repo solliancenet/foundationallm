@@ -16,7 +16,7 @@
 				v-for="(message, index) in messages.slice().reverse()"
 				:key="message.id"
 				:message="message"
-				@rate="handleRateMessage(index, $event)"
+				@rate="handleRateMessage(messages.length - 1 - index, $event)"
 			/>
 		</div>
 
@@ -63,8 +63,8 @@ export default {
 		},
 
 		async handleRateMessage(messageIndex: number, { message, like }: { message: Message; like: boolean }) {
-			const data = await api.rateMessage(message, like);
-			console.log(messageIndex, data);
+			const updatedMessage = await api.rateMessage(message, like);
+			this.messages[messageIndex] = updatedMessage;
 		},
 
 		async handleSend(text: string) {
