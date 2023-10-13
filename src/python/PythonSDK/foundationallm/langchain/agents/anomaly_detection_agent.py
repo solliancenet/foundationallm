@@ -13,9 +13,9 @@ from langchain.tools.python.tool import PythonREPLTool
 
 from foundationallm.config import Configuration
 from foundationallm.langchain.agents import AgentBase
-from foundationallm.langchain.data_sources.sql import SqlDbConfig
-from foundationallm.langchain.data_sources.sql.mssql import MsSqlServer
-from foundationallm.langchain.data_sources.sql import SqlDbFactory
+from foundationallm.langchain.data_sources.sql import SQLDatabaseConfiguration
+from foundationallm.langchain.data_sources.sql.mssql import MicrosoftSQLServer
+from foundationallm.langchain.data_sources.sql import SQLDatabaseFactory
 from foundationallm.langchain.language_models import LanguageModelBase
 from foundationallm.models.orchestration import CompletionRequest, CompletionResponse
 from foundationallm.langchain.toolkits import AnomalyDetectionToolkit
@@ -43,7 +43,7 @@ class AnomalyDetectionAgent(AgentBase):
         self.user_prompt = completion_request.user_prompt
         self.llm = llm.get_language_model()
         # Currently set up to use a SQL Database table as the source system.
-        self.sql_db_config: SqlDbConfig = completion_request.data_source.configuration
+        self.sql_db_config: SQLDatabaseConfiguration = completion_request.data_source.configuration
         
         self.sql_agent_prompt = """You are an anomaly detection agent designed to interact with a SQL database. Given an input question, first create a syntactically correct {dialect} query to run, then look at the results of the query and return the answer to the input question.
         Unless the user specifies a specific number of examples they wish to obtain, always limit your query to at most {top_k} results using the TOP clause as per MS SQL. You can order the results by a relevant column to return the most interesting examples in the database.
@@ -58,7 +58,7 @@ class AnomalyDetectionAgent(AgentBase):
         self.sql_agent = create_sql_agent(
             llm = self.llm,
             toolkit = SQLDatabaseToolkit(
-                db = SqlDbFactory(sql_db_config = self.sql_db_config, app_config = app_config).get_sql_database(),
+                db = SQLDatabaseFactory(sql_db_config = self.sql_db_config, app_config = app_config).get_sql_database(),
                 llm=self.llm,
                 reduce_k_below_max_tokens=True
             ),
@@ -72,7 +72,7 @@ class AnomalyDetectionAgent(AgentBase):
         
         self.df = pd.read_sql(
             'SELECT * FROM RumInventory',
-            create_engine(MsSqlServer(sql_db_config = self.sql_db_config, app_config = app_config).get_connection_string()),
+            create_engine(MicrosoftSQLServer(sql_db_config = self.sql_db_config, app_config = app_config).get_connection_string()),
             index_col='Id'
         )
 

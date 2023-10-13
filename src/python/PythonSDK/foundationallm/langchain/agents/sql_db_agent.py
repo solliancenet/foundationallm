@@ -6,8 +6,8 @@ from langchain.prompts import PromptTemplate
 
 from foundationallm.config import Configuration
 from foundationallm.langchain.agents import AgentBase
-from foundationallm.langchain.data_sources.sql import SqlDbConfig
-from foundationallm.langchain.data_sources.sql import SqlDbFactory
+from foundationallm.langchain.data_sources.sql import SQLDatabaseConfiguration
+from foundationallm.langchain.data_sources.sql import SQLDatabaseFactory
 from foundationallm.langchain.language_models import LanguageModelBase
 from foundationallm.models.orchestration import CompletionRequest, CompletionResponse
 
@@ -33,12 +33,12 @@ class SqlDbAgent(AgentBase):
         self.agent_prompt_prefix = PromptTemplate.from_template(completion_request.agent.prompt_template)
         self.user_prompt = completion_request.user_prompt
         self.llm = llm.get_language_model()
-        self.sql_db_config: SqlDbConfig = completion_request.data_source.configuration
+        self.sql_db_config: SQLDatabaseConfiguration = completion_request.data_source.configuration
 
         self.agent = create_sql_agent(
             llm = self.llm,
             toolkit = SQLDatabaseToolkit( #TODO: Swap out with overridden, secure toolkit.
-                db = SqlDbFactory(sql_db_config = self.sql_db_config, app_config = app_config).get_sql_database(),
+                db = SQLDatabaseFactory(sql_db_config = self.sql_db_config, app_config = app_config).get_sql_database(),
                 llm=self.llm,
                 reduce_k_below_max_tokens=True
             ),

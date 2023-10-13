@@ -1,1 +1,2 @@
-from .csv_config import CSVConfig
+"""CSV file data source module."""
+from .csv_configuration import CSVConfiguration

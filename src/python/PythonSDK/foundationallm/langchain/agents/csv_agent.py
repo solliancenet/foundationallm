@@ -4,7 +4,7 @@ from langchain.callbacks import get_openai_callback
 
 from foundationallm.config import Configuration
 from foundationallm.langchain.agents import AgentBase
-from foundationallm.langchain.data_sources.csv import CSVConfig
+from foundationallm.langchain.data_sources.csv import CSVConfiguration
 from foundationallm.langchain.language_models import LanguageModelBase
 from foundationallm.models.orchestration import CompletionRequest, CompletionResponse
 
@@ -30,7 +30,7 @@ class CSVAgent(AgentBase):
         self.agent_prompt_prefix = completion_request.agent.prompt_template
         self.user_prompt = completion_request.user_prompt
         self.llm = llm.get_language_model()
-        self.data_source_config: CSVConfig = completion_request.data_source.configuration
+        self.data_source_config: CSVConfiguration = completion_request.data_source.configuration
         if self.data_source_config.path_value_is_secret:
             self.source_file_path = app_config.get_value(self.data_source_config.source_file_path)
         else:
