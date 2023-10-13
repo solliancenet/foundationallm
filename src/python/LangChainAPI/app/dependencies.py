@@ -7,21 +7,35 @@ from foundationallm.config import Configuration
 def get_config(credential: Annotated[AzureCredential, Depends(AzureCredential)]):
     """
     Gets a configuration object for retrieving application configuration values.
+    
+    Parameters
+    ----------
+    credential : AzureCredential
+        The credential required to authenticate against Azure Key Vault.
+        
+    Returns
+    Configuration
+        Returns a Configuration object used for access Azure Key Vault and application settings.
     """
+    
     keyvault_name = Configuration().get_value(key='foundationallm-keyvault-name')
     return Configuration(keyvault_name=keyvault_name, credential=credential)
 
 async def validate_api_key_header(app_config: Annotated[Configuration, Depends(get_config)], x_api_key: str = Depends(APIKeyHeader(name='X-API-Key'))):
     """
-    Validates that the X-API-Key value in the request header matches
-    the key expected for this API.
+    Validates that the X-API-Key value in the request header matches the key expected for this API.
     
     Parameters
     ----------
-    - app_config: Configuration
+    app_config : Configuration
         Used for retrieving application configuration settings.
-    - x_api_key : str
+    x_api_key : str
         The X-API-Key value in the request header.
+        
+    Returns
+    bool
+        Returns True of the X-API-Key value from the request header matches the expected value.
+        Otherwise, returns False.
     """
 
     result = x_api_key == app_config.get_value('foundationallm-langchain-api-key')
