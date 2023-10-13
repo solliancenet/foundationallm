@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System.Text;
+using FoundationaLLM.Common.Interfaces;
 
 namespace FoundationaLLM.AgentFactory.Services
 {
@@ -20,7 +21,7 @@ namespace FoundationaLLM.AgentFactory.Services
     {
         readonly LangChainOrchestrationServiceSettings _settings;
         readonly ILogger<LangChainOrchestrationService> _logger;
-        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IHttpClientFactoryService _httpClientFactoryService;
         readonly JsonSerializerSettings _jsonSerializerSettings;
 
         /// <summary>
@@ -29,11 +30,11 @@ namespace FoundationaLLM.AgentFactory.Services
         public LangChainOrchestrationService(
             IOptions<LangChainOrchestrationServiceSettings> options,
             ILogger<LangChainOrchestrationService> logger,
-            IHttpClientFactory httpClientFactory) 
+            IHttpClientFactoryService httpClientFactoryService) 
         {
             _settings = options.Value;
             _logger = logger;
-            _httpClientFactory = httpClientFactory;
+            _httpClientFactoryService = httpClientFactoryService;
             _jsonSerializerSettings = CommonJsonSerializerSettings.GetJsonSerializerSettings();
         }
 
@@ -50,7 +51,7 @@ namespace FoundationaLLM.AgentFactory.Services
         /// <returns>Returns a completion response from the orchestration engine.</returns>
         public async Task<CompletionResponse> GetCompletion(string userPrompt, List<MessageHistoryItem> messageHistory)
         {
-            var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.LangChainAPIClient);
+            var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.LangChainAPI);
 
             // TODO: This should be created and then populated by calls to the Hub APIs.
             var request = new LLMOrchestrationCompletionRequest()
@@ -130,7 +131,7 @@ namespace FoundationaLLM.AgentFactory.Services
         /// <returns>Returns a summary of the input text.</returns>
         public async Task<string> GetSummary(string userPrompt)
         {
-            var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.LangChainAPIClient);
+            var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.LangChainAPI);
 
             var request = new LLMOrchestrationCompletionRequest()
             {
@@ -173,7 +174,7 @@ namespace FoundationaLLM.AgentFactory.Services
         /// <returns>True if the service is ready. Otherwise, returns false.</returns>
         private bool GetServiceStatus()
         {
-            var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.LangChainAPIClient);
+            var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.LangChainAPI);
             var responseMessage = client.Send(
                 new HttpRequestMessage(HttpMethod.Get, "/status"));
 

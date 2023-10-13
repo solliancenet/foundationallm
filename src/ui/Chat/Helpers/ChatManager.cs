@@ -156,7 +156,7 @@ namespace FoundationaLLM.Chat.Helpers
 
         private async Task<T> SendRequest<T>(HttpMethod method, string requestUri, object payload = null)
         {
-            var client = await GetHttpClientAsync(Common.Constants.HttpClients.DefaultHttpClient, _entraSettings.Scopes);
+            var client = await GetHttpClientAsync(Common.Constants.HttpClients.CoreAPI, _entraSettings.Scopes);
             HttpResponseMessage responseMessage;
             switch (method)
             {
@@ -177,7 +177,7 @@ namespace FoundationaLLM.Chat.Helpers
 
         private async Task SendRequest(HttpMethod method, string requestUri)
         {
-            var client = await GetHttpClientAsync(Common.Constants.HttpClients.DefaultHttpClient, _entraSettings.Scopes);
+            var client = await GetHttpClientAsync(Common.Constants.HttpClients.CoreAPI, _entraSettings.Scopes);
             switch (method)
             {
                 case HttpMethod m when m == HttpMethod.Delete:

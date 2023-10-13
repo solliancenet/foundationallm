@@ -33,8 +33,11 @@ namespace FoundationaLLM.Gatekeeper.API
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:GatekeeperAPI"));
             builder.Services.AddOptions<KeyVaultConfigurationServiceSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:Configuration"));
-            builder.Services.AddOptions<DownstreamAPIKeySettings>()
-                .Bind(builder.Configuration.GetSection("FoundationaLLM:AgentFactoryAPI"));
+
+            // Register the downstream services and HTTP clients.
+            RegisterDownstreamServices(builder);
+
+
             builder.Services.AddTransient<IAPIKeyValidationService, APIKeyValidationService>();
             builder.Services.AddSingleton<IConfigurationService, KeyVaultConfigurationService>();
 
@@ -45,17 +48,6 @@ namespace FoundationaLLM.Gatekeeper.API
             builder.Services.AddScoped<IHttpClientFactoryService, HttpClientFactoryService>();
             builder.Services.AddScoped<IUserClaimsProviderService, NoOpUserClaimsProviderService>();
             builder.Services.AddScoped<IGatekeeperService, GatekeeperService>();
-
-            builder.Services
-                .AddHttpClient(HttpClients.AgentFactoryAPIClient,
-                    httpClient =>
-                    {
-                        httpClient.BaseAddress = new Uri(builder.Configuration["FoundationaLLM:AgentFactoryAPI:APIUrl"]);
-                        //httpClient.DefaultRequestHeaders.Add("X-API-KEY", builder.Configuration["FoundationaLLM:AgentFactoryAPI:APIKey"]);
-                    })
-                .AddTransientHttpErrorPolicy(policyBuilder =>
-                    policyBuilder.WaitAndRetryAsync(
-                        3, retryNumber => TimeSpan.FromMilliseconds(600)));
 
             builder.Services.AddOptions<RefinementServiceSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:Refinement"));
@@ -128,6 +120,31 @@ namespace FoundationaLLM.Gatekeeper.API
             app.MapControllers();
 
             app.Run();
+        }
+
+        /// <summary>
+        /// Bind the downstream API settings to the configuration and register the HTTP clients.
+        /// </summary>
+        /// <param name="builder"></param>
+        private static void RegisterDownstreamServices(WebApplicationBuilder builder)
+        {
+            var downstreamAPISettings = new DownstreamAPISettings
+            {
+                DownstreamAPIs = new Dictionary<string, DownstreamAPIKeySettings>()
+            };
+            foreach (var apiSetting in builder.Configuration.GetSection("FoundationaLLM:DownstreamAPIs").GetChildren())
+            {
+                var key = apiSetting.Key;
+                var settings = apiSetting.Get<DownstreamAPIKeySettings>();
+                downstreamAPISettings.DownstreamAPIs[key] = settings;
+                builder.Services
+                    .AddHttpClient(key, client => { client.BaseAddress = new Uri(settings.APIUrl); })
+                    .AddTransientHttpErrorPolicy(policyBuilder =>
+                        policyBuilder.WaitAndRetryAsync(
+                            3, retryNumber => TimeSpan.FromMilliseconds(600)));
+            }
+
+            builder.Services.AddSingleton<IDownstreamAPISettings>(downstreamAPISettings);
         }
     }
 }

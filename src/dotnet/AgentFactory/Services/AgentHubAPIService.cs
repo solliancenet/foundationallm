@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 using System.Net.Http;
 using System.Runtime;
 using System.Text;
+using FoundationaLLM.Common.Interfaces;
 
 namespace FoundationaLLM.AgentFactory.Core.Services;
 
@@ -20,24 +21,24 @@ public class AgentHubAPIService : IAgentHubService
 {
     readonly AgentHubSettings _settings;
     readonly ILogger<AgentHubAPIService> _logger;
-    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly IHttpClientFactoryService _httpClientFactoryService;
     readonly JsonSerializerSettings _jsonSerializerSettings;
 
     public AgentHubAPIService(
             IOptions<AgentHubSettings> options,
             ILogger<AgentHubAPIService> logger,
-            IHttpClientFactory httpClientFactory)
+            IHttpClientFactoryService httpClientFactoryService)
     {
         _settings = options.Value;
         _logger = logger;
-        _httpClientFactory = httpClientFactory;
+        _httpClientFactoryService = httpClientFactoryService;
     }
 
     public async Task<string> Status()
     {
         try
         {
-            var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.AgentHubAPIClient);
+            var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.AgentHubAPI);
 
             var responseMessage = await client.GetAsync("/status");
 
@@ -62,7 +63,7 @@ public class AgentHubAPIService : IAgentHubService
         {
             AgentHubMessage ahm = new AgentHubMessage { UserPrompt = userPrompt, UserContext = userContext };
             
-            var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.AgentHubAPIClient);
+            var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.AgentHubAPI);
 
             var responseMessage = await client.PostAsync("/resolve_request", new StringContent(
                     JsonConvert.SerializeObject(ahm),

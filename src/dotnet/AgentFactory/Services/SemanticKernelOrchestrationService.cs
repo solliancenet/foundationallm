@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System.Text;
+using FoundationaLLM.Common.Interfaces;
 
 namespace FoundationaLLM.AgentFactory.Services
 {
@@ -14,17 +15,17 @@ namespace FoundationaLLM.AgentFactory.Services
     {
         readonly SemanticKernelOrchestrationServiceSettings _settings;
         readonly ILogger<SemanticKernelOrchestrationService> _logger;
-        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IHttpClientFactoryService _httpClientFactoryService;
         readonly JsonSerializerSettings _jsonSerializerSettings;
 
         public SemanticKernelOrchestrationService(
             IOptions<SemanticKernelOrchestrationServiceSettings> options,
             ILogger<SemanticKernelOrchestrationService> logger,
-            IHttpClientFactory httpClientFactory)
+            IHttpClientFactoryService httpClientFactoryService)
         {
             _settings = options.Value;
             _logger = logger;
-            _httpClientFactory = httpClientFactory;
+            _httpClientFactoryService = httpClientFactoryService;
             _jsonSerializerSettings = CommonJsonSerializerSettings.GetJsonSerializerSettings();
         }
 
@@ -34,7 +35,7 @@ namespace FoundationaLLM.AgentFactory.Services
 
         public async Task<CompletionResponse> GetCompletion(string userPrompt, List<MessageHistoryItem> messageHistory)
         {
-            var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.SemanticKernelAPIClient);
+            var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.SemanticKernelAPI);
 
             var responseMessage = await client.PostAsync("/orchestration/completion",
                 new StringContent(
@@ -61,7 +62,7 @@ namespace FoundationaLLM.AgentFactory.Services
 
         public async Task<string> GetSummary(string content)
         {
-            var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.SemanticKernelAPIClient);
+            var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.SemanticKernelAPI);
 
             var responseMessage = await client.PostAsync("/orchestration/summary",
                 new StringContent(
@@ -92,7 +93,7 @@ namespace FoundationaLLM.AgentFactory.Services
 
         private bool GetServiceStatus()
         {
-            var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.SemanticKernelAPIClient);
+            var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.SemanticKernelAPI);
             var responseMessage = client.Send(
                 new HttpRequestMessage(HttpMethod.Get, "/status"));
 
