@@ -1,6 +1,5 @@
-from foundationallm.hubs.prompt import PromptMetadata, PromptHubRequest, PromptHubResponse, PromptRepository
+from foundationallm.hubs.prompt import PromptHubRequest, PromptHubResponse
 from foundationallm.hubs import Resolver
-from typing import List
 
 class PromptResolver(Resolver):
     """The PromptResolver class is responsible for resolving a request to a metadata value."""

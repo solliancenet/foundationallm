@@ -10,9 +10,9 @@ class Repository(ABC):
         self.config = config    
 
     @abstractmethod
-    def get_metadata_values(self, pattern: str=None) -> List[Metadata]:
+    def get_metadata_values(self, pattern=None) -> List[Metadata]:
         """
-        Returns a list of metadata values optionally filtered by a pattern.
+        Returns a list of metadata values optionally filtered by a pattern/pattern objects.
         """
         pass
     

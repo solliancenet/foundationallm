@@ -10,5 +10,5 @@ class DataSourceHub(HubBase):
         # initialize config       
         key_vault_name = Configuration().get_value(key="foundationallm-keyvault-name")        
         self.config = Configuration(keyvault_name=key_vault_name, credential=AzureCredential())
-        super().__init__(repository= DataSourceRepository(self.config), resolver= DataSourceResolver())
+        super().__init__(resolver= DataSourceResolver(DataSourceRepository(self.config)))
         
