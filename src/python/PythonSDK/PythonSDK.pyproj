@@ -103,7 +103,6 @@
     <Compile Include="foundationallm\langchain\__init__.py" />
     <Compile Include="foundationallm\hubs\prompt\prompt_hub_request.py" />
     <Compile Include="foundationallm\hubs\prompt\prompt_hub_response.py" />
-    <Compile Include="foundationallm\models\metadata\agent_metadata.py" />
     <Compile Include="foundationallm\models\orchestration\metadata\agent.py" />
     <Compile Include="foundationallm\langchain\data_sources\data_source_configuration.py" />
     <Compile Include="foundationallm\models\orchestration\metadata\data_source.py" />
