@@ -1,4 +1,5 @@
 locals {
+  hostname           = "www.internal.foundationallm.ai"
   location           = var.location
   location_short     = var.location_short
   private_dns_zones  = var.private_dns_zones
@@ -71,24 +72,28 @@ module "appconfig" {
   }
 }
 
-# module "application_gateway" {
-#   source     = "./modules/application-gateway"
-#   depends_on = [azurerm_role_assignment.keyvault_secrets_user_agw]
+module "application_gateway" {
+  source     = "./modules/application-gateway"
+  depends_on = [azurerm_role_assignment.keyvault_secrets_user_agw]
 
-#   action_group_id            = azurerm_monitor_action_group.do_nothing.id
-#   identity_id                = azurerm_user_assigned_identity.agw.id
-#   log_analytics_workspace_id = module.logs.id
-#   resource_group             = azurerm_resource_group.rgs["AppGateway"]
-#   resource_prefix            = local.resource_prefix
-#   subnet_id                  = azurerm_subnet.subnets["AppGateway"].id
-#   tags                       = local.tags
-# }
+  action_group_id            = azurerm_monitor_action_group.do_nothing.id
+  backend_pool_ip_addresses  = ["0.0.0.0"] # TODO: Replace with AKS frontend IP address
+  hostname                   = local.hostname
+  identity_id                = azurerm_user_assigned_identity.agw.id
+  key_vault_secret_id        = module.application_gateway_certificate.certificate_secret_id
+  log_analytics_workspace_id = module.logs.id
+  public_dns_zone            = var.public_dns_zone
+  resource_group             = azurerm_resource_group.rgs["AppGateway"]
+  resource_prefix            = local.resource_prefix
+  subnet_id                  = azurerm_subnet.subnets["AppGateway"].id
+  tags                       = local.tags
+}
 
 module "application_gateway_certificate" {
   source = "./modules/keyvault-acme-certificate"
 
   administrator_email = "tbd@solliance.net"
-  domain              = "www.internal.foundationallm.ai"
+  domain              = local.hostname
   key_vault_id        = module.ops_keyvault.id
   public_dns_zone     = var.public_dns_zone
 }

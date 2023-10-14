@@ -62,7 +62,7 @@ resource "azurerm_application_gateway" "main" {
   http_listener {
     frontend_ip_configuration_name = "http"
     frontend_port_name             = "http"
-    hostname                       = var.hostname
+    host_name                      = var.hostname
     name                           = "http"
     protocol                       = "Http"
   }
@@ -70,11 +70,11 @@ resource "azurerm_application_gateway" "main" {
   http_listener {
     frontend_ip_configuration_name = "https"
     frontend_port_name             = "https"
-    hostname                       = var.hostname
+    host_name                      = var.hostname
     name                           = "https"
     protocol                       = "Https"
     require_sni                    = true
-    ssl_certificate_name           = local.ssl_certificate_name
+    ssl_certificate_name           = "default"
   }
 
   identity {
@@ -122,7 +122,7 @@ resource "azurerm_application_gateway" "main" {
 
   ssl_certificate {
     key_vault_secret_id = var.key_vault_secret_id
-    name                = local.ssl_certificate_name
+    name                = "default"
   }
 
   ssl_policy {
@@ -138,6 +138,14 @@ resource "azurerm_application_gateway" "main" {
   }
 }
 
+resource "azurerm_dns_a_record" "a" {
+  name                = "www"
+  zone_name           = var.public_dns_zone.name
+  resource_group_name = var.public_dns_zone.resource_group_name
+  ttl                 = 300
+  records             = [azurerm_public_ip.pip.ip_address]
+}
+
 resource "azurerm_public_ip" "pip" {
   allocation_method   = "Static"
   location            = var.resource_group.location
@@ -147,3 +155,17 @@ resource "azurerm_public_ip" "pip" {
   tags                = var.tags
 }
 
+module "diagnostics" {
+  source = "../diagnostics"
+
+  log_analytics_workspace_id = var.log_analytics_workspace_id
+
+  monitored_services = {
+    agw = {
+      id = azurerm_application_gateway.main.id
+    }
+    pip = {
+      id = azurerm_public_ip.pip.id
+    }
+  }
+}
