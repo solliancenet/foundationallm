@@ -19,3 +19,11 @@ export interface Session {
 	name: string;
 	messages: Array<Message>;
 }
+
+export interface CompletionPrompt {
+	id: string;
+	type: string;
+	sessionId: string;
+	messageId: string;
+	prompt: string;
+}

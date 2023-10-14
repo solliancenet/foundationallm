@@ -3,23 +3,24 @@ using FoundationaLLM.Common.Settings;
 using FoundationaLLM.Gatekeeper.Core.Interfaces;
 using Newtonsoft.Json;
 using System.Text;
+using FoundationaLLM.Common.Interfaces;
 
 namespace FoundationaLLM.Gatekeeper.Core.Services
 {
     public class AgentFactoryAPIService : IAgentFactoryAPIService
     {
-        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IHttpClientFactoryService _httpClientFactoryService;
         readonly JsonSerializerSettings _jsonSerializerSettings;
 
-        public AgentFactoryAPIService(IHttpClientFactory httpClientFactory)
+        public AgentFactoryAPIService(IHttpClientFactoryService httpClientFactoryService)
         {
-            _httpClientFactory = httpClientFactory;
+            _httpClientFactoryService = httpClientFactoryService;
             _jsonSerializerSettings = CommonJsonSerializerSettings.GetJsonSerializerSettings();
         }
 
         public async Task<CompletionResponse> GetCompletion(CompletionRequest completionRequest)
         {
-            var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.AgentFactoryAPIClient);
+            var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.AgentFactoryAPI);
 
             var responseMessage = await client.PostAsync("orchestration/completion",
             new StringContent(
@@ -37,16 +38,16 @@ namespace FoundationaLLM.Gatekeeper.Core.Services
             return new CompletionResponse
             {
                 Completion = "A problem on my side prevented me from responding.",
-                UserPrompt = completionRequest.Prompt,
-                UserPromptTokens = 0,
-                ResponseTokens = 0,
+                UserPrompt = completionRequest.UserPrompt,
+                PromptTokens = 0,
+                CompletionTokens = 0,
                 UserPromptEmbedding = new float[] { 0 }
             };
         }
 
         public async Task<SummaryResponse> GetSummary(SummaryRequest summaryRequest)
         {
-            var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.AgentFactoryAPIClient);
+            var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.AgentFactoryAPI);
 
             var responseMessage = await client.PostAsync("orchestration/summarize",
                 new StringContent(
@@ -69,7 +70,7 @@ namespace FoundationaLLM.Gatekeeper.Core.Services
 
         public async Task<bool> SetLLMOrchestrationPreference(string orchestrationService)
         {
-            var client = _httpClientFactory.CreateClient(Common.Constants.HttpClients.AgentFactoryAPIClient);
+            var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.AgentFactoryAPI);
 
             var responseMessage = await client.PostAsync("orchestration/preference",
                 new StringContent(orchestrationService));

@@ -29,10 +29,4 @@
 	  <ProjectReference Include="..\..\..\src\dotnet\Core\Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Models\" />
-    <Folder Include="Utils\" />
-    <Folder Include="Services\" />
-  </ItemGroup>
-
 </Project>

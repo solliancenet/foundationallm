@@ -1,4 +1,6 @@
 ﻿using FoundationaLLM.AgentFactory.Core.Interfaces;
+using FoundationaLLM.AgentFactory.Core.Models.ConfigurationOptions;
+using FoundationaLLM.AgentFactory.Core.Models.Messages;
 using FoundationaLLM.AgentFactory.Interfaces;
 using FoundationaLLM.AgentFactory.Models.ConfigurationOptions;
 using FoundationaLLM.AgentFactory.Models.Orchestration;
@@ -12,7 +14,9 @@ public class AgentFactoryService : IAgentFactoryService
 {
     private readonly ISemanticKernelOrchestrationService _semanticKernelOrchestration;
     private readonly ILangChainOrchestrationService _langChainOrchestration;
-    private readonly ChatServiceSettings _settings;
+    private readonly IAgentHubService _agentHubService;
+    private readonly AgentFactorySettings _agentFactorySettings;
+    private readonly AgentHubSettings _agentHubSettings;
     private readonly ILogger<AgentFactoryService> _logger;
 
     private LLMOrchestrationService _llmOrchestrationService = LLMOrchestrationService.LangChain;
@@ -20,15 +24,19 @@ public class AgentFactoryService : IAgentFactoryService
     public AgentFactoryService(
         ISemanticKernelOrchestrationService semanticKernelOrchestration,
         ILangChainOrchestrationService langChainOrchestration,
-        IOptions<ChatServiceSettings> options,
+        IAgentHubService agentHubService,
+        IOptions<AgentFactorySettings> agentFactorySettings,
+        IOptions<AgentHubSettings> agentHubSettings,
         ILogger<AgentFactoryService> logger)
     {
         _semanticKernelOrchestration = semanticKernelOrchestration;
         _langChainOrchestration = langChainOrchestration;
-        _settings = options.Value;
+        _agentHubService = agentHubService;
+        _agentFactorySettings = agentFactorySettings.Value;
+        _agentHubSettings = agentHubSettings.Value;
         _logger = logger;
 
-        SetLLMOrchestrationPreference(_settings.DefaultOrchestrationService);
+        SetLLMOrchestrationPreference(_agentFactorySettings.DefaultOrchestrationService);
     }
 
     public bool SetLLMOrchestrationPreference(string orchestrationService)
@@ -41,22 +49,19 @@ public class AgentFactoryService : IAgentFactoryService
         else
             return false;
     }
-
     public string Status
     {
         get
         {
             if (_semanticKernelOrchestration.IsInitialized)
                 return "ready";
-
             var status = new List<string>();
-
             if (!_semanticKernelOrchestration.IsInitialized)
                 status.Add("SemanticKernelOrchestrationService: initializing");
-
             return string.Join(",", status);
         }
     }
+
 
     /// <summary>
     /// Retrieve a completion from the configured orchestration service.
@@ -65,21 +70,26 @@ public class AgentFactoryService : IAgentFactoryService
     {
         try
         {
+            //get all agents for prompt...
+            //List<AgentHubResponse> agents = await _agentHubService.ResolveRequest(completionRequest.Prompt, "");
+
             // Generate the completion to return to the user
-            var result = await GetLLMOrchestrationService().GetResponse(completionRequest.Prompt,
-                completionRequest.MessageHistory);
+            var result = await GetLLMOrchestrationService().GetCompletion(
+                completionRequest.UserPrompt,
+                completionRequest.MessageHistory
+            );
 
             return result;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error retrieving completion from the orchestration service for {completionRequest.Prompt}.");
+            _logger.LogError(ex, $"Error retrieving completion from the orchestration service for {completionRequest.UserPrompt}.");
             return new CompletionResponse
             {
                 Completion = "A problem on my side prevented me from responding.",
-                UserPrompt = completionRequest.Prompt,
-                UserPromptTokens = 0,
-                ResponseTokens = 0,
+                UserPrompt = completionRequest.UserPrompt,
+                PromptTokens = 0,
+                CompletionTokens = 0,
                 UserPromptEmbedding = new float[] { 0 }
             };
         }
@@ -108,7 +118,6 @@ public class AgentFactoryService : IAgentFactoryService
             };
         }
     }
-
     private ILLMOrchestrationService GetLLMOrchestrationService()
     {
         switch (_llmOrchestrationService)

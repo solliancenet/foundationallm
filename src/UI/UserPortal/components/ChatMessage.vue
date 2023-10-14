@@ -8,41 +8,61 @@
 	>
 		<div class="message">
 			<div class="message__header">
+				<!-- Sender -->
 				<span class="header__sender">
 					<img v-if="message.sender !== 'User'" class="avatar" src="~/assets/brain-royalty-free.png">
 					<span>{{ message.sender }}</span>
 				</span>
 
-				<span>{{ message.timeStamp }}</span>
+				<!-- Timestamp -->
+				<span>{{ $filters.timeAgo(new Date(message.timeStamp)) }}</span>
 			</div>
 
+			<!-- Message text -->
 			<div class="message__body">
 				{{ message.text }}
 			</div>
 
 			<div class="message__footer" v-if="message.sender !== 'User'">
-				<div class="message__votes">
-					<span
-						:class="message.rating ? 'selected like' : 'like'"
-						@click="handleRate(message, true)"
-					>
-						<i :class="message.rating ? 'icon pi pi-thumbs-up-fill' : 'icon pi pi-thumbs-up'"></i>
-						<span>Like</span>
+				<span class="ratings">
+					<!-- Like -->
+					<span>
+						<button @click="handleRate(message, true)">
+							<i :class="message.rating ? 'icon pi pi-thumbs-up-fill' : 'icon pi pi-thumbs-up'"></i>
+							{{ message.rating ? 'Message Liked!' : 'Like' }}
+						</button>
 					</span>
 
-					<span
-						:class="message.rating === false ? 'selected dislike' : 'dislike'"
-						@click="handleRate(message, false)"
-					>
-						<i :class="message.rating === false ? 'icon pi pi-thumbs-down-fill' : 'icon pi pi-thumbs-down'"></i>
-						<span>Dislike</span>
+					<!-- Dislike -->
+					<span>
+						<button @click="handleRate(message, false)">
+							<i :class="message.rating === false ? 'icon pi pi-thumbs-down-fill' : 'icon pi pi-thumbs-down'"></i>
+							{{ message.rating === false ? 'Message Disliked.' : 'Dislike' }}
+						</button>
 					</span>
-				</div>
+				</span>
 
-				<div class="view-prompt">
-					<i class="icon pi pi-book"></i>
-					<span>View Prompt</span>
-				</div>
+				<!-- View prompt -->
+				<span class="view-prompt">
+					<button @click="handleViewPrompt">
+						<i class="icon pi pi-book"></i>
+						View Prompt
+					</button>
+
+					<!-- Prompt dialog -->
+					<Dialog
+						:visible="viewPrompt"
+						modal
+						header="Completion Prompt"
+						:closable="false"
+						:style="{ width: '50vw' }"
+					>
+						<p class="prompt-text">{{ prompt.prompt }}</p>
+						<template #footer>
+							<Button label="Close" @click="viewPrompt = false" />
+						</template>
+					</Dialog>
+				</span>
 			</div>
 		</div>
 	</div>
@@ -50,7 +70,8 @@
 
 <script lang="ts">
 import type { PropType } from 'vue';
-import { Message } from '@/js/types';
+import { Message, CompletionPrompt } from '@/js/types';
+import api from '~/server/api';
 
 export default {
 	name: 'ChatMessage',
@@ -64,9 +85,22 @@ export default {
 
 	emits: ['rate'],
 
+	data() {
+		return {
+			prompt: {} as CompletionPrompt,
+			viewPrompt: false,
+		};
+	},
+
 	methods: {
 		handleRate(message: Message, like: Boolean) {
 			this.$emit('rate', { message, like });
+		},
+
+		async handleViewPrompt() {
+			const prompt = await api.getPrompt(this.message.sessionId, this.message.completionPromptId);
+			this.prompt = prompt;
+			this.viewPrompt = true;
 		}
 	},
 };
@@ -128,12 +162,18 @@ export default {
 	margin-right: 12px;
 }
 
-.view-prompt {
-	cursor: pointer;
+.ratings {
+	display: flex;
+	gap: 16px;
 }
 
 .icon {
 	margin-right: 4px;
+	cursor: pointer;
+}
+
+.view-prompt {
+	cursor: pointer;
 }
 
 .dislike {
@@ -143,5 +183,10 @@ export default {
 
 .like {
 	cursor: pointer;
+}
+
+.prompt-text {
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
 }
 </style>

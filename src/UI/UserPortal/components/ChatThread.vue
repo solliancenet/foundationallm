@@ -17,7 +17,7 @@
 				v-for="(message, index) in messages.slice().reverse()"
 				:key="message.id"
 				:message="message"
-				@rate="handleRateMessage(index, $event)"
+				@rate="handleRateMessage(messages.length - 1 - index, $event)"
 			/>
 			<div v-else class="new-chat-alert">
 				<div class="alert-header">
@@ -44,26 +44,42 @@ export default {
 	name: 'ChatThread',
 
 	props: {
-		messages: {
-			type: Array<Message>,
-			required: true,
-		},
-
 		session: {
 			type: Object as PropType<Session>,
 			required: true,
 		},
 	},
 
+	data() {
+		return {
+			messages: [] as Array<Message>,
+		};
+	},
+
+	watch: {
+		session() {
+			this.getMessages();
+		}
+	},
+
+	async created() {
+		await this.getMessages();
+	},
+
 	methods: {
-		async handleRateMessage(messageIndex, { message, like }: { message: Message; like: boolean }) {
-			const data = await api.rateMessage(message, like);
-			this.messages[messageIndex] = data;
+		async getMessages() {
+			const data = await api.getMessages(this.session.id);
+			this.messages = data;
+		},
+
+		async handleRateMessage(messageIndex: number, { message, like }: { message: Message; like: boolean }) {
+			const updatedMessage = await api.rateMessage(message, like);
+			this.messages[messageIndex] = updatedMessage;
 		},
 
 		async handleSend(text: string) {
-			const data = api.sendMessage(this.session.id, text);
-			console.log(data);
+			await api.sendMessage(this.session.id, text);
+			await this.getMessages();
 		},
 	},
 };

@@ -1,9 +1,12 @@
 ﻿using FoundationaLLM.Common.Models.Chat;
+using Newtonsoft.Json;
 
 namespace FoundationaLLM.Common.Models.Orchestration;
 
-public class CompletionRequest
+public class CompletionRequest : OrchestrationRequest
 {
-    public string Prompt { get; init; }
-    public List<MessageHistoryItem> MessageHistory { get; init; }
+    public string UserContext { get; init; }
+
+    [JsonProperty("message_history")]
+    public List<MessageHistoryItem>? MessageHistory { get; init; } = new List<MessageHistoryItem>();
 }

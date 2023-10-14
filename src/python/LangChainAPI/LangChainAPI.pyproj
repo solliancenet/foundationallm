@@ -22,8 +22,18 @@
     <TestFramework>none</TestFramework>
     <UnitTestPattern>test*.py</UnitTestPattern>
     <UnitTestRootDirectory>.</UnitTestRootDirectory>
-    <Environment>
-    </Environment>
+    <Environment>foundationallm-keyvault-name=solliance-aicopilot
+foundationallm-azure-openai-api-url=https://foundationallm-01.openai.azure.com/
+Foundationallm-azure-openai-api-version=2023-05-15
+foundationallm-azure-openai-api-completions-model-version=0301
+foundationallm-azure-openai-api-completions-deployment=completions
+foundationallm-azure-openai-api-embeddings-deployment=embeddings
+foundationallm-langchain-summary-model-name=gpt-35-turbo
+foundationallm-langchain-summary-model-max-tokens=4097
+foundationallm-langchain-sqldb-testdb-server-name=cocorahs-ai
+foundationallm-langchain-sqldb-testdb-database-name=cocorahsdb
+foundationallm-langchain-sqldb-testdb-database-username=coco-admin
+foundationallm-configuration-allow-environment-variables=True</Environment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>

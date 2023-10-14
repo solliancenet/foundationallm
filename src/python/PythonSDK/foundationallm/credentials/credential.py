@@ -1,5 +1,8 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 
-class Credential:
+class Credential(ABC):
+    """Abstract base class for Credential objects"""
+    
+    @abstractmethod
     def get_credential(self):
-        pass
+        """Retrieves credentials"""

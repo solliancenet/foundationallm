@@ -1,5 +1,7 @@
 using Asp.Versioning;
+using Azure.Identity;
 using FoundationaLLM.AgentFactory.Core.Interfaces;
+using FoundationaLLM.AgentFactory.Core.Models.ConfigurationOptions;
 using FoundationaLLM.AgentFactory.Core.Services;
 using FoundationaLLM.AgentFactory.Interfaces;
 using FoundationaLLM.AgentFactory.Models.ConfigurationOptions;
@@ -7,7 +9,11 @@ using FoundationaLLM.AgentFactory.Services;
 using FoundationaLLM.Common.Authentication;
 using FoundationaLLM.Common.Constants;
 using FoundationaLLM.Common.Interfaces;
+using FoundationaLLM.Common.Middleware;
+using FoundationaLLM.Common.Models.Authentication;
+using FoundationaLLM.Common.Models.Configuration;
 using FoundationaLLM.Common.OpenAPI;
+using FoundationaLLM.Common.Services;
 using Microsoft.Extensions.Options;
 using Polly;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -26,46 +32,42 @@ namespace FoundationaLLM.AgentFactory.API
 
             // Add API Key Authorization
             builder.Services.AddHttpContextAccessor();
+            builder.Services.AddScoped<IUserClaimsProviderService, NoOpUserClaimsProviderService>();
             builder.Services.AddScoped<APIKeyAuthenticationFilter>();
             builder.Services.AddOptions<APIKeyValidationSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:AgentFactoryAPI"));
             builder.Services.AddTransient<IAPIKeyValidationService, APIKeyValidationService>();
 
             builder.Services.AddOptions<SemanticKernelOrchestrationServiceSettings>()
-                .Bind(builder.Configuration.GetSection("FoundationaLLM:SemanticKernelOrchestration"));
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:SemanticKernelAPI"));
 
             builder.Services.AddOptions<LangChainOrchestrationServiceSettings>()
-                .Bind(builder.Configuration.GetSection("FoundationaLLM:LangChainOrchestration"));
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:LangChainAPI"));
 
-            builder.Services.AddOptions<ChatServiceSettings>()
-                .Bind(builder.Configuration.GetSection("FoundationaLLM:Chat"));
+            builder.Services.AddOptions<AgentHubSettings>()
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:AgentHubAPI"));
 
-            builder.Services.AddSingleton<ISemanticKernelOrchestrationService, SemanticKernelOrchestrationService>();
-            builder.Services.AddSingleton<ILangChainOrchestrationService, LangChainOrchestrationService>();
-            builder.Services.AddSingleton<IAgentFactoryService, AgentFactoryService>();
+            builder.Services.AddOptions<AgentFactorySettings>()
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:AgentFactory"));
+
+            builder.Services.AddOptions<KeyVaultConfigurationServiceSettings>()
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:Configuration"));
+
+            builder.Services.AddSingleton<IConfigurationService, KeyVaultConfigurationService>();
+            
+            builder.Services.AddScoped<ISemanticKernelOrchestrationService, SemanticKernelOrchestrationService>();
+            builder.Services.AddScoped<ILangChainOrchestrationService, LangChainOrchestrationService>();
+            builder.Services.AddScoped<IAgentFactoryService, AgentFactoryService>();
+            builder.Services.AddScoped<IAgentHubService, AgentHubAPIService>();
+            builder.Services.AddScoped<IUserIdentityContext, UserIdentityContext>();
+            builder.Services.AddScoped<IHttpClientFactoryService, HttpClientFactoryService>();
+            builder.Services.AddScoped<IUserClaimsProviderService, NoOpUserClaimsProviderService>();
 
             builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 
-            builder.Services
-                .AddHttpClient(HttpClients.LangChainAPIClient,
-                    httpClient =>
-                    {
-                        httpClient.BaseAddress = new Uri(builder.Configuration["FoundationaLLM:LangChainOrchestration:APIUrl"]);
-                        httpClient.DefaultRequestHeaders.Add("X-API-KEY", builder.Configuration["FoundationaLLM:LangChainOrchestration:APIKey"]);
-                    })
-                .AddTransientHttpErrorPolicy(policyBuilder =>
-                    policyBuilder.WaitAndRetryAsync(
-                        3, retryNumber => TimeSpan.FromMilliseconds(600)));
-            builder.Services
-                .AddHttpClient(HttpClients.SemanticKernelAPIClient,
-                    httpClient =>
-                    {
-                        httpClient.BaseAddress = new Uri(builder.Configuration["FoundationaLLM:SemanticKernelOrchestration:APIUrl"]);
-                        httpClient.DefaultRequestHeaders.Add("X-API-KEY", builder.Configuration["FoundationaLLM:SemanticKernelOrchestration:APIKey"]);
-                    })
-                .AddTransientHttpErrorPolicy(policyBuilder =>
-                    policyBuilder.WaitAndRetryAsync(
-                        3, retryNumber => TimeSpan.FromMilliseconds(600)));
+            // Register the downstream services and HTTP clients.
+            RegisterDownstreamServices(builder);
+
 
             builder.Services
                 .AddApiVersioning(options =>
@@ -105,6 +107,9 @@ namespace FoundationaLLM.AgentFactory.API
 
             var app = builder.Build();
 
+            // Register the middleware to set the user identity context.
+            app.UseMiddleware<UserIdentityMiddleware>();
+
             app.UseExceptionHandler(exceptionHandlerApp
                 => exceptionHandlerApp.Run(async context
                     => await Results.Problem().ExecuteAsync(context)));
@@ -130,6 +135,31 @@ namespace FoundationaLLM.AgentFactory.API
             app.MapControllers();
 
             app.Run();
+        }
+
+        /// <summary>
+        /// Bind the downstream API settings to the configuration and register the HTTP clients.
+        /// </summary>
+        /// <param name="builder"></param>
+        private static void RegisterDownstreamServices(WebApplicationBuilder builder)
+        {
+            var downstreamAPISettings = new DownstreamAPISettings
+            {
+                DownstreamAPIs = new Dictionary<string, DownstreamAPIKeySettings>()
+            };
+            foreach (var apiSetting in builder.Configuration.GetSection("FoundationaLLM:DownstreamAPIs").GetChildren())
+            {
+                var key = apiSetting.Key;
+                var settings = apiSetting.Get<DownstreamAPIKeySettings>();
+                downstreamAPISettings.DownstreamAPIs[key] = settings;
+                builder.Services
+                    .AddHttpClient(key, client => { client.BaseAddress = new Uri(settings.APIUrl); })
+                    .AddTransientHttpErrorPolicy(policyBuilder =>
+                        policyBuilder.WaitAndRetryAsync(
+                            3, retryNumber => TimeSpan.FromMilliseconds(600)));
+            }
+
+            builder.Services.AddSingleton<IDownstreamAPISettings>(downstreamAPISettings);
         }
     }
 }

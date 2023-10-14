@@ -7,6 +7,7 @@ using FoundationaLLM.Common.Interfaces;
 using FoundationaLLM.Common.Models.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace FoundationaLLM.Common.Controllers
 {
@@ -15,24 +16,10 @@ namespace FoundationaLLM.Common.Controllers
     /// </summary>
     public class APIControllerBase : ControllerBase
     {
-        protected UnifiedUserIdentity? _userIdentity;
-        protected readonly IUserClaimsProviderService _claimsProviderService;
 
-        protected APIControllerBase(IUserClaimsProviderService claimsProviderService)
+        protected APIControllerBase()
         {
-            _claimsProviderService = claimsProviderService;
-        }
 
-        protected UnifiedUserIdentity? UserIdentity
-        {
-            get
-            {
-                if (_userIdentity == null && User != null)
-                {
-                    _userIdentity = _claimsProviderService.GetUserIdentity(User);
-                }
-                return _userIdentity;
-            }
         }
     }
 }

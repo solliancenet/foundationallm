@@ -21,6 +21,6 @@ namespace FoundationaLLM.Common.Interfaces
         /// <param name="userPrincipal">The principal that provides multiple
         /// claims-based identities.</param>
         /// <returns></returns>
-        UnifiedUserIdentity GetUserIdentity(ClaimsPrincipal userPrincipal);
+        UnifiedUserIdentity? GetUserIdentity(ClaimsPrincipal? userPrincipal);
     }
 }

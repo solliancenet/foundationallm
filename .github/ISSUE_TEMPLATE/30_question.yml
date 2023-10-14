@@ -1,0 +1,31 @@
+name: 🤔 Question?
+description: You have something specific to achieve and the existing documentation hasn't covered how.
+title: '[Question]: '
+labels: ['question']
+body:
+- type: markdown
+  attributes:
+    value: |
+      Please check for an existing issue ([FoundationaLLM/issues](https://github.com/solliancenet/FoundationaLLM/issues?q=is%3Aissue)) and our documentation before asking a question.
+- type: textarea
+  attributes:
+    label: What are you wanting to achieve?
+    description: A clear and concise description of what you're trying to do.
+    placeholder: I am trying to do [...] but [...]
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: What code or approach do you have so far?
+    description: |
+      We ❤ code! Point us to a [minimalistic project which reproduces this issue (repro)](https://github.com/solliancenet/FoundationaLLM/blob/main/docs/contributing/repro.md) hosted in a public GitHub repo.
+      Code snippets wrapped in a codefence are also acceptable.
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Additional context
+    description: |
+      Add any other context or screenshots related to your question here.
+  validations:
+    required: false

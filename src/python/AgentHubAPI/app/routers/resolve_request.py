@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends
 from app.dependencies import validate_api_key_header
-from foundationallm.models import Session
-from foundationallm.hubs.agent import AgentHub
+from foundationallm.hubs.agent import AgentHub, AgentHubRequest, AgentHubResponse
 
 router = APIRouter(
     prefix='/resolve_request',
@@ -11,5 +10,5 @@ router = APIRouter(
 )
 
 @router.post('/')
-async def resolve_request(request: Session):    
+async def resolve_request(request: AgentHubRequest) -> AgentHubResponse:    
     return AgentHub().resolve_request(request)

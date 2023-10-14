@@ -4,3 +4,4 @@ tenacity==8.2.3
 azure-identity==1.14.0
 azure-keyvault-secrets==4.7.0
 azure-storage-blob==12.18.2
+numpy==1.26.0

@@ -2,7 +2,7 @@
 	<div class="chat-sidebar">
 		<!-- Sidebar header -->
 		<div class="chat-sidebar__header">
-			<span>Sessions</span>
+			<span>Chats</span>
 			<button @click="handleAddSession">
 				<span class="text">+</span>
 			</button>
@@ -21,57 +21,130 @@
 					class="chat"
 					:class="{ 'chat--selected': currentSession?.id === session.id }"
 				>
+					<!-- Chat name -->
 					<span class="chat__name">{{ session.name }}</span>
-					<div class="chat-options">
-						<span class="option edit">
+
+					<!-- Chat icons -->
+					<span class="chat__icons">
+						<!-- Rename session -->
+						<button small class="option edit" @click.stop="openRenameModal(session)">
 							<i class="icon pi pi-pencil"></i>
-						</span>
-						<span class="option delete">
+						</button>
+
+						<!-- Delete session -->
+						<button small class="option delete" @click.stop="sessionToDelete = session">
 							<i class="icon pi pi-trash"></i>
-						</span>
-					</div>
+						</button>
+					</span>
 				</div>
 			</div>
 		</div>
+
+		<!-- Rename session dialog -->
+		<Dialog
+			:visible="sessionToRename !== null"
+			modal
+			:header="`Rename Chat ${sessionToRename?.name}`"
+			:closable="false"
+			:style="{ width: '50vw' }"
+		>
+			<InputText
+				v-model="newSessionName"
+				type="text"
+				placeholder="New chat name"
+				:style="{ width: '100%' }"
+			></InputText>
+			<template #footer>
+				<Button label="Cancel" text @click="closeRenameModal" />
+				<Button label="Rename" @click="handleRenameSession" />
+			</template>
+		</Dialog>
+
+		<!-- Delete session dialog -->
+		<Dialog
+			:visible="sessionToDelete !== null"
+			modal
+			header="Delete a Chat"
+			:closable="false"
+			:style="{ width: '50vw' }"
+		>
+			<p>Do you want to delete the chat "{{ sessionToDelete.name }}" ?</p>
+			<template #footer>
+				<Button label="Cancel" text @click="sessionToDelete = null" />
+				<Button label="Delete" severity="danger" @click="handleDeleteSession" />
+			</template>
+		</Dialog>
 	</div>
 </template>
 
 <script lang="ts">
 import { Session } from '@/js/types';
+import api from '~/server/api';
 
 export default {
 	name: 'ChatSidebar',
 
-	props: {
-		sessions: {
-			type: Array<Session>,
-			required: true,
-		},
-	},
-
-	emits: ['add-session', 'session-selected'],
+	emits: ['change-session'],
 
 	data() {
 		return {
+			sessions: [] as Array<Session>,
 			currentSession: null as Session | null,
+			sessionToRename: null as Session | null,
+			newSessionName: '' as string,
+			sessionToDelete: null as Session | null,
 		};
 	},
 
+	async created() {
+		await this.getSessions();
+		this.handleSessionSelected(this.sessions[0]);
+	},
+
 	methods: {
-		handleAddSession() {
-			this.$emit('add-session');
+		openRenameModal(session: Session) {
+			this.sessionToRename = session;
+			this.newSessionName = session.name;
+		},
+
+		closeRenameModal() {
+			this.sessionToRename = null;
+			this.newSessionName = '';
+		},
+
+		async getSessions() {
+			const session = await api.getSessions();
+			this.sessions = session;
+		},
+
+		async handleRenameSession() {
+			const updatedSession = await api.renameSession(this.sessionToRename!.id, this.newSessionName);
+			const sessionIndex = this.sessions.findIndex(session => session.id === updatedSession.id);
+			this.sessions[sessionIndex] = updatedSession;
+			this.sessionToRename = null;
+		},
+
+		async handleAddSession() {
+			const session = await api.addSession();
+			this.handleSessionSelected(session);
+			await this.getSessions();
 		},
 
 		handleSessionSelected(session: Session) {
 			this.currentSession = session;
-			this.$emit('session-selected', session);
+			this.$emit('change-session', session);
+		},
+
+		async handleDeleteSession() {
+			await api.deleteSession(this.sessionToDelete!.id);
+			this.sessionToDelete = null;
+			await this.getSessions();
 		},
 	},
 };
 </script>
 
 <style lang="scss" scoped>
-
 .chat-sidebar {
 	width: 300px;
 	height: 100%;
@@ -100,12 +173,13 @@ export default {
 	margin: 24px;
 	padding: 12px;
 	display: flex;
-    justify-content: space-between;
-    align-items: center;
+	justify-content: space-between;
+	align-items: center;
 }
 
-.chat-options {
+.chat__icons {
 	display: flex;
+	justify-content: space-between;
 }
 
 .chat--selected {
@@ -115,10 +189,11 @@ export default {
 .chat--selected .option {
 	background-color: rgba(245, 245, 245, 1);
 }
+
 .option {
 	background-color: rgba(220, 220, 220, 1);
 	padding: 4px;
-    border-radius: 3px;
+	border-radius: 3px;
 }
 
 .option:hover {
@@ -130,7 +205,10 @@ export default {
 	margin-left: 8px;
 }
 
-.chat--selected .option:hover {
-	background-color: rgba(180, 180, 180, 1);
+.chat__name {
+}
+
+.chat__icons {
+	flex-shrink: 0;
 }
 </style>

@@ -4,20 +4,21 @@
 			<div class="icon"></div>
 			<div class="text"></div>
 		</div>
-		<textarea
+		<InputText
 			v-model="text"
 			class="input"
 			type="text"
 			placeholder="What would you like to ask?"
-		/>
+			@keydown.enter="handleSend"
+		></InputText>
 		<div class="submit">
 			<div class="icon"></div>
-			<button @click="handleSend">Send</button>
+			<Button @click="handleSend">Send</Button>
 		</div>
 	</div>
 </template>
 
-<script>
+<script lang="ts">
 export default {
 	name: 'ChatInput',
 
@@ -25,13 +26,14 @@ export default {
 
 	data() {
 		return {
-			text: ''
+			text: '' as string,
 		};
 	},
 
 	methods: {
 		handleSend() {
 			this.$emit('send', this.text);
+			this.text = '';
 		},
 	},
 };
@@ -56,7 +58,7 @@ export default {
 }
 
 .input:focus {
-	height: 192px;
+	// height: 192px;
 }
 
 .submit {
