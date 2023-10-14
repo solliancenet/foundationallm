@@ -4,7 +4,7 @@ locals {
       aggregation = "Average"
       description = "Service CPU utilization greater than 75% for 1 hour"
       frequency   = "PT1M"
-      metric_name = "ServiceAvailability"
+      metric_name = "cpu_percent"
       operator    = "GreaterThan"
       threshold   = 75
       window_size = "PT1H"
