@@ -1,4 +1,4 @@
-locals {# TODO : alerts
+locals { # TODO : alerts
 }
 
 resource "azurerm_application_gateway" "main" {

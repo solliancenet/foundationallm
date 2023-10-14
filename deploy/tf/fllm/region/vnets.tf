@@ -41,8 +41,55 @@ locals {
       service_endpoints = []
 
       nsg_rules = {
-        inbound  = merge(local.default_nsg_rules.inbound, {})
-        outbound = merge(local.default_nsg_rules.outbound, {})
+        inbound = merge(local.default_nsg_rules.inbound, {
+          "allow-internet-http-inbound" = {
+            access                     = "Allow"
+            destination_address_prefix = "VirtualNetwork"
+            destination_port_range     = "80"
+            priority                   = 128
+            protocol                   = "Tcp"
+            source_address_prefix      = "Internet"
+            source_port_range          = "*"
+          }
+          "allow-internet-https-inbound" = {
+            access                     = "Allow"
+            destination_address_prefix = "VirtualNetwork"
+            destination_port_range     = "443"
+            priority                   = 132
+            protocol                   = "Tcp"
+            source_address_prefix      = "Internet"
+            source_port_range          = "*"
+          }
+          "allow-gatewaymanager-inbound" = {
+            access                     = "Allow"
+            destination_address_prefix = "*"
+            destination_port_range     = "65200-65535"
+            priority                   = 148
+            protocol                   = "Tcp"
+            source_address_prefix      = "GatewayManager"
+            source_port_range          = "*"
+          }
+          "allow-loadbalancer-inbound" = {
+            access                     = "Allow"
+            destination_address_prefix = "*"
+            destination_port_range     = "*"
+            priority                   = 164
+            protocol                   = "*"
+            source_address_prefix      = "AzureLoadBalancer"
+            source_port_range          = "*"
+          }
+        })
+        outbound = merge(local.default_nsg_rules.outbound, {
+          "allow-internet-outbound" = {
+            access                     = "Allow"
+            destination_address_prefix = "Internet"
+            destination_port_range     = "*"
+            priority                   = 128
+            protocol                   = "*"
+            source_address_prefix      = "*"
+            source_port_range          = "*"
+          }
+        })
       }
     }
     "Services" = {
