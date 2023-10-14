@@ -63,7 +63,7 @@ resource "azurerm_monitor_metric_alert" "alert" {
   frequency           = each.value.frequency
   name                = "${var.resource_prefix}-mssql-${each.key}-alert"
   resource_group_name = var.resource_group.name
-  scopes              = [azurerm_mssql_server.main.id]
+  scopes              = [azurerm_mssql_elasticpool.main.id]
   severity            = each.value.severity
   tags                = var.tags
   window_size         = each.value.window_size
