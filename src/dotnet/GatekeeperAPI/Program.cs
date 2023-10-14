@@ -62,19 +62,6 @@ namespace FoundationaLLM.Gatekeeper.API
             builder.Services.AddScoped<IUserClaimsProviderService, NoOpUserClaimsProviderService>();
             builder.Services.AddScoped<IGatekeeperService, GatekeeperService>();
 
-
-            
-            builder.Services
-                .AddHttpClient(HttpClients.AgentFactoryAPI,
-                    httpClient =>
-                    {
-                        httpClient.BaseAddress = new Uri(builder.Configuration["FoundationaLLM:DownstreamAPIs:AgentFactoryAPI:APIUrl"]);
-                        //httpClient.DefaultRequestHeaders.Add("X-API-KEY", builder.Configuration["FoundationaLLM:DownstreamAPIs:AgentFactoryAPI:APIKey"]);
-                    })
-                .AddTransientHttpErrorPolicy(policyBuilder =>
-                    policyBuilder.WaitAndRetryAsync(
-                        3, retryNumber => TimeSpan.FromMilliseconds(600)));
-
             builder.Services
                 .AddApiVersioning(options =>
                 {
@@ -166,7 +153,7 @@ namespace FoundationaLLM.Gatekeeper.API
 
                 downstreamAPISettings.DownstreamAPIs[key] = settings;
                 builder.Services
-                    .AddHttpClient(key, client => { client.BaseAddress = new Uri(settings.APIUrl); client.DefaultRequestHeaders.Add("X-API-KEY", azureAdSecret); })
+                    .AddHttpClient(key, client => { client.BaseAddress = new Uri(settings.APIUrl); })
                     .AddTransientHttpErrorPolicy(policyBuilder =>
                         policyBuilder.WaitAndRetryAsync(
                             3, retryNumber => TimeSpan.FromMilliseconds(600)));
