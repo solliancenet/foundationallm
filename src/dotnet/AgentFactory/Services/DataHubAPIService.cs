@@ -17,16 +17,16 @@ using FoundationaLLM.Common.Interfaces;
 
 namespace FoundationaLLM.AgentFactory.Core.Services;
 
-public class PromptHubAPIService : IPromptHubService
+public class DataSourceHubAPIService : IDataSourceHubService
 {
-    readonly PromptHubSettings _settings;
-    readonly ILogger<PromptHubAPIService> _logger;
+    readonly DataSourceHubSettings _settings;
+    readonly ILogger<DataSourceHubAPIService> _logger;
     private readonly IHttpClientFactoryService _httpClientFactoryService;
     readonly JsonSerializerSettings _jsonSerializerSettings;
 
-    public PromptHubAPIService(
-            IOptions<PromptHubSettings> options,
-            ILogger<PromptHubAPIService> logger,
+    public DataSourceHubAPIService(
+            IOptions<DataSourceHubSettings> options,
+            ILogger<DataSourceHubAPIService> logger,
             IHttpClientFactoryService httpClientFactoryService)
     {
         _settings = options.Value;
@@ -38,7 +38,7 @@ public class PromptHubAPIService : IPromptHubService
     {
         try
         {
-            var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.PromptHubAPI);
+            var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.DataSourceHubAPI);
 
             var responseMessage = await client.GetAsync("/status");
 
@@ -57,13 +57,13 @@ public class PromptHubAPIService : IPromptHubService
         return null;
     }
 
-    public async Task<PromptHubResponse> ResolveRequest(string userPrompt, string userContext)
+    public async Task<DataSourceHubResponse> ResolveRequest(string userPrompt, string userContext)
     {
         try
         {
-            PromptHubMessage phm = new PromptHubMessage { AgentName = "TODO : SOME AGENT NAME" };
-            
-            var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.PromptHubAPI);
+            DataSourceHubMessage phm = new DataSourceHubMessage { DataSourceName = "TODO : SOME AGENT NAME" };
+
+            var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.DataSourceHubAPI);
 
             var responseMessage = await client.PostAsync("/resolve_request", new StringContent(
                     JsonConvert.SerializeObject(phm),
@@ -72,7 +72,7 @@ public class PromptHubAPIService : IPromptHubService
             if (responseMessage.IsSuccessStatusCode)
             {
                 var responseContent = await responseMessage.Content.ReadAsStringAsync();
-                var completionResponse = JsonConvert.DeserializeObject<PromptHubResponse>(responseContent);
+                var completionResponse = JsonConvert.DeserializeObject<DataSourceHubResponse>(responseContent);
 
                 return completionResponse;
             }
@@ -83,6 +83,7 @@ public class PromptHubAPIService : IPromptHubService
             throw ex;
         }
 
-        return new PromptHubResponse();
-    }    
+        return new DataSourceHubResponse();
+    }
+
 }

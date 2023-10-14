@@ -1,8 +1,9 @@
-﻿namespace FoundationaLLM.AgentFactory.Models.ConfigurationOptions
+﻿using FoundationaLLM.AgentFactory.Core.Models.ConfigurationOptions;
+
+namespace FoundationaLLM.AgentFactory.Models.ConfigurationOptions
 {
-    public record PromptHubSettings
+    public class PromptHubSettings : BaseSettings
     {
-        public string? APIUrl { get; init; }
-        public string? APIKey { get; init; }
+        
     }
 }
