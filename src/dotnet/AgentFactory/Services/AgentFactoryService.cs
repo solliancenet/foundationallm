@@ -21,6 +21,9 @@ public class AgentFactoryService : IAgentFactoryService
     private readonly PromptHubSettings _promptHubSettings;
     private readonly IPromptHubService _promptHubService;
 
+    private readonly DataSourceHubSettings _dataSourceHubSettings;
+    private readonly IDataSourceHubService _dataSourceHubService;
+
     private readonly ILogger<AgentFactoryService> _logger;
 
     private LLMOrchestrationService _llmOrchestrationService = LLMOrchestrationService.LangChain;
@@ -36,6 +39,9 @@ public class AgentFactoryService : IAgentFactoryService
         IPromptHubService promptHubService,
         IOptions<PromptHubSettings> promptHubSettings,
 
+        IDataSourceHubService dataSourceHubService,
+        IOptions<DataSourceHubSettings> dataSourceHubSettings,
+
         ILogger<AgentFactoryService> logger)
     {
         _semanticKernelOrchestration = semanticKernelOrchestration;
@@ -47,6 +53,9 @@ public class AgentFactoryService : IAgentFactoryService
 
         _promptHubService = promptHubService;
         _promptHubSettings = promptHubSettings.Value;
+
+        _dataSourceHubService = dataSourceHubService;
+        _dataSourceHubSettings = dataSourceHubSettings.Value;
 
         _logger = logger;
 
@@ -89,6 +98,9 @@ public class AgentFactoryService : IAgentFactoryService
 
             //get stuff from prompt hub
             PromptHubResponse prompts = await _promptHubService.ResolveRequest(completionRequest.UserPrompt, "");
+
+            //get data sources...
+            DataSourceHubResponse datasources = await _dataSourceHubService.ResolveRequest(completionRequest.UserPrompt, "");
 
 
             // Generate the completion to return to the user
