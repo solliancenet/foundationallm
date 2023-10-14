@@ -1,8 +1,5 @@
-locals {
-
+locals {# TODO : alerts
 }
-
-
 
 resource "azurerm_application_gateway" "main" {
   location            = var.resource_group.location
@@ -60,7 +57,7 @@ resource "azurerm_application_gateway" "main" {
   }
 
   http_listener {
-    frontend_ip_configuration_name = "http"
+    frontend_ip_configuration_name = "default"
     frontend_port_name             = "http"
     host_name                      = var.hostname
     name                           = "http"
@@ -68,7 +65,7 @@ resource "azurerm_application_gateway" "main" {
   }
 
   http_listener {
-    frontend_ip_configuration_name = "https"
+    frontend_ip_configuration_name = "default"
     frontend_port_name             = "https"
     host_name                      = var.hostname
     name                           = "https"
