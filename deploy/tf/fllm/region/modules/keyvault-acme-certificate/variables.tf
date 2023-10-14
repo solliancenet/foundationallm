@@ -12,3 +12,8 @@ variable "key_vault_id" {
   description = "The ID of the key vault to store the certificate in."
   type        = string
 }
+
+variable "public_dns_zone_resource_group_name" {
+  description = "The name of the resource group containing the public DNS zone."
+  type        = string
+}

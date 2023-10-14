@@ -63,3 +63,28 @@ locals {
     "Environment" = local.environment
   })
 }
+
+module "global" {
+  source = "./global"
+
+  location        = local.global_location
+  public_domain   = local.public_domain
+  resource_groups = local.global_resource_groups
+  resource_prefix = local.resource_prefix
+  tags            = local.tags
+}
+
+module "regions" {
+  source   = "./region"
+  for_each = local.regions
+
+  location           = each.key
+  location_short     = each.value.location_short
+  private_dns_zones  = module.global.private_dns_zones
+  public_dns_zone    = module.global.public_dns_zone
+  resource_groups    = local.regional_resource_groups
+  resource_prefix    = local.resource_prefix
+  tags               = local.tags
+  tfc_agent_token    = var.tfc_agent_token
+  vnet_address_space = each.value.vnet_address_space
+}

@@ -10,6 +10,9 @@ resource "acme_certificate" "main" {
 
   dns_challenge {
     provider = "azuredns"
+    config = {
+      AZURE_RESOURCE_GROUP = var.public_dns_zone_resource_group_name
+    }
   }
 }
 

@@ -16,6 +16,14 @@ variable "private_dns_zones" {
   }))
 }
 
+variable "public_dns_zone" {
+  type = object({
+    id                  = string
+    name                = string
+    resource_group_name = string
+  })
+}
+
 variable "resource_groups" {
   type = map(object({
     tags = map(string)
