@@ -77,7 +77,7 @@ module "application_gateway" {
   depends_on = [azurerm_role_assignment.keyvault_secrets_user_agw]
 
   action_group_id            = azurerm_monitor_action_group.do_nothing.id
-  backend_pool_ip_addresses  = ["0.0.0.0"] # TODO: Replace with AKS frontend IP address
+  backend_pool_ip_addresses  = ["10.255.255.255"] # TODO: Replace with AKS frontend IP address
   hostname                   = local.hostname
   identity_id                = azurerm_user_assigned_identity.agw.id
   key_vault_secret_id        = module.application_gateway_certificate.certificate_secret_id
