@@ -153,7 +153,7 @@ namespace FoundationaLLM.Gatekeeper.API
 
                 downstreamAPISettings.DownstreamAPIs[key] = settings;
                 builder.Services
-                    .AddHttpClient(key, client => { client.BaseAddress = new Uri(settings.APIUrl); client.DefaultRequestHeaders.Add("X-API-KEY", azureAdSecret); })
+                    .AddHttpClient(key, client => { client.BaseAddress = new Uri(settings.APIUrl); })
                     .AddTransientHttpErrorPolicy(policyBuilder =>
                         policyBuilder.WaitAndRetryAsync(
                             3, retryNumber => TimeSpan.FromMilliseconds(600)));
