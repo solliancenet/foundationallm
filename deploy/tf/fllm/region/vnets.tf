@@ -79,7 +79,7 @@ locals {
             source_port_range          = "*"
           }
         })
-        outbound = merge()
+        outbound = merge({})
       }
     }
     "Services" = {
