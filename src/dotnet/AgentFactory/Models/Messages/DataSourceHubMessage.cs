@@ -9,8 +9,8 @@ namespace FoundationaLLM.AgentFactory.Core.Models.Messages
 {
     public record DataSourceHubMessage
     {
-        [JsonPropertyName("data_source_name")]
-        public string? DataSourceName { get; set; }
+        [JsonPropertyName("data_sources")]
+        public List<string>? DataSources { get; set; }
 
     }
 }

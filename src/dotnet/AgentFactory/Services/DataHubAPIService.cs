@@ -61,7 +61,7 @@ public class DataSourceHubAPIService : IDataSourceHubService
     {
         try
         {
-            DataSourceHubMessage phm = new DataSourceHubMessage { DataSourceName = "TODO : SOME AGENT NAME" };
+            DataSourceHubMessage phm = new DataSourceHubMessage { DataSources =  new List<string> { "TODO : SOME AGENT NAME" } };
 
             var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.DataSourceHubAPI);
 

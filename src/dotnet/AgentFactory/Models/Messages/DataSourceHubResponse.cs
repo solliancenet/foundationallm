@@ -17,6 +17,16 @@ namespace FoundationaLLM.AgentFactory.Core.Models.Messages
 
     }
 
+    public record SQLDataSourceMetadata : DataSourceMetadata
+    {
+
+    }
+
+    public record BlobStorageDataSourceMetadata : DataSourceMetadata
+    {
+
+    }
+
     public record DataSourceMetadata
     {
         [JsonPropertyName("name")]
@@ -24,5 +34,10 @@ namespace FoundationaLLM.AgentFactory.Core.Models.Messages
 
         [JsonPropertyName("description")]
         public string? Description { get; set; }
+    }
+
+    public record UnderlyingImplementation
+    {
+
     }
 }
