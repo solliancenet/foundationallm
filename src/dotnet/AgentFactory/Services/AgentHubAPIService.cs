@@ -73,7 +73,7 @@ public class AgentHubAPIService : IAgentHubService
             if (responseMessage.IsSuccessStatusCode)
             {
                 var responseContent = await responseMessage.Content.ReadAsStringAsync();
-                var completionResponse = JsonConvert.DeserializeObject<AgentHubResponse>(responseContent, _jsonSerializerSettings);
+                var ahr = JsonConvert.DeserializeObject<AgentHubResponse>(responseContent, _jsonSerializerSettings);
                 
                 /*
                 dynamic obj = JsonConvert.DeserializeObject(responseContent);
