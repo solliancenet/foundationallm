@@ -133,6 +133,46 @@ module "cosmosdb" {
   }
 }
 
+module "data_cosmosdb" {
+  source = "./modules/cosmosdb"
+
+  action_group_id            = azurerm_monitor_action_group.do_nothing.id
+  log_analytics_workspace_id = module.logs.id
+  resource_group             = azurerm_resource_group.rgs["Data"]
+  resource_prefix            = "${local.resource_prefix}-DATA"
+  tags                       = local.tags
+
+  containers = {
+    embedding = {
+      partition_key_path = "/id"
+      max_throughput     = 1000
+    }
+    completions = {
+      partition_key_path = "/sessionId"
+      max_throughput     = 1000
+    }
+    product = {
+      partition_key_path = "/categoryId"
+      max_throughput     = 1000
+    }
+    customer = {
+      partition_key_path = "/customerId"
+      max_throughput     = 1000
+    }
+    leases = {
+      partition_key_path = "/id"
+      max_throughput     = 1000
+    }
+  }
+
+  private_endpoint = {
+    subnet_id = azurerm_subnet.subnets["Datasources"].id
+    private_dns_zone_ids = [
+      var.private_dns_zones["privatelink.documents.azure.com"].id,
+    ]
+  }
+}
+
 module "ha_openai" {
   source = "./modules/ha-openai"
 
@@ -206,6 +246,28 @@ module "storage" {
 
   private_endpoint = {
     subnet_id = azurerm_subnet.subnets["FLLMStorage"].id
+    private_dns_zone_ids = {
+      blob  = [var.private_dns_zones["privatelink.blob.core.windows.net"].id]
+      dfs   = [var.private_dns_zones["privatelink.dfs.core.windows.net"].id]
+      file  = [var.private_dns_zones["privatelink.file.core.windows.net"].id]
+      queue = [var.private_dns_zones["privatelink.queue.core.windows.net"].id]
+      table = [var.private_dns_zones["privatelink.table.core.windows.net"].id]
+      web   = [var.private_dns_zones["privatelink.azurewebsites.net"].id]
+    }
+  }
+}
+
+module "data_storage" {
+  source = "./modules/storage-account"
+
+  action_group_id            = azurerm_monitor_action_group.do_nothing.id
+  log_analytics_workspace_id = module.logs.id
+  resource_group             = azurerm_resource_group.rgs["Data"]
+  resource_prefix            = "${local.resource_prefix}-DATA"
+  tags                       = local.tags
+
+  private_endpoint = {
+    subnet_id = azurerm_subnet.subnets["Datasources"].id
     private_dns_zone_ids = {
       blob  = [var.private_dns_zones["privatelink.blob.core.windows.net"].id]
       dfs   = [var.private_dns_zones["privatelink.dfs.core.windows.net"].id]

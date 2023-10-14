@@ -5,6 +5,7 @@ provider "registry.terraform.io/hashicorp/azurerm" {
   version     = "3.76.0"
   constraints = "~> 3.65"
   hashes = [
+    "h1:b7wCNsV0HyJalcmjth7Y4nSBuZqEjbA0Phpggoy4bLE=",
     "h1:eArCWwNEShXmVWS08Ocd3d8ptsjbAaMECifkIBacpyw=",
     "zh:33c6b1559b012d03befeb8ee9cf5b88c31acd64983dd4f727a49a436008b5577",
     "zh:36d3cfa7cf2079a102ffce05da2de41ecf263310544990471c19ee01b135ccf3",
@@ -43,9 +44,11 @@ provider "registry.terraform.io/hashicorp/tfe" {
 }
 
 provider "registry.terraform.io/hashicorp/tls" {
-  version = "4.0.4"
+  version     = "4.0.4"
+  constraints = "~> 4.0"
   hashes = [
     "h1:pe9vq86dZZKCm+8k1RhzARwENslF3SXb9ErHbQfgjXU=",
+    "h1:rKKMyIEBZwR+8j6Tx3PwqBrStuH+J+pxcbCR5XN8WAw=",
     "zh:23671ed83e1fcf79745534841e10291bbf34046b27d6e68a5d0aab77206f4a55",
     "zh:45292421211ffd9e8e3eb3655677700e3c5047f71d8f7650d2ce30242335f848",
     "zh:59fedb519f4433c0fdb1d58b27c210b27415fddd0cd73c5312530b4309c088be",
@@ -65,6 +68,7 @@ provider "registry.terraform.io/vancluever/acme" {
   version     = "2.18.0"
   constraints = "~> 2.0"
   hashes = [
+    "h1:lgco0NxvcXE6imEeWoBHcSCdVHT5SRU6yrluHj1oP8Y=",
     "h1:w4mnffYI6qDiEvnYumdclRtWI2b9r77vfmJlf0i5OP8=",
     "zh:1aeb7837154ff93bf4b1c56fe5fc26208e58d700aa0952d516e16ed9a0fb3fc9",
     "zh:3abd74ceea55fb20feddd66935414124a87343576e33dcdf497ceef76861b7eb",

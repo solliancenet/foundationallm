@@ -19,6 +19,11 @@ locals {
         "Purpose" = "Networking"
       }
     }
+    "Data" = {
+      tags = {
+        "Purpose" = "Storage"
+      }
+    }
     "FLLMStorage" = {
       tags = {
         Purpose = "Storage"
