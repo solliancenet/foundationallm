@@ -32,6 +32,7 @@ public class AgentHubAPIService : IAgentHubService
         _settings = options.Value;
         _logger = logger;
         _httpClientFactoryService = httpClientFactoryService;
+        _jsonSerializerSettings = Common.Settings.CommonJsonSerializerSettings.GetJsonSerializerSettings();
     }
 
     public async Task<string> Status()
@@ -64,16 +65,17 @@ public class AgentHubAPIService : IAgentHubService
             AgentHubMessage ahm = new AgentHubMessage { AgentName = "weather" };
             
             var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.AgentHubAPI);
-
+                        
             var responseMessage = await client.PostAsync("/resolve_request", new StringContent(
-                    JsonConvert.SerializeObject(ahm),
+                    JsonConvert.SerializeObject(ahm, _jsonSerializerSettings),
                     Encoding.UTF8, "application/json"));
 
             if (responseMessage.IsSuccessStatusCode)
             {
                 var responseContent = await responseMessage.Content.ReadAsStringAsync();
-                var completionResponse = JsonConvert.DeserializeObject<AgentHubResponse>(responseContent);
+                var completionResponse = JsonConvert.DeserializeObject<AgentHubResponse>(responseContent, _jsonSerializerSettings);
                 
+                /*
                 dynamic obj = JsonConvert.DeserializeObject(responseContent);
                 var agents = obj.agents;
 
@@ -86,6 +88,7 @@ public class AgentHubAPIService : IAgentHubService
                     AgentMetadata am = new AgentMetadata { Name = agent.name, AllowedDataSourceNames = agent.allowed_data_source_names.ToObject<List<string>>(), Description = agent.description, LanguageModel = lmm };
                     ahr.Agents.Add(am);
                 }
+                */
                 
 
                 return ahr;

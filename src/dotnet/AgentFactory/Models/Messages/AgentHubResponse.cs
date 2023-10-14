@@ -1,49 +1,42 @@
-﻿using FoundationaLLM.AgentFactory.Core.Models.Orchestration.Metadata;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+﻿using Newtonsoft.Json;
 
 namespace FoundationaLLM.AgentFactory.Core.Models.Messages
 {
     public record AgentHubResponse
     {
         //[JsonObject]
-        [JsonPropertyName("agents")]
+        [JsonProperty("agents")]
         public List<AgentMetadata>? Agents { get; set; }
 
     }
 
     public record AgentMetadata
     {
-        [JsonPropertyName("name")]
+        [JsonProperty("name")]
         public string? Name { get; set; }
 
-        [JsonPropertyName("description")]
+        [JsonProperty("description")]
         public string? Description { get; set; }
 
-        [JsonPropertyName("allowed_data_source_names")]
+        [JsonProperty("allowed_data_source_names")]
         public List<string>? AllowedDataSourceNames { get; set; }
 
-        [JsonPropertyName("language_model")]
+        [JsonProperty("language_model")]
         public LanguageModelMetadata? LanguageModel { get; set; }
     }
 
     public record LanguageModelMetadata
     {
-        [JsonPropertyName("model_type")]
+        [JsonProperty("model_type")]
         public string? ModelType { get; set; }
 
-        [JsonPropertyName("provider")]
+        [JsonProperty("provider")]
         public string? Provider { get; set; }
 
-        [JsonPropertyName("temperature")]
+        [JsonProperty("temperature")]
         public float? Temperature { get; set; }
 
-        [JsonPropertyName("use_chat")]
+        [JsonProperty("use_chat")]
         public bool? UseChat { get; set; }
     }
 
