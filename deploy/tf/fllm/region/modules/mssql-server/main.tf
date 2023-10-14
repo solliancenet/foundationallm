@@ -48,7 +48,7 @@ resource "azurerm_mssql_elasticpool" "main" {
   }
 
   per_database_settings {
-    max_capacity = 4
+    max_capacity = 5
     min_capacity = 1
   }
 
@@ -96,7 +96,7 @@ resource "azurerm_private_endpoint" "ple" {
     is_manual_connection           = false
     name                           = "${var.resource_prefix}-sql-connection"
     private_connection_resource_id = azurerm_mssql_server.main.id
-    subresource_names              = ["Sql"]
+    subresource_names              = ["SqlServer"]
   }
 }
 
