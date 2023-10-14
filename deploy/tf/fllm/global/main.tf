@@ -14,6 +14,7 @@ locals {
     "privatelink.azure-api.net"          = {}
     "privatelink.azurewebsites.net"      = {}
     "privatelink.blob.core.windows.net"  = {}
+    "privatelink.database.windows.net"   = {}
     "privatelink.dfs.core.windows.net"   = {}
     "privatelink.documents.azure.com"    = {}
     "privatelink.file.core.windows.net"  = {}
