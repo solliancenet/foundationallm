@@ -13,7 +13,7 @@ namespace FoundationaLLM.AgentFactory.Core.Models.Messages
     {
         //[JsonObject]
         [JsonPropertyName("agents")]
-        public AgentMetadata[]? Agents { get; set; }
+        public List<AgentMetadata>? Agents { get; set; }
 
     }
 

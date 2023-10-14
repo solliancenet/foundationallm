@@ -61,7 +61,7 @@ public class AgentHubAPIService : IAgentHubService
     {
         try
         {
-            AgentHubMessage ahm = new AgentHubMessage { AgentName = "TODO : CHANGE ME" };
+            AgentHubMessage ahm = new AgentHubMessage { AgentName = "weather" };
             
             var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.AgentHubAPI);
 
@@ -78,16 +78,17 @@ public class AgentHubAPIService : IAgentHubService
                 var agents = obj.agents;
 
                 AgentHubResponse ahr = new AgentHubResponse();
+                ahr.Agents = new List<AgentMetadata>();
 
                 foreach ( var agent in agents)
                 {
                     LanguageModelMetadata lmm = new LanguageModelMetadata {  ModelType = agent.language_model.model_type, Provider = agent.language_model.provider, Temperature = agent.language_model.temperature, UseChat = agent.language_model.use_chat };
-                    AgentMetadata am = new AgentMetadata { Name = agent.name, AllowedDataSourceNames = agent.allowed_data_source_names, Description = agent.description, LanguageModel = lmm };
-                    ahr.Agents.Append(am);
+                    AgentMetadata am = new AgentMetadata { Name = agent.name, AllowedDataSourceNames = agent.allowed_data_source_names.ToObject<List<string>>(), Description = agent.description, LanguageModel = lmm };
+                    ahr.Agents.Add(am);
                 }
                 
 
-                return completionResponse;
+                return ahr;
             }
         }
         catch (Exception ex)
