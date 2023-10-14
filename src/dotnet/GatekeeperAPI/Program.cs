@@ -34,9 +34,11 @@ namespace FoundationaLLM.Gatekeeper.API
             builder.Services.AddOptions<KeyVaultConfigurationServiceSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:Configuration"));
 
+
+            builder.Services.AddSingleton<IConfigurationService, KeyVaultConfigurationService>();
+
             // Register the downstream services and HTTP clients.
             RegisterDownstreamServices(builder);
-
 
             builder.Services.AddTransient<IAPIKeyValidationService, APIKeyValidationService>();
             builder.Services.AddSingleton<IConfigurationService, KeyVaultConfigurationService>();
@@ -57,6 +59,8 @@ namespace FoundationaLLM.Gatekeeper.API
             builder.Services.AddScoped<IUserClaimsProviderService, NoOpUserClaimsProviderService>();
             builder.Services.AddScoped<IGatekeeperService, GatekeeperService>();
 
+
+            
             builder.Services
                 .AddHttpClient(HttpClients.AgentFactoryAPI,
                     httpClient =>
