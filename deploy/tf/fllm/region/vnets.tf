@@ -79,17 +79,7 @@ locals {
             source_port_range          = "*"
           }
         })
-        outbound = merge(local.default_nsg_rules.outbound, {
-          "allow-internet-outbound" = {
-            access                     = "Allow"
-            destination_address_prefix = "Internet"
-            destination_port_range     = "*"
-            priority                   = 128
-            protocol                   = "*"
-            source_address_prefix      = "*"
-            source_port_range          = "*"
-          }
-        })
+        outbound = merge()
       }
     }
     "Services" = {
