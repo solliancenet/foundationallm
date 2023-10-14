@@ -3,7 +3,7 @@ from langchain.sql_database import SQLDatabase
 from foundationallm.config import Configuration
 from foundationallm.langchain.data_sources.sql import SQLDatabaseConfiguration
 from foundationallm.langchain.data_sources.sql import MariaDB, MicrosoftSQLServer, MySQL, PostgreSQL
-from foundationallm.data_sources.sql import SQLDatabaseDialect
+from foundationallm.hubs.data_source.data_sources.sql import SQLDatabaseDialect
 
 class SQLDatabaseFactory():
     """
