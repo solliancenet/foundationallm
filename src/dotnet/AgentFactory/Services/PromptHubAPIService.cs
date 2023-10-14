@@ -72,9 +72,8 @@ public class PromptHubAPIService : IPromptHubService
             if (responseMessage.IsSuccessStatusCode)
             {
                 var responseContent = await responseMessage.Content.ReadAsStringAsync();
-                var completionResponse = JsonConvert.DeserializeObject<PromptHubResponse>(responseContent);
-
-                return completionResponse;
+                var phr = JsonConvert.DeserializeObject<PromptHubResponse>(responseContent, _jsonSerializerSettings);
+                return phr;
             }
         }
         catch (Exception ex)
