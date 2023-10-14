@@ -57,7 +57,7 @@ public class PromptHubAPIService : IPromptHubService
         return null;
     }
 
-    public async Task<List<PromptHubResponse>> ResolveRequest(string userPrompt, string userContext)
+    public async Task<PromptHubResponse> ResolveRequest(string userPrompt, string userContext)
     {
         try
         {
@@ -72,7 +72,7 @@ public class PromptHubAPIService : IPromptHubService
             if (responseMessage.IsSuccessStatusCode)
             {
                 var responseContent = await responseMessage.Content.ReadAsStringAsync();
-                var completionResponse = JsonConvert.DeserializeObject<List<PromptHubResponse>>(responseContent);
+                var completionResponse = JsonConvert.DeserializeObject<PromptHubResponse>(responseContent);
 
                 return completionResponse;
             }
@@ -83,6 +83,6 @@ public class PromptHubAPIService : IPromptHubService
             throw ex;
         }
 
-        return new List<PromptHubResponse>();
+        return new PromptHubResponse();
     }    
 }

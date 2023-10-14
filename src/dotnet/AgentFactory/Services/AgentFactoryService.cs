@@ -85,10 +85,10 @@ public class AgentFactoryService : IAgentFactoryService
         try
         {
             //get all agents for prompt...
-            List<AgentHubResponse> agents = await _agentHubService.ResolveRequest(completionRequest.UserPrompt, "");
+            AgentHubResponse agents = await _agentHubService.ResolveRequest(completionRequest.UserPrompt, "");
 
             //get stuff from prompt hub
-            List<PromptHubResponse> prompts = await _promptHubService.ResolveRequest(completionRequest.UserPrompt, "");
+            PromptHubResponse prompts = await _promptHubService.ResolveRequest(completionRequest.UserPrompt, "");
 
 
             // Generate the completion to return to the user

@@ -26,19 +26,19 @@ namespace FoundationaLLM.AgentFactory.Core.Models.Messages
         public string? Description { get; set; }
 
         [JsonPropertyName("allowed_data_source_names")]
-        public string[]? AllowedDataSourceNames { get; set; }
+        public List<string>? AllowedDataSourceNames { get; set; }
 
-        //[JsonPropertyName("language_model")]
-        //public LanguageModelMetadata? LanguageModel { get; set; }
+        [JsonPropertyName("language_model")]
+        public LanguageModelMetadata? LanguageModel { get; set; }
     }
 
     public record LanguageModelMetadata
     {
         [JsonPropertyName("model_type")]
-        public LanguageModelType? ModelType { get; set; }
+        public string? ModelType { get; set; }
 
         [JsonPropertyName("provider")]
-        public LanguageModelProvider? Provider { get; set; }
+        public string? Provider { get; set; }
 
         [JsonPropertyName("temperature")]
         public float? Temperature { get; set; }

@@ -57,7 +57,7 @@ public class AgentHubAPIService : IAgentHubService
         return null;
     }
 
-    public async Task<List<AgentHubResponse>> ResolveRequest(string userPrompt, string userContext)
+    public async Task<AgentHubResponse> ResolveRequest(string userPrompt, string userContext)
     {
         try
         {
@@ -72,7 +72,20 @@ public class AgentHubAPIService : IAgentHubService
             if (responseMessage.IsSuccessStatusCode)
             {
                 var responseContent = await responseMessage.Content.ReadAsStringAsync();
-                var completionResponse = JsonConvert.DeserializeObject<List<AgentHubResponse>>(responseContent);
+                var completionResponse = JsonConvert.DeserializeObject<AgentHubResponse>(responseContent);
+                
+                dynamic obj = JsonConvert.DeserializeObject(responseContent);
+                var agents = obj.agents;
+
+                AgentHubResponse ahr = new AgentHubResponse();
+
+                foreach ( var agent in agents)
+                {
+                    LanguageModelMetadata lmm = new LanguageModelMetadata {  ModelType = agent.language_model.model_type, Provider = agent.language_model.provider, Temperature = agent.language_model.temperature, UseChat = agent.language_model.use_chat };
+                    AgentMetadata am = new AgentMetadata { Name = agent.name, AllowedDataSourceNames = agent.allowed_data_source_names, Description = agent.description, LanguageModel = lmm };
+                    ahr.Agents.Append(am);
+                }
+                
 
                 return completionResponse;
             }
@@ -83,6 +96,6 @@ public class AgentHubAPIService : IAgentHubService
             throw ex;
         }
 
-        return new List<AgentHubResponse>();
+        return new AgentHubResponse();
     }    
 }
