@@ -20,7 +20,6 @@ using FoundationaLLM.Core.Models.Configuration;
 using FoundationaLLM.Common.Authentication;
 using FoundationaLLM.Common.Models.Authentication;
 using FoundationaLLM.Common.Middleware;
-using Newtonsoft.Json;
 
 namespace FoundationaLLM.Core.API
 {
@@ -52,7 +51,10 @@ namespace FoundationaLLM.Core.API
             RegisterAuthConfiguration(builder);
 
             builder.Services.AddApplicationInsightsTelemetry();
-            builder.Services.AddControllers();
+            builder.Services.AddControllers().AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.ContractResolver = Common.Settings.CommonJsonSerializerSettings.GetJsonSerializerSettings().ContractResolver;
+            });
             builder.Services.AddProblemDetails();
             builder.Services
                 .AddApiVersioning(options =>

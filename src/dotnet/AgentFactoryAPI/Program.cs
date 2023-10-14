@@ -28,7 +28,10 @@ namespace FoundationaLLM.AgentFactory.API
 
             // Add services to the container.
             builder.Services.AddApplicationInsightsTelemetry();
-            builder.Services.AddControllers();
+            builder.Services.AddControllers().AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.ContractResolver = Common.Settings.CommonJsonSerializerSettings.GetJsonSerializerSettings().ContractResolver;
+            });
 
             // Add API Key Authorization
             builder.Services.AddHttpContextAccessor();
