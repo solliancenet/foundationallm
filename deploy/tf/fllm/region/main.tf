@@ -87,10 +87,10 @@ module "appconfig" {
 module "application_gateway_certificate" {
   source = "./modules/keyvault-acme-certificate"
 
-  administrator_email                 = "tbd@solliance.net"
-  domain                              = "www.internal.foundationallm.ai"
-  key_vault_id                        = module.ops_keyvault.id
-  public_dns_zone_resource_group_name = var.public_dns_zone.resource_group_name
+  administrator_email = "tbd@solliance.net"
+  domain              = "www.internal.foundationallm.ai"
+  key_vault_id        = module.ops_keyvault.id
+  public_dns_zone     = var.public_dns_zone
 }
 
 module "cosmosdb" {

@@ -13,7 +13,9 @@ variable "key_vault_id" {
   type        = string
 }
 
-variable "public_dns_zone_resource_group_name" {
-  description = "The name of the resource group containing the public DNS zone."
-  type        = string
+variable "public_dns_zone" {
+  type = object({
+    name                = string
+    resource_group_name = string
+  })
 }

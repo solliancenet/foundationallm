@@ -11,7 +11,9 @@ resource "acme_certificate" "main" {
   dns_challenge {
     provider = "azuredns"
     config = {
-      AZURE_RESOURCE_GROUP = var.public_dns_zone_resource_group_name
+      AZURE_RESOURCE_GROUP = var.public_dns_zone.resource_group_name
+      AZURE_TTL            = 300
+      AZURE_ZONE_NAME      = var.public_dns_zone.name
     }
   }
 }
