@@ -7,5 +7,5 @@ public interface IPromptHubService
 {
     Task<string> Status();
 
-    Task<List<AgentHubResponse>> ResolveRequest(string user_prompt, string user_context);
+    Task<List<PromptHubResponse>> ResolveRequest(string user_prompt, string user_context);
 }

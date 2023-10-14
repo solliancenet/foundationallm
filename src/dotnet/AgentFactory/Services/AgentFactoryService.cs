@@ -17,6 +17,10 @@ public class AgentFactoryService : IAgentFactoryService
     private readonly IAgentHubService _agentHubService;
     private readonly AgentFactorySettings _agentFactorySettings;
     private readonly AgentHubSettings _agentHubSettings;
+    
+    private readonly PromptHubSettings _promptHubSettings;
+    private readonly IPromptHubService _promptHubService;
+
     private readonly ILogger<AgentFactoryService> _logger;
 
     private LLMOrchestrationService _llmOrchestrationService = LLMOrchestrationService.LangChain;
@@ -29,8 +33,8 @@ public class AgentFactoryService : IAgentFactoryService
         IOptions<AgentFactorySettings> agentFactorySettings,
         IOptions<AgentHubSettings> agentHubSettings,
 
-        //IPromptHubService promptHubService,
-        //IOptions<PromptHubSettings> promptHubSettings,
+        IPromptHubService promptHubService,
+        IOptions<PromptHubSettings> promptHubSettings,
 
         ILogger<AgentFactoryService> logger)
     {
@@ -41,9 +45,8 @@ public class AgentFactoryService : IAgentFactoryService
         _agentFactorySettings = agentFactorySettings.Value;
         _agentHubSettings = agentHubSettings.Value;
 
-        //_promptHubService = promptHubService;
-        //_promptFactorySettings = promptFactorySettings.Value;
-        //_promptHubSettings = promptHubSettings.Value;
+        _promptHubService = promptHubService;
+        _promptHubSettings = promptHubSettings.Value;
 
         _logger = logger;
 
@@ -82,10 +85,10 @@ public class AgentFactoryService : IAgentFactoryService
         try
         {
             //get all agents for prompt...
-            //List<AgentHubResponse> agents = await _agentHubService.ResolveRequest(completionRequest.Prompt, "");
+            List<AgentHubResponse> agents = await _agentHubService.ResolveRequest(completionRequest.UserPrompt, "");
 
             //get stuff from prompt hub
-            //List<PromptHubResponse> prompts = await _promptHubService.ResolveRequest(completionRequest.Prompt, "");
+            List<PromptHubResponse> prompts = await _promptHubService.ResolveRequest(completionRequest.UserPrompt, "");
 
 
             // Generate the completion to return to the user

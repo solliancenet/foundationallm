@@ -1,4 +1,5 @@
 ﻿using FoundationaLLM.AgentFactory.Core.Models.Orchestration.Metadata;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,7 @@ namespace FoundationaLLM.AgentFactory.Core.Models.Messages
 {
     public record AgentHubResponse
     {
+        //[JsonObject]
         [JsonPropertyName("agents")]
         public AgentMetadata[]? Agents { get; set; }
 
@@ -26,8 +28,8 @@ namespace FoundationaLLM.AgentFactory.Core.Models.Messages
         [JsonPropertyName("allowed_data_source_names")]
         public string[]? AllowedDataSourceNames { get; set; }
 
-        [JsonPropertyName("language_model")]
-        public LanguageModelMetadata? LanguageModel { get; set; }
+        //[JsonPropertyName("language_model")]
+        //public LanguageModelMetadata? LanguageModel { get; set; }
     }
 
     public record LanguageModelMetadata

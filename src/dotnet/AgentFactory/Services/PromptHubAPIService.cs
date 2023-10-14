@@ -57,13 +57,13 @@ public class PromptHubAPIService : IPromptHubService
         return null;
     }
 
-    public async Task<List<AgentHubResponse>> ResolveRequest(string userPrompt, string userContext)
+    public async Task<List<PromptHubResponse>> ResolveRequest(string userPrompt, string userContext)
     {
         try
         {
             PromptHubMessage phm = new PromptHubMessage { AgentName = "TODO : SOME AGENT NAME" };
             
-            var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.AgentHubAPI);
+            var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.PromptHubAPI);
 
             var responseMessage = await client.PostAsync("/resolve_request", new StringContent(
                     JsonConvert.SerializeObject(phm),
@@ -72,7 +72,7 @@ public class PromptHubAPIService : IPromptHubService
             if (responseMessage.IsSuccessStatusCode)
             {
                 var responseContent = await responseMessage.Content.ReadAsStringAsync();
-                var completionResponse = JsonConvert.DeserializeObject<List<AgentHubResponse>>(responseContent);
+                var completionResponse = JsonConvert.DeserializeObject<List<PromptHubResponse>>(responseContent);
 
                 return completionResponse;
             }
@@ -83,6 +83,6 @@ public class PromptHubAPIService : IPromptHubService
             throw ex;
         }
 
-        return new List<AgentHubResponse>();
+        return new List<PromptHubResponse>();
     }    
 }
