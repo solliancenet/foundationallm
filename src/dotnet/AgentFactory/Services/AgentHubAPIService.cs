@@ -91,7 +91,7 @@ public class AgentHubAPIService : IAgentHubService
                 */
                 
 
-                return ahr;
+                return completionResponse;
             }
         }
         catch (Exception ex)

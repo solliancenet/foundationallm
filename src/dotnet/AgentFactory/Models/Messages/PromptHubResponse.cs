@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,16 +10,16 @@ namespace FoundationaLLM.AgentFactory.Core.Models.Messages
 {
     public record PromptHubResponse
     {
-        [JsonPropertyName("prompts")]
+        [JsonProperty("prompts")]
         public PromptMetadata[]? Prompts { get; set; }
     }
 
     public record PromptMetadata
     {
-        [JsonPropertyName("name")]
+        [JsonProperty("name")]
         public string? Name { get; set; }
 
-        [JsonPropertyName("prompt")]
+        [JsonProperty("prompt")]
         public string? Prompt { get; set; }
 
     }

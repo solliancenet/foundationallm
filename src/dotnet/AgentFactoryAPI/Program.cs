@@ -65,6 +65,7 @@ namespace FoundationaLLM.AgentFactory.API
             builder.Services.AddScoped<ILangChainOrchestrationService, LangChainOrchestrationService>();
             builder.Services.AddScoped<IAgentFactoryService, AgentFactoryService>();
             builder.Services.AddScoped<IAgentHubService, AgentHubAPIService>();
+            builder.Services.AddScoped<IDataSourceHubService, DataSourceHubAPIService>();
             builder.Services.AddScoped<IPromptHubService, PromptHubAPIService>();
             builder.Services.AddScoped<IUserIdentityContext, UserIdentityContext>();
             builder.Services.AddScoped<IHttpClientFactoryService, HttpClientFactoryService>();

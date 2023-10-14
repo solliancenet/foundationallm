@@ -12,7 +12,7 @@ namespace FoundationaLLM.AgentFactory.Core.Models.Messages
     public record DataSourceHubResponse
     {
         //[JsonObject]
-        [JsonPropertyName("data_sources")]
+        [JsonProperty("data_sources")]
         public List<DataSourceMetadata>? DataSources { get; set; }
 
     }
@@ -29,10 +29,10 @@ namespace FoundationaLLM.AgentFactory.Core.Models.Messages
 
     public record DataSourceMetadata
     {
-        [JsonPropertyName("name")]
+        [JsonProperty("name")]
         public string? Name { get; set; }
 
-        [JsonPropertyName("description")]
+        [JsonProperty("description")]
         public string? Description { get; set; }
     }
 
