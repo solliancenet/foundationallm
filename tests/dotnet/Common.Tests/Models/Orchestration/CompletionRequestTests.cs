@@ -24,12 +24,12 @@ namespace FoundationaLLM.Common.Tests.Models.Orchestration
             // Act
             var completionRequest = new CompletionRequest
             {
-                Prompt = expectedPrompt,
+                UserPrompt = expectedPrompt,
                 MessageHistory = expectedMessageHistory
             };
 
             // Assert
-            Assert.Equal(expectedPrompt, completionRequest.Prompt);
+            Assert.Equal(expectedPrompt, completionRequest.UserPrompt);
             Assert.Equal(expectedMessageHistory, completionRequest.MessageHistory);
         }
     }
