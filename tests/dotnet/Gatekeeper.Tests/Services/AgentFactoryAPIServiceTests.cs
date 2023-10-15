@@ -22,7 +22,7 @@ namespace Gatekeeper.Tests.Services
         {
             // Arrange
             var httpClientFactoryService = Substitute.For<IHttpClientFactoryService>();
-            var completionRequest = new CompletionRequest { Prompt = "Prompt_1", MessageHistory = new List<MessageHistoryItem>() };
+            var completionRequest = new CompletionRequest { UserPrompt = "Prompt_1", MessageHistory = new List<MessageHistoryItem>() };
 
             // Create a mock message handler
             var mockHandler = new MockHttpMessageHandler(HttpStatusCode.OK, new CompletionResponse { Completion = "Test Completion" });
@@ -48,7 +48,7 @@ namespace Gatekeeper.Tests.Services
         {
             // Arrange
             var httpClientFactoryService = Substitute.For<IHttpClientFactoryService>();
-            var completionRequest = new CompletionRequest { Prompt = "Prompt_1", MessageHistory = new List<MessageHistoryItem>() };
+            var completionRequest = new CompletionRequest { UserPrompt = "Prompt_1", MessageHistory = new List<MessageHistoryItem>() };
 
             // Create a mock message handler
             var mockHandler = new MockHttpMessageHandler(HttpStatusCode.InternalServerError, string.Empty);

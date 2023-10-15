@@ -45,7 +45,7 @@ namespace FoundationaLLM.Common.OpenAPI
                 Title = apiName,
                 Version = description.ApiVersion.ToString(),
                 Contact = new OpenApiContact() { Name = "Solliance, Inc.", Email = "contact@solliance.net" },
-                License = new OpenApiLicense() { Name = "MIT", Url = new Uri("https://opensource.org/licenses/MIT") }
+                License = new OpenApiLicense() { Name = "FoundationaLLM Software License", Url = new Uri("https://www.foundationallm.ai/license") }
             };
 
             if (description.IsDeprecated)

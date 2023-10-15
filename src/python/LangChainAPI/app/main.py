@@ -15,7 +15,11 @@ app = FastAPI(
     },
     openapi_url='/swagger/v1/swagger.json',
     docs_url='/swagger',
-    redoc_url=None
+    redoc_url=None,
+    license_info={
+        "name": "FoundationaLLM Software License",
+        "url": "https://www.foundationallm.ai/license",
+    }
 )
 
 app.include_router(orchestration.router)
