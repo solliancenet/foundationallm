@@ -100,9 +100,11 @@ public class AgentFactoryService : IAgentFactoryService
             PromptHubResponse prompts = await _promptHubService.ResolveRequest(agentResponse.Agent.Name, completionRequest.UserContext);
 
             //get data sources listed for the agent
-            if (agentResponse.Agent.AllowedDataSourceNames == null)
-                agentResponse.Agent.AllowedDataSourceNames = new List<string>();
-            DataSourceHubResponse datasources = await _dataSourceHubService.ResolveRequest(agentResponse.Agent.AllowedDataSourceNames, completionRequest.UserContext);
+            if (agentResponse.Agent.AllowedDataSourceNames != null)
+            {
+                DataSourceHubResponse datasources = await _dataSourceHubService.ResolveRequest(agentResponse.Agent.AllowedDataSourceNames, completionRequest.UserContext);                
+            }
+
 
 
             // Generate the completion to return to the user

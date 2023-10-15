@@ -1,17 +1,9 @@
 ﻿using FoundationaLLM.AgentFactory.Core.Interfaces;
 using FoundationaLLM.AgentFactory.Core.Models.Messages;
-using FoundationaLLM.AgentFactory.Interfaces;
 using FoundationaLLM.AgentFactory.Models.ConfigurationOptions;
-using FoundationaLLM.AgentFactory.Models.Orchestration;
-using FoundationaLLM.AgentFactory.Services;
-using FoundationaLLM.Common.Models.Orchestration;
-using FoundationaLLM.Common.Settings;
-using Microsoft.AspNetCore.Server.IIS.Core;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using System.Net.Http;
-using System.Runtime;
 using System.Text;
 using FoundationaLLM.Common.Interfaces;
 
@@ -50,7 +42,7 @@ public class PromptHubAPIService : IPromptHubService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error getting agent hub status.");
+            _logger.LogError(ex, $"Error getting prompt hub status.");
             throw ex;
         }
 
@@ -78,7 +70,7 @@ public class PromptHubAPIService : IPromptHubService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error resolving request for Agent Hub.");
+            _logger.LogError(ex, $"Error resolving request for prompt Hub.");
             throw ex;
         }
 

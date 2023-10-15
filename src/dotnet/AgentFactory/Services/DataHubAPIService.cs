@@ -1,17 +1,9 @@
 ﻿using FoundationaLLM.AgentFactory.Core.Interfaces;
 using FoundationaLLM.AgentFactory.Core.Models.Messages;
-using FoundationaLLM.AgentFactory.Interfaces;
 using FoundationaLLM.AgentFactory.Models.ConfigurationOptions;
-using FoundationaLLM.AgentFactory.Models.Orchestration;
-using FoundationaLLM.AgentFactory.Services;
-using FoundationaLLM.Common.Models.Orchestration;
-using FoundationaLLM.Common.Settings;
-using Microsoft.AspNetCore.Server.IIS.Core;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using System.Net.Http;
-using System.Runtime;
 using System.Text;
 using FoundationaLLM.Common.Interfaces;
 
@@ -50,7 +42,7 @@ public class DataSourceHubAPIService : IDataSourceHubService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error getting agent hub status.");
+            _logger.LogError(ex, $"Error getting data source hub status.");
             throw ex;
         }
 
@@ -62,11 +54,10 @@ public class DataSourceHubAPIService : IDataSourceHubService
         try
         {
             DataSourceHubRequest phm = new DataSourceHubRequest { DataSources =  sources };
-
             var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.DataSourceHubAPI);
-
+            
             var responseMessage = await client.PostAsync("/resolve_request", new StringContent(
-                    JsonConvert.SerializeObject(phm),
+                    JsonConvert.SerializeObject(phm, _jsonSerializerSettings),
                     Encoding.UTF8, "application/json"));
 
             if (responseMessage.IsSuccessStatusCode)
@@ -79,7 +70,7 @@ public class DataSourceHubAPIService : IDataSourceHubService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error resolving request for Agent Hub.");
+            _logger.LogError(ex, $"Error resolving request for data source hub.");
             throw ex;
         }
 

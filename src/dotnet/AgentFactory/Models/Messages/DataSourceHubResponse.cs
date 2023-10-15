@@ -1,18 +1,10 @@
-﻿using FoundationaLLM.AgentFactory.Core.Models.Orchestration.Metadata;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+﻿using Newtonsoft.Json;
 
 namespace FoundationaLLM.AgentFactory.Core.Models.Messages
 {
     public record DataSourceHubResponse
     {
-        //[JsonObject]
+        
         [JsonProperty("data_sources")]
         public List<DataSourceMetadata>? DataSources { get; set; }
 
