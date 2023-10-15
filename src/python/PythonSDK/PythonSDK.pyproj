@@ -103,12 +103,12 @@
     <Compile Include="foundationallm\langchain\__init__.py" />
     <Compile Include="foundationallm\hubs\prompt\prompt_hub_request.py" />
     <Compile Include="foundationallm\hubs\prompt\prompt_hub_response.py" />
-    <Compile Include="foundationallm\models\orchestration\metadata\agent.py" />
+    <Compile Include="foundationallm\models\metadata\agent.py" />
+    <Compile Include="foundationallm\models\metadata\data_source.py" />
+    <Compile Include="foundationallm\models\metadata\language_model.py" />
+    <Compile Include="foundationallm\models\metadata\metadata_base.py" />
+    <Compile Include="foundationallm\models\metadata\__init__.py" />
     <Compile Include="foundationallm\langchain\data_sources\data_source_configuration.py" />
-    <Compile Include="foundationallm\models\orchestration\metadata\data_source.py" />
-    <Compile Include="foundationallm\models\orchestration\metadata\language_model.py" />
-    <Compile Include="foundationallm\models\orchestration\metadata\metadata_base.py" />
-    <Compile Include="foundationallm\models\orchestration\metadata\__init__.py" />
     <Compile Include="foundationallm\models\orchestration\completion_request.py" />
     <Compile Include="foundationallm\models\message.py" />
     <Compile Include="foundationallm\models\orchestration\completion_response.py" />
@@ -122,6 +122,7 @@
     <Compile Include="foundationallm\auth\__init__.py" />
     <Compile Include="foundationallm\config\configuration.py" />
     <Compile Include="foundationallm\config\__init__.py" />
+    <Compile Include="foundationallm\sdk_client.py" />
     <Compile Include="foundationallm\storage\blob_storage_manager.py" />
     <Compile Include="foundationallm\storage\storage_manager_base.py" />
     <Compile Include="foundationallm\storage\__init__.py" />
@@ -156,7 +157,7 @@
     <Folder Include="foundationallm\langchain\tools\" />
     <Folder Include="foundationallm\langchain\toolkits\" />
     <Folder Include="foundationallm\models\" />
-    <Folder Include="foundationallm\models\orchestration\metadata\" />
+    <Folder Include="foundationallm\models\metadata\" />
     <Folder Include="foundationallm\models\orchestration\" />
     <Folder Include="foundationallm\hubs\" />
     <Folder Include="foundationallm\credentials\" />

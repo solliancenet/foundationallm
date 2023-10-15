@@ -2,7 +2,7 @@ from langchain.base_language import BaseLanguageModel
 from langchain.llms import AzureOpenAI
 from foundationallm.config import Configuration
 
-import foundationallm.models.orchestration.metadata.language_model as LanguageModel
+import foundationallm.models.metadata.language_model as LanguageModel
 from foundationallm.langchain.language_models.openai import OpenAIModelBase, AzureOpenAIAPIType
 
 class AzureTextCompletionModel(OpenAIModelBase):

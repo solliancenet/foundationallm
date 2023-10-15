@@ -1,12 +1,9 @@
 from fastapi import APIRouter, Depends
-from app.dependencies import get_config, validate_api_key_header
+from app.dependencies import validate_api_key_header
 
 from foundationallm.credentials import AzureCredential
 from foundationallm.models.orchestration import *
-from foundationallm.langchain.agents import AgentFactory
-
-# Initialize config
-app_config = get_config(credential=AzureCredential())
+from foundationallm import SDKClient
 
 # Initialize API routing
 router = APIRouter(
@@ -31,6 +28,9 @@ async def get_completion(completion_request: CompletionRequest) -> CompletionRes
     CompletionResponse
         Object containing the completion and token usage details
     """
+    # Initialize an SDK client.
+    client = SDKClient(credential=AzureCredential())
     
-    completion_agent = AgentFactory(completion_request = completion_request, config = app_config).get_agent()
-    return completion_agent.run()
+    # Create an agent
+    agent = client.create_agent(completion_request = completion_request)
+    return agent.run(completion_request.user_prompt)
