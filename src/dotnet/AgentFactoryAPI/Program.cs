@@ -38,20 +38,20 @@ namespace FoundationaLLM.AgentFactory.API
             builder.Services.AddScoped<IUserClaimsProviderService, NoOpUserClaimsProviderService>();
             builder.Services.AddScoped<APIKeyAuthenticationFilter>();
             builder.Services.AddOptions<APIKeyValidationSettings>()
-                .Bind(builder.Configuration.GetSection("FoundationaLLM:AgentFactoryAPI"));
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:DownstreamAPIs:AgentFactoryAPI"));
             builder.Services.AddTransient<IAPIKeyValidationService, APIKeyValidationService>();
 
             builder.Services.AddOptions<SemanticKernelServiceSettings>()
-                .Bind(builder.Configuration.GetSection("FoundationaLLM:SemanticKernelAPI"));
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:DownstreamAPIs:SemanticKernelAPI"));
 
             builder.Services.AddOptions<LangChainServiceSettings>()
-                .Bind(builder.Configuration.GetSection("FoundationaLLM:LangChainAPI"));
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:DownstreamAPIs:LangChainAPI"));
 
             builder.Services.AddOptions<AgentHubSettings>()
-                .Bind(builder.Configuration.GetSection("FoundationaLLM:AgentHubAPI"));
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:DownstreamAPIs:AgentHubAPI"));
 
             builder.Services.AddOptions<PromptHubSettings>()
-                .Bind(builder.Configuration.GetSection("FoundationaLLM:PromptHubAPI"));
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:DownstreamAPIs:PromptHubAPI"));
 
             builder.Services.AddOptions<AgentFactorySettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:AgentFactory"));

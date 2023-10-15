@@ -4,8 +4,11 @@ namespace FoundationaLLM.AgentFactory.Core.Models.Messages
 {
     public record AgentHubRequest
     {
-        [JsonProperty("agent_name")]
-        public string? AgentName { get; set; }
+        [JsonProperty("user_prompt")]
+        public string UserPrompt { get; set; }
+
+        [JsonProperty("user_context")]
+        public string? UserContext { get; set; }
 
     }
 }

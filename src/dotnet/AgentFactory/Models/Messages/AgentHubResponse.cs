@@ -5,8 +5,8 @@ namespace FoundationaLLM.AgentFactory.Core.Models.Messages
     public record AgentHubResponse
     {
         //[JsonObject]
-        [JsonProperty("agents")]
-        public List<AgentMetadata>? Agents { get; set; }
+        [JsonProperty("agent")]
+        public AgentMetadata Agent { get; set; }
 
     }
 

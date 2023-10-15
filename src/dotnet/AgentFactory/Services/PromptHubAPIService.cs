@@ -57,11 +57,11 @@ public class PromptHubAPIService : IPromptHubService
         return null;
     }
 
-    public async Task<PromptHubResponse> ResolveRequest(string userPrompt, string userContext)
+    public async Task<PromptHubResponse> ResolveRequest(string agentName, string userContext)
     {
         try
         {
-            PromptHubRequest phm = new PromptHubRequest { AgentName = "TODO : SOME AGENT NAME" };
+            PromptHubRequest phm = new PromptHubRequest { AgentName = agentName };
             
             var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.PromptHubAPI);
 

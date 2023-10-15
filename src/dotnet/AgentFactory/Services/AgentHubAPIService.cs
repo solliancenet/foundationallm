@@ -62,7 +62,7 @@ public class AgentHubAPIService : IAgentHubService
     {
         try
         {
-            AgentHubRequest ahm = new AgentHubRequest { AgentName = "weather" };
+            AgentHubRequest ahm = new AgentHubRequest { UserPrompt=userPrompt, UserContext=userContext };
             
             var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.AgentHubAPI);
                         
@@ -73,24 +73,7 @@ public class AgentHubAPIService : IAgentHubService
             if (responseMessage.IsSuccessStatusCode)
             {
                 var responseContent = await responseMessage.Content.ReadAsStringAsync();
-                var ahr = JsonConvert.DeserializeObject<AgentHubResponse>(responseContent, _jsonSerializerSettings);
-                
-                /*
-                dynamic obj = JsonConvert.DeserializeObject(responseContent);
-                var agents = obj.agents;
-
-                AgentHubResponse ahr = new AgentHubResponse();
-                ahr.Agents = new List<AgentMetadata>();
-
-                foreach ( var agent in agents)
-                {
-                    LanguageModelMetadata lmm = new LanguageModelMetadata {  ModelType = agent.language_model.model_type, Provider = agent.language_model.provider, Temperature = agent.language_model.temperature, UseChat = agent.language_model.use_chat };
-                    AgentMetadata am = new AgentMetadata { Name = agent.name, AllowedDataSourceNames = agent.allowed_data_source_names.ToObject<List<string>>(), Description = agent.description, LanguageModel = lmm };
-                    ahr.Agents.Add(am);
-                }
-                */
-                
-
+                var ahr = JsonConvert.DeserializeObject<AgentHubResponse>(responseContent, _jsonSerializerSettings);                          
                 return ahr;
             }
         }
