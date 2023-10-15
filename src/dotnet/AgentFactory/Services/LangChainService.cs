@@ -17,19 +17,19 @@ namespace FoundationaLLM.AgentFactory.Services
     /// <summary>
     /// The LangChain orchestration service.
     /// </summary>
-    public class LangChainOrchestrationService : ILangChainOrchestrationService
+    public class LangChainService : ILangChainService
     {
-        readonly LangChainOrchestrationServiceSettings _settings;
-        readonly ILogger<LangChainOrchestrationService> _logger;
+        readonly LangChainServiceSettings _settings;
+        readonly ILogger<LangChainService> _logger;
         private readonly IHttpClientFactoryService _httpClientFactoryService;
         readonly JsonSerializerSettings _jsonSerializerSettings;
 
         /// <summary>
         /// LangChain Orchestration Service
         /// </summary>
-        public LangChainOrchestrationService(
-            IOptions<LangChainOrchestrationServiceSettings> options,
-            ILogger<LangChainOrchestrationService> logger,
+        public LangChainService(
+            IOptions<LangChainServiceSettings> options,
+            ILogger<LangChainService> logger,
             IHttpClientFactoryService httpClientFactoryService) 
         {
             _settings = options.Value;

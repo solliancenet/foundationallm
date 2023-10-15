@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FoundationaLLM.AgentFactory.Core.Models.Messages
 {
-    public record DataSourceHubMessage
+    public record DataSourceHubRequest
     {
         [JsonPropertyName("data_sources")]
         public List<string>? DataSources { get; set; }

@@ -12,8 +12,8 @@ namespace FoundationaLLM.AgentFactory.Core.Services;
 
 public class AgentFactoryService : IAgentFactoryService
 {
-    private readonly ISemanticKernelOrchestrationService _semanticKernelOrchestration;
-    private readonly ILangChainOrchestrationService _langChainOrchestration;
+    private readonly ISemanticKernelService _semanticKernel;
+    private readonly ILangChainService _langChain;
     private readonly IAgentHubService _agentHubService;
     private readonly AgentFactorySettings _agentFactorySettings;
     private readonly AgentHubSettings _agentHubSettings;
@@ -29,8 +29,8 @@ public class AgentFactoryService : IAgentFactoryService
     private LLMOrchestrationService _llmOrchestrationService = LLMOrchestrationService.LangChain;
 
     public AgentFactoryService(
-        ISemanticKernelOrchestrationService semanticKernelOrchestration,
-        ILangChainOrchestrationService langChainOrchestration,
+        ISemanticKernelService semanticKernel,
+        ILangChainService langChain,
         
         IAgentHubService agentHubService,
         IOptions<AgentFactorySettings> agentFactorySettings,
@@ -44,8 +44,8 @@ public class AgentFactoryService : IAgentFactoryService
 
         ILogger<AgentFactoryService> logger)
     {
-        _semanticKernelOrchestration = semanticKernelOrchestration;
-        _langChainOrchestration = langChainOrchestration;
+        _semanticKernel = semanticKernel;
+        _langChain = langChain;
         
         _agentHubService = agentHubService;
         _agentFactorySettings = agentFactorySettings.Value;
@@ -76,11 +76,11 @@ public class AgentFactoryService : IAgentFactoryService
     {
         get
         {
-            if (_semanticKernelOrchestration.IsInitialized)
+            if (_semanticKernel.IsInitialized)
                 return "ready";
             var status = new List<string>();
-            if (!_semanticKernelOrchestration.IsInitialized)
-                status.Add("SemanticKernelOrchestrationService: initializing");
+            if (!_semanticKernel.IsInitialized)
+                status.Add("SemanticKernelService: initializing");
             return string.Join(",", status);
         }
     }
@@ -154,10 +154,10 @@ public class AgentFactoryService : IAgentFactoryService
         switch (_llmOrchestrationService)
         {
             case LLMOrchestrationService.SemanticKernel:
-                return _semanticKernelOrchestration as ILLMOrchestrationService;
+                return _semanticKernel as ILLMOrchestrationService;
             case LLMOrchestrationService.LangChain:
             default:
-                return _langChainOrchestration as ILLMOrchestrationService;
+                return _langChain as ILLMOrchestrationService;
         }
     }
 }

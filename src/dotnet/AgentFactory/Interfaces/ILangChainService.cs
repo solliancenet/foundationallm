@@ -3,7 +3,7 @@
     /// <summary>
     /// Interface for the LangChain Orchestration Service
     /// </summary>
-    public interface ILangChainOrchestrationService : ILLMOrchestrationService
+    public interface ILangChainService : ILLMOrchestrationService
     {
     }
 }

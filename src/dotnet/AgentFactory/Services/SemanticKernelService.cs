@@ -11,16 +11,16 @@ using FoundationaLLM.Common.Interfaces;
 
 namespace FoundationaLLM.AgentFactory.Services
 {
-    public class SemanticKernelOrchestrationService : ISemanticKernelOrchestrationService
+    public class SemanticKernelService : ISemanticKernelService
     {
-        readonly SemanticKernelOrchestrationServiceSettings _settings;
-        readonly ILogger<SemanticKernelOrchestrationService> _logger;
+        readonly SemanticKernelServiceSettings _settings;
+        readonly ILogger<SemanticKernelService> _logger;
         private readonly IHttpClientFactoryService _httpClientFactoryService;
         readonly JsonSerializerSettings _jsonSerializerSettings;
 
-        public SemanticKernelOrchestrationService(
-            IOptions<SemanticKernelOrchestrationServiceSettings> options,
-            ILogger<SemanticKernelOrchestrationService> logger,
+        public SemanticKernelService(
+            IOptions<SemanticKernelServiceSettings> options,
+            ILogger<SemanticKernelService> logger,
             IHttpClientFactoryService httpClientFactoryService)
         {
             _settings = options.Value;

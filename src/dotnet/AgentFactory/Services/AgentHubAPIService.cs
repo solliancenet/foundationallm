@@ -62,7 +62,7 @@ public class AgentHubAPIService : IAgentHubService
     {
         try
         {
-            AgentHubMessage ahm = new AgentHubMessage { AgentName = "weather" };
+            AgentHubRequest ahm = new AgentHubRequest { AgentName = "weather" };
             
             var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.AgentHubAPI);
                         

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FoundationaLLM.AgentFactory.Core.Models.ConfigurationOptions
 {
-    public class BaseSettings
+    public class SettingsBase
     {
         public string? APIUrl { get; init; }
         public string? APIKey { get; init; }

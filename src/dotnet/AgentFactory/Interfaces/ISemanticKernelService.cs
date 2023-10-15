@@ -1,6 +1,6 @@
 ﻿namespace FoundationaLLM.AgentFactory.Interfaces
 {
-    public interface ISemanticKernelOrchestrationService : ILLMOrchestrationService
+    public interface ISemanticKernelService : ILLMOrchestrationService
     {
         Task AddMemory(object item, string itemName, Action<object, float[]> vectorizer);
 

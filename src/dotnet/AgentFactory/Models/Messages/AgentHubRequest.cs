@@ -2,7 +2,7 @@
 
 namespace FoundationaLLM.AgentFactory.Core.Models.Messages
 {
-    public record AgentHubMessage
+    public record AgentHubRequest
     {
         [JsonProperty("agent_name")]
         public string? AgentName { get; set; }

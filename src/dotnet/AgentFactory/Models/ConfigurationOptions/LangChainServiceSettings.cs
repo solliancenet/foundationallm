@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FoundationaLLM.AgentFactory.Models.ConfigurationOptions
 {
-    public class LangChainOrchestrationServiceSettings : BaseSettings
+    public class LangChainServiceSettings : SettingsBase
     {
         
     }

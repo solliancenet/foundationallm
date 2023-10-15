@@ -61,7 +61,7 @@ public class PromptHubAPIService : IPromptHubService
     {
         try
         {
-            PromptHubMessage phm = new PromptHubMessage { AgentName = "TODO : SOME AGENT NAME" };
+            PromptHubRequest phm = new PromptHubRequest { AgentName = "TODO : SOME AGENT NAME" };
             
             var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.PromptHubAPI);
 

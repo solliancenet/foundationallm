@@ -2,7 +2,7 @@
 
 namespace FoundationaLLM.AgentFactory.Models.ConfigurationOptions
 {
-    public class DataSourceHubSettings : BaseSettings
+    public class DataSourceHubSettings : SettingsBase
     {
         
     }

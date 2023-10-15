@@ -2,7 +2,7 @@
 
 namespace FoundationaLLM.AgentFactory.Models.ConfigurationOptions
 {
-    public class PromptHubSettings : BaseSettings
+    public class PromptHubSettings : SettingsBase
     {
         
     }

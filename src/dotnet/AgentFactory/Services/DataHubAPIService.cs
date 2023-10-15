@@ -61,7 +61,7 @@ public class DataSourceHubAPIService : IDataSourceHubService
     {
         try
         {
-            DataSourceHubMessage phm = new DataSourceHubMessage { DataSources =  sources };
+            DataSourceHubRequest phm = new DataSourceHubRequest { DataSources =  sources };
 
             var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.DataSourceHubAPI);
 

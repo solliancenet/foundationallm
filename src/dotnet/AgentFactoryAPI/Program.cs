@@ -41,10 +41,10 @@ namespace FoundationaLLM.AgentFactory.API
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:AgentFactoryAPI"));
             builder.Services.AddTransient<IAPIKeyValidationService, APIKeyValidationService>();
 
-            builder.Services.AddOptions<SemanticKernelOrchestrationServiceSettings>()
+            builder.Services.AddOptions<SemanticKernelServiceSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:SemanticKernelAPI"));
 
-            builder.Services.AddOptions<LangChainOrchestrationServiceSettings>()
+            builder.Services.AddOptions<LangChainServiceSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:LangChainAPI"));
 
             builder.Services.AddOptions<AgentHubSettings>()
@@ -61,8 +61,8 @@ namespace FoundationaLLM.AgentFactory.API
 
             builder.Services.AddSingleton<IConfigurationService, KeyVaultConfigurationService>();
             
-            builder.Services.AddScoped<ISemanticKernelOrchestrationService, SemanticKernelOrchestrationService>();
-            builder.Services.AddScoped<ILangChainOrchestrationService, LangChainOrchestrationService>();
+            builder.Services.AddScoped<ISemanticKernelService, SemanticKernelService>();
+            builder.Services.AddScoped<ILangChainService, LangChainService>();
             builder.Services.AddScoped<IAgentFactoryService, AgentFactoryService>();
             builder.Services.AddScoped<IAgentHubService, AgentHubAPIService>();
             builder.Services.AddScoped<IDataSourceHubService, DataSourceHubAPIService>();

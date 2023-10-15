@@ -2,7 +2,7 @@
 
 namespace FoundationaLLM.AgentFactory.Models.ConfigurationOptions
 {
-    public class SemanticKernelOrchestrationServiceSettings : BaseSettings
+    public class SemanticKernelServiceSettings : SettingsBase
     {
         
     }
