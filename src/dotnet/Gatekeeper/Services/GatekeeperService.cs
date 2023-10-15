@@ -26,7 +26,7 @@ namespace FoundationaLLM.Gatekeeper.Core.Services
             //TODO: Call RefinementService to refine userPrompt
             //await _refinementService.RefineUserPrompt(completionRequest.Prompt);
 
-            var result = await _contentSafetyService.AnalyzeText(completionRequest.Prompt);
+            var result = await _contentSafetyService.AnalyzeText(completionRequest.UserPrompt);
             
             if (result.Safe)
                 return await _agentFactoryAPIService.GetCompletion(completionRequest);
