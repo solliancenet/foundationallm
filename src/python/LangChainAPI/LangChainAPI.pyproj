@@ -61,6 +61,13 @@ foundationallm-configuration-allow-environment-variables=True</Environment>
     <Folder Include="app\routers\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\PythonSDK\PythonSDK.pyproj">
+      <Name>PythonSDK</Name>
+      <Project>{2469cc23-7f26-4b84-8878-98d90604eee8}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
     <Interpreter Include="env\">
       <Id>env</Id>
       <Version>3.11</Version>
@@ -70,13 +77,6 @@ foundationallm-configuration-allow-environment-variables=True</Environment>
       <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
       <Architecture>X64</Architecture>
     </Interpreter>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\PythonSDK\PythonSDK.pyproj">
-      <Name>PythonSDK</Name>
-      <Project>{2469cc23-7f26-4b84-8878-98d90604eee8}</Project>
-      <Private>True</Private>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.Web.targets" />
   <!-- Specify pre- and post-build commands in the BeforeBuild and 
