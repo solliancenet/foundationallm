@@ -58,17 +58,6 @@ namespace FoundationaLLM.Gatekeeper.API
             builder.Services.AddScoped<IGatekeeperService, GatekeeperService>();
 
             builder.Services
-                .AddHttpClient(HttpClients.AgentFactoryAPIClient,
-                    httpClient =>
-                    {
-                        httpClient.BaseAddress = new Uri(builder.Configuration["FoundationaLLM:AgentFactoryAPI:APIUrl"]);
-                        //httpClient.DefaultRequestHeaders.Add("X-API-KEY", builder.Configuration["FoundationaLLM:AgentFactoryAPI:APIKey"]);
-                    })
-                .AddTransientHttpErrorPolicy(policyBuilder =>
-                    policyBuilder.WaitAndRetryAsync(
-                        3, retryNumber => TimeSpan.FromMilliseconds(600)));
-
-            builder.Services
                 .AddApiVersioning(options =>
                 {
                     // Reporting api versions will return the headers
