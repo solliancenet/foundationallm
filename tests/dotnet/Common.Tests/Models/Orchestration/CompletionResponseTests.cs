@@ -66,8 +66,8 @@ namespace FoundationaLLM.Common.Tests.Models.Orchestration
             // Assert
             Assert.Equal(expectedCompletion, completionResponse.Completion);
             Assert.Equal(expectedUserPrompt, completionResponse.UserPrompt);
-            Assert.Equal(expectedUserPromptTokens, completionResponse.UserPromptTokens);
-            Assert.Equal(expectedResponseTokens, completionResponse.ResponseTokens);
+            Assert.Equal(expectedUserPromptTokens, completionResponse.PromptTokens);
+            Assert.Equal(expectedResponseTokens, completionResponse.CompletionTokens);
             Assert.Equal(expectedUserPromptEmbedding, completionResponse.UserPromptEmbedding);
         }
 
