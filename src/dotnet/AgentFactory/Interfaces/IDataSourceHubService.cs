@@ -11,5 +11,5 @@ public interface IDataSourceHubService
 
     Task<string> Status();
 
-    Task<DataSourceHubResponse> ResolveRequest(string user_prompt, string user_context);
+    Task<DataSourceHubResponse> ResolveRequest(List<string> sources, string user_context);
 }

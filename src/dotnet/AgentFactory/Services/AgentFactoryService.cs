@@ -94,13 +94,14 @@ public class AgentFactoryService : IAgentFactoryService
         try
         {
             //get all agents for prompt...
-            AgentHubResponse agents = await _agentHubService.ResolveRequest(completionRequest.UserPrompt, "");
+            AgentHubResponse agents = await _agentHubService.ResolveRequest(completionRequest.UserPrompt, completionRequest.UserContext);
 
-            //get stuff from prompt hub
-            PromptHubResponse prompts = await _promptHubService.ResolveRequest(completionRequest.UserPrompt, "");
+            //get prompts from prompt hub
+            PromptHubResponse prompts = await _promptHubService.ResolveRequest(completionRequest.UserPrompt, completionRequest.UserContext);
 
             //get data sources...
-            DataSourceHubResponse datasources = await _dataSourceHubService.ResolveRequest(completionRequest.UserPrompt, "");
+            var sources = new List<string> { "about-solliance" };
+            DataSourceHubResponse datasources = await _dataSourceHubService.ResolveRequest(sources, completionRequest.UserContext);
 
 
             // Generate the completion to return to the user

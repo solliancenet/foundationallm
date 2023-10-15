@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -34,10 +35,32 @@ namespace FoundationaLLM.AgentFactory.Core.Models.Messages
 
         [JsonProperty("description")]
         public string? Description { get; set; }
-    }
 
-    public record UnderlyingImplementation
-    {
+        [JsonProperty("underlying_implementation")]
+        public string? UnderlyingImplementation { get; set; }
 
+        [JsonProperty("file_type")]
+        public string? FileType { get; set; }
+
+        [JsonProperty("authentication")]
+        public Dictionary<string, string>? Authentication { get; set; }
+
+        [JsonProperty("container")]
+        public string? Container { get; set; }
+
+        [JsonProperty("files")]
+        public List<string>? Files { get; set; }
+
+        [JsonProperty("dialect")]
+        public string? Dialect { get; set; }
+
+        [JsonProperty("include_tables")]
+        public List<string>? IncludeTables { get; set; }
+
+        [JsonProperty("exclude_tables")]
+        public List<string>? ExcludeTables { get; set; }
+
+        [JsonProperty("few_shot_example_count")]
+        public int? FewShotExampleCount { get; set; }
     }
 }

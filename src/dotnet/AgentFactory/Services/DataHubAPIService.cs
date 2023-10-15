@@ -57,11 +57,11 @@ public class DataSourceHubAPIService : IDataSourceHubService
         return null;
     }
 
-    public async Task<DataSourceHubResponse> ResolveRequest(string userPrompt, string userContext)
+    public async Task<DataSourceHubResponse> ResolveRequest(List<string> sources, string userContext)
     {
         try
         {
-            DataSourceHubMessage phm = new DataSourceHubMessage { DataSources =  new List<string> { "TODO : SOME AGENT NAME" } };
+            DataSourceHubMessage phm = new DataSourceHubMessage { DataSources =  sources };
 
             var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.DataSourceHubAPI);
 
