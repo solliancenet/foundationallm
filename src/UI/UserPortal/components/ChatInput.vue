@@ -7,7 +7,7 @@
 			placeholder="What would you like to ask?"
 			@keydown.enter="handleSend"
 		></InputText>
-		<Button class="submit" @click="handleSend" label="Send" icon="pi pi-send"/>
+		<Button class="submit" icon="pi pi-send" label="Send" @click="handleSend" />
 	</div>
 </template>
 

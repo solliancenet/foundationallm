@@ -10,15 +10,19 @@
 			</template>
 		</div>
 
-		<!-- Messages -->
-		<div :class="messages.length !== 0 ? 'chat-thread__messages' : 'chat-thread__messages empty'">
-			<ChatMessage
-				v-if="messages.length !== 0"
-				v-for="(message, index) in messages.slice().reverse()"
-				:key="message.id"
-				:message="message"
-				@rate="handleRateMessage(messages.length - 1 - index, $event)"
-			/>
+		<!-- Message list -->
+		<div class="chat-thread__messages" :class="messages.length === 0 && 'empty'">
+			<!-- Messages -->
+			<template v-if="messages.length !== 0">
+				<ChatMessage
+					v-for="(message, index) in messages.slice().reverse()"
+					:key="message.id"
+					:message="message"
+					@rate="handleRateMessage(messages.length - 1 - index, $event)"
+				/>
+			</template>
+
+			<!-- New chat alert -->
 			<div v-else class="new-chat-alert">
 				<div class="alert-header">
 					<i class="pi pi-exclamation-circle"></i>

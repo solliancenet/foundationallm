@@ -1,10 +1,7 @@
 <template>
 	<div
 		class="message-row"
-		:class="{
-			'message--in': !(message.sender === 'User'),
-			'message--out': message.sender === 'User',
-		}"
+		:class="message.sender === 'User' ? 'message--out' : 'message--in'"
 	>
 		<div class="message">
 			<div class="message__header">
