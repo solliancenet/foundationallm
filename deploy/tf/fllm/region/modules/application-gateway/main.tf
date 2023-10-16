@@ -76,6 +76,11 @@ resource "azurerm_application_gateway" "main" {
     probe_name            = "https"
     protocol              = "Https"
     request_timeout       = 180
+
+    connection_draining {
+      enabled           = true
+      drain_timeout_sec = 30
+    }
   }
 
   frontend_ip_configuration {
