@@ -104,7 +104,6 @@ resource "azurerm_kubernetes_cluster" "main" {
   }
 
   kubelet_identity {
-    type = "UserAssigned"
     user_assigned_identity_id = azurerm_user_assigned_identity.aks_kubelet_mi.id
   }
 
