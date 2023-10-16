@@ -35,6 +35,18 @@ variable "resource_prefix" {
   type        = string
 }
 
+variable "sql_admin_ad_group" {
+  description = "SQL Admin AD group"
+  type = object({
+    name      = string
+    object_id = string
+  })
+  default = {
+    name      = "FoundationaLLM SQL Admins"
+    object_id = "73d59f98-857b-45e7-950b-5ee30d289bc8"
+  }
+}
+
 variable "vnet_address_space" {
   description = "Address space of the regional VNET"
   type        = string

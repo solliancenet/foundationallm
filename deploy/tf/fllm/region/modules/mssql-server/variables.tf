@@ -30,6 +30,11 @@ variable "resource_prefix" {
   type        = string
 }
 
+variable "sql_admin_object_id" {
+  description = "The object ID of the SQL administrator."
+  type        = string
+}
+
 variable "tags" {
   description = "A map of tags for the resource."
   type        = map(string)

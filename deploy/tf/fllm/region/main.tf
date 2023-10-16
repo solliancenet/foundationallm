@@ -247,6 +247,7 @@ module "sql" {
   log_analytics_workspace_id = module.logs.id
   resource_group             = azurerm_resource_group.rgs["Data"]
   resource_prefix            = local.resource_prefix
+  sql_admin_object_id        = var.sql_admin_ad_group.object_id
   tags                       = local.tags
 
   private_endpoint = {

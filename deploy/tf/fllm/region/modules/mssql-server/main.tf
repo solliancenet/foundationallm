@@ -26,7 +26,7 @@ resource "azurerm_mssql_server" "main" {
 
   azuread_administrator {
     login_username              = "ADAdmin"
-    object_id                   = data.azurerm_client_config.current.object_id
+    object_id                   = var.sql_admin_object_id
     azuread_authentication_only = true
   }
 
