@@ -95,6 +95,10 @@ resource "azurerm_kubernetes_cluster" "main" {
     log_analytics_workspace_id = var.log_analytics_workspace_id
   }
 
+  network_profile {
+    network_plugin = "azure"
+  }
+
   tags = var.tags
 
   depends_on = [
