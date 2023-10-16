@@ -120,8 +120,6 @@
     <Compile Include="foundationallm\models\orchestration\__init__.py" />
     <Compile Include="foundationallm\models\session.py" />
     <Compile Include="foundationallm\models\__init__.py" />
-    <Compile Include="foundationallm\auth\api_key_validator.py" />
-    <Compile Include="foundationallm\auth\__init__.py" />
     <Compile Include="foundationallm\config\configuration.py" />
     <Compile Include="foundationallm\config\__init__.py" />
     <Compile Include="foundationallm\storage\blob_storage_manager.py" />
@@ -167,7 +165,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="foundationallm\" />
-    <Folder Include="foundationallm\auth\" />
     <Folder Include="foundationallm\config\" />
   </ItemGroup>
   <ItemGroup>

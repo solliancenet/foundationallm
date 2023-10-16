@@ -27,7 +27,7 @@ class AgentFactory:
         completion_request : CompletionRequest
             The completion request object containing the user prompt to execute, message history,
             and agent and data source metadata.
-        app_config : Configuration
+        config : Configuration
             Application configuration class for retrieving configuration settings.
         """
         self.completion_request = completion_request
@@ -48,12 +48,12 @@ class AgentFactory:
         """
         match self.agent.type:
             case 'anomaly':
-                return AnomalyDetectionAgent(self.completion_request, llm=self.llm, app_config=self.config)
+                return AnomalyDetectionAgent(self.completion_request, llm=self.llm, config=self.config)
             case 'csv':
-                return CSVAgent(self.completion_request, llm=self.llm, app_config=self.config)
+                return CSVAgent(self.completion_request, llm=self.llm, config=self.config)
             case 'sql':
-                return SqlDbAgent(self.completion_request, llm=self.llm, app_config=self.config)
+                return SqlDbAgent(self.completion_request, llm=self.llm, config=self.config)
             case 'summary':
-                return SummaryAgent(self.completion_request, llm=self.llm, app_config=self.config)
+                return SummaryAgent(self.completion_request, llm=self.llm, config=self.config)
             case _:
-                return ConversationalAgent(self.completion_request, llm=self.llm, app_config=self.config)
+                return ConversationalAgent(self.completion_request, llm=self.llm, config=self.config)

@@ -7,7 +7,7 @@ from foundationallm.langchain.language_models.openai import OpenAIModelBase
 
 class OpenAIChatModel(OpenAIModelBase):
     """OpenAI chat model."""
-    config_value_base_name: str = 'foundationallm-openai-api'
+    config_value_base_name: str = 'FoundationaLLM:OpenAI:API'
     deployment_name: str
     model_version: str
     
@@ -23,9 +23,9 @@ class OpenAIChatModel(OpenAIModelBase):
             Application configuration class for retrieving configuration settings.
         """
         self.config = config
-        self.openai_api_base = self.config.get_value(f'{self.config_value_base_name}-url')
-        self.openai_api_key = self.config.get_value(f'{self.config_value_base_name}-key')
-        self.temperature = language_model.temperature
+        self.openai_api_base = self.config.get_value(f'{self.config_value_base_name}:EndPoint')
+        self.openai_api_key = self.config.get_value(f'{self.config_value_base_name}:Key')
+        self.temperature = self.config.get_value(f'{self.config_value_base_name}:Temperature')
          
     def get_language_model(self) -> BaseLanguageModel:
         """
@@ -37,7 +37,7 @@ class OpenAIChatModel(OpenAIModelBase):
             Returns an AzureChatOpenAI chat model.
         """
         return ChatOpenAI(
-            temperature = self.temperature,
             openai_api_base = self.openai_api_base,
-            openai_api_key = self.openai_api_key
+            openai_api_key = self.openai_api_key,
+            temperature = self.temperature
         )

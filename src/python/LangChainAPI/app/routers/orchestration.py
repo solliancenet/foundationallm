@@ -1,8 +1,8 @@
 from logging import config
 from fastapi import APIRouter, Depends
 from app.dependencies import validate_api_key_header
-from foundationallm.config import Configuration
 
+from foundationallm.config import Configuration
 from foundationallm.models.orchestration import CompletionRequest, CompletionResponse
 from foundationallm.langchain.orchestration import OrchestrationManager
 
@@ -15,6 +15,9 @@ router = APIRouter(
 )
 
 config = Configuration()
+print(config.get_value('FoundationaLLM:LangChainAPI:Key'))
+print(config.get_value('FoundationaLLM:AzureOpenAI:API:Key'))
+print(config.get_value('FoundationaLLM:AzureOpenAI:API'))
 
 @router.post('/completion')
 async def get_completion(completion_request: CompletionRequest) -> CompletionResponse:
