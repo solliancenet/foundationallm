@@ -64,7 +64,7 @@ namespace FoundationaLLM.Gatekeeper.Core.Services
             
             return new SummaryResponse
             {
-                Info = "[No Summary]"
+                Summary = "[No Summary]"
             };
         }
 

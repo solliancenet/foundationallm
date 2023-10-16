@@ -3,7 +3,7 @@ using FoundationaLLM.Common.Models.Orchestration;
 
 namespace FoundationaLLM.AgentFactory.Core.Interfaces;
 
-public interface IPromptHubService
+public interface IPromptHubAPIService
 {
     Task<string> Status();
 

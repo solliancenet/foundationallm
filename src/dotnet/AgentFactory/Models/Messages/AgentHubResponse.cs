@@ -18,6 +18,9 @@ namespace FoundationaLLM.AgentFactory.Core.Models.Messages
         [JsonProperty("description")]
         public string? Description { get; set; }
 
+        [JsonProperty("orchestrator")]
+        public string? Orchestrator { get; set; }
+
         [JsonProperty("allowed_data_source_names")]
         public List<string>? AllowedDataSourceNames { get; set; }
 

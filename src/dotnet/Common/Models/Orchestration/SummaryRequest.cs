@@ -1,6 +1,5 @@
 ﻿namespace FoundationaLLM.Common.Models.Orchestration;
 
-public class SummaryRequest
+public class SummaryRequest : OrchestrationRequest
 {
-    public string Prompt { get; init; }
 }

@@ -9,7 +9,7 @@ using FoundationaLLM.Common.Interfaces;
 
 namespace FoundationaLLM.AgentFactory.Core.Services;
 
-public class PromptHubAPIService : IPromptHubService
+public class PromptHubAPIService : IPromptHubAPIService
 {
     readonly PromptHubSettings _settings;
     readonly ILogger<PromptHubAPIService> _logger;

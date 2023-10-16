@@ -39,12 +39,12 @@ namespace FoundationaLLM.Gatekeeper.Core.Services
             //TODO: Call RefinementService to refine userPrompt
             //await _refinementService.RefineUserPrompt(summaryRequest.Prompt);
 
-            var result = await _contentSafetyService.AnalyzeText(summaryRequest.Prompt);
+            var result = await _contentSafetyService.AnalyzeText(summaryRequest.UserPrompt);
 
             if (result.Safe)
                 return await _agentFactoryAPIService.GetSummary(summaryRequest);
 
-            return new SummaryResponse() { Info = result.Reason };
+            return new SummaryResponse() { Summary = result.Reason };
         }
 
         public async Task<bool> SetLLMOrchestrationPreference(string orchestrationService)

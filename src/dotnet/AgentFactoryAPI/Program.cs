@@ -61,12 +61,13 @@ namespace FoundationaLLM.AgentFactory.API
 
             builder.Services.AddSingleton<IConfigurationService, KeyVaultConfigurationService>();
             
-            builder.Services.AddScoped<ISemanticKernelService, SemanticKernelService>();
-            builder.Services.AddScoped<ILangChainService, LangChainService>();
+            builder.Services.AddScoped<ILLMOrchestrationService, SemanticKernelService>();
+            builder.Services.AddScoped<ILLMOrchestrationService, LangChainService>();
+
             builder.Services.AddScoped<IAgentFactoryService, AgentFactoryService>();
-            builder.Services.AddScoped<IAgentHubService, AgentHubAPIService>();
-            builder.Services.AddScoped<IDataSourceHubService, DataSourceHubAPIService>();
-            builder.Services.AddScoped<IPromptHubService, PromptHubAPIService>();
+            builder.Services.AddScoped<IAgentHubAPIService, AgentHubAPIService>();
+            builder.Services.AddScoped<IDataSourceHubAPIService, DataSourceHubAPIService>();
+            builder.Services.AddScoped<IPromptHubAPIService, PromptHubAPIService>();
             builder.Services.AddScoped<IUserIdentityContext, UserIdentityContext>();
             builder.Services.AddScoped<IHttpClientFactoryService, HttpClientFactoryService>();
             builder.Services.AddScoped<IUserClaimsProviderService, NoOpUserClaimsProviderService>();

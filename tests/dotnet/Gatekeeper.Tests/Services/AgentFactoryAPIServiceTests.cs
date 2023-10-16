@@ -74,10 +74,10 @@ namespace Gatekeeper.Tests.Services
         {
             // Arrange
             var httpClientFactoryService = Substitute.For<IHttpClientFactoryService>();
-            var summaryRequest = new SummaryRequest { Prompt = "Prompt_1" };
+            var summaryRequest = new SummaryRequest { UserPrompt = "Prompt_1" };
 
             // Create a mock message handler
-            var mockHandler = new MockHttpMessageHandler(HttpStatusCode.OK, new SummaryResponse { Info = "Test Response" });
+            var mockHandler = new MockHttpMessageHandler(HttpStatusCode.OK, new SummaryResponse { Summary = "Test Response" });
 
             var httpClient = new HttpClient(mockHandler)
             {
@@ -92,7 +92,7 @@ namespace Gatekeeper.Tests.Services
 
             // Assert
             Assert.NotNull(summaryResponse);
-            Assert.Equal("Test Response", summaryResponse.Info);
+            Assert.Equal("Test Response", summaryResponse.Summary);
         }
 
         [Fact]
@@ -100,7 +100,7 @@ namespace Gatekeeper.Tests.Services
         {
             // Arrange
             var httpClientFactoryService = Substitute.For<IHttpClientFactoryService>();
-            var summaryRequest = new SummaryRequest { Prompt = "Prompt_1" };
+            var summaryRequest = new SummaryRequest { UserPrompt = "Prompt_1" };
 
             // Create a mock message handler
             var mockHandler = new MockHttpMessageHandler(HttpStatusCode.InternalServerError, string.Empty);
@@ -118,7 +118,7 @@ namespace Gatekeeper.Tests.Services
 
             // Assert
             Assert.NotNull(summaryResponse);
-            Assert.Equal("[No Summary]", summaryResponse.Info);
+            Assert.Equal("[No Summary]", summaryResponse.Summary);
         }
 
         [Fact]

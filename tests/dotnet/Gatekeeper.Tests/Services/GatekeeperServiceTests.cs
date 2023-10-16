@@ -18,8 +18,7 @@ namespace Gatekeeper.Tests.Services
             // Arrange
             var agentFactoryAPIService = Substitute.For<IAgentFactoryAPIService>();
             var refinementService = Substitute.For<IRefinementService>();
-            var contentSafetyService = Substitute.For<IContentSafetyService>();
-            var service = new GatekeeperService(agentFactoryAPIService, refinementService, contentSafetyService);
+            var service = new GatekeeperService(agentFactoryAPIService, refinementService);
             var completionRequest = new CompletionRequest { UserPrompt = "Prompt_1", MessageHistory = new List<FoundationaLLM.Common.Models.Chat.MessageHistoryItem>() };
 
             // Act
@@ -35,9 +34,8 @@ namespace Gatekeeper.Tests.Services
             // Arrange
             var agentFactoryAPIService = Substitute.For<IAgentFactoryAPIService>();
             var refinementService = Substitute.For<IRefinementService>();
-            var contentSafetyService = Substitute.For<IContentSafetyService>();
-            var service = new GatekeeperService(agentFactoryAPIService, refinementService, contentSafetyService);
-            var summaryRequest = new SummaryRequest { Prompt = "Prompt_1" };
+            var service = new GatekeeperService(agentFactoryAPIService, refinementService);
+            var summaryRequest = new SummaryRequest { UserPrompt = "Prompt_1" };
 
             // Act
             await service.GetSummary(summaryRequest);
@@ -52,8 +50,7 @@ namespace Gatekeeper.Tests.Services
             // Arrange
             var agentFactoryAPIService = Substitute.For<IAgentFactoryAPIService>();
             var refinementService = Substitute.For<IRefinementService>();
-            var contentSafetyService = Substitute.For<IContentSafetyService>();
-            var service = new GatekeeperService(agentFactoryAPIService, refinementService, contentSafetyService);
+            var service = new GatekeeperService(agentFactoryAPIService, refinementService);
             var orchestrationService = "ServiceName";
 
             // Act

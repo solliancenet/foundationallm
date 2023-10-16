@@ -2,5 +2,5 @@
 
 public class SummaryResponse
 {
-    public string Info { get; init; }
+    public string Summary { get; init; }
 }

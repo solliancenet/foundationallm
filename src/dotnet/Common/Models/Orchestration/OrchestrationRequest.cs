@@ -12,5 +12,8 @@ namespace FoundationaLLM.Common.Models.Orchestration
         /// </summary>
         [JsonProperty("user_prompt")]
         public string UserPrompt { get; set; }
+
+        [JsonProperty("user_context")]
+        public string UserContext { get; init; }
     }
 }
