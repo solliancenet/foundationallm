@@ -143,13 +143,8 @@ namespace FoundationaLLM.Gatekeeper.API
             };
             foreach (var apiSetting in builder.Configuration.GetSection("FoundationaLLM:DownstreamAPIs").GetChildren())
             {
-                var serviceProvider = builder.Services.BuildServiceProvider();
-                //var kvConfig = serviceProvider.GetRequiredService<Common.Interfaces.IConfigurationService>();
                 var key = apiSetting.Key;
                 var settings = apiSetting.Get<DownstreamAPIKeySettings>();
-
-                //var azureAdSecret = kvConfig.GetValue<string>(settings.APIKeySecretName);
-                string azureAdSecret = "";
 
                 downstreamAPISettings.DownstreamAPIs[key] = settings;
                 builder.Services
