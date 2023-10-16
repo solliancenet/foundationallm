@@ -210,6 +210,7 @@ export default {
 }
 
 .chat__name {
+	cursor: pointer;
 }
 
 .chat__icons {

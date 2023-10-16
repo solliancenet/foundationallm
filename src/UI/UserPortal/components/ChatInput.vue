@@ -1,5 +1,5 @@
 <template>
-	<div class="chat-input">
+	<div class="chat-input p-inputgroup">
 		<InputText
 			v-model="text"
 			class="input"
@@ -7,7 +7,7 @@
 			placeholder="What would you like to ask?"
 			@keydown.enter="handleSend"
 		></InputText>
-		<Button class="submit" @click="handleSend">Send</Button>
+		<Button class="submit" @click="handleSend" label="Send" icon="pi pi-send"/>
 	</div>
 </template>
 
@@ -37,6 +37,7 @@ export default {
 	display: flex;
 	background-color: white;
 	border-radius: 8px;
+	margin: 16px;
 }
 
 .pre-input {
@@ -56,6 +57,7 @@ export default {
 
 .submit {
 	flex: 0 0 10%;
-	text-align: center;
+	text-align: left;
+	flex-basis: auto;
 }
 </style>

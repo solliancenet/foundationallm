@@ -31,7 +31,9 @@
 		</div>
 
 		<!-- Chat input -->
-		<ChatInput @send="handleSend" />
+		<div class="chat-thread__input">
+			<ChatInput @send="handleSend" />
+		</div>
 	</div>
 </template>
 
@@ -110,6 +112,10 @@ export default {
 	overscroll-behavior: auto;
 	scrollbar-gutter: stable;
 	padding: 24px;
+}
+
+.chat-thread__input {
+	display: flex;
 }
 
 .empty {
