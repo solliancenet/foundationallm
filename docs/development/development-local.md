@@ -198,7 +198,8 @@
       "HateSeverity": 2,
       "ViolenceSeverity": 2,
       "SelfHarmSeverity": 2,
-      "SexualSeverity": 2
+      "SexualSeverity": 2,
+      "APIKeySecretName": "foundationallm-content-safety-key"
     }
   }
 }
@@ -215,8 +216,7 @@
       }
     },
     "AzureContentSafety": {
-      "Endpoint": "<...>",
-      "Key": "<...>"
+      "Endpoint": "<...>"
     }
   }
 }
