@@ -2,6 +2,7 @@
 	<div class="chat-sidebar">
 		<!-- Sidebar header -->
 		<div class="chat-sidebar__header">
+			<img :src="logoURL" />
 			<span>{{ logoText }}</span>
 		</div>
 
@@ -108,6 +109,7 @@ export default {
 	data() {
 		return {
 			logoText: this.$config.public.LOGO_TEXT,
+			logoURL: this.$config.public.LOGO_URL,
 			sessions: [] as Array<Session>,
 			currentSession: null as Session | null,
 			sessionToRename: null as Session | null,
@@ -175,10 +177,20 @@ export default {
 
 .chat-sidebar__header {
 	height: 70px;
-	padding: 24px;
+	width: 100%;
+	padding-right: 24px;
+	padding-left: 24px;
+	padding-top: 12px;
 	display: flex;
-	justify-content: space-between;
+	align-items: center;
 	color: var(--primary-text);
+
+	img {
+		max-height: 100%;
+		width: auto;
+		max-width: 148px;
+		margin-right: 12px;
+	}
 }
 
 .chat-sidebar__section-header {
