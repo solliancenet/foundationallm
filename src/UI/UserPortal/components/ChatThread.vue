@@ -104,7 +104,7 @@ export default {
 	height: 70px;
 	padding: 24px;
 	border-bottom: 1px solid #EAEAEA;
-	background-color: white;
+	background-color: var(--accent-color);
 }
 
 .chat-thread__messages {

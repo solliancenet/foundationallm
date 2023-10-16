@@ -134,7 +134,7 @@ export default {
 .message--out {
 	flex-direction: row-reverse;
 	.message {
-		background-color: var(--primary-bg);
+		background-color: var(--primary-color);
 		color: var(--primary-text)
 	}
 }

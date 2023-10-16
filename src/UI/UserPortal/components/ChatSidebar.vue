@@ -2,7 +2,7 @@
 	<div class="chat-sidebar">
 		<!-- Sidebar header -->
 		<div class="chat-sidebar__header">
-			<span>Logo Goes Here</span>
+			<span>{{ logoText }}</span>
 		</div>
 
 		<!-- Sidebar section header -->
@@ -107,6 +107,7 @@ export default {
 
 	data() {
 		return {
+			logoText: this.$config.public.LOGO_TEXT,
 			sessions: [] as Array<Session>,
 			currentSession: null as Session | null,
 			sessionToRename: null as Session | null,
@@ -169,7 +170,7 @@ export default {
 	height: 100%;
 	display: flex;
 	flex-direction: column;
-	background-color: var(--primary-bg);
+	background-color: var(--primary-color);
 }
 
 .chat-sidebar__header {

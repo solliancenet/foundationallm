@@ -1,5 +1,5 @@
 <template>
-	<div class="chat-app">
+	<div :style="style" class="chat-app">
 		<ChatSidebar @change-session="handleChangeSession" />
 		<ChatThread :session="currentSession" />
 	</div>
@@ -17,6 +17,17 @@ export default {
 		};
 	},
 
+	computed: {
+		style() {
+			return {
+				'--primary-bg': this.$config.public.BRANDING_BACKGROUND_COLOR,
+				'--primary-color': this.$config.public.BRANDING_PRIMARY_COLOR,
+				'--secondary-color': this.$config.public.BRANDING_SECONDARY_COLOR,
+				'--accent-color': this.$config.public.BRANDING_ACCENT_COLOR,
+			};
+		}
+	},
+
 	methods: {
 		handleChangeSession(session: Session) {
 			this.currentSession = session;
@@ -25,9 +36,8 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
 :root {
-	--primary-bg: #131833;
 	--primary-text: white;
 }
 
@@ -45,6 +55,6 @@ body,
 .chat-app {
 	display: flex;
 	height: 100vh;
-	background-color: rgba(242, 242, 242, 1);
+	background-color: var(--primary-bg);
 }
 </style>
