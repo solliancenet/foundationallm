@@ -74,7 +74,7 @@ export default {
 			this.messages = data;
 		},
 
-		async handleRateMessage(messageIndex: number, { message, like }: { message: Message; like: boolean }) {
+		async handleRateMessage(messageIndex: number, { message, like }: { message: Message; like: Message['rating'] }) {
 			const updatedMessage = await api.rateMessage(message, like);
 			this.messages[messageIndex] = updatedMessage;
 		},

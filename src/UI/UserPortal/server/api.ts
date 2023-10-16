@@ -33,12 +33,14 @@ export default {
   },
 
   async rateMessage(message: Message, rating: Message['rating']) {
+    const params: {
+      rating?: Message['rating']
+    } = {};
+    if (rating !== null) params.rating = rating;
     return await $fetch(
       `${API_URL}/sessions/${message.sessionId}/message/${message.id}/rate`, {
         method: 'POST',
-        params: {
-          rating
-        }
+        params
       }
     ) as Message;
   },

@@ -102,8 +102,8 @@ export default {
 	},
 
 	methods: {
-		handleRate(message: Message, like: Boolean) {
-			this.$emit('rate', { message, like: message.rating === like ? undefined : like })
+		handleRate(message: Message, like: boolean) {
+			this.$emit('rate', { message, like: message.rating === like ? null : like })
 		},
 
 		async handleViewPrompt() {
