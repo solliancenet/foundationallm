@@ -21,38 +21,47 @@ resource "azurerm_user_assigned_identity" "aks_mi" {
   resource_group_name = var.resource_group.name
 }
 
-resource "azurerm_user_assigned_identity" "aks_kubelet_mi" {
-  location            = var.resource_group.location
-  name                = "${var.resource_prefix}-aks-kubelet-mi"
-  resource_group_name = var.resource_group.name
-}
-
-resource "azurerm_role_assignment" "aks_mi" {
+resource "azurerm_role_assignment" "dns_contributor" {
   scope                = var.private_endpoint.private_dns_zone_ids["aks"][0]
   principal_id         = azurerm_user_assigned_identity.aks_mi.principal_id
   role_definition_name = "Private DNS Zone Contributor"
 }
 
-resource "azurerm_role_assignment" "aks_net_mi" {
-  scope = var.private_endpoint.subnet.id
-  principal_id = azurerm_user_assigned_identity.aks_kubelet_mi.principal_id
+resource "azurerm_role_assignment" "network_contributor" {
+  scope                = var.private_endpoint.subnet.id
+  principal_id         = azurerm_user_assigned_identity.aks_mi.principal_id
   role_definition_name = "Network Contributor"
 }
 
 resource "azurerm_kubernetes_cluster" "main" {
-  location            = var.resource_group.location
-  name                = "${var.resource_prefix}-aks"
-  resource_group_name = var.resource_group.name
-
+  name                       = "${var.resource_prefix}-aks"
+  location                   = var.resource_group.location
+  resource_group_name        = var.resource_group.name
   dns_prefix_private_cluster = "${var.resource_prefix}-aks"
+  private_cluster_enabled    = true
+  private_dns_zone_id        = var.private_endpoint.private_dns_zone_ids["aks"][0]
 
-  aci_connector_linux {
-    subnet_name = var.private_endpoint.subnet.name
+  identity {
+    type = "UserAssigned"
+    identity_ids = [
+      azurerm_user_assigned_identity.aks_mi.id
+    ]
+  }
+
+  default_node_pool {
+    name           = "default"
+    node_count     = 3
+    vm_size        = "Standard_D2_v2"
+    vnet_subnet_id = var.private_endpoint.subnet.id
+  }
+
+  network_profile {
+    network_plugin = "azure"
+    dns_service_ip = "10.1.3.4"
+    service_cidr   = "10.1.3.0/24"
   }
 
   automatic_channel_upgrade = "stable"
-
-  auto_scaler_profile {}
 
   azure_active_directory_role_based_access_control {
     managed   = true
@@ -64,8 +73,6 @@ resource "azurerm_kubernetes_cluster" "main" {
     azure_rbac_enabled = true
   }
 
-  azure_policy_enabled = true
-
   ingress_application_gateway {
     gateway_id = var.agw_id
   }
@@ -76,52 +83,21 @@ resource "azurerm_kubernetes_cluster" "main" {
     log_analytics_workspace_id = var.log_analytics_workspace_id
   }
 
-  private_cluster_enabled = true
-
-  private_dns_zone_id = var.private_endpoint.private_dns_zone_ids["aks"][0]
-
   workload_identity_enabled = true
 
   role_based_access_control_enabled = true
 
   sku_tier = "Standard"
 
-  default_node_pool {
-    name                = "default"
-    vm_size             = "Standard_D2_v2"
-    type                = "VirtualMachineScaleSets"
-    pod_subnet_id       = var.private_endpoint.subnet.id
-    enable_auto_scaling = true
-    max_count           = 5
-    min_count           = 2
-  }
-
-  identity {
-    type = "UserAssigned"
-    identity_ids = [
-      azurerm_user_assigned_identity.aks_mi.id
-    ]
-  }
-
-  kubelet_identity {
-    client_id = azurerm_user_assigned_identity.aks_kubelet_mi.client_id
-    object_id = azurerm_user_assigned_identity.aks_kubelet_mi.principal_id
-    user_assigned_identity_id = azurerm_user_assigned_identity.aks_kubelet_mi.id
-  }
-
   microsoft_defender {
     log_analytics_workspace_id = var.log_analytics_workspace_id
-  }
-
-  network_profile {
-    network_plugin = "azure"
   }
 
   tags = var.tags
 
   depends_on = [
-    azurerm_role_assignment.aks_mi,
-    azurerm_role_assignment.aks_net_mi
+    azurerm_role_assignment.dns_contributor,
+    azurerm_role_assignment.network_contributor
   ]
 }
 
