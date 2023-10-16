@@ -21,6 +21,12 @@ resource "azurerm_user_assigned_identity" "aks_mi" {
   resource_group_name = var.resource_group.name
 }
 
+resource "azurerm_user_assigned_identity" "aks_kubelet_mi" {
+  location            = var.resource_group.location
+  name                = "${var.resource_prefix}-aks-kubelet-mi"
+  resource_group_name = var.resource_group.name
+}
+
 resource "azurerm_role_assignment" "aks_mi" {
   scope                = var.private_endpoint.private_dns_zone_ids["aks"][0]
   principal_id         = azurerm_user_assigned_identity.aks_mi.principal_id
@@ -28,8 +34,13 @@ resource "azurerm_role_assignment" "aks_mi" {
 }
 
 resource "azurerm_role_assignment" "aks_net_mi" {
+<<<<<<< Updated upstream
   scope                = var.private_endpoint.subnet.id
   principal_id         = azurerm_user_assigned_identity.aks_mi.principal_id
+=======
+  scope = var.private_endpoint.subnet.id
+  principal_id = azurerm_user_assigned_identity.aks_kubelet_mi.principal_id
+>>>>>>> Stashed changes
   role_definition_name = "Network Contributor"
 }
 
@@ -95,6 +106,11 @@ resource "azurerm_kubernetes_cluster" "main" {
     identity_ids = [
       azurerm_user_assigned_identity.aks_mi.id
     ]
+  }
+
+  kubelet_identity {
+    type = "UserAssigned"
+    user_assigned_identity_id = azurerm_user_assigned_identity.aks_kubelet_mi.id
   }
 
   microsoft_defender {
