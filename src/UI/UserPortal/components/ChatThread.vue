@@ -10,18 +10,34 @@
 			</template>
 		</div>
 
-		<!-- Messages -->
-		<div class="chat-thread__messages">
-			<ChatMessage
-				v-for="(message, index) in messages.slice().reverse()"
-				:key="message.id"
-				:message="message"
-				@rate="handleRateMessage(messages.length - 1 - index, $event)"
-			/>
+		<!-- Message list -->
+		<div class="chat-thread__messages" :class="messages.length === 0 && 'empty'">
+			<!-- Messages -->
+			<template v-if="messages.length !== 0">
+				<ChatMessage
+					v-for="(message, index) in messages.slice().reverse()"
+					:key="message.id"
+					:message="message"
+					@rate="handleRateMessage(messages.length - 1 - index, $event)"
+				/>
+			</template>
+
+			<!-- New chat alert -->
+			<div v-else class="new-chat-alert">
+				<div class="alert-header">
+					<i class="pi pi-exclamation-circle"></i>
+					<span class="alert-header-text">Get Started</span>
+				</div>
+				<div class="alert-body">
+					<span class="alert-body-text">How can I help?</span>
+				</div>
+			</div>
 		</div>
 
 		<!-- Chat input -->
-		<ChatInput @send="handleSend" />
+		<div class="chat-thread__input">
+			<ChatInput @send="handleSend" />
+		</div>
 	</div>
 </template>
 
@@ -39,6 +55,8 @@ export default {
 			required: true,
 		},
 	},
+
+	emits: ['update-session'],
 
 	data() {
 		return {
@@ -62,7 +80,7 @@ export default {
 			this.messages = data;
 		},
 
-		async handleRateMessage(messageIndex: number, { message, like }: { message: Message; like: boolean }) {
+		async handleRateMessage(messageIndex: number, { message, like }: { message: Message; like: Message['rating'] }) {
 			const updatedMessage = await api.rateMessage(message, like);
 			this.messages[messageIndex] = updatedMessage;
 		},
@@ -70,6 +88,14 @@ export default {
 		async handleSend(text: string) {
 			await api.sendMessage(this.session.id, text);
 			await this.getMessages();
+
+			// Update the session name based on the message sent
+			if (this.messages.length === 2) {
+				const sessionFullText = this.messages.map((message) => message.text).join('\n');
+				const { text: newSessionName } = await api.summarizeSessionName(this.session.id, sessionFullText);
+				const updatedSession = await api.renameSession(this.session.id, newSessionName);
+				this.$emit('update-session', updatedSession);
+			}
 		},
 	},
 };
@@ -87,9 +113,8 @@ export default {
 .chat-thread__header {
 	height: 70px;
 	padding: 24px;
-	border-bottom: 1px solid gray;
-	background-color: rgba(32, 32, 32, 1);
-	color: white;
+	border-bottom: 1px solid #EAEAEA;
+	background-color: var(--accent-color);
 }
 
 .chat-thread__messages {
@@ -100,5 +125,33 @@ export default {
 	overscroll-behavior: auto;
 	scrollbar-gutter: stable;
 	padding: 24px;
+}
+
+.chat-thread__input {
+	display: flex;
+}
+
+.empty {
+	flex-direction: column;
+}
+.new-chat-alert {
+	background-color: #d9f0d1;
+	margin: 10px;
+	padding: 10px;
+	border-radius: 6px;
+}
+.alert-header, .alert-header > i {
+	display: flex;
+	align-items: center;
+	font-size: 1.5rem;
+}
+.alert-header-text {
+	font-weight: 500;
+	margin-left: 8px;
+}
+.alert-body-text {
+	font-size: 1.2rem;
+	font-weight: 300;
+	font-style: italic;
 }
 </style>
