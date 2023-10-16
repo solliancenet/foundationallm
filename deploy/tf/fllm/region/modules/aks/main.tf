@@ -40,11 +40,6 @@ resource "azurerm_kubernetes_cluster" "main" {
 
   automatic_channel_upgrade = "stable"
 
-  api_server_access_profile {
-    subnet_id                = var.private_endpoint.subnet.id
-    vnet_integration_enabled = true
-  }
-
   auto_scaler_profile {}
 
   azure_active_directory_role_based_access_control {
