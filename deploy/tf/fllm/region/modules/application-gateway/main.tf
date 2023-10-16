@@ -4,14 +4,14 @@ locals {
       aggregation = "Average"
       description = "Backend health is less than 1 for 5 minutes"
       frequency   = "PT1M"
-      metric_name = "HeatlhyHostCount"
+      metric_name = "HealthyHostCount"
       operator    = "LessThan"
       severity    = 0
       threshold   = 1
       window_size = "PT5M"
     }
     dataprocessed = {
-      aggregation = "Average"
+      aggregation = "Total"
       description = "Data processed is greater than 100000 for 5 minutes"
       frequency   = "PT1M"
       metric_name = "BytesSent"
@@ -21,7 +21,7 @@ locals {
       window_size = "PT5M"
     }
     failedrequests = {
-      aggregation = "Average"
+      aggregation = "Total"
       description = "Failed requests are greater than 10 for 5 minutes"
       frequency   = "PT1M"
       metric_name = "FailedRequests"
@@ -31,7 +31,7 @@ locals {
       window_size = "PT5M"
     }
     requests = {
-      aggregation = "Average"
+      aggregation = "Total"
       description = "Requests are greater than 1000 for 5 minutes"
       frequency   = "PT1M"
       metric_name = "TotalRequests"
