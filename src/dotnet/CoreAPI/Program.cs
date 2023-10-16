@@ -31,6 +31,18 @@ namespace FoundationaLLM.Core.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            var allowAllCorsOrigins = "AllowAllOrigins";
+            builder.Services.AddCors(policyBuilder =>
+            {
+                policyBuilder.AddPolicy(allowAllCorsOrigins,
+                    policy =>
+                    {
+                        policy.AllowAnyOrigin();
+                        policy.AllowAnyHeader();
+                        policy.AllowAnyMethod();
+                    });
+            });
+
             builder.Services.AddOptions<CosmosDbSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:CosmosDB"));
             builder.Services.AddOptions<KeyVaultConfigurationServiceSettings>()
@@ -123,6 +135,8 @@ namespace FoundationaLLM.Core.API
                 });
 
             app.MapControllers();
+
+            app.UseCors(allowAllCorsOrigins);
 
             app.Run();
         }
