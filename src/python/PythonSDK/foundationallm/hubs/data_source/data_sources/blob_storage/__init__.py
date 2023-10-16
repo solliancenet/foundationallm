@@ -1,3 +1,2 @@
-from .blob_storage_file_type import BlobStorageFileType
 from .blob_storage_authentication_metadata import BlobStorageAuthenticationMetadata
 from .blob_storage_data_source_metadata import BlobStorageDataSourceMetadata
