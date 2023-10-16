@@ -104,6 +104,8 @@ resource "azurerm_kubernetes_cluster" "main" {
   }
 
   kubelet_identity {
+    client_id = azurerm_user_assigned_identity.aks_kubelet_mi.client_id
+    object_id = azurerm_user_assigned_identity.aks_kubelet_mi.principal_id
     user_assigned_identity_id = azurerm_user_assigned_identity.aks_kubelet_mi.id
   }
 
