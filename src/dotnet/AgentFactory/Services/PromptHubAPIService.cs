@@ -24,6 +24,7 @@ public class PromptHubAPIService : IPromptHubService
         _settings = options.Value;
         _logger = logger;
         _httpClientFactoryService = httpClientFactoryService;
+        _jsonSerializerSettings = Common.Settings.CommonJsonSerializerSettings.GetJsonSerializerSettings();
     }
 
     public async Task<string> Status()
@@ -56,9 +57,9 @@ public class PromptHubAPIService : IPromptHubService
             PromptHubRequest phm = new PromptHubRequest { AgentName = agentName };
             
             var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.PromptHubAPI);
-
+            var body = JsonConvert.SerializeObject(phm, _jsonSerializerSettings);
             var responseMessage = await client.PostAsync("/resolve_request", new StringContent(
-                    JsonConvert.SerializeObject(phm),
+                    body,
                     Encoding.UTF8, "application/json"));
 
             if (responseMessage.IsSuccessStatusCode)

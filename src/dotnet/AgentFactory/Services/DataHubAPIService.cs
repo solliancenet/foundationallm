@@ -24,6 +24,7 @@ public class DataSourceHubAPIService : IDataSourceHubService
         _settings = options.Value;
         _logger = logger;
         _httpClientFactoryService = httpClientFactoryService;
+        _jsonSerializerSettings = Common.Settings.CommonJsonSerializerSettings.GetJsonSerializerSettings();
     }
 
     public async Task<string> Status()
