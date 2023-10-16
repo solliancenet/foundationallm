@@ -1,9 +1,5 @@
 <template>
 	<div class="chat-input">
-		<div class="pre-input">
-			<div class="icon"></div>
-			<div class="text"></div>
-		</div>
 		<InputText
 			v-model="text"
 			class="input"
@@ -11,10 +7,7 @@
 			placeholder="What would you like to ask?"
 			@keydown.enter="handleSend"
 		></InputText>
-		<div class="submit">
-			<div class="icon"></div>
-			<Button @click="handleSend">Send</Button>
-		</div>
+		<Button class="submit" @click="handleSend">Send</Button>
 	</div>
 </template>
 

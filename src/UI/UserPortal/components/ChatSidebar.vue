@@ -25,16 +25,20 @@
 					<span class="chat__name">{{ session.name }}</span>
 
 					<!-- Chat icons -->
-					<span class="chat__icons">
+					<span class="p-buttonset chat__icons">
 						<!-- Rename session -->
-						<button small class="option edit" @click.stop="openRenameModal(session)">
-							<i class="icon pi pi-pencil"></i>
-						</button>
+						<Button
+							icon="pi pi-pencil"
+							size="small"
+							@click.stop="openRenameModal(session)"
+						/>
 
 						<!-- Delete session -->
-						<button small class="option delete" @click.stop="sessionToDelete = session">
-							<i class="icon pi pi-trash"></i>
-						</button>
+						<Button
+							icon="pi pi-trash"
+							size="small"
+							@click.stop="sessionToDelete = session"
+						/>
 					</span>
 				</div>
 			</div>
@@ -210,5 +214,6 @@ export default {
 
 .chat__icons {
 	flex-shrink: 0;
+	margin-left: 12px;
 }
 </style>

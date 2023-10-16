@@ -27,27 +27,33 @@
 				<span class="ratings">
 					<!-- Like -->
 					<span>
-						<button @click="handleRate(message, true)">
-							<i :class="message.rating ? 'icon pi pi-thumbs-up-fill' : 'icon pi pi-thumbs-up'"></i>
-							{{ message.rating ? 'Message Liked!' : 'Like' }}
-						</button>
+						<Button
+							:icon="message.rating ? 'pi pi-thumbs-up-fill' : 'pi pi-thumbs-up'"
+							size="small"
+							@click.stop="handleRate(message, true)"
+							:label="message.rating ? 'Message Liked!' : 'Like'"
+						/>
 					</span>
 
 					<!-- Dislike -->
 					<span>
-						<button @click="handleRate(message, false)">
-							<i :class="message.rating === false ? 'icon pi pi-thumbs-down-fill' : 'icon pi pi-thumbs-down'"></i>
-							{{ message.rating === false ? 'Message Disliked.' : 'Dislike' }}
-						</button>
+						<Button
+							:icon="message.rating === false ? 'pi pi-thumbs-down-fill' : 'pi pi-thumbs-down'"
+							size="small"
+							@click.stop="handleRate(message, false)"
+							:label="message.rating === false ? 'Message Disliked.' : 'Dislike'"
+						/>
 					</span>
 				</span>
 
 				<!-- View prompt -->
 				<span class="view-prompt">
-					<button @click="handleViewPrompt">
-						<i class="icon pi pi-book"></i>
-						View Prompt
-					</button>
+					<Button
+						icon="pi pi-book"
+						size="small"
+						@click.stop="handleViewPrompt"
+						label="View Prompt"
+					/>
 
 					<!-- Prompt dialog -->
 					<Dialog
@@ -94,7 +100,7 @@ export default {
 
 	methods: {
 		handleRate(message: Message, like: Boolean) {
-			this.$emit('rate', { message, like });
+			this.$emit('rate', { message, like: message.rating === like ? undefined : like })
 		},
 
 		async handleViewPrompt() {
@@ -109,7 +115,7 @@ export default {
 <style lang="scss" scoped>
 .message-row {
 	display: flex;
-	align-items: end;
+	align-items: flex-end;
 	margin: 8px;
 }
 
