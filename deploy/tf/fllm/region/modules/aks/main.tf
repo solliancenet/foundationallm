@@ -34,13 +34,8 @@ resource "azurerm_role_assignment" "aks_mi" {
 }
 
 resource "azurerm_role_assignment" "aks_net_mi" {
-<<<<<<< Updated upstream
-  scope                = var.private_endpoint.subnet.id
-  principal_id         = azurerm_user_assigned_identity.aks_mi.principal_id
-=======
   scope = var.private_endpoint.subnet.id
   principal_id = azurerm_user_assigned_identity.aks_kubelet_mi.principal_id
->>>>>>> Stashed changes
   role_definition_name = "Network Contributor"
 }
 
