@@ -1,12 +1,16 @@
 ﻿using FoundationaLLM.AgentFactory.Core.Interfaces;
 using FoundationaLLM.AgentFactory.Core.Models.ConfigurationOptions;
 using FoundationaLLM.AgentFactory.Core.Models.Messages;
+using FoundationaLLM.AgentFactory.Core.Models.Orchestration;
 using FoundationaLLM.AgentFactory.Interfaces;
 using FoundationaLLM.AgentFactory.Models.ConfigurationOptions;
 using FoundationaLLM.AgentFactory.Models.Orchestration;
 using FoundationaLLM.Common.Models.Orchestration;
+using FoundationaLLM.AgentFactory.Core.Models.Orchestration.Metadata;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.SemanticKernel.SemanticFunctions;
+using FoundationaLLM.AgentFactory.Core.Models.Orchestration.DataSourceConfigurations;
 
 namespace FoundationaLLM.AgentFactory.Core.Services;
 
@@ -97,23 +101,61 @@ public class AgentFactoryService : IAgentFactoryService
             AgentHubResponse agentResponse= await _agentHubService.ResolveRequest(completionRequest.UserPrompt, completionRequest.UserContext);
 
             //get prompts for the agent from the prompt hub
-            PromptHubResponse prompts = await _promptHubService.ResolveRequest(agentResponse.Agent.Name, completionRequest.UserContext);
+            PromptHubResponse promptResponse = await _promptHubService.ResolveRequest(agentResponse.Agent.Name, completionRequest.UserContext);
 
-            //get data sources listed for the agent
-            if (agentResponse.Agent.AllowedDataSourceNames != null)
+            //get data sources listed for the agent           
+            DataSourceHubResponse datasourceResponse = await _dataSourceHubService.ResolveRequest(agentResponse.Agent.AllowedDataSourceNames, completionRequest.UserContext);
+            //construct the configuration
+            SQLDatabaseConfiguration dataSourceConfig = new SQLDatabaseConfiguration()
             {
-                DataSourceHubResponse datasources = await _dataSourceHubService.ResolveRequest(agentResponse.Agent.AllowedDataSourceNames, completionRequest.UserContext);                
-            }
+                Dialect = datasourceResponse.DataSources[0].Dialect,
+                Host = datasourceResponse.DataSources[0].Authentication["host"],
+                Port = Convert.ToInt32(datasourceResponse.DataSources[0].Authentication["port"]),
+                DatabaseName = datasourceResponse.DataSources[0].Authentication["database"],
+                Username = datasourceResponse.DataSources[0].Authentication["username"],
+                PasswordSecretName = datasourceResponse.DataSources[0].Authentication["password_secret"],
+                IncludeTables = datasourceResponse.DataSources[0].IncludeTables,
+                FewShotExampleCount = datasourceResponse.DataSources[0].FewShotExampleCount ?? 0                
+            };
 
-
+            //create LLMOrchestrationCompletionRequest
+            LLMOrchestrationCompletionRequest llmCompletionRequest = new LLMOrchestrationCompletionRequest()
+            {
+                UserPrompt = completionRequest.UserPrompt,
+                Agent = new Agent()
+                {
+                    Name = agentResponse.Agent.Name,
+                    Type = datasourceResponse.DataSources[0].UnderlyingImplementation,
+                    Description =  agentResponse.Agent.Description,
+                    PromptTemplate = promptResponse.Prompts[0].Prompt                    
+                },
+                LanguageModel = new LanguageModel()
+                {
+                    Type = agentResponse.Agent.LanguageModel.ModelType,
+                    Provider = agentResponse.Agent.LanguageModel.Provider,
+                    Temperature = agentResponse.Agent.LanguageModel.Temperature ?? 0f,
+                    UseChat = agentResponse.Agent.LanguageModel.UseChat ?? true
+                },                
+                DataSource = new SQLDatabaseDataSource()
+                {
+                    Name = datasourceResponse.DataSources[0].Name,
+                    Type = datasourceResponse.DataSources[0].UnderlyingImplementation,
+                    Description = datasourceResponse.DataSources[0].Description,
+                    Configuration = dataSourceConfig
+                },
+                MessageHistory = completionRequest.MessageHistory
+            };
 
             // Generate the completion to return to the user
-            var result = await GetLLMOrchestrationService().GetCompletion(
-                completionRequest.UserPrompt,
-                completionRequest.MessageHistory
-            );
+            var result = await GetLLMOrchestrationService().GetCompletion(llmCompletionRequest);
 
-            return result;
+            return new CompletionResponse()
+            {
+                Completion = result.Completion,
+                UserPrompt = completionRequest.UserPrompt,
+                PromptTokens = result.PromptTokens,
+                CompletionTokens = result.CompletionTokens,
+            };
         }
         catch (Exception ex)
         {

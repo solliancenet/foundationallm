@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System.Text;
 using FoundationaLLM.Common.Interfaces;
+using FoundationaLLM.AgentFactory.Core.Models.Orchestration;
 
 namespace FoundationaLLM.AgentFactory.Services
 {
@@ -98,6 +99,11 @@ namespace FoundationaLLM.AgentFactory.Services
                 new HttpRequestMessage(HttpMethod.Get, "/status"));
 
             return responseMessage.Content.ToString() == "ready";
+        }
+
+        public Task<LLMOrchestrationCompletionResponse> GetCompletion(LLMOrchestrationCompletionRequest request)
+        {
+            throw new NotImplementedException();
         }
     }
 }
