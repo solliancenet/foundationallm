@@ -6,9 +6,9 @@ locals {
       frequency   = "PT1M"
       metric_name = "ServiceAvailability"
       operator    = "LessThan"
+      severity    = 0
       threshold   = 99
       window_size = "PT1H"
-      severity    = 0
     }
   }
 }

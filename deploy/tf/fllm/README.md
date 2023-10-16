@@ -83,6 +83,28 @@ Type: `string`
 
 Default: `"internal.foundationallm.ai"`
 
+### <a name="input_sql_admin_ad_group"></a> [sql\_admin\_ad\_group](#input\_sql\_admin\_ad\_group)
+
+Description: SQL Admin AD group
+
+Type:
+
+```hcl
+object({
+    name      = string
+    object_id = string
+  })
+```
+
+Default:
+
+```json
+{
+  "name": "FoundationaLLM SQL Admins",
+  "object_id": "73d59f98-857b-45e7-950b-5ee30d289bc8"
+}
+```
+
 ### <a name="input_tags"></a> [tags](#input\_tags)
 
 Description: The tags to use on each resource

@@ -1,4 +1,46 @@
-locals { # TODO : alerts
+locals {
+  alert = {
+    backendhealth = {
+      aggregation = "Average"
+      description = "Backend health is less than 1 for 5 minutes"
+      frequency   = "PT1M"
+      metric_name = "HeatlhyHostCount"
+      operator    = "LessThan"
+      severity    = 0
+      threshold   = 1
+      window_size = "PT5M"
+    }
+    dataprocessed = {
+      aggregation = "Average"
+      description = "Data processed is greater than 100000 for 5 minutes"
+      frequency   = "PT1M"
+      metric_name = "BytesSent"
+      operator    = "GreaterThan"
+      severity    = 2
+      threshold   = 100000
+      window_size = "PT5M"
+    }
+    failedrequests = {
+      aggregation = "Average"
+      description = "Failed requests are greater than 10 for 5 minutes"
+      frequency   = "PT1M"
+      metric_name = "FailedRequests"
+      operator    = "GreaterThan"
+      severity    = 1
+      threshold   = 10
+      window_size = "PT5M"
+    }
+    requests = {
+      aggregation = "Average"
+      description = "Requests are greater than 1000 for 5 minutes"
+      frequency   = "PT1M"
+      metric_name = "TotalRequests"
+      operator    = "GreaterThan"
+      severity    = 2
+      threshold   = 1000
+      window_size = "PT5M"
+    }
+  }
 }
 
 resource "azurerm_application_gateway" "main" {
@@ -141,6 +183,31 @@ resource "azurerm_dns_a_record" "a" {
   resource_group_name = var.public_dns_zone.resource_group_name
   ttl                 = 300
   records             = [azurerm_public_ip.pip.ip_address]
+}
+
+resource "azurerm_monitor_metric_alert" "alert" {
+  for_each = local.alert
+
+  description         = each.value.description
+  frequency           = each.value.frequency
+  name                = "${var.resource_prefix}-agw-${each.key}-alert"
+  resource_group_name = var.resource_group.name
+  scopes              = [azurerm_application_gateway.main.id]
+  severity            = each.value.severity
+  tags                = var.tags
+  window_size         = each.value.window_size
+
+  action {
+    action_group_id = var.action_group_id
+  }
+
+  criteria {
+    aggregation      = each.value.aggregation
+    metric_name      = each.value.metric_name
+    metric_namespace = "Microsoft.Network/ApplicationGateways"
+    operator         = each.value.operator
+    threshold        = each.value.threshold
+  }
 }
 
 resource "azurerm_public_ip" "pip" {
