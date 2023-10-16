@@ -37,7 +37,7 @@ body,
 #__layout {
 	height: 100%;
 	margin: 0;
-	font-family: 'Nunito', sans-serif;
+	font-family: 'Poppins', sans-serif;
 }
 </style>
 
