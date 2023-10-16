@@ -26,6 +26,11 @@ export default {
 </script>
 
 <style>
+:root {
+	--primary-bg: #131833;
+	--primary-text: white;
+}
+
 html,
 body,
 #__nuxt,

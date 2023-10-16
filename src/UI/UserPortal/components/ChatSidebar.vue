@@ -2,10 +2,21 @@
 	<div class="chat-sidebar">
 		<!-- Sidebar header -->
 		<div class="chat-sidebar__header">
+			<span>Logo Goes Here</span>
+		</div>
+
+		<!-- Sidebar section header -->
+		<div class="chat-sidebar__section-header">
 			<span>Chats</span>
-			<button @click="handleAddSession">
+			<!-- <button @click="handleAddSession">
 				<span class="text">+</span>
-			</button>
+			</button> -->
+			<Button
+				icon="pi pi-plus"
+				text
+				severity="secondary"
+				@click="handleAddSession"
+			/>
 		</div>
 
 		<!-- Chats -->
@@ -25,11 +36,13 @@
 					<span class="chat__name">{{ session.name }}</span>
 
 					<!-- Chat icons -->
-					<span class="p-buttonset chat__icons">
+					<span v-if="currentSession?.id === session.id" class="chat__icons">
 						<!-- Rename session -->
 						<Button
 							icon="pi pi-pencil"
 							size="small"
+							severity="secondary"
+							text
 							@click.stop="openRenameModal(session)"
 						/>
 
@@ -37,6 +50,8 @@
 						<Button
 							icon="pi pi-trash"
 							size="small"
+							severity="danger"
+							text
 							@click.stop="sessionToDelete = session"
 						/>
 					</span>
@@ -152,19 +167,31 @@ export default {
 .chat-sidebar {
 	width: 300px;
 	height: 100%;
-	border-right: 1px solid gray;
 	display: flex;
 	flex-direction: column;
+	background-color: var(--primary-bg);
 }
 
 .chat-sidebar__header {
 	height: 70px;
 	padding: 24px;
-	border-bottom: 1px solid gray;
 	display: flex;
 	justify-content: space-between;
-	background-color: rgba(32, 32, 32, 1);
-	color: white;
+	color: var(--primary-text);
+}
+
+.chat-sidebar__section-header {
+	height: 64px;
+	padding: 24px;
+	padding-bottom: 12px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	color: var(--primary-text);
+	text-transform: uppercase;
+	// font-size: 14px;
+	font-size: 0.875rem;
+	font-weight: 600;
 }
 
 .chat-sidebar__chats {
@@ -173,12 +200,21 @@ export default {
 }
 
 .chat {
-	border-radius: 8px;
-	margin: 24px;
-	padding: 12px;
+	padding: 24px;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+	color: var(--primary-text);
+	transition: all 0.25s ease-in-out;
+	font-size: 13px;
+	font-size: 0.8125rem;
+	height: 72px;
+}
+
+.chat__name {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .chat__icons {
@@ -186,8 +222,12 @@ export default {
 	justify-content: space-between;
 }
 
+.chat:hover {
+	background-color: rgba(217, 217, 217, 0.05);
+}
 .chat--selected {
-	background-color: lightgray;
+	background-color: rgba(217, 217, 217, 0.1);
+	border-left: 4px solid rgba(217, 217, 217, 0.5);
 }
 
 .chat--selected .option {
