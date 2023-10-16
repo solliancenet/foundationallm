@@ -139,8 +139,22 @@ locals {
       }
 
       nsg_rules = {
-        inbound  = merge(local.default_nsg_rules.inbound, {})
-        outbound = merge(local.default_nsg_rules.outbound, {})
+        inbound  = merge({}, {})
+        outbound = merge({}, {})
+      }
+    }
+    "FLLMFrontEnd" = {
+      address_prefix    = cidrsubnet(local.vnet_address_space, 8, 9)
+      service_endpoints = []
+      delegations = {
+        "Microsoft.ContainerService/managedClusters" = [
+          "Microsoft.Network/virtualNetworks/subnets/action"
+        ]
+      }
+
+      nsg_rules = {
+        inbound  = merge({}, {})
+        outbound = merge({}, {})
       }
     }
     "FLLMStorage" = {
