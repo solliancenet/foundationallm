@@ -12,26 +12,34 @@
 
 		<!-- Message list -->
 		<div class="chat-thread__messages" :class="messages.length === 0 && 'empty'">
-			<!-- Messages -->
-			<template v-if="messages.length !== 0">
-				<ChatMessage
-					v-for="(message, index) in messages.slice().reverse()"
-					:key="message.id"
-					:message="message"
-					@rate="handleRateMessage(messages.length - 1 - index, $event)"
-				/>
+			<template v-if="isLoading">
+				<div class="chat-thread__loading">
+					<i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+				</div>
 			</template>
 
-			<!-- New chat alert -->
-			<div v-else class="new-chat-alert">
-				<div class="alert-header">
-					<i class="pi pi-exclamation-circle"></i>
-					<span class="alert-header-text">Get Started</span>
+			<template v-else>
+				<!-- Messages -->
+				<template v-if="messages.length !== 0">
+					<ChatMessage
+						v-for="(message, index) in messages.slice().reverse()"
+						:key="message.id"
+						:message="message"
+						@rate="handleRateMessage(messages.length - 1 - index, $event)"
+					/>
+				</template>
+
+				<!-- New chat alert -->
+				<div v-else class="new-chat-alert">
+					<div class="alert-header">
+						<i class="pi pi-exclamation-circle"></i>
+						<span class="alert-header-text">Get Started</span>
+					</div>
+					<div class="alert-body">
+						<span class="alert-body-text">How can I help?</span>
+					</div>
 				</div>
-				<div class="alert-body">
-					<span class="alert-body-text">How can I help?</span>
-				</div>
-			</div>
+			</template>
 		</div>
 
 		<!-- Chat input -->
@@ -61,6 +69,7 @@ export default {
 	data() {
 		return {
 			messages: [] as Array<Message>,
+			isLoading: true,
 		};
 	},
 
@@ -70,14 +79,12 @@ export default {
 		}
 	},
 
-	async created() {
-		await this.getMessages();
-	},
-
 	methods: {
 		async getMessages() {
+			this.isLoading = true;
 			const data = await api.getMessages(this.session.id);
 			this.messages = data;
+			this.isLoading = false;
 		},
 
 		async handleRateMessage(messageIndex: number, { message, like }: { message: Message; like: Message['rating'] }) {
@@ -115,6 +122,14 @@ export default {
 	padding: 24px;
 	border-bottom: 1px solid #EAEAEA;
 	background-color: var(--accent-color);
+}
+
+.chat-thread__loading {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
 .chat-thread__messages {
