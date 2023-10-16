@@ -98,6 +98,21 @@ module "application_gateway_certificate" {
   public_dns_zone     = var.public_dns_zone
 }
 
+module "application_insights" {
+  source = "./modules/application-insights"
+
+  action_group_id            = azurerm_monitor_action_group.do_nothing.id
+  log_analytics_workspace_id = module.logs.id
+  resource_group             = azurerm_resource_group.rgs["OPS"]
+  resource_prefix            = local.resource_prefix
+  tags                       = local.tags
+
+  azure_monitor_private_link_scope = {
+    name                = module.ampls.name
+    resource_group_name = azurerm_resource_group.rgs["OPS"].name
+  }
+}
+
 module "backend_aks" {
   source = "./modules/aks"
 

@@ -112,7 +112,7 @@ resource "azurerm_monitor_data_collection_rule" "dcr" {
 
 resource "azurerm_monitor_private_link_scoped_service" "ampls" {
   linked_resource_id  = azurerm_log_analytics_workspace.workspace.id
-  name                = "${var.resource_prefix}-amplss"
+  name                = "${var.resource_prefix}-la-amplss"
   resource_group_name = var.azure_monitor_private_link_scope.resource_group_name
   scope_name          = var.azure_monitor_private_link_scope.name
 }
