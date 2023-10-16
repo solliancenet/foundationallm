@@ -56,6 +56,8 @@ export default {
 		},
 	},
 
+	emits: ['update-session'],
+
 	data() {
 		return {
 			messages: [] as Array<Message>,
@@ -86,6 +88,14 @@ export default {
 		async handleSend(text: string) {
 			await api.sendMessage(this.session.id, text);
 			await this.getMessages();
+
+			// Update the session name based on the message sent
+			if (this.messages.length === 2) {
+				const sessionFullText = this.messages.map((message) => message.text).join('\n');
+				const { text: newSessionName } = await api.summarizeSessionName(this.session.id, sessionFullText);
+				const updatedSession = await api.renameSession(this.session.id, newSessionName);
+				this.$emit('update-session', updatedSession);
+			}
 		},
 	},
 };

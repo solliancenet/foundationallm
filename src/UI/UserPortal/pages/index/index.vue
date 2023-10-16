@@ -1,7 +1,7 @@
 <template>
 	<div :style="style" class="chat-app">
-		<ChatSidebar @change-session="handleChangeSession" />
-		<ChatThread :session="currentSession" />
+		<ChatSidebar ref="sidebar" :currentSession="currentSession" @change-session="handleChangeSession" />
+		<ChatThread :session="currentSession" @update-session="handleUpdateSession" />
 	</div>
 </template>
 
@@ -31,6 +31,11 @@ export default {
 	methods: {
 		handleChangeSession(session: Session) {
 			this.currentSession = session;
+		},
+
+		handleUpdateSession(session: Session) {
+			this.currentSession = session;
+			this.$refs.sidebar.getSessions();
 		},
 	},
 };

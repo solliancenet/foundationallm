@@ -20,6 +20,13 @@ export default {
     }) as Session;
   },
 
+  async summarizeSessionName(sessionId: string, text: string) {
+    return await $fetch(`${API_URL}/sessions/${sessionId}/summarize-name`, {
+      method: 'POST',
+      body: JSON.stringify(text),
+    }) as { text: string };
+  },
+
   async deleteSession(sessionId: string) {
     return await $fetch(`${API_URL}/sessions/${sessionId}`, { method: 'DELETE' }) as Session;
   },

@@ -98,20 +98,29 @@
 </template>
 
 <script lang="ts">
+import type { PropType } from 'vue';
 import { Session } from '@/js/types';
 import api from '~/server/api';
 
 export default {
 	name: 'ChatSidebar',
 
+	props: {
+		currentSession: {
+			type: Object as PropType<Session> | null,
+			required: true,
+		}
+	},
+
 	emits: ['change-session'],
+
+	expose: ['getSessions'],
 
 	data() {
 		return {
 			logoText: this.$config.public.LOGO_TEXT,
 			logoURL: this.$config.public.LOGO_URL,
 			sessions: [] as Array<Session>,
-			currentSession: null as Session | null,
 			sessionToRename: null as Session | null,
 			newSessionName: '' as string,
 			sessionToDelete: null as Session | null,
@@ -153,7 +162,6 @@ export default {
 		},
 
 		handleSessionSelected(session: Session) {
-			this.currentSession = session;
 			this.$emit('change-session', session);
 		},
 
