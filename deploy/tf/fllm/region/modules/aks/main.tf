@@ -15,6 +15,18 @@ locals {
 
 data "azurerm_client_config" "current" {}
 
+resource "azurerm_user_assigned_identity" "aks_mi" {
+  location            = var.resource_group.location
+  name                = "${var.resource_prefix}-aks-mi"
+  resource_group_name = var.resource_group.name
+}
+
+resource "azurerm_role_assignment" "aks_mi" {
+  scope                = var.private_endpoint.private_dns_zone_ids["aks"][0]
+  principal_id         = azurerm_user_assigned_identity.aks_mi.principal_id
+  role_definition_name = "Private DNS Zone Contributor"
+}
+
 resource "azurerm_kubernetes_cluster" "main" {
   location            = var.resource_group.location
   name                = "${var.resource_prefix}-aks"
@@ -59,6 +71,8 @@ resource "azurerm_kubernetes_cluster" "main" {
 
   private_cluster_enabled = true
 
+  private_dns_zone_id = var.private_endpoint.private_dns_zone_ids["aks"][0]
+
   workload_identity_enabled = true
 
   role_based_access_control_enabled = true
@@ -76,7 +90,10 @@ resource "azurerm_kubernetes_cluster" "main" {
   }
 
   identity {
-    type = "SystemAssigned"
+    type = "UserAssigned"
+    identity_ids = [
+      azurerm_user_assigned_identity.aks_mi.id
+    ]
   }
 
   microsoft_defender {
@@ -84,6 +101,10 @@ resource "azurerm_kubernetes_cluster" "main" {
   }
 
   tags = var.tags
+
+  depends_on = [
+    azurerm_role_assignment.aks_mi
+  ]
 }
 
 resource "azurerm_monitor_metric_alert" "alert" {
