@@ -154,9 +154,6 @@ namespace FoundationaLLM.Core.API
 
         public static void RegisterAuthConfiguration(WebApplicationBuilder builder)
         {
-            var serviceProvider = builder.Services.BuildServiceProvider();
-            var kvConfig = serviceProvider.GetRequiredService<Common.Interfaces.IConfigurationService>();
-            var azureAdSecret = kvConfig.GetValue<string>(builder.Configuration["FoundationaLLM:Entra:ClientSecretKeyName"]);
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddMicrosoftIdentityWebApi(jwtOptions =>
                     {
@@ -164,11 +161,11 @@ namespace FoundationaLLM.Core.API
                     },
                     identityOptions =>
                     {
-                        identityOptions.ClientSecret = azureAdSecret;
-                        identityOptions.Instance = builder.Configuration["FoundationaLLM:Entra:Instance"];
-                        identityOptions.TenantId = builder.Configuration["FoundationaLLM:Entra:TenantId"];
-                        identityOptions.ClientId = builder.Configuration["FoundationaLLM:Entra:ClientId"];
-                        identityOptions.CallbackPath = builder.Configuration["FoundationaLLM:Entra:CallbackPath"];
+                        identityOptions.ClientSecret = builder.Configuration["FoundationaLLM:CoreAPI:Entra:ClientSecret"];
+                        identityOptions.Instance = builder.Configuration["FoundationaLLM:CoreAPI:Entra:Instance"];
+                        identityOptions.TenantId = builder.Configuration["FoundationaLLM:CoreAPI:Entra:TenantId"];
+                        identityOptions.ClientId = builder.Configuration["FoundationaLLM:CoreAPI:Entra:ClientId"];
+                        identityOptions.CallbackPath = builder.Configuration["FoundationaLLM:CoreAPI:Entra:CallbackPath"];
                     });
                 //.EnableTokenAcquisitionToCallDownstreamApi()
                 //.AddInMemoryTokenCaches();

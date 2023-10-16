@@ -9,9 +9,13 @@
     <AssemblyName>FoundationaLLM.Chat</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="appsettings.development.json.bak" />
+  </ItemGroup>
+  <ItemGroup>
     <_WebToolingArtifacts Remove="Properties\launchSettings.json" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="appsettings.development.json.bak" />
     <Content Include="Properties\launchSettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -26,6 +30,7 @@
     <PackageReference Include="Humanizer" Version="2.14.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.11" NoWarn="NU1605" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="7.0.11" NoWarn="NU1605" />
+    <PackageReference Include="Microsoft.Azure.AppConfiguration.AspNetCore" Version="6.1.0" />
     <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="7.0.11" />
     <PackageReference Include="Microsoft.Identity.Web" Version="2.15.1" />
     <PackageReference Include="Microsoft.Identity.Web.DownstreamApi" Version="2.15.1" />
