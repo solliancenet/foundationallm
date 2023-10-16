@@ -27,6 +27,12 @@ resource "azurerm_role_assignment" "aks_mi" {
   role_definition_name = "Private DNS Zone Contributor"
 }
 
+resource "azurerm_role_assignment" "aks_net_mi" {
+  scope = var.private_endpoint.subnet.id
+  principal_id = azurerm_user_assigned_identity.aks_mi.principal_id
+  role_definition_name = "Network Contributor"
+}
+
 resource "azurerm_kubernetes_cluster" "main" {
   location            = var.resource_group.location
   name                = "${var.resource_prefix}-aks"
@@ -102,7 +108,8 @@ resource "azurerm_kubernetes_cluster" "main" {
   tags = var.tags
 
   depends_on = [
-    azurerm_role_assignment.aks_mi
+    azurerm_role_assignment.aks_mi,
+    azurerm_role_assignment.aks_net_mi
   ]
 }
 
