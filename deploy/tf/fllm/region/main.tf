@@ -98,6 +98,27 @@ module "application_gateway_certificate" {
   public_dns_zone     = var.public_dns_zone
 }
 
+module "backend_aks" {
+  source = "./modules/aks"
+
+  action_group_id            = azurerm_monitor_action_group.do_nothing.id
+  agw_id                     = module.application_gateway.id
+  aks_admin_object_id        = var.sql_admin_ad_group.object_id
+  log_analytics_workspace_id = module.logs.id
+  resource_group             = azurerm_resource_group.rgs["APP"]
+  resource_prefix            = "${local.resource_prefix}-BACKEND"
+  tags                       = local.tags
+
+  private_endpoint = {
+    subnet = azurerm_subnet.subnets["FLLMServices"]
+    private_dns_zone_ids = {
+      aks = [
+        var.private_dns_zones["privatelink.eastus.azmk8s.io"].id,
+      ]
+    }
+  }
+}
+
 module "cosmosdb" {
   source = "./modules/cosmosdb"
 

@@ -14,6 +14,11 @@ locals {
   }
 
   regional_resource_groups = {
+    "APP" = {
+      tags = {
+        "Purpose" = "Application"
+      }
+    }
     "AppGateway" = {
       tags = {
         "Purpose" = "Networking"

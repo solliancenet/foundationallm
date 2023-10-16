@@ -25,5 +25,6 @@ locals {
     "privatelink.table.core.windows.net" = {}
     "privatelink.vaultcore.azure.net"    = {}
     "scm.azure-api.net"                  = {}
+    "privatelink.eastus.azmk8s.io"       = {}
   }
 }
