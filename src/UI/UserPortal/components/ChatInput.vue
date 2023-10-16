@@ -6,7 +6,7 @@
 			type="text"
 			placeholder="What would you like to ask?"
 			@keydown.enter="handleSend"
-		></InputText>
+		/>
 		<Button class="submit" icon="pi pi-send" label="Send" @click="handleSend" />
 	</div>
 </template>
@@ -38,6 +38,7 @@ export default {
 	background-color: white;
 	border-radius: 8px;
 	margin: 16px;
+	width: 100%;
 }
 
 .pre-input {
@@ -48,7 +49,6 @@ export default {
 	width: 100%;
 	height: 100%;
 	height: 64px;
-	transition: height 0.25s ease-in-out;
 }
 
 .input:focus {
