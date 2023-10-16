@@ -16,11 +16,11 @@ namespace FoundationaLLM.Common.Models.Configuration.Branding
         /// </summary>
         public string CompanyName { get; set; }
         /// <summary>
-        /// The URL of the client's favicon.
+        /// The URL of the client's favicon. Can be an absolute URL or a relative URL.
         /// </summary>
         public string FavIconUrl { get; set; }
         /// <summary>
-        /// The URL of the client's logo.
+        /// The URL of the client's logo. Can be an absolute URL or a relative URL.
         /// </summary>
         public string LogoUrl { get; set; }
         /// <summary>
