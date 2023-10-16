@@ -226,7 +226,7 @@ export default {
 	justify-content: space-between;
 	align-items: center;
 	color: var(--primary-text);
-	transition: all 0.25s ease-in-out;
+	transition: all 0.1s ease-in-out;
 	font-size: 13px;
 	font-size: 0.8125rem;
 	height: 72px;
