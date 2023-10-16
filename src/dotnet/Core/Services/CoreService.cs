@@ -106,6 +106,7 @@ public class CoreService : ICoreService
             var completionRequest = new CompletionRequest
             {
                 UserPrompt = userPrompt,
+                UserContext = "",
                 MessageHistory = messageHistoryList
             };
 

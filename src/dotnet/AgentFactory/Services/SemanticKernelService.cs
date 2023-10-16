@@ -8,19 +8,20 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System.Text;
 using FoundationaLLM.Common.Interfaces;
+using FoundationaLLM.AgentFactory.Core.Models.Orchestration;
 
 namespace FoundationaLLM.AgentFactory.Services
 {
-    public class SemanticKernelOrchestrationService : ISemanticKernelOrchestrationService
+    public class SemanticKernelService : ISemanticKernelService
     {
-        readonly SemanticKernelOrchestrationServiceSettings _settings;
-        readonly ILogger<SemanticKernelOrchestrationService> _logger;
+        readonly SemanticKernelServiceSettings _settings;
+        readonly ILogger<SemanticKernelService> _logger;
         private readonly IHttpClientFactoryService _httpClientFactoryService;
         readonly JsonSerializerSettings _jsonSerializerSettings;
 
-        public SemanticKernelOrchestrationService(
-            IOptions<SemanticKernelOrchestrationServiceSettings> options,
-            ILogger<SemanticKernelOrchestrationService> logger,
+        public SemanticKernelService(
+            IOptions<SemanticKernelServiceSettings> options,
+            ILogger<SemanticKernelService> logger,
             IHttpClientFactoryService httpClientFactoryService)
         {
             _settings = options.Value;
@@ -98,6 +99,11 @@ namespace FoundationaLLM.AgentFactory.Services
                 new HttpRequestMessage(HttpMethod.Get, "/status"));
 
             return responseMessage.Content.ToString() == "ready";
+        }
+
+        public Task<LLMOrchestrationCompletionResponse> GetCompletion(LLMOrchestrationCompletionRequest request)
+        {
+            throw new NotImplementedException();
         }
     }
 }

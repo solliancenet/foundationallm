@@ -1,4 +1,5 @@
-﻿using FoundationaLLM.Common.Models.Chat;
+﻿using FoundationaLLM.AgentFactory.Core.Models.Orchestration;
+using FoundationaLLM.Common.Models.Chat;
 using FoundationaLLM.Common.Models.Orchestration;
 
 namespace FoundationaLLM.AgentFactory.Interfaces
@@ -20,6 +21,13 @@ namespace FoundationaLLM.AgentFactory.Interfaces
         /// <param name="messageHistory">List of previous user prompts in the form of a message history.</param>
         /// <returns>Returns a Completion response.</returns>
         Task<CompletionResponse> GetCompletion(string userPrompt, List<MessageHistoryItem> messageHistory);
+
+        /// <summary>
+        /// Method for retrieving a completion from the orchestration service.
+        /// </summary>
+        /// <param name="request">Hub populated request object containing agent, prompt, language model, and data source information</param>
+        /// <returns></returns>
+        Task<LLMOrchestrationCompletionResponse> GetCompletion(LLMOrchestrationCompletionRequest request);
 
         /// <summary>
         /// Method for retrieving a string summarizing text passed into the function.

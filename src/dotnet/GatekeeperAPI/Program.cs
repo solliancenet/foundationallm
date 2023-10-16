@@ -24,7 +24,10 @@ namespace FoundationaLLM.Gatekeeper.API
 
             // Add services to the container.
             builder.Services.AddApplicationInsightsTelemetry();
-            builder.Services.AddControllers();
+            builder.Services.AddControllers().AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.ContractResolver = Common.Settings.CommonJsonSerializerSettings.GetJsonSerializerSettings().ContractResolver;
+            });
 
             // Add API Key Authorization
             builder.Services.AddHttpContextAccessor();
@@ -34,9 +37,11 @@ namespace FoundationaLLM.Gatekeeper.API
             builder.Services.AddOptions<KeyVaultConfigurationServiceSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:Configuration"));
 
+
+            builder.Services.AddSingleton<IConfigurationService, KeyVaultConfigurationService>();
+
             // Register the downstream services and HTTP clients.
             RegisterDownstreamServices(builder);
-
 
             builder.Services.AddTransient<IAPIKeyValidationService, APIKeyValidationService>();
             builder.Services.AddSingleton<IConfigurationService, KeyVaultConfigurationService>();
@@ -140,6 +145,7 @@ namespace FoundationaLLM.Gatekeeper.API
             {
                 var key = apiSetting.Key;
                 var settings = apiSetting.Get<DownstreamAPIKeySettings>();
+
                 downstreamAPISettings.DownstreamAPIs[key] = settings;
                 builder.Services
                     .AddHttpClient(key, client => { client.BaseAddress = new Uri(settings.APIUrl); })

@@ -1,10 +1,7 @@
 <template>
 	<div
 		class="message-row"
-		:class="{
-			'message--in': !(message.sender === 'User'),
-			'message--out': message.sender === 'User',
-		}"
+		:class="message.sender === 'User' ? 'message--out' : 'message--in'"
 	>
 		<div class="message">
 			<div class="message__header">
@@ -24,25 +21,39 @@
 			</div>
 
 			<div class="message__footer" v-if="message.sender !== 'User'">
-				<!-- Like -->
-				<span>
-					<span class="icon"></span>
-					<button @click="handleRate(message, true)">
-						{{ message.rating ? 'Message Liked!' : 'Like' }}
-					</button>
-				</span>
+				<span class="ratings">
+					<!-- Like -->
+					<span>
+						<Button
+							size="small"
+							text
+							:icon="message.rating ? 'pi pi-thumbs-up-fill' : 'pi pi-thumbs-up'"
+							:label="message.rating ? 'Message Liked!' : 'Like'"
+							@click.stop="handleRate(message, true)"
+						/>
+					</span>
 
-				<!-- Dislike -->
-				<span>
-					<span class="icon"></span>
-					<button @click="handleRate(message, false)">
-						{{ message.rating === false ? 'Message Disliked.' : 'Dislike' }}
-					</button>
+					<!-- Dislike -->
+					<span>
+						<Button
+							size="small"
+							text
+							:icon="message.rating === false ? 'pi pi-thumbs-down-fill' : 'pi pi-thumbs-down'"
+							:label="message.rating === false ? 'Message Disliked.' : 'Dislike'"
+							@click.stop="handleRate(message, false)"
+						/>
+					</span>
 				</span>
 
 				<!-- View prompt -->
 				<span class="view-prompt">
-					<button @click="handleViewPrompt">View Prompt</button>
+					<Button
+						size="small"
+						text
+						icon="pi pi-book"
+						label="View Prompt"
+						@click.stop="handleViewPrompt"
+					/>
 
 					<!-- Prompt dialog -->
 					<Dialog
@@ -88,8 +99,8 @@ export default {
 	},
 
 	methods: {
-		handleRate(message: Message, like: Boolean) {
-			this.$emit('rate', { message, like });
+		handleRate(message: Message, like: boolean) {
+			this.$emit('rate', { message, like: message.rating === like ? null : like })
 		},
 
 		async handleViewPrompt() {
@@ -104,13 +115,12 @@ export default {
 <style lang="scss" scoped>
 .message-row {
 	display: flex;
-	align-items: end;
+	align-items: flex-end;
 	margin: 8px;
 }
 
 .message {
 	padding: 16px;
-	border-radius: 8px;
 	width: 80%;
 	box-shadow: 0 5px 10px 0 rgba(27, 29, 33, 0.1);
 }
@@ -124,7 +134,8 @@ export default {
 .message--out {
 	flex-direction: row-reverse;
 	.message {
-		background-color: rgba(233, 235, 249, 1);
+		background-color: var(--primary-color);
+		color: var(--primary-text)
 	}
 }
 
@@ -142,7 +153,7 @@ export default {
 .message__footer {
 	margin-top: 12px;
 	display: flex;
-	gap: 12px;
+	justify-content: space-between;
 }
 
 .header__sender {
@@ -155,6 +166,29 @@ export default {
 	height: 32px;
 	border-radius: 50%;
 	margin-right: 12px;
+}
+
+.ratings {
+	display: flex;
+	gap: 16px;
+}
+
+.icon {
+	margin-right: 4px;
+	cursor: pointer;
+}
+
+.view-prompt {
+	cursor: pointer;
+}
+
+.dislike {
+	margin-left: 12px;
+	cursor: pointer;
+}
+
+.like {
+	cursor: pointer;
 }
 
 .prompt-text {

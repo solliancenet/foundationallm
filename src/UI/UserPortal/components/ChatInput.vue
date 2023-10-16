@@ -1,20 +1,13 @@
 <template>
-	<div class="chat-input">
-		<div class="pre-input">
-			<div class="icon"></div>
-			<div class="text"></div>
-		</div>
+	<div class="chat-input p-inputgroup">
 		<InputText
 			v-model="text"
 			class="input"
 			type="text"
 			placeholder="What would you like to ask?"
 			@keydown.enter="handleSend"
-		></InputText>
-		<div class="submit">
-			<div class="icon"></div>
-			<Button @click="handleSend">Send</Button>
-		</div>
+		/>
+		<Button class="submit" icon="pi pi-send" label="Send" @click="handleSend" />
 	</div>
 </template>
 
@@ -44,6 +37,8 @@ export default {
 	display: flex;
 	background-color: white;
 	border-radius: 8px;
+	margin: 16px;
+	width: 100%;
 }
 
 .pre-input {
@@ -54,7 +49,6 @@ export default {
 	width: 100%;
 	height: 100%;
 	height: 64px;
-	transition: height 0.25s ease-in-out;
 }
 
 .input:focus {
@@ -63,6 +57,7 @@ export default {
 
 .submit {
 	flex: 0 0 10%;
-	text-align: center;
+	text-align: left;
+	flex-basis: auto;
 }
 </style>

@@ -2,7 +2,7 @@
 
 namespace FoundationaLLM.AgentFactory.Core.Models.Orchestration
 {
-    internal class LLMOrchestrationCompletionResponse
+    public class LLMOrchestrationCompletionResponse
     {
         /// <summary>
         /// The completion response from the orchestration engine.

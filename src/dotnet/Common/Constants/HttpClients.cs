@@ -30,4 +30,12 @@ public static class HttpClients
     /// Named client with matching configuration for the Agent Hub API.
     /// </summary>
     public const string AgentHubAPI = "AgentHubAPI";
+    /// <summary>
+    /// Named client with matching configuration for the Prompt Hub API.
+    /// </summary>
+    public const string PromptHubAPI = "PromptHubAPI";
+    /// <summary>
+    /// Named client with matching configuration for the DataSource Hub API.
+    /// </summary>
+    public const string DataSourceHubAPI = "DataSourceHubAPI";
 }
