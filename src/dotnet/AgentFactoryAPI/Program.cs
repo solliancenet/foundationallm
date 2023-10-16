@@ -28,7 +28,10 @@ namespace FoundationaLLM.AgentFactory.API
 
             // Add services to the container.
             builder.Services.AddApplicationInsightsTelemetry();
-            builder.Services.AddControllers();
+            builder.Services.AddControllers().AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.ContractResolver = Common.Settings.CommonJsonSerializerSettings.GetJsonSerializerSettings().ContractResolver;
+            });
 
             // Add API Key Authorization
             builder.Services.AddHttpContextAccessor();
@@ -38,14 +41,17 @@ namespace FoundationaLLM.AgentFactory.API
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:AgentFactoryAPI"));
             builder.Services.AddTransient<IAPIKeyValidationService, APIKeyValidationService>();
 
-            builder.Services.AddOptions<SemanticKernelOrchestrationServiceSettings>()
-                .Bind(builder.Configuration.GetSection("FoundationaLLM:SemanticKernelAPI"));
+            builder.Services.AddOptions<SemanticKernelServiceSettings>()
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:DownstreamAPIs:SemanticKernelAPI"));
 
-            builder.Services.AddOptions<LangChainOrchestrationServiceSettings>()
-                .Bind(builder.Configuration.GetSection("FoundationaLLM:LangChainAPI"));
+            builder.Services.AddOptions<LangChainServiceSettings>()
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:DownstreamAPIs:LangChainAPI"));
 
             builder.Services.AddOptions<AgentHubSettings>()
-                .Bind(builder.Configuration.GetSection("FoundationaLLM:AgentHubAPI"));
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:DownstreamAPIs:AgentHubAPI"));
+
+            builder.Services.AddOptions<PromptHubSettings>()
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:DownstreamAPIs:PromptHubAPI"));
 
             builder.Services.AddOptions<AgentFactorySettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:AgentFactory"));
@@ -55,10 +61,12 @@ namespace FoundationaLLM.AgentFactory.API
 
             builder.Services.AddSingleton<IConfigurationService, KeyVaultConfigurationService>();
             
-            builder.Services.AddScoped<ISemanticKernelOrchestrationService, SemanticKernelOrchestrationService>();
-            builder.Services.AddScoped<ILangChainOrchestrationService, LangChainOrchestrationService>();
+            builder.Services.AddScoped<ISemanticKernelService, SemanticKernelService>();
+            builder.Services.AddScoped<ILangChainService, LangChainService>();
             builder.Services.AddScoped<IAgentFactoryService, AgentFactoryService>();
             builder.Services.AddScoped<IAgentHubService, AgentHubAPIService>();
+            builder.Services.AddScoped<IDataSourceHubService, DataSourceHubAPIService>();
+            builder.Services.AddScoped<IPromptHubService, PromptHubAPIService>();
             builder.Services.AddScoped<IUserIdentityContext, UserIdentityContext>();
             builder.Services.AddScoped<IHttpClientFactoryService, HttpClientFactoryService>();
             builder.Services.AddScoped<IUserClaimsProviderService, NoOpUserClaimsProviderService>();

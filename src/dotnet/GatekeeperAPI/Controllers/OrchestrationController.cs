@@ -21,19 +21,19 @@ namespace FoundationaLLM.Gatekeeper.API.Controllers
         }
 
         [HttpPost("completion")]
-        public async Task<CompletionResponse> GetCompletion([FromBody] CompletionRequest completionRequest)
+        public async Task<CompletionResponse> GetCompletion(CompletionRequest completionRequest)
         {
             return await _gatekeeperService.GetCompletion(completionRequest);
         }
 
         [HttpPost("summarize")]
-        public async Task<SummaryResponse> GetSummary([FromBody] SummaryRequest summaryRequest)
+        public async Task<SummaryResponse> GetSummary(SummaryRequest summaryRequest)
         {
             return await _gatekeeperService.GetSummary(summaryRequest);
         }
 
         [HttpPost("preference")]
-        public async Task<bool> SetLLMOrchestrationPreference([FromBody] string orchestrationService)
+        public async Task<bool> SetLLMOrchestrationPreference(string orchestrationService)
         {
             return await _gatekeeperService.SetLLMOrchestrationPreference(orchestrationService);
         }

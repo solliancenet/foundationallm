@@ -29,7 +29,7 @@ namespace FoundationaLLM.Core.Services
             // await _refinementService.RefineUserPrompt(completionRequest);
 
             var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.GatekeeperAPI);
-
+                       
             var responseMessage = await client.PostAsync("orchestration/completion",
             new StringContent(
                     JsonConvert.SerializeObject(completionRequest, _jsonSerializerSettings),

@@ -1,32 +1,24 @@
 ﻿using FoundationaLLM.AgentFactory.Core.Interfaces;
 using FoundationaLLM.AgentFactory.Core.Models.Messages;
-using FoundationaLLM.AgentFactory.Interfaces;
 using FoundationaLLM.AgentFactory.Models.ConfigurationOptions;
-using FoundationaLLM.AgentFactory.Models.Orchestration;
-using FoundationaLLM.AgentFactory.Services;
-using FoundationaLLM.Common.Models.Orchestration;
-using FoundationaLLM.Common.Settings;
-using Microsoft.AspNetCore.Server.IIS.Core;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using System.Net.Http;
-using System.Runtime;
 using System.Text;
 using FoundationaLLM.Common.Interfaces;
 
 namespace FoundationaLLM.AgentFactory.Core.Services;
 
-public class AgentHubAPIService : IAgentHubService
+public class PromptHubAPIService : IPromptHubService
 {
-    readonly AgentHubSettings _settings;
-    readonly ILogger<AgentHubAPIService> _logger;
+    readonly PromptHubSettings _settings;
+    readonly ILogger<PromptHubAPIService> _logger;
     private readonly IHttpClientFactoryService _httpClientFactoryService;
     readonly JsonSerializerSettings _jsonSerializerSettings;
 
-    public AgentHubAPIService(
-            IOptions<AgentHubSettings> options,
-            ILogger<AgentHubAPIService> logger,
+    public PromptHubAPIService(
+            IOptions<PromptHubSettings> options,
+            ILogger<PromptHubAPIService> logger,
             IHttpClientFactoryService httpClientFactoryService)
     {
         _settings = options.Value;
@@ -39,7 +31,7 @@ public class AgentHubAPIService : IAgentHubService
     {
         try
         {
-            var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.AgentHubAPI);
+            var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.PromptHubAPI);
 
             var responseMessage = await client.GetAsync("/status");
 
@@ -51,38 +43,38 @@ public class AgentHubAPIService : IAgentHubService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error getting agent hub status.");
+            _logger.LogError(ex, $"Error getting prompt hub status.");
             throw ex;
         }
 
         return null;
     }
 
-    public async Task<AgentHubResponse> ResolveRequest(string userPrompt, string userContext)
+    public async Task<PromptHubResponse> ResolveRequest(string agentName, string userContext)
     {
         try
         {
-            AgentHubRequest ahm = new AgentHubRequest { UserPrompt=userPrompt, UserContext=userContext };
+            PromptHubRequest phm = new PromptHubRequest { AgentName = agentName };
             
-            var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.AgentHubAPI);
-                        
+            var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.PromptHubAPI);
+            var body = JsonConvert.SerializeObject(phm, _jsonSerializerSettings);
             var responseMessage = await client.PostAsync("/resolve_request", new StringContent(
-                    JsonConvert.SerializeObject(ahm, _jsonSerializerSettings),
+                    body,
                     Encoding.UTF8, "application/json"));
 
             if (responseMessage.IsSuccessStatusCode)
             {
                 var responseContent = await responseMessage.Content.ReadAsStringAsync();
-                var ahr = JsonConvert.DeserializeObject<AgentHubResponse>(responseContent, _jsonSerializerSettings);                          
-                return ahr;
+                var phr = JsonConvert.DeserializeObject<PromptHubResponse>(responseContent, _jsonSerializerSettings);
+                return phr;
             }
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error resolving request for Agent Hub.");
+            _logger.LogError(ex, $"Error resolving request for prompt Hub.");
             throw ex;
         }
 
-        return new AgentHubResponse();
+        return new PromptHubResponse();
     }    
 }

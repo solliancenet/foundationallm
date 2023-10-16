@@ -5,7 +5,9 @@ class AgentHubRequest(BaseModel):
     """     
     AgentHubRequest contains the information needed to retrieve AgentMetadata from the AgentHub.
     
-    agent_name: the name of the agent to retrieve, send an empty string or None to retrieve all prompts.
+    user_prompt: the prompt the user entered into the system.
+    user_context: details about the user making the request.
         
     """
-    agent_name: Optional[str] = None
+    user_prompt:str
+    user_context: Optional[str] = None

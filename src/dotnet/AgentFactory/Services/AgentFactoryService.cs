@@ -1,39 +1,66 @@
 ﻿using FoundationaLLM.AgentFactory.Core.Interfaces;
 using FoundationaLLM.AgentFactory.Core.Models.ConfigurationOptions;
 using FoundationaLLM.AgentFactory.Core.Models.Messages;
+using FoundationaLLM.AgentFactory.Core.Models.Orchestration;
 using FoundationaLLM.AgentFactory.Interfaces;
 using FoundationaLLM.AgentFactory.Models.ConfigurationOptions;
 using FoundationaLLM.AgentFactory.Models.Orchestration;
 using FoundationaLLM.Common.Models.Orchestration;
+using FoundationaLLM.AgentFactory.Core.Models.Orchestration.Metadata;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.SemanticKernel.SemanticFunctions;
+using FoundationaLLM.AgentFactory.Core.Models.Orchestration.DataSourceConfigurations;
 
 namespace FoundationaLLM.AgentFactory.Core.Services;
 
 public class AgentFactoryService : IAgentFactoryService
 {
-    private readonly ISemanticKernelOrchestrationService _semanticKernelOrchestration;
-    private readonly ILangChainOrchestrationService _langChainOrchestration;
+    private readonly ISemanticKernelService _semanticKernel;
+    private readonly ILangChainService _langChain;
     private readonly IAgentHubService _agentHubService;
     private readonly AgentFactorySettings _agentFactorySettings;
     private readonly AgentHubSettings _agentHubSettings;
+    
+    private readonly PromptHubSettings _promptHubSettings;
+    private readonly IPromptHubService _promptHubService;
+
+    private readonly DataSourceHubSettings _dataSourceHubSettings;
+    private readonly IDataSourceHubService _dataSourceHubService;
+
     private readonly ILogger<AgentFactoryService> _logger;
 
     private LLMOrchestrationService _llmOrchestrationService = LLMOrchestrationService.LangChain;
 
     public AgentFactoryService(
-        ISemanticKernelOrchestrationService semanticKernelOrchestration,
-        ILangChainOrchestrationService langChainOrchestration,
+        ISemanticKernelService semanticKernel,
+        ILangChainService langChain,
+        
         IAgentHubService agentHubService,
         IOptions<AgentFactorySettings> agentFactorySettings,
         IOptions<AgentHubSettings> agentHubSettings,
+
+        IPromptHubService promptHubService,
+        IOptions<PromptHubSettings> promptHubSettings,
+
+        IDataSourceHubService dataSourceHubService,
+        IOptions<DataSourceHubSettings> dataSourceHubSettings,
+
         ILogger<AgentFactoryService> logger)
     {
-        _semanticKernelOrchestration = semanticKernelOrchestration;
-        _langChainOrchestration = langChainOrchestration;
+        _semanticKernel = semanticKernel;
+        _langChain = langChain;
+        
         _agentHubService = agentHubService;
         _agentFactorySettings = agentFactorySettings.Value;
         _agentHubSettings = agentHubSettings.Value;
+
+        _promptHubService = promptHubService;
+        _promptHubSettings = promptHubSettings.Value;
+
+        _dataSourceHubService = dataSourceHubService;
+        _dataSourceHubSettings = dataSourceHubSettings.Value;
+
         _logger = logger;
 
         SetLLMOrchestrationPreference(_agentFactorySettings.DefaultOrchestrationService);
@@ -53,11 +80,11 @@ public class AgentFactoryService : IAgentFactoryService
     {
         get
         {
-            if (_semanticKernelOrchestration.IsInitialized)
+            if (_semanticKernel.IsInitialized)
                 return "ready";
             var status = new List<string>();
-            if (!_semanticKernelOrchestration.IsInitialized)
-                status.Add("SemanticKernelOrchestrationService: initializing");
+            if (!_semanticKernel.IsInitialized)
+                status.Add("SemanticKernelService: initializing");
             return string.Join(",", status);
         }
     }
@@ -70,16 +97,65 @@ public class AgentFactoryService : IAgentFactoryService
     {
         try
         {
-            //get all agents for prompt...
-            //List<AgentHubResponse> agents = await _agentHubService.ResolveRequest(completionRequest.Prompt, "");
+            //get agent for prompt...
+            AgentHubResponse agentResponse= await _agentHubService.ResolveRequest(completionRequest.UserPrompt, completionRequest.UserContext);
+
+            //get prompts for the agent from the prompt hub
+            PromptHubResponse promptResponse = await _promptHubService.ResolveRequest(agentResponse.Agent.Name, completionRequest.UserContext);
+
+            //get data sources listed for the agent           
+            DataSourceHubResponse datasourceResponse = await _dataSourceHubService.ResolveRequest(agentResponse.Agent.AllowedDataSourceNames, completionRequest.UserContext);
+            //construct the configuration
+            SQLDatabaseConfiguration dataSourceConfig = new SQLDatabaseConfiguration()
+            {
+                Dialect = datasourceResponse.DataSources[0].Dialect,
+                Host = datasourceResponse.DataSources[0].Authentication["host"],
+                Port = Convert.ToInt32(datasourceResponse.DataSources[0].Authentication["port"]),
+                DatabaseName = datasourceResponse.DataSources[0].Authentication["database"],
+                Username = datasourceResponse.DataSources[0].Authentication["username"],
+                PasswordSecretName = datasourceResponse.DataSources[0].Authentication["password_secret"],
+                IncludeTables = datasourceResponse.DataSources[0].IncludeTables,
+                FewShotExampleCount = datasourceResponse.DataSources[0].FewShotExampleCount ?? 0                
+            };
+
+            //create LLMOrchestrationCompletionRequest
+            LLMOrchestrationCompletionRequest llmCompletionRequest = new LLMOrchestrationCompletionRequest()
+            {
+                UserPrompt = completionRequest.UserPrompt,
+                Agent = new Agent()
+                {
+                    Name = agentResponse.Agent.Name,
+                    Type = datasourceResponse.DataSources[0].UnderlyingImplementation,
+                    Description =  agentResponse.Agent.Description,
+                    PromptTemplate = promptResponse.Prompts[0].Prompt                    
+                },
+                LanguageModel = new LanguageModel()
+                {
+                    Type = agentResponse.Agent.LanguageModel.ModelType,
+                    Provider = agentResponse.Agent.LanguageModel.Provider,
+                    Temperature = agentResponse.Agent.LanguageModel.Temperature ?? 0f,
+                    UseChat = agentResponse.Agent.LanguageModel.UseChat ?? true
+                },                
+                DataSource = new SQLDatabaseDataSource()
+                {
+                    Name = datasourceResponse.DataSources[0].Name,
+                    Type = datasourceResponse.DataSources[0].UnderlyingImplementation,
+                    Description = datasourceResponse.DataSources[0].Description,
+                    Configuration = dataSourceConfig
+                },
+                MessageHistory = completionRequest.MessageHistory
+            };
 
             // Generate the completion to return to the user
-            var result = await GetLLMOrchestrationService().GetCompletion(
-                completionRequest.UserPrompt,
-                completionRequest.MessageHistory
-            );
+            var result = await GetLLMOrchestrationService().GetCompletion(llmCompletionRequest);
 
-            return result;
+            return new CompletionResponse()
+            {
+                Completion = result.Completion,
+                UserPrompt = completionRequest.UserPrompt,
+                PromptTokens = result.PromptTokens,
+                CompletionTokens = result.CompletionTokens,
+            };
         }
         catch (Exception ex)
         {
@@ -123,10 +199,10 @@ public class AgentFactoryService : IAgentFactoryService
         switch (_llmOrchestrationService)
         {
             case LLMOrchestrationService.SemanticKernel:
-                return _semanticKernelOrchestration as ILLMOrchestrationService;
+                return _semanticKernel as ILLMOrchestrationService;
             case LLMOrchestrationService.LangChain:
             default:
-                return _langChainOrchestration as ILLMOrchestrationService;
+                return _langChain as ILLMOrchestrationService;
         }
     }
 }

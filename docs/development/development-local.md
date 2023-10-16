@@ -244,25 +244,36 @@
   },
   "AllowedHosts": "*",
   "FoundationaLLM": {
-    "Chat": {
-      "DefaultOrchestrationService": "SemanticKernel"
-    },
-    "DownstreamAPIs": {
-      "LangChainAPI": {
-        "APIUrl": "",
-        "APIKeySecretName": "foundationallm-langchain-api-key"
+      "AgentFactory": {
+        "DefaultOrchestrationService": "LangChain"
       },
-      "SemanticKernelAPI": {
-        "APIUrl": "",
-        "APIKeySecretName": "foundationallm-semantic-kernel-orchestration-api-key"
+      "DownstreamAPIs": {
+          "LangChainAPI": {
+            "APIUrl": "",
+            "APIKeySecretName": "foundationallm-langchain-api-key"
+          },
+          "SemanticKernelAPI": {
+            "APIUrl": "",
+            "APIKeySecretName": "foundationallm-semantic-kernel-orchestration-api-key"
+          },
+          "AgentHubAPI": {
+            "APIUrl": "",
+            "APIKeySecretName": "foundationallm-agenthub-api-key"
+          },
+          "PromptHubAPI": {
+            "APIUrl": "",
+            "APIKeySecretName": "foundationallm-prompthub-api-key"
+          },
+          "DataSourceHubAPI": {
+            "APIUrl": "",
+            "APIKeySecretName": "foundationallm-datasourcehub-api-key"
+          }
       },
-      "AgentHubAPI": {
-        "APIUrl": "",
-        "APIKeySecretName": "foundationallm-agenthub-api-key"
-      }
-    },
     "AgentFactoryAPI": {
       "APIKeySecretName": "foundationallm-agent-factory-api-key"
+    },
+    "Configuration": {
+      "KeyVaultUri": ""
     }
   }
 }
@@ -275,12 +286,21 @@
   "FoundationaLLM": {
     "DownstreamAPIs": {
       "LangChainAPI": {
-        "APIUrl": "<...>"     
+        "APIUrl": "<...>"
       },
       "SemanticKernelAPI": {
         "APIUrl": "<...>"
+      },
+      "AgentHubAPI": {
+        "APIUrl": "<...>"
+      },
+      "PromptHubAPI": {
+        "APIUrl": "<...>"
+      },
+      "DataSourceHubAPI": {
+        "APIUrl": "<...>"
       }
-    },
+    },  
     "Configuration": {
       "KeyVaultUri": "<...>"
     }

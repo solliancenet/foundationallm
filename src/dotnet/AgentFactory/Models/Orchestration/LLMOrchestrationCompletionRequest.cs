@@ -21,22 +21,9 @@ namespace FoundationaLLM.AgentFactory.Core.Models.Orchestration
         /// Data source metadata
         /// </summary>
         [JsonProperty("data_source")]
-        public dynamic? DataSource
-        {
-            get
-            {
-                switch (Agent.Type)
-                {
-                    case "anomaly": case "sql":
-                        return new SQLDatabaseDataSource();
-                    case "csv":
-                        return new CSVFileDataSource();
-                    default:
-                        return null;
-                }
-            }
-            set => DataSource = value;
-        }
+        public SQLDatabaseDataSource DataSource { get; set; }
+        
+           
 
         /// <summary>
         /// Language model metadata.

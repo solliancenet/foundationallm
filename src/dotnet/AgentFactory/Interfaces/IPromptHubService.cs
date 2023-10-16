@@ -3,9 +3,9 @@ using FoundationaLLM.Common.Models.Orchestration;
 
 namespace FoundationaLLM.AgentFactory.Core.Interfaces;
 
-public interface IAgentHubService
+public interface IPromptHubService
 {
     Task<string> Status();
 
-    Task<AgentHubResponse> ResolveRequest(string userPrompt, string userContext);
+    Task<PromptHubResponse> ResolveRequest(string agentName, string userContext);
 }
