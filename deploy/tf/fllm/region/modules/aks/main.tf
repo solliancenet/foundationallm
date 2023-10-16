@@ -4,7 +4,7 @@ locals {
       aggregation = "Average"
       description = "Node CPU utilization greater than 75% for 1 hour"
       frequency   = "PT1M"
-      metric_name = "mode_cpu_usage_percentage"
+      metric_name = "node_cpu_usage_percentage"
       operator    = "GreaterThan"
       threshold   = 75
       window_size = "PT1H"
@@ -57,7 +57,7 @@ resource "azurerm_kubernetes_cluster" "main" {
 
   network_profile {
     network_plugin = "azure"
-    service_cidr = "10.100.0.0/16"
+    service_cidr   = "10.100.0.0/16"
     dns_service_ip = "10.100.254.1"
   }
 
