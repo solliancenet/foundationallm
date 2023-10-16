@@ -6,9 +6,14 @@ class AgentBase(ABC):
     """Abstract base class for Agents"""
     
     @abstractmethod
-    def run(self) -> OrchestrationResponse:
+    def run(self, prompt: str) -> OrchestrationResponse:
         """
         Execute the agent's run method
+        
+        Parameters
+        ----------
+        prompt : str
+            The prompt for which a completion is begin generated.
 
         Returns
         -------

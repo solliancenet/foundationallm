@@ -33,14 +33,18 @@ class SummaryAgent(AgentBase):
             Application configuration class for retrieving configuration settings.
         """
         self.summarizer_chain_prompt = PromptTemplate.from_template(completion_request.agent.prompt_template)
-        self.user_prompt = completion_request.user_prompt
         self.llm = llm.get_language_model()
         self.model_name = app_config.get_value('foundationallm-langchain-summary-model-name')
         self.max_tokens = app_config.get_value('foundationallm-langchain-summary-model-max-tokens')
         
-    def __get_text_as_documents(self) -> List[Document]:
+    def __get_text_as_documents(self, prompt: str) -> List[Document]:
         """
         Splits text into smaller parts and creates smaller documents to split the summarization task into smaller jobs.
+
+        Parameters
+        ----------
+        prompt : str
+            The prompt for which a summary completion is begin generated.
 
         Returns
         -------
@@ -48,14 +52,19 @@ class SummaryAgent(AgentBase):
             Returns an array of documents.
         """
         text_splitter = CharacterTextSplitter()
-        texts = text_splitter.split_text(self.user_prompt)
+        texts = text_splitter.split_text(prompt)
 
         # Create multiple documents
         return [Document(page_content=t) for t in texts]
     
-    def __get_summarizer_chain(self) -> BaseCombineDocumentsChain:
+    def __get_summarizer_chain(self, prompt: str) -> BaseCombineDocumentsChain:
         """
         Builds a LangChain summarizer chain to use for summarizing the user prompt.
+
+        Parameters
+        ----------
+        prompt : str
+            The prompt for which a summary completion is begin generated.
         
         Returns
         -------
@@ -66,7 +75,7 @@ class SummaryAgent(AgentBase):
         max_tokens = int(self.max_tokens)
         
         encoding = tiktoken.encoding_for_model(model_name)
-        num_tokens = len(encoding.encode(self.user_prompt))
+        num_tokens = len(encoding.encode(prompt))
     
         # Summarize output filter
         if num_tokens < max_tokens:
@@ -85,9 +94,14 @@ class SummaryAgent(AgentBase):
                 verbose=True
             )
 
-    def run(self) -> CompletionResponse:
+    def run(self, prompt: str) -> CompletionResponse:
         """
         Executes a completion request using a summarizer agent.
+
+        Parameters
+        ----------
+        prompt : str
+            The prompt for which a summary completion is begin generated.
         
         Returns
         -------
@@ -95,14 +109,14 @@ class SummaryAgent(AgentBase):
             Returns a CompletionResponse with the generated summary, the user_prompt,
             and token utilization and execution cost details.
         """
-        docs = self.__get_text_as_documents()
-        summarizer_chain = self.__get_summarizer_chain()
+        docs = self.__get_text_as_documents(prompt=prompt)
+        summarizer_chain = self.__get_summarizer_chain(prompt=prompt)
 
         # Summarize text
         with get_openai_callback() as cb:
             return CompletionResponse(
-                completion=summarizer_chain.run(docs),
-                user_prompt= self.user_prompt,
+                completion = summarizer_chain.run(docs),
+                user_prompt = prompt,
                 completion_tokens = cb.completion_tokens,
                 prompt_tokens = cb.prompt_tokens,
                 total_tokens = cb.total_tokens,

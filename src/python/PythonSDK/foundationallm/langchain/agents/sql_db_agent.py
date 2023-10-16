@@ -31,7 +31,6 @@ class SqlDbAgent(AgentBase):
             Application configuration class for retrieving configuration settings.
         """
         self.agent_prompt_prefix = PromptTemplate.from_template(completion_request.agent.prompt_template)
-        self.user_prompt = completion_request.user_prompt
         self.llm = llm.get_language_model()
         self.sql_db_config: SQLDatabaseConfiguration = completion_request.data_source.configuration
 
@@ -61,9 +60,14 @@ class SqlDbAgent(AgentBase):
         """
         return self.agent.agent.llm_chain.prompt.template
         
-    def run(self) -> CompletionResponse:
+    def run(self, prompt: str) -> CompletionResponse:
         """
         Executes a query against a SQL database.
+
+        Parameters
+        ----------
+        prompt : str
+            The prompt for which a completion is begin generated.
         
         Returns
         -------
@@ -73,8 +77,8 @@ class SqlDbAgent(AgentBase):
         """
         with get_openai_callback() as cb:
             return CompletionResponse(
-                completion = self.agent.run(self.user_prompt),
-                user_prompt= self.user_prompt,
+                completion = self.agent.run(prompt),
+                user_prompt= prompt,
                 completion_tokens = cb.completion_tokens,
                 prompt_tokens = cb.prompt_tokens,
                 total_tokens = cb.total_tokens,

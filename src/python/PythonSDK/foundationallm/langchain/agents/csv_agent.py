@@ -28,7 +28,6 @@ class CSVAgent(AgentBase):
             Application configuration class for retrieving configuration settings.
         """
         self.agent_prompt_prefix = completion_request.agent.prompt_template
-        self.user_prompt = completion_request.user_prompt
         self.llm = llm.get_language_model()
         self.data_source_config: CSVConfiguration = completion_request.data_source.configuration
         if self.data_source_config.path_value_is_secret:
@@ -55,9 +54,14 @@ class CSVAgent(AgentBase):
         """
         return self.agent.agent.llm_chain.prompt.template
     
-    def run(self) -> CompletionResponse:
+    def run(self, prompt: str) -> CompletionResponse:
         """
         Executes a query against the contents of a CSV file.
+        
+        Parameters
+        ----------
+        prompt : str
+            The prompt for which a completion is begin generated.
         
         Returns
         -------
@@ -67,8 +71,8 @@ class CSVAgent(AgentBase):
         """
         with get_openai_callback() as cb:
             return CompletionResponse(
-                completion = self.agent.run(self.user_prompt),
-                user_prompt= self.user_prompt,
+                completion = self.agent.run(prompt),
+                user_prompt= prompt,
                 completion_tokens = cb.completion_tokens,
                 prompt_tokens = cb.prompt_tokens,
                 total_tokens = cb.total_tokens,
