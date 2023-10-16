@@ -57,8 +57,6 @@ resource "azurerm_kubernetes_cluster" "main" {
 
   network_profile {
     network_plugin = "azure"
-    dns_service_ip = "10.1.3.4"
-    service_cidr   = "10.1.3.0/24"
   }
 
   automatic_channel_upgrade = "stable"
