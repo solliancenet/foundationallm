@@ -1,17 +1,10 @@
 ﻿using FoundationaLLM.Common.Interfaces;
-using FoundationaLLM.Common.Models.Authentication;
+using FoundationaLLM.Common.Models.Chat;
 using FoundationaLLM.Common.Models.Orchestration;
 using FoundationaLLM.Gatekeeper.Core.Services;
-using Newtonsoft.Json;
+using FoundationaLLM.TestUtils.Helpers;
 using NSubstitute;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using FoundationaLLM.Common.Models.Chat;
 
 namespace Gatekeeper.Tests.Services
 {
@@ -169,25 +162,6 @@ namespace Gatekeeper.Tests.Services
 
             // Assert
             Assert.False(result);
-        }
-
-    }
-    public class MockHttpMessageHandler : HttpMessageHandler
-    {
-        private readonly HttpStatusCode _statusCode;
-        private readonly object _content;
-
-        public MockHttpMessageHandler(HttpStatusCode statusCode, object content)
-        {
-            _statusCode = statusCode;
-            _content = content;
-        }
-
-        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
-        {
-            var response = new HttpResponseMessage(_statusCode);
-            response.Content = new StringContent(JsonConvert.SerializeObject(_content));
-            return await Task.FromResult(response);
         }
     }
 }

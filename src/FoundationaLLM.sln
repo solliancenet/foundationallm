@@ -51,6 +51,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AgentFactoryAPI", "dotnet\A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AgentFactory", "dotnet\AgentFactory\AgentFactory.csproj", "{59C6DEDC-F60D-4EB9-A2E5-793EC42F3895}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestUtils", "..\tests\dotnet\TestUtils\TestUtils.csproj", "{7F7CA6E9-F1F0-403D-B72D-2AC134F64CDE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -127,6 +129,10 @@ Global
 		{59C6DEDC-F60D-4EB9-A2E5-793EC42F3895}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{59C6DEDC-F60D-4EB9-A2E5-793EC42F3895}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{59C6DEDC-F60D-4EB9-A2E5-793EC42F3895}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F7CA6E9-F1F0-403D-B72D-2AC134F64CDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F7CA6E9-F1F0-403D-B72D-2AC134F64CDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F7CA6E9-F1F0-403D-B72D-2AC134F64CDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F7CA6E9-F1F0-403D-B72D-2AC134F64CDE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -153,6 +159,7 @@ Global
 		{865A944E-76C4-4DA9-B367-6D1CAB66ABCC} = {32FD7A00-B42E-4B0B-B09C-9CE48D8E047B}
 		{87CBD379-8F88-4C45-B7B1-595B5BAE734D} = {B6DC1190-2873-44A3-85B3-63D7BDE99231}
 		{59C6DEDC-F60D-4EB9-A2E5-793EC42F3895} = {B6DC1190-2873-44A3-85B3-63D7BDE99231}
+		{7F7CA6E9-F1F0-403D-B72D-2AC134F64CDE} = {28E0E967-A94D-4820-8A61-0B71D3B2780F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FF5DE858-4B85-4EE8-8A6D-46E8E4FBA078}

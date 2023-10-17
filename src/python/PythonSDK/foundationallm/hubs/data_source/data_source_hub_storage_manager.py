@@ -5,8 +5,9 @@ from typing import List
 class DataSourceHubStorageManager(BlobStorageManager):
      """The DataSourceHubStorageManager class is responsible for fetching available datasource values from Azure Blob Storage."""
      def __init__(self, config: Configuration = None):
-         connection_string = config.get_value("foundationallm-storage-connection-string")
-         container_name = config.get_value("foundationallm-datasource-metadata-storage-container")
+         connection_string = config.get_value("FoundationaLLM:DataSourceHub:StorageManager:BlobStorage:ConnectionString")
+         container_name = config.get_value("FoundationaLLM:DataSourceHub:DataSourceMetadata:StorageContainer")
+
          super().__init__(blob_connection_string=connection_string,
                              container_name=container_name)
          

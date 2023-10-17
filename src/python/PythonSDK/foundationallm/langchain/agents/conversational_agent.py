@@ -14,7 +14,7 @@ class ConversationalAgent(AgentBase):
     Default agent with basic conversational capabilities.
     """
     
-    def __init__(self, completion_request: CompletionRequest, llm: LanguageModelBase, app_config: Configuration):
+    def __init__(self, completion_request: CompletionRequest, llm: LanguageModelBase, config: Configuration):
         """
         Initializes a DefaultAgent
 
@@ -25,7 +25,7 @@ class ConversationalAgent(AgentBase):
             and agent and data source metadata.
         llm : LanguageModelBase
             The language model to use for executing the completion request.
-        app_config : Configuration
+        config : Configuration
             Application configuration class for retrieving configuration settings.
         """
         self.agent_prompt_prefix = completion_request.agent.prompt_template

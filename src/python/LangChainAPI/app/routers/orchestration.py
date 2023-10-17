@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from app.dependencies import validate_api_key_header
 
-from foundationallm.credentials import AzureCredential
+from foundationallm.config import Configuration
 from foundationallm.models.orchestration import CompletionRequest, CompletionResponse
 from foundationallm.langchain.orchestration import OrchestrationManager
 
@@ -12,6 +12,8 @@ router = APIRouter(
     dependencies=[Depends(validate_api_key_header)],
     responses={404: {'description':'Not found'}}
 )
+
+config = Configuration()
 
 @router.post('/completion')
 async def get_completion(completion_request: CompletionRequest) -> CompletionResponse:
@@ -29,5 +31,5 @@ async def get_completion(completion_request: CompletionRequest) -> CompletionRes
     CompletionResponse
         Object containing the completion response and token usage details.
     """
-    orchestration_manager = OrchestrationManager(completion_request = completion_request, credential=AzureCredential())
+    orchestration_manager = OrchestrationManager(completion_request = completion_request, configuration=config)
     return orchestration_manager.run(completion_request.user_prompt)

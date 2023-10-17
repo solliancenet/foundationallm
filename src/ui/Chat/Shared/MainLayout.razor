@@ -1,4 +1,22 @@
-﻿@inherits LayoutComponentBase
+﻿@using FoundationaLLM.Chat.Helpers
+@inherits LayoutComponentBase
+@inject IJSRuntime JSRuntime
+@inject IBrandingService BrandingService
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await BrandingService.InitializeAsync();
+        await JSRuntime.InvokeVoidAsync("updateFavIcon", BrandingService.CurrentConfig?.FavIconUrl);
+        await JSRuntime.InvokeVoidAsync("updateCSSVariables", 
+            BrandingService.CurrentConfig?.PrimaryColor, 
+            BrandingService.CurrentConfig?.SecondaryColor, 
+            BrandingService.CurrentConfig?.AccentColor, 
+            BrandingService.CurrentConfig?.BackgroundColor,
+            BrandingService.CurrentConfig?.PrimaryTextColor,
+            BrandingService.CurrentConfig?.SecondaryTextColor);
+    }
+}
 
 <PageTitle>Data Copilot</PageTitle>
 @Body

@@ -2,7 +2,7 @@
 	<div class="chat-sidebar">
 		<!-- Sidebar header -->
 		<div class="chat-sidebar__header">
-			<img :src="logoURL" />
+			<img :src="logoURL" :alt="companyName" />
 			<span>{{ logoText }}</span>
 		</div>
 
@@ -120,6 +120,7 @@ export default {
 		return {
 			logoText: this.$config.public.LOGO_TEXT,
 			logoURL: this.$config.public.LOGO_URL,
+			companyName: this.$config.public.BRANDING_COMPANY_NAME,
 			sessions: [] as Array<Session>,
 			sessionToRename: null as Session | null,
 			newSessionName: '' as string,
@@ -247,7 +248,8 @@ export default {
 	background-color: rgba(217, 217, 217, 0.05);
 }
 .chat--selected {
-	background-color: rgba(217, 217, 217, 0.1);
+	color: var(--secondary-text);
+	background-color: var(--secondary-color);
 	border-left: 4px solid rgba(217, 217, 217, 0.5);
 }
 

@@ -16,7 +16,7 @@ class SqlDbAgent(AgentBase):
     Agent for interacting with SQL databases.
     """
 
-    def __init__(self, completion_request: CompletionRequest, llm: LanguageModelBase, app_config: Configuration):
+    def __init__(self, completion_request: CompletionRequest, llm: LanguageModelBase, config: Configuration):
         """
         Initializes a SQL database agent.
 
@@ -27,7 +27,7 @@ class SqlDbAgent(AgentBase):
             and agent and data source metadata.
         llm : LanguageModelBase
             The language model to use for executing the completion request.
-        app_config : Configuration
+        config : Configuration
             Application configuration class for retrieving configuration settings.
         """
         self.agent_prompt_prefix = PromptTemplate.from_template(completion_request.agent.prompt_template)
@@ -37,7 +37,7 @@ class SqlDbAgent(AgentBase):
         self.agent = create_sql_agent(
             llm = self.llm,
             toolkit = SQLDatabaseToolkit( #TODO: Swap out with overridden, secure toolkit.
-                db = SQLDatabaseFactory(sql_db_config = self.sql_db_config, app_config = app_config).get_sql_database(),
+                db = SQLDatabaseFactory(sql_db_config = self.sql_db_config, config = config).get_sql_database(),
                 llm=self.llm,
                 reduce_k_below_max_tokens=True
             ),

@@ -2,6 +2,7 @@ from foundationallm.hubs import Repository
 from foundationallm.hubs.data_source import DataSourceMetadata, UnderlyingImplementation
 from .data_sources.sql import SQLDataSourceMetadata
 from .data_sources.blob_storage import BlobStorageDataSourceMetadata
+from .data_sources.search_service import SearchServiceDataSourceMetadata
 from foundationallm.hubs.data_source import DataSourceHubStorageManager
 from typing import List
 
@@ -35,6 +36,8 @@ class DataSourceRepository(Repository):
                     configs.append(SQLDataSourceMetadata.model_validate_json(mgr.read_file_content(config_file)))
                 elif common_datasource_metadata.underlying_implementation == UnderlyingImplementation.BLOB_STORAGE:
                     configs.append(BlobStorageDataSourceMetadata.model_validate_json(mgr.read_file_content(config_file)))
+                elif common_datasource_metadata.underlying_implementation == UnderlyingImplementation.SEARCH_SERVICE:
+                    configs.append(SearchServiceDataSourceMetadata.model_validate_json(mgr.read_file_content(config_file)))
             except:
                 continue
         return configs

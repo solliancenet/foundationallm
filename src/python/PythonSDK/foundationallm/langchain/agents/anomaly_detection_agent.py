@@ -26,7 +26,7 @@ class AnomalyDetectionAgent(AgentBase):
     Agent for performing anomaly detection.
     """
 
-    def __init__(self, completion_request: CompletionRequest, llm: LanguageModelBase, app_config: Configuration):
+    def __init__(self, completion_request: CompletionRequest, llm: LanguageModelBase, config: Configuration):
         """
         Initializes a anomaly detection agent.
 
@@ -37,7 +37,7 @@ class AnomalyDetectionAgent(AgentBase):
             and agent and data source metadata.
         llm : LanguageModelBase
             The language model to use for executing the completion request.
-        app_config : Configuration
+        config : Configuration
             Application configuration class for retrieving configuration settings.
         """
         self.agent_prompt_prefix = completion_request.agent.prompt_template #PromptTemplate.from_template(completion_request.agent.prompt_template)
@@ -58,7 +58,7 @@ class AnomalyDetectionAgent(AgentBase):
         self.sql_agent = create_sql_agent(
             llm = self.llm,
             toolkit = SQLDatabaseToolkit(
-                db = SQLDatabaseFactory(sql_db_config = self.sql_db_config, app_config = app_config).get_sql_database(),
+                db = SQLDatabaseFactory(sql_db_config = self.sql_db_config, config = config).get_sql_database(),
                 llm=self.llm,
                 reduce_k_below_max_tokens=True
             ),
@@ -72,7 +72,7 @@ class AnomalyDetectionAgent(AgentBase):
         
         self.df = pd.read_sql(
             'SELECT * FROM RumInventory',
-            create_engine(MicrosoftSQLServer(sql_db_config = self.sql_db_config, app_config = app_config).get_connection_string()),
+            create_engine(MicrosoftSQLServer(sql_db_config = self.sql_db_config, config = config).get_connection_string()),
             index_col='Id'
         )
 

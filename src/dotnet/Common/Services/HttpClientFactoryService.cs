@@ -51,8 +51,7 @@ namespace FoundationaLLM.Common.Services
             // Add the API key header.
             if (_apiSettings.DownstreamAPIs.TryGetValue(clientName, out var settings))
             {
-                var apiKey = _configurationService.GetValue<string>(settings.APIKeySecretName);
-                httpClient.DefaultRequestHeaders.Add(Constants.HttpHeaders.APIKey, apiKey);
+                httpClient.DefaultRequestHeaders.Add(Constants.HttpHeaders.APIKey, settings.APIKey);
             }
 
             // Optionally add the user identity header.
