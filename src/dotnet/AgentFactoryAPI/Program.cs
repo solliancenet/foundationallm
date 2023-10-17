@@ -26,6 +26,15 @@ namespace FoundationaLLM.AgentFactory.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Configuration.AddAzureAppConfiguration(options =>
+            {
+                options.Connect(builder.Configuration["FoundationaLLM:AppConfig:ConnectionString"]);
+                options.ConfigureKeyVault(options =>
+                {
+                    options.SetCredential(new DefaultAzureCredential());
+                });
+            });
+
             // Add services to the container.
             builder.Services.AddApplicationInsightsTelemetry();
             builder.Services.AddControllers().AddNewtonsoftJson(options =>
@@ -38,7 +47,7 @@ namespace FoundationaLLM.AgentFactory.API
             builder.Services.AddScoped<IUserClaimsProviderService, NoOpUserClaimsProviderService>();
             builder.Services.AddScoped<APIKeyAuthenticationFilter>();
             builder.Services.AddOptions<APIKeyValidationSettings>()
-                .Bind(builder.Configuration.GetSection("FoundationaLLM:AgentFactoryAPI"));
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:DownstreamAPIs:AgentFactoryAPI"));
             builder.Services.AddTransient<IAPIKeyValidationService, APIKeyValidationService>();
 
             builder.Services.AddOptions<SemanticKernelServiceSettings>()

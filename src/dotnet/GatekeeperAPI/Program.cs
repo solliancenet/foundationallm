@@ -1,4 +1,5 @@
 using Asp.Versioning;
+using Azure.Identity;
 using FoundationaLLM.Common.Authentication;
 using FoundationaLLM.Common.Constants;
 using FoundationaLLM.Common.Interfaces;
@@ -22,6 +23,15 @@ namespace FoundationaLLM.Gatekeeper.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Configuration.AddAzureAppConfiguration(options =>
+            {
+                options.Connect(builder.Configuration["FoundationaLLM:AppConfig:ConnectionString"]);
+                options.ConfigureKeyVault(options =>
+                {
+                    options.SetCredential(new DefaultAzureCredential());
+                });
+            });
+
             // Add services to the container.
             builder.Services.AddApplicationInsightsTelemetry();
             builder.Services.AddControllers().AddNewtonsoftJson(options =>
@@ -33,7 +43,7 @@ namespace FoundationaLLM.Gatekeeper.API
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddScoped<APIKeyAuthenticationFilter>();
             builder.Services.AddOptions<APIKeyValidationSettings>()
-                .Bind(builder.Configuration.GetSection("FoundationaLLM:GatekeeperAPI"));
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:DownstreamAPIs:GatekeeperAPI"));
             builder.Services.AddOptions<KeyVaultConfigurationServiceSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:Configuration"));
 

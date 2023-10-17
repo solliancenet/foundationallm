@@ -24,8 +24,8 @@ namespace FoundationaLLM.Common.Authentication
         /// </summary>
         public required string APIUrl { get; init; }
         /// <summary>
-        /// The name of the secret that contains the API key.
+        /// The value of the API key.
         /// </summary>
-        public required string APIKeySecretName { get; init; }
+        public required string APIKey { get; init; }
     }
 }
