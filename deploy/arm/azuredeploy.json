@@ -960,7 +960,7 @@
       "dependsOn": [ "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultSettings').name)]" , "[resourceId('Microsoft.CognitiveServices/accounts', variables('safetySettings').name)]"],
       "properties": {
         "attributes": { "enabled": true },
-        "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('safetySettings').name), '2018-07-01').keys[0].value]"
+        "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('safetySettings').name), '2023-05-01').keys[0].value]"
       }
     },
     {
