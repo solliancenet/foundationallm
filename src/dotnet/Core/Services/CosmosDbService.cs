@@ -196,11 +196,12 @@ namespace FoundationaLLM.Core.Services
         /// <summary>
         /// Gets a list of all current chat sessions.
         /// </summary>
+        /// <param name="type">Identifier for kiosk and normal session.</param>
         /// <returns>List of distinct chat session items.</returns>
-        public async Task<List<Session>> GetSessionsAsync()
+        public async Task<List<Session>> GetSessionsAsync(string type)
         {
             QueryDefinition query = new QueryDefinition("SELECT DISTINCT * FROM c WHERE c.type = @type")
-                .WithParameter("@type", nameof(Session));
+                .WithParameter("@type", type);
 
             FeedIterator<Session> response = _completions.GetItemQueryIterator<Session>(query);
 

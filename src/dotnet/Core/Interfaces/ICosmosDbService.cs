@@ -11,7 +11,7 @@ public interface ICosmosDbService
     /// Gets a list of all current chat sessions.
     /// </summary>
     /// <returns>List of distinct chat session items.</returns>
-    Task<List<Session>> GetSessionsAsync();
+    Task<List<Session>> GetSessionsAsync(string type);
 
     /// <summary>
     /// Gets a list of all current chat messages for a specified session identifier.
