@@ -7,6 +7,7 @@ from foundationallm.models.orchestration import CompletionRequest, CompletionRes
 from langchain.document_loaders import AzureBlobStorageFileLoader, AzureBlobStorageContainerLoader
 from langchain.indexes import VectorstoreIndexCreator
 from langchain.indexes.vectorstore import VectorStoreIndexWrapper
+from langchain.embeddings import OpenAIEmbeddings
 from foundationallm.models.orchestration import MessageHistoryItem
 
 class BlobStorageAgent(AgentBase):
@@ -28,7 +29,8 @@ class BlobStorageAgent(AgentBase):
         self.prompt_prefix = completion_request.agent.prompt_template + self.__build_chat_history(completion_request.message_history)
         self.connection_string = config.get_value(completion_request.data_source.configuration.connection_string_secret)        
         self.container_name = completion_request.data_source.configuration.container        
-        self.file_names = completion_request.data_source.configuration.files        
+        self.file_names = completion_request.data_source.configuration.files
+        self.__config = config        
         
     def __get_vector_index(self) -> VectorStoreIndexWrapper:
         """
@@ -47,7 +49,17 @@ class BlobStorageAgent(AgentBase):
         #       embeddings (defaults to langchain's own embeddings), 
         #       text_splitter(defaults to TextSplitter)
         #       vectorstore_cls (defaults to Chroma)
-        index = VectorstoreIndexCreator().from_loaders(loaders)
+
+        embeddings = OpenAIEmbeddings(
+            openai_api_base = self.__config.get_value("FoundationaLLM:AzureOpenAI:API:Endpoint"),
+            openai_api_version = self.__config.get_value("FoundationaLLM:AzureOpenAI:API:Version"),
+            openai_api_key = self.__config.get_value("FoundationaLLM:AzureOpenAI:API:Key"),
+            openai_api_type = "azure",
+            deployment = "embeddings",
+            chunk_size=1
+        )
+    
+        index = VectorstoreIndexCreator(embedding=embeddings).from_loaders(loaders)
         return index             
 
     def __build_chat_history(self, messages:List[MessageHistoryItem]=None, human_label:str="Human", ai_label:str="Agent") -> str:

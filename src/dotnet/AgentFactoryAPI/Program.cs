@@ -14,6 +14,7 @@ using FoundationaLLM.Common.Models.Authentication;
 using FoundationaLLM.Common.Models.Configuration;
 using FoundationaLLM.Common.OpenAPI;
 using FoundationaLLM.Common.Services;
+using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 using Microsoft.Extensions.Options;
 using Polly;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -37,10 +38,15 @@ namespace FoundationaLLM.AgentFactory.API
                     options.SetCredential(new DefaultAzureCredential());
                 });
             });
-            builder.Configuration.AddJsonFile("appsettings.development.json", true, true);
+            if (builder.Environment.IsDevelopment())
+                builder.Configuration.AddJsonFile("appsettings.development.json", true, true);
 
             // Add services to the container.
-            builder.Services.AddApplicationInsightsTelemetry();
+            builder.Services.AddApplicationInsightsTelemetry(new ApplicationInsightsServiceOptions
+            {
+                ConnectionString = builder.Configuration["FoundationaLLM:APIs:AgentFactoryAPI:AppInsightsConnectionString"],
+                DeveloperMode = builder.Environment.IsDevelopment()
+            });
             builder.Services.AddControllers().AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.ContractResolver = Common.Settings.CommonJsonSerializerSettings.GetJsonSerializerSettings().ContractResolver;

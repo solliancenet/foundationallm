@@ -1,0 +1,11 @@
+FoundationaLLM simplifies and streamlines building knowledge management (e.g., question/answer agents) and analytic (e.g., self-service business intelligence) copilots over the data sources present across your enterprise.
+
+FoundationaLLM deploys a secure, comprehensive and highly configurable copilot platform to your Azure cloud environment:
+
+- Simplifies integration with enterprise data sources used by agent for in-context learning (e.g., enabling RAG, CoT, ReAct and inner monologue patterns).
+- Provides defense in depth with fine-grain security controls over data used by agent and pre/post completion filters that guard against attack.
+- Hardened solution attacked by an LLM red team from inception.
+- Scalable solution load balances across multiple LLM endpoints.
+- Extensible to new data sources, new LLM orchestrators and LLMs.
+
+You can learn more about FoundationaLLM at https://foundationallm.ai
