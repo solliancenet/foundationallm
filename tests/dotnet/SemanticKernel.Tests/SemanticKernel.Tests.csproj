@@ -26,15 +26,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Chat\" />
-    <Folder Include="Memory\" />
-    <Folder Include="MemorySource\" />
-    <Folder Include="TextEmbedding\" />
-    <Folder Include="Skills\" />
-    <Folder Include="Services\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\..\src\dotnet\SemanticKernel\SemanticKernel.csproj" />
   </ItemGroup>
 
