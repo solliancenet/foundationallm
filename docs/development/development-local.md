@@ -116,7 +116,7 @@
       "Database": "database",
       "ChangeFeedLeaseContainer": "leases"
     },
-    "DownstreamAPIs": {    
+    "APIs": {    
       "GatekeeperAPI": {
         "APIUrl": "",
         "APIKeySecretName": "foundationallm-gatekeeper-api-key"
@@ -146,7 +146,7 @@
       "Endpoint": "https://<...>-cosmos-nosql.documents.azure.com:443/",
       "Key": "<...>"
     },
-    "DownstreamAPIs": {
+    "APIs": {
       "GatekeeperAPI": {
         "APIUrl": "<...>"
       }
@@ -186,7 +186,7 @@
   },
   "AllowedHosts": "*",
   "FoundationaLLM": {
-    "DownstreamAPIs": {
+    "APIs": {
       "AgentFactoryAPI": {
         "APIUrl": ""
       }
@@ -210,7 +210,7 @@
 ```json
 {
   "FoundationaLLM": {
-    "DownstreamAPIs": {
+    "APIs": {
       "AgentFactoryAPI": {
         "APIUrl": "<...>"
       }
@@ -247,7 +247,7 @@
       "AgentFactory": {
         "DefaultOrchestrationService": "LangChain"
       },
-      "DownstreamAPIs": {
+      "APIs": {
           "LangChainAPI": {
             "APIUrl": "",
             "APIKeySecretName": "foundationallm-langchain-api-key"
@@ -284,7 +284,7 @@
 ```json
 {
   "FoundationaLLM": {
-    "DownstreamAPIs": {
+    "APIs": {
       "LangChainAPI": {
         "APIUrl": "<...>"
       },
