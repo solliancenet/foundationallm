@@ -56,13 +56,13 @@ appConfig:
   uri: {{appConfigEndpoint}}
   connectionString: {{appConfigConnectionString}}
 azureWorkloadIdentity:
-  agentFactoryApiClientId: {{langChainApiMiClientId}}
-  agentHubApiClientId: {{langChainApiMiClientId}}
-  chatUiClientId: {{langChainApiMiClientId}}
-  coreApiClientId: {{langChainApiMiClientId}}
-  dataSourceHubApiClientId: {{langChainApiMiClientId}}
-  gatekeeperApiClientId: {{langChainApiMiClientId}}
+  agentFactoryApiClientId: {{agentFactoryApiMiClientId}}
+  agentHubApiClientId: {{agentHubApiMiClientId}}
+  chatUiClientId: {{chatUiMiClientId}}
+  coreApiClientId: {{coreApiMiClientId}}
+  dataSourceHubApiClientId: {{dataSourceHubApiMiClientId}}
+  gatekeeperApiClientId: {{gatekeeperApiMiClientId}}
   langChainApiClientId: {{langChainApiMiClientId}}
-  promptHubApiClientId: {{langChainApiMiClientId}}
-  semanticKernelApiClientId: {{langChainApiMiClientId}}
+  promptHubApiClientId: {{promptHubApiMiClientId}}
+  semanticKernelApiClientId: {{semanticKernelApiMiClientId}}
   tenantId: {{tenantId}}

@@ -118,56 +118,49 @@ Write-Host "Configuration file used is $valuesFile" -ForegroundColor Yellow
 
 if ($charts.Contains("agent-factory-api") -or  $charts.Contains("*")) {
     Write-Host "API chart - agent-factory-api" -ForegroundColor Yellow
-    $command = "helm upgrade --install $name-api ./agent-factory-api -f $valuesFile --set ingress.hosts='{$aksHost}' --set image.repository=$acrLogin/agent-factory-api --set image.tag=$tag --set hpa.activated=$autoscale"
+    $command = "helm upgrade --install $name-agent-factory-api ./agent-factory-api -f $valuesFile --set ingress.hosts='{$aksHost}' --set image.repository=$acrLogin/agent-factory-api --set image.tag=$tag --set hpa.activated=$autoscale"
     $command = createHelmCommand $command 
     Invoke-Expression "$command"
 }
 
 if ($charts.Contains("agent-hub-api") -or  $charts.Contains("*")) {
     Write-Host "API chart - agent-hub-api" -ForegroundColor Yellow
-    $command = "helm upgrade --install $name-api ./agent-hub-api -f $valuesFile --set ingress.hosts='{$aksHost}' --set image.repository=$acrLogin/agent-hub-api --set image.tag=$tag --set hpa.activated=$autoscale"
+    $command = "helm upgrade --install $name-agent-hub-api ./agent-hub-api -f $valuesFile --set ingress.hosts='{$aksHost}' --set image.repository=$acrLogin/agent-hub-api --set image.tag=$tag --set hpa.activated=$autoscale"
     $command = createHelmCommand $command 
     Invoke-Expression "$command"
 }
 
 if ($charts.Contains("core-api") -or  $charts.Contains("*")) {
     Write-Host "API chart - core-api" -ForegroundColor Yellow
-    $command = "helm upgrade --install $name-api ./core-api -f $valuesFile --set ingress.hosts='{$aksHost}' --set image.repository=$acrLogin/core-api --set image.tag=$tag --set hpa.activated=$autoscale"
+    $command = "helm upgrade --install $name-core-api ./core-api -f $valuesFile --set ingress.hosts='{$aksHost}' --set image.repository=$acrLogin/core-api --set image.tag=$tag --set hpa.activated=$autoscale"
     $command = createHelmCommand $command 
     Invoke-Expression "$command"
 }
 
 if ($charts.Contains("data-source-hub-api") -or  $charts.Contains("*")) {
     Write-Host "API chart - data-source-hub-api" -ForegroundColor Yellow
-    $command = "helm upgrade --install $name-api ./data-source-hub-api -f $valuesFile --set ingress.hosts='{$aksHost}' --set image.repository=$acrLogin/data-source-hub-api --set image.tag=$tag --set hpa.activated=$autoscale"
+    $command = "helm upgrade --install $name-data-source-hub-api ./data-source-hub-api -f $valuesFile --set ingress.hosts='{$aksHost}' --set image.repository=$acrLogin/data-source-hub-api --set image.tag=$tag --set hpa.activated=$autoscale"
     $command = createHelmCommand $command 
     Invoke-Expression "$command"
 }
 
 if ($charts.Contains("gatekeeper-api") -or  $charts.Contains("*")) {
     Write-Host "API chart - gatekeeper-api" -ForegroundColor Yellow
-    $command = "helm upgrade --install $name-api ./gatekeeper-api -f $valuesFile --set ingress.hosts='{$aksHost}' --set image.repository=$acrLogin/gatekeeper-api --set image.tag=$tag --set hpa.activated=$autoscale"
+    $command = "helm upgrade --install $name-gatekeeper-api ./gatekeeper-api -f $valuesFile --set ingress.hosts='{$aksHost}' --set image.repository=$acrLogin/gatekeeper-api --set image.tag=$tag --set hpa.activated=$autoscale"
     $command = createHelmCommand $command 
     Invoke-Expression "$command"
 }
 
 if ($charts.Contains("prompt-hub-api") -or  $charts.Contains("*")) {
     Write-Host "API chart - prompt-hub-api" -ForegroundColor Yellow
-    $command = "helm upgrade --install $name-api ./prompt-hub-api -f $valuesFile --set ingress.hosts='{$aksHost}' --set image.repository=$acrLogin/prompt-hub-api --set image.tag=$tag --set hpa.activated=$autoscale"
-    $command = createHelmCommand $command 
-    Invoke-Expression "$command"
-}
-
-if ($charts.Contains("core-api") -or  $charts.Contains("*")) {
-    Write-Host "API chart - core-api" -ForegroundColor Yellow
-    $command = "helm upgrade --install $name-api ./core-api -f $valuesFile --set ingress.hosts='{$aksHost}' --set image.repository=$acrLogin/core-api --set image.tag=$tag --set hpa.activated=$autoscale"
+    $command = "helm upgrade --install $name-prompt-hub-api ./prompt-hub-api -f $valuesFile --set ingress.hosts='{$aksHost}' --set image.repository=$acrLogin/prompt-hub-api --set image.tag=$tag --set hpa.activated=$autoscale"
     $command = createHelmCommand $command 
     Invoke-Expression "$command"
 }
 
 if ($charts.Contains("semantic-kernel-api") -or  $charts.Contains("*")) {
     Write-Host "API chart - semantic-kernel-api" -ForegroundColor Yellow
-    $command = "helm upgrade --install $name-api ./semantic-kernel-api -f $valuesFile --set ingress.hosts='{$aksHost}' --set image.repository=$acrLogin/semantic-kernel-api --set image.tag=$tag --set hpa.activated=$autoscale"
+    $command = "helm upgrade --install $name-semantic-kernel-api ./semantic-kernel-api -f $valuesFile --set ingress.hosts='{$aksHost}' --set image.repository=$acrLogin/semantic-kernel-api --set image.tag=$tag --set hpa.activated=$autoscale"
     $command = createHelmCommand $command 
     Invoke-Expression "$command"
 }

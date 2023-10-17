@@ -1,5 +1,6 @@
 {{- $name := include "chat-ui.fullname" . -}}
 {{- $cfgname := printf "%s-%s" "cfg" $name -}}
+{{- $secretName := printf "%s-%s" "secret" $name -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:

@@ -153,7 +153,8 @@
       "Key Vault Crypto User": "12338af0-0e69-4776-bea7-57ae8d297424",
       "Key Vault Reader": "21090545-7ca7-4776-b22c-e363652d74d2",
       "Key Vault Secrets Officer": "b86a8fe4-44ce-4948-aee5-eccb2c155cd7",
-      "Key Vault Secrets User": "4633458b-17de-408a-b874-0445c86b69e6"
+      "Key Vault Secrets User": "4633458b-17de-408a-b874-0445c86b69e6",
+      "App Configuration Data Reader": "516239f1-63e1-4d78-a4de-a74fb236a071"
     }
   },
   "resources": [
@@ -944,11 +945,99 @@
     {
       "type": "Microsoft.Authorization/roleAssignments",
       "apiVersion": "2022-04-01",
-      "scope": "[format('Microsoft.KeyVault/vaults/{0}', variables('keyVaultSettings').name)]",
+      "scope": "[format('Microsoft.AppConfiguration/configurationStores/{0}', variables('appConfigSettings').name)]",
+      "name": "[guid(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}agentfactorymi', parameters('name'))), variables('keyVaultSettings').name)]",
+      "properties": {
+        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('roleIdMapping')['App Configuration Data Reader'])]",
+        "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('agentFactorySettings').miName), providers('Microsoft.ManagedIdentity', 'userAssignedIdentities').apiVersions[0]).principalId]",
+        "principalType": "ServicePrincipal"
+      }
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "scope": "[format('Microsoft.AppConfiguration/configurationStores/{0}', variables('appConfigSettings').name)]",
+      "name": "[guid(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}agenthubmi', parameters('name'))), variables('keyVaultSettings').name)]",
+      "properties": {
+        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('roleIdMapping')['App Configuration Data Reader'])]",
+        "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('agentHubSettings').miName), providers('Microsoft.ManagedIdentity', 'userAssignedIdentities').apiVersions[0]).principalId]",
+        "principalType": "ServicePrincipal"
+      }
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "scope": "[format('Microsoft.AppConfiguration/configurationStores/{0}', variables('appConfigSettings').name)]",
+      "name": "[guid(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}chatuimi', parameters('name'))), variables('keyVaultSettings').name)]",
+      "properties": {
+        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('roleIdMapping')['App Configuration Data Reader'])]",
+        "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('chatUiSettings').miName), providers('Microsoft.ManagedIdentity', 'userAssignedIdentities').apiVersions[0]).principalId]",
+        "principalType": "ServicePrincipal"
+      }
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "scope": "[format('Microsoft.AppConfiguration/configurationStores/{0}', variables('appConfigSettings').name)]",
+      "name": "[guid(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}coremi', parameters('name'))), variables('keyVaultSettings').name)]",
+      "properties": {
+        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('roleIdMapping')['App Configuration Data Reader'])]",
+        "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('coreSettings').miName), providers('Microsoft.ManagedIdentity', 'userAssignedIdentities').apiVersions[0]).principalId]",
+        "principalType": "ServicePrincipal"
+      }
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "scope": "[format('Microsoft.AppConfiguration/configurationStores/{0}', variables('appConfigSettings').name)]",
+      "name": "[guid(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}datasourcehubmi', parameters('name'))), variables('keyVaultSettings').name)]",
+      "properties": {
+        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('roleIdMapping')['App Configuration Data Reader'])]",
+        "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('dataSourceHubSettings').miName), providers('Microsoft.ManagedIdentity', 'userAssignedIdentities').apiVersions[0]).principalId]",
+        "principalType": "ServicePrincipal"
+      }
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "scope": "[format('Microsoft.AppConfiguration/configurationStores/{0}', variables('appConfigSettings').name)]",
+      "name": "[guid(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}gatekeepermi', parameters('name'))), variables('keyVaultSettings').name)]",
+      "properties": {
+        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('roleIdMapping')['App Configuration Data Reader'])]",
+        "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('gatekeeperSettings').miName), providers('Microsoft.ManagedIdentity', 'userAssignedIdentities').apiVersions[0]).principalId]",
+        "principalType": "ServicePrincipal"
+      }
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "scope": "[format('Microsoft.AppConfiguration/configurationStores/{0}', variables('appConfigSettings').name)]",
       "name": "[guid(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}langchainmi', parameters('name'))), variables('keyVaultSettings').name)]",
       "properties": {
-        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('roleIdMapping')['Key Vault Secrets User'])]",
+        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('roleIdMapping')['App Configuration Data Reader'])]",
         "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('langChainSettings').miName), providers('Microsoft.ManagedIdentity', 'userAssignedIdentities').apiVersions[0]).principalId]",
+        "principalType": "ServicePrincipal"
+      }
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "scope": "[format('Microsoft.AppConfiguration/configurationStores/{0}', variables('appConfigSettings').name)]",
+      "name": "[guid(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}prompthubmi', parameters('name'))), variables('keyVaultSettings').name)]",
+      "properties": {
+        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('roleIdMapping')['App Configuration Data Reader'])]",
+        "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('promptHubSettings').miName), providers('Microsoft.ManagedIdentity', 'userAssignedIdentities').apiVersions[0]).principalId]",
+        "principalType": "ServicePrincipal"
+      }
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "scope": "[format('Microsoft.AppConfiguration/configurationStores/{0}', variables('appConfigSettings').name)]",
+      "name": "[guid(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}semantickernelmi', parameters('name'))), variables('keyVaultSettings').name)]",
+      "properties": {
+        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('roleIdMapping')['App Configuration Data Reader'])]",
+        "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('semanticKernelSettings').miName), providers('Microsoft.ManagedIdentity', 'userAssignedIdentities').apiVersions[0]).principalId]",
         "principalType": "ServicePrincipal"
       }
     }
