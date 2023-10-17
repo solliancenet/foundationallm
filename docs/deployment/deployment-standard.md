@@ -1,5 +1,7 @@
 # Deployment - Standard
 
+Foundationa**LLM** deploys into your own Azure Subscription. By default it will deploy to Azure Container Apps (ACA) that make it fast to get started. When you want to deploy to production at scale, you can also deploy to Azure Kubernetes Service (AKS). Given that there are Azure Subscription quota limits to the number of Azure OpenAI Service resources you can deploy, you can choose to use an existing Azure OpenAI Service resource instead of a creating a new one with your deployment.
+
 ## Prerequisites
 
 - Azure Subscription
@@ -14,7 +16,7 @@
 
 Follow the steps below to deploy the solution to your Azure subscription. You will be prompted to log in to your Azure account during the deployment process.
 
-1. Ensure all the prerequisites are installed, and that Docker Desktop is running.  
+1. Ensure all the prerequisites are met, and that Docker Desktop is running.  
 
 1. From a PowerShell prompt, execute the following to clone the repository:
 
@@ -24,14 +26,14 @@ Follow the steps below to deploy the solution to your Azure subscription. You wi
 
 1. Run the following script to provision the infrastructure and deploy the API and frontend. This will provision all of the required infrastructure, deploy the API and web app services, and import data into Cosmos DB.
 
-    1. Option 1: Fresh deployment using ACA
+    1. Option 1: Full deployment using Microsoft Azure Container Apps (ACA)
 
         ```pwsh
         cd foundationallm
         ./deploy/scripts/Unified-Deploy.ps1 -resourceGroup <rg_name> -location <location> -subscription <target_subscription_id>
         ```
 
-    2. Option 2: Fresh deployment using AKS
+    2. Option 2: Full deployment using Microsoft Azure Kubernetes Service (AKS)
         To deploy to an AKS environment instead, run the same script with the added argument `-deployAks 1`, as shown below.  This will provision all of the required infrastructure, deploy the API and web app services as pods in an AKS cluster, and import data into Cosmos DB.
 
         ```pwsh
@@ -39,7 +41,7 @@ Follow the steps below to deploy the solution to your Azure subscription. You wi
         ./deploy/scripts/Unified-Deploy.ps1 -resourceGroup <rg_name> -location <location> -subscription <target_subscription_id> -deployAks 1
         ```
 
-    3. Option 3: Deployment using existing Azure OpenAI resource
+    3. Option 3: Deployment using an existing Azure OpenAI resource
         To deploy using an already provisioned Azure OpenAI resource, add the following parameters:
         | Parameter | Description |
         | --- | --- |
