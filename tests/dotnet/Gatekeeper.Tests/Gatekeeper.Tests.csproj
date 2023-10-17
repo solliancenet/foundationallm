@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\dotnet\Gatekeeper\Gatekeeper.csproj" />
+    <ProjectReference Include="..\TestingInfrastructure\TestingInfrastructure.csproj" />
   </ItemGroup>
 
 </Project>
