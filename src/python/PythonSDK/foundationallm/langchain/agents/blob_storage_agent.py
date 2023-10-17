@@ -30,6 +30,9 @@ class BlobStorageAgent(AgentBase):
         self.file_names = completion_request.data_source.configuration.files        
         
     def __get_vector_index(self) -> VectorStoreIndexWrapper:
+        """
+        Creates a vector index from files in the indicated blob storage container and files list
+        """
         loaders = []    
         if "*" in self.file_names:
             # Load all files in the container
@@ -58,7 +61,7 @@ class BlobStorageAgent(AgentBase):
        
     def run(self, prompt: str) -> CompletionResponse:
         """
-        Executes a completion request using a summarizer agent.
+        Executes a completion request by querying the vector index with the user prompt.
 
         Parameters
         ----------
