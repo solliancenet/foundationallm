@@ -8,19 +8,15 @@ namespace FoundationaLLM.Common.Authentication
     /// </summary>
     public class APIKeyValidationService : IAPIKeyValidationService
     {
-        private readonly IConfigurationService _configurationService;
         private readonly APIKeyValidationSettings _settings;
 
         /// <summary>
         /// Creates a new instance of the <see cref="APIKeyValidationService"/> class.
         /// </summary>
-        /// <param name="configurationService">Service for retrieving application secrets, settings or other variables from the configuration store.</param>
         /// <param name="options">otions for the deployed API key validation service.</param>
         public APIKeyValidationService(
-            IConfigurationService configurationService,
             IOptions<APIKeyValidationSettings> options)
         {
-            _configurationService = configurationService;
             _settings = options.Value;
         }
 
