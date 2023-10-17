@@ -3,7 +3,6 @@ using FoundationaLLM.Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
-using FoundationaLLM.Common.Controllers;
 using FoundationaLLM.Common.Interfaces;
 using Microsoft.Identity.Web;
 
@@ -14,7 +13,7 @@ namespace FoundationaLLM.Core.API.Controllers
     [ApiVersion(1.0)]
     [ApiController]
     [Route("[controller]")]
-    public class StatusController : APIControllerBase
+    public class StatusController : ControllerBase
     {
         private readonly ICoreService _coreService;
         private readonly ILogger<StatusController> _logger;

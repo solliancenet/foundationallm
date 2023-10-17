@@ -1,15 +1,32 @@
 import os
-from re import A
-from tkinter import N
+#from re import A
+#from tkinter import N
 from azure.keyvault.secrets import SecretClient
+#from sqlalchemy import exc
 from tenacity import retry, wait_random_exponential, stop_after_attempt, RetryError
 import logging
-from foundationallm.credentials import Credential
+from azure.appconfiguration.provider import (
+    AzureAppConfigurationKeyVaultOptions,
+    load,
+    #SettingSelector
+)
+from azure.identity import DefaultAzureCredential
 
 class Configuration():    
-    def __init__(self, keyvault_name: str = None, credential: Credential = None):
-        self.keyvault_name = keyvault_name
-        self.credential = credential
+    def __init__(self):
+        """Init"""
+        try:
+            vault_url = os.environ['foundationallm-keyvault-uri']
+        except Exception as e:
+            raise e
+        
+        credential = DefaultAzureCredential()
+        secret_client = SecretClient(vault_url=vault_url, credential=credential)
+        app_config_secret_name = os.environ.get("foundationallm-app-configuration-secret-name")
+        connection_string = secret_client.get_secret(name=app_config_secret_name).value
+        
+        # Connect to Azure App Configuration using a connection string.
+        self.__config = load(connection_string=connection_string, key_vault_options=AzureAppConfigurationKeyVaultOptions(credential=credential))
             
     def get_value(self, key: str) -> str:
         """
@@ -43,22 +60,11 @@ class Configuration():
         if allow_env_vars == True:
             value = os.environ.get(key)
             
-            if value is None and not (self.keyvault_name is None or self.credential is None):               
-                vault_url = f"https://{self.keyvault_name}.vault.azure.net"           
-                self.secret_client = SecretClient(vault_url=vault_url, credential=self.credential.get_credential())
-                try:
-                    value = self.__get_secret_with_retry(name=key)                
-                except Exception as e:            
-                    pass
-        else:
-            # future check for App Configuration, then KV 
-            if not (self.keyvault_name is None or self.credential is None):                
-                vault_url = f"https://{self.keyvault_name}.vault.azure.net"           
-                self.secret_client = SecretClient(vault_url=vault_url, credential=self.credential.get_credential())
-                try:
-                    value = self.__get_secret_with_retry(name=key)                
-                except Exception as e:            
-                    pass
+        if value is None:               
+            try:
+                value = self.__get_config_with_retry(name=key)                
+            except Exception as e:            
+                pass
 
         if value is not None:
             return value        
@@ -78,17 +84,16 @@ class Configuration():
         else:
             logging.warning(message)
 
-    # Retry with jitter on transient errors. Initially up to 2^x * 1 seconds
-    # between each retry until the range reaches 30 seconds,
-    # then randomly up to 60 seconds afterwards.
-    # Ultimately, stop after 5 attempts.
+    # Retry with jitter on transient errors. Initially up to 2^x * 1 seconds between each retry
+    # until the range reaches 30 seconds, then randomly up to 60 seconds afterwards.
+    # Stop after five retry attempts.
     @retry(
-            wait=wait_random_exponential(multiplier=1, max=5),
-            stop=stop_after_attempt(5),
-            before_sleep=__retry_before_sleep
-        )
-    def __get_secret_with_retry(self, name):
+        wait=wait_random_exponential(multiplier=1, max=5),
+        stop=stop_after_attempt(5),
+        before_sleep=__retry_before_sleep
+    )
+    def __get_config_with_retry(self, name):
         try:
-            return self.secret_client.get_secret(name).value
+            return self.__config[name]
         except RetryError:
             pass

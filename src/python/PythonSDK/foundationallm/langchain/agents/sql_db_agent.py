@@ -16,7 +16,7 @@ class SqlDbAgent(AgentBase):
     Agent for interacting with SQL databases.
     """
 
-    def __init__(self, completion_request: CompletionRequest, llm: LanguageModelBase, app_config: Configuration):
+    def __init__(self, completion_request: CompletionRequest, llm: LanguageModelBase, config: Configuration):
         """
         Initializes a SQL database agent.
 
@@ -27,18 +27,17 @@ class SqlDbAgent(AgentBase):
             and agent and data source metadata.
         llm : LanguageModelBase
             The language model to use for executing the completion request.
-        app_config : Configuration
+        config : Configuration
             Application configuration class for retrieving configuration settings.
         """
         self.agent_prompt_prefix = PromptTemplate.from_template(completion_request.agent.prompt_template)
-        self.user_prompt = completion_request.user_prompt
         self.llm = llm.get_language_model()
         self.sql_db_config: SQLDatabaseConfiguration = completion_request.data_source.configuration
 
         self.agent = create_sql_agent(
             llm = self.llm,
             toolkit = SQLDatabaseToolkit( #TODO: Swap out with overridden, secure toolkit.
-                db = SQLDatabaseFactory(sql_db_config = self.sql_db_config, app_config = app_config).get_sql_database(),
+                db = SQLDatabaseFactory(sql_db_config = self.sql_db_config, config = config).get_sql_database(),
                 llm=self.llm,
                 reduce_k_below_max_tokens=True
             ),
@@ -61,9 +60,14 @@ class SqlDbAgent(AgentBase):
         """
         return self.agent.agent.llm_chain.prompt.template
         
-    def run(self) -> CompletionResponse:
+    def run(self, prompt: str) -> CompletionResponse:
         """
         Executes a query against a SQL database.
+
+        Parameters
+        ----------
+        prompt : str
+            The prompt for which a completion is begin generated.
         
         Returns
         -------
@@ -73,8 +77,8 @@ class SqlDbAgent(AgentBase):
         """
         with get_openai_callback() as cb:
             return CompletionResponse(
-                completion = self.agent.run(self.user_prompt),
-                user_prompt= self.user_prompt,
+                completion = self.agent.run(prompt),
+                user_prompt= prompt,
                 completion_tokens = cb.completion_tokens,
                 prompt_tokens = cb.prompt_tokens,
                 total_tokens = cb.total_tokens,

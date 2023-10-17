@@ -14,7 +14,7 @@ class SQLDatabaseDataSource:
     username: str
     password: str
 
-    def __init__(self, sql_db_config: SQLDatabaseConfiguration, app_config: Configuration):
+    def __init__(self, sql_db_config: SQLDatabaseConfiguration, config: Configuration):
         """
         Initializes a SQL database data source.
 
@@ -22,7 +22,7 @@ class SQLDatabaseDataSource:
         ----------
         sql_db_config : SqlDbConfig
             SQL Database configuration class for providing settings to the database.
-        app_config : Configuration
+        config : Configuration
             Application configuration class for retrieving configuration settings.
         """
         self.sql_db_config = sql_db_config
@@ -32,7 +32,7 @@ class SQLDatabaseDataSource:
         self.port = sql_db_config.port or self.get_default_port()
         self.database_name = sql_db_config.database_name
         self.username = sql_db_config.username
-        self.password = app_config.get_value(self.sql_db_config.password_secret_name)
+        self.password = config.get_value(self.sql_db_config.password_secret_setting_key_name)
         self.include_tables = sql_db_config.include_tables
         self.sample_rows_in_table_info = sql_db_config.few_shot_example_count
     

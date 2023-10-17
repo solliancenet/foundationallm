@@ -11,7 +11,7 @@
     <SearchPath>..\PythonSDK</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <LaunchProvider>Standard Python launcher</LaunchProvider>
-    <WebBrowserUrl>http://localhost:8765/swagger</WebBrowserUrl>
+    <WebBrowserUrl>https://localhost:8765/swagger</WebBrowserUrl>
     <OutputPath>.</OutputPath>
     <SuppressCollectPythonCloudServiceFiles>true</SuppressCollectPythonCloudServiceFiles>
     <Name>LangChainAPI</Name>
@@ -22,7 +22,8 @@
     <TestFramework>none</TestFramework>
     <UnitTestPattern>test*.py</UnitTestPattern>
     <UnitTestRootDirectory>.</UnitTestRootDirectory>
-    <Environment>foundationallm-keyvault-name=solliance-aicopilot
+    <Environment>foundationallm-keyvault-uri=https://solliance-aicopilot.vault.azure.net/
+foundationallm-app-configuration-secret-name=foundationallm-app-configuration-connection-string
 foundationallm-azure-openai-api-url=https://foundationallm-01.openai.azure.com/
 Foundationallm-azure-openai-api-version=2023-05-15
 foundationallm-azure-openai-api-completions-model-version=0301

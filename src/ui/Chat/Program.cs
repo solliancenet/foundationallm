@@ -96,6 +96,8 @@ static class ProgramExtensions
     public static void RegisterServices(this IServiceCollection services)
     {
         services.AddScoped<IChatManager, ChatManager>();
+        services.AddScoped<IBrandManager, BrandManager>();
+        services.AddScoped<IBrandingService, BrandingService>();
         services.AddScoped<IAuthenticatedHttpClientFactory, EntraAuthenticatedHttpClientFactory>();
     }
 }

@@ -13,7 +13,7 @@ class CSVAgent(AgentBase):
     Agent for analyzing the contents of delimited files (e.g., CSV).
     """
     
-    def __init__(self, completion_request: CompletionRequest, llm: LanguageModelBase, app_config: Configuration):
+    def __init__(self, completion_request: CompletionRequest, llm: LanguageModelBase, config: Configuration):
         """
         Initializes a CSV agent.
 
@@ -24,15 +24,14 @@ class CSVAgent(AgentBase):
             and agent and data source metadata.
         llm : LanguageModelBase
             The language model to use for executing the completion request.
-        app_config : Configuration
+        config : Configuration
             Application configuration class for retrieving configuration settings.
         """
         self.agent_prompt_prefix = completion_request.agent.prompt_template
-        self.user_prompt = completion_request.user_prompt
         self.llm = llm.get_language_model()
         self.data_source_config: CSVConfiguration = completion_request.data_source.configuration
         if self.data_source_config.path_value_is_secret:
-            self.source_file_path = app_config.get_value(self.data_source_config.source_file_path)
+            self.source_file_path = config.get_value(self.data_source_config.source_file_path)
         else:
             self.source_file_path = self.data_source_config.source_file_path
         
@@ -55,9 +54,14 @@ class CSVAgent(AgentBase):
         """
         return self.agent.agent.llm_chain.prompt.template
     
-    def run(self) -> CompletionResponse:
+    def run(self, prompt: str) -> CompletionResponse:
         """
         Executes a query against the contents of a CSV file.
+        
+        Parameters
+        ----------
+        prompt : str
+            The prompt for which a completion is begin generated.
         
         Returns
         -------
@@ -67,8 +71,8 @@ class CSVAgent(AgentBase):
         """
         with get_openai_callback() as cb:
             return CompletionResponse(
-                completion = self.agent.run(self.user_prompt),
-                user_prompt= self.user_prompt,
+                completion = self.agent.run(prompt),
+                user_prompt= prompt,
                 completion_tokens = cb.completion_tokens,
                 prompt_tokens = cb.prompt_tokens,
                 total_tokens = cb.total_tokens,

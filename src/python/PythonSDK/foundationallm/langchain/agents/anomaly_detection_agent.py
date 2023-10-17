@@ -13,11 +13,12 @@ from langchain.tools.python.tool import PythonREPLTool
 
 from foundationallm.config import Configuration
 from foundationallm.langchain.agents import AgentBase
+from foundationallm.langchain.language_models import LanguageModelBase
+from foundationallm.langchain.data_sources.sql import SQLDatabaseFactory
+from foundationallm.models.orchestration import CompletionRequest, CompletionResponse
 from foundationallm.langchain.data_sources.sql import SQLDatabaseConfiguration
 from foundationallm.langchain.data_sources.sql.mssql import MicrosoftSQLServer
-from foundationallm.langchain.data_sources.sql import SQLDatabaseFactory
-from foundationallm.langchain.language_models import LanguageModelBase
-from foundationallm.models.orchestration import CompletionRequest, CompletionResponse
+
 from foundationallm.langchain.toolkits import AnomalyDetectionToolkit
 
 class AnomalyDetectionAgent(AgentBase):
@@ -25,9 +26,9 @@ class AnomalyDetectionAgent(AgentBase):
     Agent for performing anomaly detection.
     """
 
-    def __init__(self, completion_request: CompletionRequest, llm: LanguageModelBase, app_config: Configuration):
+    def __init__(self, completion_request: CompletionRequest, llm: LanguageModelBase, config: Configuration):
         """
-        Initializes a SummaryAgent
+        Initializes a anomaly detection agent.
 
         Parameters
         ----------
@@ -36,11 +37,10 @@ class AnomalyDetectionAgent(AgentBase):
             and agent and data source metadata.
         llm : LanguageModelBase
             The language model to use for executing the completion request.
-        app_config : Configuration
+        config : Configuration
             Application configuration class for retrieving configuration settings.
         """
         self.agent_prompt_prefix = completion_request.agent.prompt_template #PromptTemplate.from_template(completion_request.agent.prompt_template)
-        self.user_prompt = completion_request.user_prompt
         self.llm = llm.get_language_model()
         # Currently set up to use a SQL Database table as the source system.
         self.sql_db_config: SQLDatabaseConfiguration = completion_request.data_source.configuration
@@ -58,7 +58,7 @@ class AnomalyDetectionAgent(AgentBase):
         self.sql_agent = create_sql_agent(
             llm = self.llm,
             toolkit = SQLDatabaseToolkit(
-                db = SQLDatabaseFactory(sql_db_config = self.sql_db_config, app_config = app_config).get_sql_database(),
+                db = SQLDatabaseFactory(sql_db_config = self.sql_db_config, config = config).get_sql_database(),
                 llm=self.llm,
                 reduce_k_below_max_tokens=True
             ),
@@ -72,7 +72,7 @@ class AnomalyDetectionAgent(AgentBase):
         
         self.df = pd.read_sql(
             'SELECT * FROM RumInventory',
-            create_engine(MicrosoftSQLServer(sql_db_config = self.sql_db_config, app_config = app_config).get_connection_string()),
+            create_engine(MicrosoftSQLServer(sql_db_config = self.sql_db_config, config = config).get_connection_string()),
             index_col='Id'
         )
 
@@ -125,9 +125,14 @@ class AnomalyDetectionAgent(AgentBase):
         """
         return self.agent.agent.llm_chain.prompt.template
         
-    def run(self) -> CompletionResponse:
+    def run(self, prompt: str) -> CompletionResponse:
         """
         Executes an anomaly detection request.
+
+        Parameters
+        ----------
+        prompt : str
+            The prompt for which a completion is begin generated.
         
         Returns
         -------
@@ -137,8 +142,8 @@ class AnomalyDetectionAgent(AgentBase):
         """
         with get_openai_callback() as cb:
             return CompletionResponse(
-                completion = self.agent.run(self.user_prompt),
-                user_prompt= self.user_prompt,
+                completion = self.agent.run(prompt),
+                user_prompt= prompt,
                 completion_tokens = cb.completion_tokens,
                 prompt_tokens = cb.prompt_tokens,
                 total_tokens = cb.total_tokens,
