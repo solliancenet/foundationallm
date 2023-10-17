@@ -43,5 +43,9 @@ namespace FoundationaLLM.Common.Models.Configuration.Branding
         /// The background color of the client in hex format.
         /// </summary>
         public string BackgroundColor { get; set; }
+        /// <summary>
+        /// Flag indicating whether we use kiosk mode or not
+        /// </summary>
+        public bool KioskMode { get; set; }
     }
 }
