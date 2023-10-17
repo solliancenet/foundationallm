@@ -8,6 +8,7 @@
 			<template v-else>
 				<span>Please select a session</span>
 			</template>
+			<button @click="signIn()">TEST</button>
 		</div>
 
 		<!-- Messages -->
@@ -80,8 +81,38 @@ export default {
 		},
 
 		async handleSend(text: string) {
+			this.messages.push({
+				completionPromptId: null,
+				id: "",
+				rating: null,
+				sender: "User",
+				sessionId: this.session.id,
+				text: text,
+				timeStamp: Date.now(),
+				tokens: 0,
+				type: "Message",
+				vector: [],
+			});
 			await api.sendMessage(this.session.id, text);
 			await this.getMessages();
+		},
+		async signIn() {
+			try {
+				const msalInstance = this.$msalInstance;
+				const loginRequest = this.$loginRequest;
+
+				const response = await msalInstance.loginPopup(loginRequest);
+
+				if (response) {
+
+				console.log('User is signed in.');
+				console.log(response);
+				} else {
+				console.log('User did not sign in.');
+				}
+			} catch (error) {
+				console.log(error);
+			}
 		},
 	},
 };
