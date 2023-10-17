@@ -7,7 +7,7 @@ from foundationallm.langchain.language_models.openai import OpenAIModelBase
 
 class OpenAITextCompletionModel(OpenAIModelBase):
     """Azure OpenAI text completion model."""
-    config_value_base_name: str = 'foundationallm-openai-api'
+    config_value_base_name: str = 'FoundationaLLM:OpenAI:API'
     
     def __init__(self, language_model: LanguageModel, config: Configuration):
         """
@@ -21,9 +21,12 @@ class OpenAITextCompletionModel(OpenAIModelBase):
             Application configuration class for retrieving configuration settings.
         """
         self.config = config
-        self.openai_api_base = self.config.get_value(f'{self.config_value_base_name}-url')
-        self.openai_api_key = self.config.get_value(f'{self.config_value_base_name}-key')
-        self.temperature = language_model.temperature
+        self.config_value = self.config.get_value(self.config_value_base_name)
+        
+        self.openai_api_base = self.config_value["Endpoint"]
+        self.temperature = self.config_value["Temperature"]
+        
+        self.openai_api_key = self.config.get_value(f'{self.config_value_base_name}:Key')
 
     def get_language_model(self) -> BaseLanguageModel:
         """

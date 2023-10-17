@@ -123,8 +123,6 @@
     <Compile Include="foundationallm\models\orchestration\__init__.py" />
     <Compile Include="foundationallm\models\session.py" />
     <Compile Include="foundationallm\models\__init__.py" />
-    <Compile Include="foundationallm\auth\api_key_validator.py" />
-    <Compile Include="foundationallm\auth\__init__.py" />
     <Compile Include="foundationallm\config\configuration.py" />
     <Compile Include="foundationallm\config\__init__.py" />
     <Compile Include="foundationallm\storage\blob_storage_manager.py" />
@@ -136,17 +134,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include=".gitignore" />
-    <Content Include="foundationallm\hubs\data_source\data_sources\blob_storage\__pycache__\blob_storage_authentication_metadata.cpython-311.pyc" />
-    <Content Include="foundationallm\hubs\data_source\data_sources\blob_storage\__pycache__\blob_storage_data_source_metadata.cpython-311.pyc" />
-    <Content Include="foundationallm\hubs\data_source\data_sources\blob_storage\__pycache__\blob_storage_file_type.cpython-311.pyc" />
-    <Content Include="foundationallm\hubs\data_source\data_sources\blob_storage\__pycache__\__init__.cpython-311.pyc" />
     <Content Include="requirements.txt" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="foundationallm\" />
     <Folder Include="foundationallm\hubs\data_source\data_sources\" />
     <Folder Include="foundationallm\hubs\data_source\data_sources\blob_storage\" />
-    <Folder Include="foundationallm\hubs\data_source\data_sources\blob_storage\__pycache__\" />
     <Folder Include="foundationallm\hubs\data_source\data_sources\search_service\" />
     <Folder Include="foundationallm\hubs\data_source\data_sources\sql\" />
     <Folder Include="foundationallm\hubs\agent\" />
@@ -171,7 +164,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="foundationallm\" />
-    <Folder Include="foundationallm\auth\" />
     <Folder Include="foundationallm\config\" />
   </ItemGroup>
   <ItemGroup>

@@ -9,7 +9,7 @@ class SQLDatabaseFactory():
     """
     Factory class to determine which SQL database to use.
     """
-    def __init__(self, sql_db_config: SQLDatabaseConfiguration, app_config: Configuration):
+    def __init__(self, sql_db_config: SQLDatabaseConfiguration, config: Configuration):
         """
         Initializes an AgentFactory for selecting which agent to use for completion.
 
@@ -17,21 +17,21 @@ class SQLDatabaseFactory():
         ----------
         sql_db_config : SQLDatabaseConfiguration
             SQL Database configuration class for providing settings to the database.
-        app_config : Configuration
+        config : Configuration
             Application configuration class for retrieving configuration settings.
         """
         self.sql_db_config: SQLDatabaseConfiguration = sql_db_config
-        self.app_config: Configuration = app_config
+        self.config: Configuration = config
         self.dialect = self.sql_db_config.dialect
         
     def get_sql_database(self) -> SQLDatabase:
         match self.dialect:
             case SQLDatabaseDialect.MARIADB:
-                return MariaDB(sql_db_config = self.sql_db_config, app_config = self.app_config).get_database()
+                return MariaDB(sql_db_config = self.sql_db_config, config = self.config).get_database()
             case SQLDatabaseDialect.MSSQL:
-                return MicrosoftSQLServer(sql_db_config = self.sql_db_config, app_config = self.app_config).get_database()
+                return MicrosoftSQLServer(sql_db_config = self.sql_db_config, config = self.config).get_database()
             case SQLDatabaseDialect.MYSQL:
-                return MySQL(sql_db_config = self.sql_db_config, app_config = self.app_config).get_database()
+                return MySQL(sql_db_config = self.sql_db_config, config = self.config).get_database()
             case SQLDatabaseDialect.POSTGRESQL:
-                return PostgreSQL(sql_db_config = self.sql_db_config, app_config = self.app_config).get_database()
+                return PostgreSQL(sql_db_config = self.sql_db_config, config = self.config).get_database()
         

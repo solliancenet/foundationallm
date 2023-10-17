@@ -33,9 +33,9 @@ class LanguageModelFactory:
                     if self.language_model.use_chat:
                         return AzureChatModel(language_model = self.language_model, config = self.config)
                     else:
-                        return AzureTextCompletionModel(language_model = self.language_model,config = self.config)
+                        return AzureTextCompletionModel(language_model = self.language_model, config = self.config)
                 case LanguageModelProviders.OPENAI:
                     if self.language_model.use_chat:
-                        return OpenAIChatModel(language_model = self.language_model,config = self.config)
+                        return OpenAIChatModel(language_model = self.language_model, config = self.config)
                     else:
-                        return OpenAITextCompletionModel(language_model = self.language_model,config = self.config)
+                        return OpenAITextCompletionModel(language_model = self.language_model, config = self.config)

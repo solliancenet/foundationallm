@@ -18,7 +18,7 @@ class SummaryAgent(AgentBase):
     Agent for summarizing input text.
     """
         
-    def __init__(self, completion_request: CompletionRequest, llm: LanguageModelBase, app_config: Configuration):
+    def __init__(self, completion_request: CompletionRequest, llm: LanguageModelBase, config: Configuration):
         """
         Initializes a SummaryAgent
 
@@ -29,13 +29,16 @@ class SummaryAgent(AgentBase):
             and agent and data source metadata.
         llm : LanguageModelBase
             The language model to use for executing the completion request.
-        app_config : Configuration
+        config : Configuration
             Application configuration class for retrieving configuration settings.
         """
+        self.config = config
+        self.config_value = self.config.get_value('FoundationaLLM:LangChain:Summary')
+        
         self.summarizer_chain_prompt = PromptTemplate.from_template(completion_request.agent.prompt_template)
         self.llm = llm.get_language_model()
-        self.model_name = app_config.get_value('foundationallm-langchain-summary-model-name')
-        self.max_tokens = app_config.get_value('foundationallm-langchain-summary-model-max-tokens')
+        self.model_name = self.config_value["ModelName"]
+        self.max_tokens = self.config_value["MaxTokens"]
         
     def __get_text_as_documents(self, prompt: str) -> List[Document]:
         """
