@@ -17,14 +17,6 @@ namespace FoundationaLLM.AgentFactory.Interfaces
         /// <summary>
         /// Method for retrieving a completion from the orchestration service.
         /// </summary>
-        /// <param name="userPrompt">The user propt for which a completion should be retrieved.</param>
-        /// <param name="messageHistory">List of previous user prompts in the form of a message history.</param>
-        /// <returns>Returns a Completion response.</returns>
-        Task<CompletionResponse> GetCompletion(string userPrompt, List<MessageHistoryItem> messageHistory);
-
-        /// <summary>
-        /// Method for retrieving a completion from the orchestration service.
-        /// </summary>
         /// <param name="request">Hub populated request object containing agent, prompt, language model, and data source information</param>
         /// <returns></returns>
         Task<LLMOrchestrationCompletionResponse> GetCompletion(LLMOrchestrationCompletionRequest request);

@@ -3,10 +3,7 @@ using FoundationaLLM.Common.Models.Orchestration;
 
 namespace FoundationaLLM.AgentFactory.Core.Interfaces;
 
-/// <summary>
-/// IPromptHubService interface
-/// </summary>
-public interface IPromptHubService
+public interface IPromptHubAPIService
 {
     /// <summary>
     /// Gets the status of the Prompt Hub Service

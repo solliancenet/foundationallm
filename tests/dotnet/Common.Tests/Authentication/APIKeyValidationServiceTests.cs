@@ -17,7 +17,7 @@ namespace FoundationaLLM.Common.Tests.Authentication
         {
             // Arrange
             var configurationService = Substitute.For<IConfigurationService>();
-            var options = Options.Create(new APIKeyValidationSettings { APIKeySecretName = "ValidKey" });
+            var options = Options.Create(new APIKeyValidationSettings { APIKey = "ValidKey" });
             var apiKeyValidationService = new APIKeyValidationService(configurationService, options);
             var apiKey = "ValidKey";
 
@@ -35,7 +35,7 @@ namespace FoundationaLLM.Common.Tests.Authentication
         {
             // Arrange
             var configurationService = Substitute.For<IConfigurationService>();
-            var options = Options.Create(new APIKeyValidationSettings { APIKeySecretName = "ValidKey" });
+            var options = Options.Create(new APIKeyValidationSettings { APIKey = "ValidKey" });
             var apiKeyValidationService = new APIKeyValidationService(configurationService, options);
             var apiKey = "InvalidKey";
 
@@ -53,7 +53,7 @@ namespace FoundationaLLM.Common.Tests.Authentication
         {
             // Arrange
             var configurationService = Substitute.For<IConfigurationService>();
-            var options = Options.Create(new APIKeyValidationSettings { APIKeySecretName = "ValidKey" });
+            var options = Options.Create(new APIKeyValidationSettings { APIKey = "ValidKey" });
             var apiKeyValidationService = new APIKeyValidationService(configurationService, options);
             var apiKey = "";
 

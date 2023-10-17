@@ -31,11 +31,5 @@ namespace FoundationaLLM.Gatekeeper.API.Controllers
         {
             return await _gatekeeperService.GetSummary(summaryRequest);
         }
-
-        [HttpPost("preference")]
-        public async Task<bool> SetLLMOrchestrationPreference(string orchestrationService)
-        {
-            return await _gatekeeperService.SetLLMOrchestrationPreference(orchestrationService);
-        }
     }
 }

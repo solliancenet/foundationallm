@@ -14,6 +14,7 @@ using System.Net.Http;
 using System.Runtime;
 using System.Text;
 using FoundationaLLM.Common.Interfaces;
+using FoundationaLLM.Common.Constants;
 
 namespace FoundationaLLM.AgentFactory.Core.Services;
 
@@ -53,7 +54,7 @@ public class AgentHubAPIService : IAgentHubService
     {
         try
         {
-            var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.AgentHubAPI);
+            var client = _httpClientFactoryService.CreateClient(HttpClients.AgentHubAPI);
 
             var responseMessage = await client.GetAsync("/status");
 

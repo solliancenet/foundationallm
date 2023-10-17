@@ -87,7 +87,7 @@ namespace FoundationaLLM.AgentFactory.Services
 
             var responseMessage = await client.PostAsync("/orchestration/summary",
                 new StringContent(
-                    JsonConvert.SerializeObject(new SummaryRequest { Prompt = content }, _jsonSerializerSettings),
+                    JsonConvert.SerializeObject(new SummaryRequest { UserPrompt = content }, _jsonSerializerSettings),
                     Encoding.UTF8, "application/json"));
 
             if (responseMessage.IsSuccessStatusCode)

@@ -6,9 +6,7 @@ class PromptHubStorageManager(BlobStorageManager):
      """The PromptHubStorageManager class is responsible for fetching available prompt values from Azure Blob Storage."""
      def __init__(self, config: Configuration = None):
          connection_string = config.get_value("FoundationaLLM:PromptHub:StorageManager:BlobStorage:ConnectionString")
-         
-         config_value = config.get_value("FoundationaLLM:PromptHub")
-         container_name = config_value["PromptMetadata"]["StorageContainer"]
+         container_name = config.get_value("FoundationaLLM:PromptHub:PromptMetadata:StorageContainer")
 
          super().__init__(blob_connection_string=connection_string,
                              container_name=container_name)

@@ -10,4 +10,3 @@ class AgentHubRequest(BaseModel):
         
     """
     user_prompt:str
-    user_context: Optional[str] = None

@@ -77,7 +77,7 @@ namespace FoundationaLLM.Core.Tests.Services
         {
             // Arrange
             var expected = "Test Response";
-            var response = new SummaryResponse { Info = expected };
+            var response = new SummaryResponse { Summary = expected };
             var summaryRequest = "Test Prompt";
 
             // Create a mock message handler

@@ -54,35 +54,34 @@ namespace FoundationaLLM.AgentFactory.API
             builder.Services.AddScoped<IUserClaimsProviderService, NoOpUserClaimsProviderService>();
             builder.Services.AddScoped<APIKeyAuthenticationFilter>();
             builder.Services.AddOptions<APIKeyValidationSettings>()
-                .Bind(builder.Configuration.GetSection("FoundationaLLM:DownstreamAPIs:AgentFactoryAPI"));
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:APIs:AgentFactoryAPI"));
             builder.Services.AddTransient<IAPIKeyValidationService, APIKeyValidationService>();
 
             builder.Services.AddOptions<SemanticKernelServiceSettings>()
-                .Bind(builder.Configuration.GetSection("FoundationaLLM:DownstreamAPIs:SemanticKernelAPI"));
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:APIs:SemanticKernelAPI"));
 
             builder.Services.AddOptions<LangChainServiceSettings>()
-                .Bind(builder.Configuration.GetSection("FoundationaLLM:DownstreamAPIs:LangChainAPI"));
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:APIs:LangChainAPI"));
 
             builder.Services.AddOptions<AgentHubSettings>()
-                .Bind(builder.Configuration.GetSection("FoundationaLLM:DownstreamAPIs:AgentHubAPI"));
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:APIs:AgentHubAPI"));
 
             builder.Services.AddOptions<PromptHubSettings>()
-                .Bind(builder.Configuration.GetSection("FoundationaLLM:DownstreamAPIs:PromptHubAPI"));
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:APIs:PromptHubAPI"));
 
             builder.Services.AddOptions<AgentFactorySettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:AgentFactory"));
 
             builder.Services.AddOptions<KeyVaultConfigurationServiceSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:Configuration"));
-
-            builder.Services.AddSingleton<IConfigurationService, KeyVaultConfigurationService>();
             
-            builder.Services.AddScoped<ISemanticKernelService, SemanticKernelService>();
-            builder.Services.AddScoped<ILangChainService, LangChainService>();
+            builder.Services.AddScoped<ILLMOrchestrationService, SemanticKernelService>();
+            builder.Services.AddScoped<ILLMOrchestrationService, LangChainService>();
+
             builder.Services.AddScoped<IAgentFactoryService, AgentFactoryService>();
-            builder.Services.AddScoped<IAgentHubService, AgentHubAPIService>();
-            builder.Services.AddScoped<IDataSourceHubService, DataSourceHubAPIService>();
-            builder.Services.AddScoped<IPromptHubService, PromptHubAPIService>();
+            builder.Services.AddScoped<IAgentHubAPIService, AgentHubAPIService>();
+            builder.Services.AddScoped<IDataSourceHubAPIService, DataSourceHubAPIService>();
+            builder.Services.AddScoped<IPromptHubAPIService, PromptHubAPIService>();
             builder.Services.AddScoped<IUserIdentityContext, UserIdentityContext>();
             builder.Services.AddScoped<IHttpClientFactoryService, HttpClientFactoryService>();
             builder.Services.AddScoped<IUserClaimsProviderService, NoOpUserClaimsProviderService>();
@@ -171,7 +170,8 @@ namespace FoundationaLLM.AgentFactory.API
             {
                 DownstreamAPIs = new Dictionary<string, DownstreamAPIKeySettings>()
             };
-            foreach (var apiSetting in builder.Configuration.GetSection("FoundationaLLM:DownstreamAPIs").GetChildren())
+
+            var agentHubAPISettings = new DownstreamAPIKeySettings
             {
                 var key = apiSetting.Key;
                 var settings = apiSetting.Get<DownstreamAPIKeySettings>();
@@ -181,7 +181,6 @@ namespace FoundationaLLM.AgentFactory.API
                     .AddTransientHttpErrorPolicy(policyBuilder =>
                         policyBuilder.WaitAndRetryAsync(
                             3, retryNumber => TimeSpan.FromMilliseconds(600)));
-            }
 
             builder.Services.AddSingleton<IDownstreamAPISettings>(downstreamAPISettings);
         }

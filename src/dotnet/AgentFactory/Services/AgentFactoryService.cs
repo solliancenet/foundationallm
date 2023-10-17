@@ -1,4 +1,5 @@
-﻿using FoundationaLLM.AgentFactory.Core.Interfaces;
+﻿using FoundationaLLM.AgentFactory.Core.Agents;
+using FoundationaLLM.AgentFactory.Core.Interfaces;
 using FoundationaLLM.AgentFactory.Core.Models.ConfigurationOptions;
 using FoundationaLLM.AgentFactory.Core.Models.Messages;
 using FoundationaLLM.AgentFactory.Core.Models.Orchestration;
@@ -11,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.SemanticKernel.SemanticFunctions;
 using FoundationaLLM.AgentFactory.Core.Models.Orchestration.DataSourceConfigurations;
+using FoundationaLLM.Common.Interfaces;
 
 namespace FoundationaLLM.AgentFactory.Core.Services;
 
@@ -19,19 +21,19 @@ namespace FoundationaLLM.AgentFactory.Core.Services;
 /// </summary>
 public class AgentFactoryService : IAgentFactoryService
 {
-    private readonly ISemanticKernelService _semanticKernel;
-    private readonly ILangChainService _langChain;
-    private readonly IAgentHubService _agentHubService;
+    private readonly IEnumerable<ILLMOrchestrationService> _orchestrationServices;
+    private readonly IAgentHubAPIService _agentHubAPIService;
     private readonly AgentFactorySettings _agentFactorySettings;
     private readonly AgentHubSettings _agentHubSettings;
     
     private readonly PromptHubSettings _promptHubSettings;
-    private readonly IPromptHubService _promptHubService;
+    private readonly IPromptHubAPIService _promptHubAPIService;
 
     private readonly DataSourceHubSettings _dataSourceHubSettings;
-    private readonly IDataSourceHubService _dataSourceHubService;
+    private readonly IDataSourceHubAPIService _dataSourceHubAPIService;
 
     private readonly ILogger<AgentFactoryService> _logger;
+    private readonly IUserIdentityContext _userIdentity;
 
     private LLMOrchestrationService _llmOrchestrationService = LLMOrchestrationService.LangChain;
 
@@ -49,32 +51,32 @@ public class AgentFactoryService : IAgentFactoryService
     /// <param name="dataSourceHubSettings"></param>
     /// <param name="logger"></param>
     public AgentFactoryService(
-        ISemanticKernelService semanticKernel,
-        ILangChainService langChain,
-        
-        IAgentHubService agentHubService,
+        IEnumerable<ILLMOrchestrationService> orchestrationServices,
+
         IOptions<AgentFactorySettings> agentFactorySettings,
+
+        IAgentHubAPIService agentHubService,
         IOptions<AgentHubSettings> agentHubSettings,
 
-        IPromptHubService promptHubService,
+        IPromptHubAPIService promptHubService,
         IOptions<PromptHubSettings> promptHubSettings,
 
-        IDataSourceHubService dataSourceHubService,
+        IDataSourceHubAPIService dataSourceHubService,
         IOptions<DataSourceHubSettings> dataSourceHubSettings,
 
-        ILogger<AgentFactoryService> logger)
+        ILogger<AgentFactoryService> logger,
+        IUserIdentityContext userIdentity)
     {
-        _semanticKernel = semanticKernel;
-        _langChain = langChain;
+        _orchestrationServices = orchestrationServices;
         
-        _agentHubService = agentHubService;
+        _agentHubAPIService = agentHubService;
         _agentFactorySettings = agentFactorySettings.Value;
         _agentHubSettings = agentHubSettings.Value;
 
-        _promptHubService = promptHubService;
+        _promptHubAPIService = promptHubService;
         _promptHubSettings = promptHubSettings.Value;
 
-        _dataSourceHubService = dataSourceHubService;
+        _dataSourceHubAPIService = dataSourceHubService;
         _dataSourceHubSettings = dataSourceHubSettings.Value;
 
         _logger = logger;
@@ -105,12 +107,12 @@ public class AgentFactoryService : IAgentFactoryService
     {
         get
         {
-            if (_semanticKernel.IsInitialized)
+            if (_orchestrationServices.All(os => os.IsInitialized))
                 return "ready";
-            var status = new List<string>();
-            if (!_semanticKernel.IsInitialized)
-                status.Add("SemanticKernelService: initializing");
-            return string.Join(",", status);
+
+            return string.Join(",", _orchestrationServices
+                .Where(os => !os.IsInitialized)
+                .Select(os => $"{os.GetType().Name}: initializing"));
         }
     }
 
@@ -122,8 +124,13 @@ public class AgentFactoryService : IAgentFactoryService
     {
         try
         {
-            //get agent for prompt...
-            AgentHubResponse agentResponse= await _agentHubService.ResolveRequest(completionRequest.UserPrompt, completionRequest.UserContext);
+            var agent = await AgentBuilder.Build(
+                completionRequest.UserPrompt,
+                _userIdentity.CurrentUserIdentity.UPN,
+                _agentHubAPIService,
+                _orchestrationServices,
+                _promptHubAPIService,
+                _dataSourceHubAPIService);
 
             //get prompts for the agent from the prompt hub
             PromptHubResponse promptResponse = await _promptHubService.ResolveRequest(agentResponse.Agent!.Name!, completionRequest.UserContext);
@@ -205,35 +212,27 @@ public class AgentFactoryService : IAgentFactoryService
     /// <summary>
     /// Retrieve a summarization for the passed in prompt from the orchestration service.
     /// </summary>
-    public async Task<SummaryResponse> GetSummary(SummaryRequest content)
+    public async Task<SummaryResponse> GetSummary(SummaryRequest summaryRequest)
     {
         try
         {
-            var summary = await GetLLMOrchestrationService().GetSummary(content.Prompt);
+            var agent = await AgentBuilder.Build(
+                summaryRequest.UserPrompt,
+                _userIdentity.CurrentUserIdentity.UPN,
+                _agentHubAPIService,
+                _orchestrationServices,
+                _promptHubAPIService,
+                _dataSourceHubAPIService);
 
-            return new SummaryResponse
-            {
-                Info = summary
-            };
+            return await agent.GetSummary(summaryRequest);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error retrieving summarization for {content}.");
+            _logger.LogError(ex, $"Error retrieving summarization for {summaryRequest.UserPrompt}.");
             return new SummaryResponse
             {
-                Info = "[No Summary]"
+                Summary = "[No Summary]"
             };
-        }
-    }
-    private ILLMOrchestrationService GetLLMOrchestrationService()
-    {
-        switch (_llmOrchestrationService)
-        {
-            case LLMOrchestrationService.SemanticKernel:
-                return _semanticKernel as ILLMOrchestrationService;
-            case LLMOrchestrationService.LangChain:
-            default:
-                return _langChain as ILLMOrchestrationService;
         }
     }
 }

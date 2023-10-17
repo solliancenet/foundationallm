@@ -4,7 +4,7 @@ namespace FoundationaLLM.AgentFactory.Core.Interfaces;
 /// <summary>
 /// Interface for the Agent Factory Service
 /// </summary>
-public interface IDataSourceHubService
+public interface IDataSourceHubAPIService
 {
     /// <summary>
     /// Gets the status of the DataSource Hub Service

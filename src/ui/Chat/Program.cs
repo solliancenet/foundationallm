@@ -40,8 +40,6 @@ builder.Services.Configure<EntraSettings>(builder.Configuration.GetSection("Foun
 builder.Services.AddOptions<KeyVaultConfigurationServiceSettings>()
     .Bind(builder.Configuration.GetSection("FoundationaLLM:Configuration"));
 
-builder.Services.AddSingleton<IConfigurationService, KeyVaultConfigurationService>();
-
 builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
     .AddMicrosoftIdentityWebApp(options =>
     {

@@ -43,18 +43,14 @@ namespace FoundationaLLM.Gatekeeper.API
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddScoped<APIKeyAuthenticationFilter>();
             builder.Services.AddOptions<APIKeyValidationSettings>()
-                .Bind(builder.Configuration.GetSection("FoundationaLLM:DownstreamAPIs:GatekeeperAPI"));
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:APIs:GatekeeperAPI"));
             builder.Services.AddOptions<KeyVaultConfigurationServiceSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:Configuration"));
-
-
-            builder.Services.AddSingleton<IConfigurationService, KeyVaultConfigurationService>();
 
             // Register the downstream services and HTTP clients.
             RegisterDownstreamServices(builder);
 
             builder.Services.AddTransient<IAPIKeyValidationService, APIKeyValidationService>();
-            builder.Services.AddSingleton<IConfigurationService, KeyVaultConfigurationService>();
 
             builder.Services.AddOptions<RefinementServiceSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:Refinement"));
@@ -151,18 +147,20 @@ namespace FoundationaLLM.Gatekeeper.API
             {
                 DownstreamAPIs = new Dictionary<string, DownstreamAPIKeySettings>()
             };
-            foreach (var apiSetting in builder.Configuration.GetSection("FoundationaLLM:DownstreamAPIs").GetChildren())
-            {
-                var key = apiSetting.Key;
-                var settings = apiSetting.Get<DownstreamAPIKeySettings>();
 
-                downstreamAPISettings.DownstreamAPIs[key] = settings;
-                builder.Services
-                    .AddHttpClient(key, client => { client.BaseAddress = new Uri(settings.APIUrl); })
+            var agentFactoryAPISettings = new DownstreamAPIKeySettings
+            {
+                APIUrl = builder.Configuration[$"FoundationaLLM:APIs:{HttpClients.AgentFactoryAPI}:APIUrl"],
+                APIKey = builder.Configuration[$"FoundationaLLM:APIs:{HttpClients.AgentFactoryAPI}:APIKey"]
+            };
+            downstreamAPISettings.DownstreamAPIs[HttpClients.AgentFactoryAPI] = agentFactoryAPISettings;
+
+            builder.Services
+                    .AddHttpClient(agentFactoryAPISettings.APIKey,
+                        client => { client.BaseAddress = new Uri(agentFactoryAPISettings.APIUrl); })
                     .AddTransientHttpErrorPolicy(policyBuilder =>
                         policyBuilder.WaitAndRetryAsync(
                             3, retryNumber => TimeSpan.FromMilliseconds(600)));
-            }
 
             builder.Services.AddSingleton<IDownstreamAPISettings>(downstreamAPISettings);
         }

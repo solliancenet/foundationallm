@@ -32,13 +32,11 @@ class SummaryAgent(AgentBase):
         config : Configuration
             Application configuration class for retrieving configuration settings.
         """
-        self.config = config
-        self.config_value = self.config.get_value('FoundationaLLM:LangChain:Summary')
-        
+        self.config = config        
         self.summarizer_chain_prompt = PromptTemplate.from_template(completion_request.agent.prompt_template)
         self.llm = llm.get_language_model()
-        self.model_name = self.config_value["ModelName"]
-        self.max_tokens = self.config_value["MaxTokens"]
+        self.model_name = self.config.get_value["FoundationaLLM:LangChain:Summary:ModelName"]
+        self.max_tokens = self.config.get_value["FoundationaLLM:LangChain:Summary:MaxTokens"]
         
     def __get_text_as_documents(self, prompt: str) -> List[Document]:
         """
