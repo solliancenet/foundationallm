@@ -1,15 +1,15 @@
 locals {
   alert = {
-#    node_cpu = {
-#      aggregation = "Average"
-#      description = "Node CPU utilization greater than 75% for 1 hour"
-#      frequency   = "PT1M"
-#      metric_name = "node_cpu_usage_percentage"
-#      operator    = "GreaterThan"
-#      threshold   = 75
-#      window_size = "PT1H"
-#      severity    = 0
-#    }
+    #    node_cpu = {
+    #      aggregation = "Average"
+    #      description = "Node CPU utilization greater than 75% for 1 hour"
+    #      frequency   = "PT1M"
+    #      metric_name = "node_cpu_usage_percentage"
+    #      operator    = "GreaterThan"
+    #      threshold   = 75
+    #      window_size = "PT1H"
+    #      severity    = 0
+    #    }
   }
 }
 

@@ -1,5 +1,6 @@
 locals {
-  tfc_address_prefix = cidrsubnet(local.vnet_address_space, 11, 2046)
+  tfc_address_prefix   = cidrsubnet(local.vnet_address_space, 11, 2046)
+  agent_address_prefix = cidrsubnet(local.vnet_address_space, 11, 2047)
 
   default_nsg_rules = {
     inbound = {
@@ -344,6 +345,39 @@ locals {
             access                     = "Allow"
             destination_address_prefix = "Internet"
             destination_port_range     = "443"
+            priority                   = 256
+            protocol                   = "Tcp"
+            source_address_prefix      = "*"
+            source_port_range          = "*"
+          }
+          "allow-vnet" = {
+            access                     = "Allow"
+            destination_address_prefix = "VirtualNetwork"
+            destination_port_range     = "*"
+            priority                   = 4068
+            protocol                   = "*"
+            source_address_prefix      = "VirtualNetwork"
+            source_port_range          = "*"
+          }
+        })
+      }
+    }
+    "Agents" = {
+      address_prefix    = local.agent_address_prefix
+      service_endpoints = []
+      delegation = {
+        "Microsoft.ContainerInstance/containerGroups" = [
+          "Microsoft.Network/virtualNetworks/subnets/action"
+        ]
+      }
+
+      nsg_rules = {
+        inbound = merge({}, {})
+        outbound = merge({}, {
+          "allow-ado-services" = {
+            access                     = "Allow"
+            destination_address_prefix = "Internet"
+            destination_port_range     = "*"
             priority                   = 256
             protocol                   = "Tcp"
             source_address_prefix      = "*"
