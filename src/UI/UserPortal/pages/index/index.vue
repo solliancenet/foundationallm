@@ -24,6 +24,8 @@ export default {
 				'--primary-color': this.$config.public.BRANDING_PRIMARY_COLOR,
 				'--secondary-color': this.$config.public.BRANDING_SECONDARY_COLOR,
 				'--accent-color': this.$config.public.BRANDING_ACCENT_COLOR,
+				'--primary-text': this.$config.public.BRANDING_PRIMARY_TEXT_COLOR,
+				'--secondary-text': this.$config.public.BRANDING_SECONDARY_TEXT_COLOR,
 			};
 		}
 	},
