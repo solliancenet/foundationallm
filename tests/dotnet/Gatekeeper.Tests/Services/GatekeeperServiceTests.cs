@@ -45,22 +45,5 @@ namespace Gatekeeper.Tests.Services
             // Assert
             await agentFactoryAPIService.Received(1).GetSummary(Arg.Is(summaryRequest));
         }
-
-        [Fact]
-        public async Task SetLLMOrchestrationPreference_CallsAgentFactoryAPIServiceWithOrchestrationService()
-        {
-            // Arrange
-            var agentFactoryAPIService = Substitute.For<IAgentFactoryAPIService>();
-            var refinementService = Substitute.For<IRefinementService>();
-            var contentSafetyService = Substitute.For<IContentSafetyService>();
-            var service = new GatekeeperService(agentFactoryAPIService, refinementService, contentSafetyService);
-            var orchestrationService = "ServiceName";
-
-            // Act
-            await service.SetLLMOrchestrationPreference(orchestrationService);
-
-            // Assert
-            await agentFactoryAPIService.Received(1).SetLLMOrchestrationPreference(Arg.Is(orchestrationService));
-        }
     }
 }

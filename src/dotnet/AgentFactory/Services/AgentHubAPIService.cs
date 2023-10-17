@@ -63,7 +63,7 @@ public class AgentHubAPIService : IAgentHubAPIService
     {
         try
         {
-            AgentHubRequest ahm = new AgentHubRequest { UserPrompt=userPrompt, UserContext=userContext };
+            AgentHubRequest ahm = new AgentHubRequest { UserPrompt=userPrompt };
             
             var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.AgentHubAPI);
                         

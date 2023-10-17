@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.SemanticKernel.SemanticFunctions;
 using FoundationaLLM.AgentFactory.Core.Models.Orchestration.DataSourceConfigurations;
+using FoundationaLLM.Common.Interfaces;
 
 namespace FoundationaLLM.AgentFactory.Core.Services;
 
@@ -29,14 +30,16 @@ public class AgentFactoryService : IAgentFactoryService
     private readonly IDataSourceHubAPIService _dataSourceHubAPIService;
 
     private readonly ILogger<AgentFactoryService> _logger;
+    private readonly IUserIdentityContext _userIdentity;
 
     private LLMOrchestrationService _llmOrchestrationService = LLMOrchestrationService.LangChain;
 
     public AgentFactoryService(
         IEnumerable<ILLMOrchestrationService> orchestrationServices,
-        
-        IAgentHubAPIService agentHubService,
+
         IOptions<AgentFactorySettings> agentFactorySettings,
+
+        IAgentHubAPIService agentHubService,
         IOptions<AgentHubSettings> agentHubSettings,
 
         IPromptHubAPIService promptHubService,
@@ -45,7 +48,8 @@ public class AgentFactoryService : IAgentFactoryService
         IDataSourceHubAPIService dataSourceHubService,
         IOptions<DataSourceHubSettings> dataSourceHubSettings,
 
-        ILogger<AgentFactoryService> logger)
+        ILogger<AgentFactoryService> logger,
+        IUserIdentityContext userIdentity)
     {
         _orchestrationServices = orchestrationServices;
         
@@ -60,6 +64,7 @@ public class AgentFactoryService : IAgentFactoryService
         _dataSourceHubSettings = dataSourceHubSettings.Value;
 
         _logger = logger;
+        _userIdentity = userIdentity;
     }
 
     public string Status
@@ -85,7 +90,7 @@ public class AgentFactoryService : IAgentFactoryService
         {
             var agent = await AgentBuilder.Build(
                 completionRequest.UserPrompt,
-                completionRequest.UserContext,
+                _userIdentity.CurrentUserIdentity.UPN,
                 _agentHubAPIService,
                 _orchestrationServices,
                 _promptHubAPIService,
@@ -116,7 +121,7 @@ public class AgentFactoryService : IAgentFactoryService
         {
             var agent = await AgentBuilder.Build(
                 summaryRequest.UserPrompt,
-                summaryRequest.UserContext,
+                _userIdentity.CurrentUserIdentity.UPN,
                 _agentHubAPIService,
                 _orchestrationServices,
                 _promptHubAPIService,

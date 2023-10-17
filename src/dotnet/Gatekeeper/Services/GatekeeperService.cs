@@ -46,10 +46,5 @@ namespace FoundationaLLM.Gatekeeper.Core.Services
 
             return new SummaryResponse() { Summary = result.Reason };
         }
-
-        public async Task<bool> SetLLMOrchestrationPreference(string orchestrationService)
-        {
-            return await _agentFactoryAPIService.SetLLMOrchestrationPreference(orchestrationService);
-        }
     }
 }
