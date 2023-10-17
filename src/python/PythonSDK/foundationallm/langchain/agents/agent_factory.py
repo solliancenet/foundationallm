@@ -1,17 +1,15 @@
 from unittest.mock import Base
-from langchain import base_language
 from langchain.base_language import BaseLanguageModel
-from langchain.llms.openai import OpenAIChat
-
 from foundationallm.config import Configuration
 from foundationallm.models.orchestration import CompletionRequest
-from foundationallm.langchain.language_models import LanguageModelFactory
 from foundationallm.langchain.agents import AgentBase
 from foundationallm.langchain.agents import AnomalyDetectionAgent
 from foundationallm.langchain.agents import CSVAgent
 from foundationallm.langchain.agents import SqlDbAgent
 from foundationallm.langchain.agents import SummaryAgent
+from foundationallm.langchain.agents import BlobStorageAgent
 from foundationallm.langchain.agents import ConversationalAgent
+
 
 class AgentFactory:
     """
@@ -55,5 +53,7 @@ class AgentFactory:
                 return SqlDbAgent(self.completion_request, llm=self.llm, config=self.config)
             case 'summary':
                 return SummaryAgent(self.completion_request, llm=self.llm, config=self.config)
+            case 'blob':
+                return BlobStorageAgent(self.completion_request, llm=self.llm, config=self.config)
             case _:
                 return ConversationalAgent(self.completion_request, llm=self.llm, config=self.config)

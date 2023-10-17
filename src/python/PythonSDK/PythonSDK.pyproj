@@ -27,7 +27,6 @@
     <Compile Include="foundationallm\credentials\__init__.py" />
     <Compile Include="foundationallm\hubs\data_source\data_sources\blob_storage\blob_storage_authentication_metadata.py" />
     <Compile Include="foundationallm\hubs\data_source\data_sources\blob_storage\blob_storage_data_source_metadata.py" />
-    <Compile Include="foundationallm\hubs\data_source\data_sources\blob_storage\blob_storage_file_type.py" />
     <Compile Include="foundationallm\hubs\data_source\data_sources\blob_storage\__init__.py" />
     <Compile Include="foundationallm\hubs\data_source\data_sources\search_service\search_service_authentication_metadata.py" />
     <Compile Include="foundationallm\hubs\data_source\data_sources\search_service\search_service_data_source_metadata.py" />
@@ -69,6 +68,9 @@
     <Compile Include="foundationallm\hubs\resolver.py" />
     <Compile Include="foundationallm\hubs\__init__.py" />
     <Compile Include="foundationallm\langchain\agents\agent_base.py" />
+    <Compile Include="foundationallm\langchain\agents\blob_storage_agent.py" />
+    <Compile Include="foundationallm\langchain\data_sources\blob\blob_storage_configuration.py" />
+    <Compile Include="foundationallm\langchain\data_sources\blob\__init__.py" />
     <Compile Include="foundationallm\langchain\data_sources\sql\mariadb.py" />
     <Compile Include="foundationallm\langchain\language_models\language_model_types.py" />
     <Compile Include="foundationallm\langchain\language_models\openai\azure_openai_api_types.py" />
@@ -147,6 +149,7 @@
     <Folder Include="foundationallm\hubs\prompt\" />
     <Folder Include="foundationallm\langchain\" />
     <Folder Include="foundationallm\langchain\agents\" />
+    <Folder Include="foundationallm\langchain\data_sources\blob\" />
     <Folder Include="foundationallm\langchain\data_sources\csv\" />
     <Folder Include="foundationallm\langchain\language_models\" />
     <Folder Include="foundationallm\langchain\language_models\openai\" />
