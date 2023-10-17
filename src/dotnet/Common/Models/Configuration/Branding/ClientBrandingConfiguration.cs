@@ -16,6 +16,10 @@ namespace FoundationaLLM.Common.Models.Configuration.Branding
         /// </summary>
         public string CompanyName { get; set; }
         /// <summary>
+        /// The page title of the client. 
+        /// </summary>
+        public string PageTitle { get; set; }
+        /// <summary>
         /// The URL of the client's favicon. Can be an absolute URL or a relative URL.
         /// </summary>
         public string FavIconUrl { get; set; }
@@ -43,5 +47,13 @@ namespace FoundationaLLM.Common.Models.Configuration.Branding
         /// The background color of the client in hex format.
         /// </summary>
         public string BackgroundColor { get; set; }
+        /// <summary>
+        /// The text color that overlays the <see cref="PrimaryColor"/> of the client in hex format.
+        /// </summary>
+        public string PrimaryTextColor { get; set; }
+        /// <summary>
+        /// The text color that overlays the <see cref="SecondaryColor"/> of the client in hex format.
+        /// </summary>
+        public string SecondaryTextColor { get; set; }
     }
 }

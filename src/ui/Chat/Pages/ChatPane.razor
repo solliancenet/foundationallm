@@ -6,16 +6,27 @@
 @using global::FoundationaLLM.Common.Models.Chat;
 @using FoundationaLLM.Chat.Components
 @inject IChatManager chatManager
+@inject IBrandingService BrandingService
 @inject IJSRuntime JSRuntime
 
 <div class="h-100 mh-100 d-flex flex-column overflow-hidden justify-content-start">
     @if (ShowHeader)
     {
-        <div class="navbar navbar-dark" style="background-color: black">
-            <div class="w-100 navbar navbar-dark d-flex flex-row px-4 justify-content-between flex-nowrap" style="background-color: black">
+        <div class="chat-header">
+            <div class="w-100 navbar d-flex flex-row px-4 justify-content-between flex-nowrap">
                 <div class="d-flex flex-row justify-content-start">
                     <div class="flex-fill">
-                        <img src="customer-logo.png" style="max-width: 150px;" />
+                        @if (!string.IsNullOrWhiteSpace(BrandingService.CurrentConfig?.LogoText))
+                        {
+                            <p class="chat-header-logo">
+                                <img src="@BrandingService.CurrentConfig?.LogoUrl" alt="@BrandingService.CurrentConfig?.CompanyName" style="vertical-align: bottom; width: 200px;" />
+                                <span>@BrandingService.CurrentConfig?.LogoText</span>
+                            </p>
+                        }
+                        else
+                        {
+                            <img src="@BrandingService.CurrentConfig?.LogoUrl" alt="@BrandingService.CurrentConfig?.CompanyName" style="max-width: 150px;" />
+                        }
                     </div>
                     <button class="navbar-toggler border-0" @onclick="ToggleNavMenu">
                         <i class="bi bi-arrow-right-square-fill"></i>
@@ -97,7 +108,7 @@
                         @foreach (var msg in _messagesInChat)
                         {
                             <div class="toast fade show w-75 rounded-3 @(msg.Sender == nameof(Participants.Assistant) ? "align-self-end" : "align-self-start")">
-                                <div class="toast-header @(msg.Sender == nameof(Participants.Assistant) ? "bg-success text-dark" : "bg-dark text-light")">
+                                <div class="toast-header @(msg.Sender == nameof(Participants.Assistant) ? "assistant" : "user")">
                                     <i class="bi @(msg.Sender == nameof(Participants.Assistant) ? "bi-robot" : "bi-person") me-1" aria-hidden="true"></i>
                                     <strong class="me-auto text-capitalize">
                                         @msg.Sender
@@ -172,6 +183,41 @@
         }
     </div>
 </div>
+
+<style type="text/css">
+    .toast-container .toast-header.assistant {
+        background-color: var(--primary-color);
+        color: var(--primary-text);
+    }
+    .toast-container .toast-header.user {
+        background-color: var(--secondary-color);
+        color: var(--secondary-text);
+    }
+    .chat-header {
+        background-color: var(--primary-color);
+    }
+    .chat-header img {
+        width: 150px;
+    }
+    .chat-header .bi.bi-arrow-right-square-fill {
+        color: var(--primary-text);
+    }
+    .chat-header-logo {
+        height: 70px;
+        width: 100%;
+        padding-right: 24px;
+        padding-left: 24px;
+        padding-top: 12px;
+        display: flex;
+        align-items: center;
+        color: var(--primary-text);
+        text-align: right;
+        font-size: 1.2em;
+    }
+    .chat-header-logo span {
+        padding-left: 12px;
+    }
+</style>
 
 @if (_completionPromptPopUpOpen)
 {
