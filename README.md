@@ -1,14 +1,18 @@
 # Foundationa**LLM**: A platform accelerating delivery of secure, trustworthy enterprise copilots
 
+[![License](https://www.foundationallm.ai/license)]
+
 Foundationa**LLM** simplifies and streamlines building *knowledge management* (e.g., question/answer agents) and *analytic* (e.g., self-service business intelligence) copilots over the data sources present across your enterprise.  
 
-Foundationa**LLM** deploys a comprehensive and highly configurable copilot platform to your Azure cloud environment:
+Foundationa**LLM** deploys a secure, comprehensive and highly configurable copilot platform to your Azure cloud environment:
 
 - Simplifies integration with enterprise data sources used by agent for in-context learning (e.g., enabling RAG, CoT, ReAct and inner monologue patterns).
 - Provides defense in depth with fine-grain security controls over data used by agent and pre/post completion filters that guard against attack.
 - Hardened solution attacked by an LLM red team from inception.
 - Scalable solution load balances across multiple LLM endpoints.
 - Extensible to new data sources, new LLM orchestrators and LLMs.
+
+![FoundationaLLM Overview](./docs/media/foundationallm-highlevel-architecture.png)
 
 ## What do WE mean by "copilot"
 
@@ -18,7 +22,7 @@ At its most basic, a copilot uses enterprise supplied knowledge and generative A
 
 This basic capability emerges in copilots which power these scenarios:
 
-- Knowledge Management: Help users quickly find the information they seek and deliver at the right level and in the right format. Examples include summarization and sentiment analysis. 
+- Knowledge Management: Help users quickly find the information they seek and deliver at the right level and in the right format. Examples include summarization, rephrasing or retargeting to address a persona (e.g., explain it like I'm five), sentiment analysis and recommendations.
 
 - Analytics: Help users quickly get to the data driven insights they seek. Examples include recommendations, predictions, anomaly detection, statistical analysis and data querying and reporting.
 
@@ -39,3 +43,7 @@ FoundationalLLM provides a simple command line driven approach to getting your f
 
 Follow the [Standard Deployment instructions](./docs/deployment/deployment-standard.md) to get Foundationa**LLM** deployed in your Azure subscription.
 
+
+## Contributing to FoundationaLLM
+
+We are happy to accept contributions to the FoundationaLLM project in the form of feedback, bug reports, and pull requests. Please see [Contributing to FoundationaLLM](./CONTRIBUTING.md) for instructions.
