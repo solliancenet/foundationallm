@@ -23,6 +23,7 @@ using FoundationaLLM.Common.Middleware;
 using FoundationaLLM.Common.Models.Configuration.Branding;
 using Newtonsoft.Json;
 using Azure.Identity;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
 
 namespace FoundationaLLM.Core.API
 {
@@ -39,6 +40,7 @@ namespace FoundationaLLM.Core.API
                 {
                     options.SetCredential(new DefaultAzureCredential());
                 });
+            });
               
             var allowAllCorsOrigins = "AllowAllOrigins";
             builder.Services.AddCors(policyBuilder =>
@@ -62,8 +64,6 @@ namespace FoundationaLLM.Core.API
             // Register the downstream services and HTTP clients.
             RegisterDownstreamServices(builder);
 
-
-            builder.Services.AddSingleton<IConfigurationService, KeyVaultConfigurationService>();
             builder.Services.AddScoped<ICosmosDbService, CosmosDbService>();
             builder.Services.AddScoped<ICoreService, CoreService>();
             builder.Services.AddScoped<IGatekeeperAPIService, GatekeeperAPIService>();
@@ -160,18 +160,21 @@ namespace FoundationaLLM.Core.API
             {
                 DownstreamAPIs = new Dictionary<string, DownstreamAPIKeySettings>()
             };
-            foreach (var apiSetting in builder.Configuration.GetSection("FoundationaLLM:DownstreamAPIs").GetChildren())
+
+            var gatekeeperAPISettings = new DownstreamAPIKeySettings
             {
-                var key = apiSetting.Key;
-                var settings = apiSetting.Get<DownstreamAPIKeySettings>();
-                downstreamAPISettings.DownstreamAPIs[key] = settings;
-                builder.Services
-                    .AddHttpClient(key, client => { client.BaseAddress = new Uri(settings.APIUrl); })
+                APIUrl = builder.Configuration[$"FoundationaLLM:APIs:{HttpClients.GatekeeperAPI}:APIUrl"],
+                APIKey = builder.Configuration[$"FoundationaLLM:APIs:{HttpClients.GatekeeperAPI}:APIKey"]
+            };
+            downstreamAPISettings.DownstreamAPIs[HttpClients.GatekeeperAPI] = gatekeeperAPISettings;
+
+            builder.Services
+                    .AddHttpClient(gatekeeperAPISettings.APIKey,
+                        client => { client.BaseAddress = new Uri(gatekeeperAPISettings.APIUrl); })
                     .AddTransientHttpErrorPolicy(policyBuilder =>
                         policyBuilder.WaitAndRetryAsync(
                             3, retryNumber => TimeSpan.FromMilliseconds(600)));
-            }
-            
+
             builder.Services.AddSingleton<IDownstreamAPISettings>(downstreamAPISettings);
         }
 

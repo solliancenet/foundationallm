@@ -16,12 +16,12 @@ namespace FoundationaLLM.Common.Tests.Authentication
             var downstreamApiKeySettings = new DownstreamAPIKeySettings
             {
                 APIUrl = "URL_1",
-                APIKeySecretName = "API_KEY_SECRET"
+                APIKey = "API_KEY_SECRET"
             };
 
             // Assert
             Assert.Equal("URL_1", downstreamApiKeySettings.APIUrl);
-            Assert.Equal("API_KEY_SECRET", downstreamApiKeySettings.APIKeySecretName);
+            Assert.Equal("API_KEY_SECRET", downstreamApiKeySettings.APIKey);
         }
 
         [Fact]
@@ -30,7 +30,7 @@ namespace FoundationaLLM.Common.Tests.Authentication
             // Arrange
             var downstreamAPIs = new Dictionary<string, DownstreamAPIKeySettings>
             {
-                { "API_1", new DownstreamAPIKeySettings { APIUrl = "URL_1", APIKeySecretName = "API_KEY_SECRET" } }
+                { "API_1", new DownstreamAPIKeySettings { APIUrl = "URL_1", APIKey = "API_KEY_SECRET" } }
             };
 
             var downstreamAPISettings = new DownstreamAPISettings

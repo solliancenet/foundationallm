@@ -18,11 +18,11 @@ namespace FoundationaLLM.Common.Tests.Models.Orchestration
             // Act
             var summaryRequest = new SummaryRequest
             {
-                Prompt = expectedPrompt
+                UserPrompt = expectedPrompt
             };
 
             // Assert
-            Assert.Equal(expectedPrompt, summaryRequest.Prompt);
+            Assert.Equal(expectedPrompt, summaryRequest.UserPrompt);
         }
     }
 }

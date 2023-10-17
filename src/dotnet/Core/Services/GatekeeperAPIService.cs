@@ -62,7 +62,7 @@ namespace FoundationaLLM.Core.Services
 
             var responseMessage = await client.PostAsync("orchestration/summarize",
                 new StringContent(
-                    JsonConvert.SerializeObject(new SummaryRequest { Prompt = content }, _jsonSerializerSettings),
+                    JsonConvert.SerializeObject(new SummaryRequest { UserPrompt = content }, _jsonSerializerSettings),
                     Encoding.UTF8, "application/json"));
 
             if (responseMessage.IsSuccessStatusCode)
@@ -70,7 +70,7 @@ namespace FoundationaLLM.Core.Services
                 var responseContent = await responseMessage.Content.ReadAsStringAsync();
                 var summarizeResponse = JsonConvert.DeserializeObject<SummaryResponse>(responseContent);
 
-                return summarizeResponse?.Info;
+                return summarizeResponse?.Summary;
             }
             else
                 return "A problem on my side prevented me from responding.";

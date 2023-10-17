@@ -15,11 +15,11 @@ namespace FoundationaLLM.Common.Tests.Authentication
             // Arrange
             var settings = new APIKeyValidationSettings
             {
-                APIKeySecretName = "API_KEY_SECRET"
+                APIKey = "API_KEY_SECRET"
             };
 
             // Assert
-            Assert.Equal("API_KEY_SECRET", settings.APIKeySecretName);
+            Assert.Equal("API_KEY_SECRET", settings.APIKey);
         }
     }
 }

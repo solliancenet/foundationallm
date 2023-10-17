@@ -29,20 +29,6 @@ namespace FoundationaLLM.Core.API.Controllers
             _logger = logger;
         }
 
-        [HttpPost(Name = "SetOrchestratorChoice")]
-        public async Task<IActionResult> SetPreference([FromBody] string orchestrationService)
-        {
-            var orchestrationPreferenceSet = await _gatekeeperAPIService.SetLLMOrchestrationPreference(orchestrationService);
-
-            if (orchestrationPreferenceSet)
-            {
-                return Ok();
-            }
-
-            _logger.LogError($"The LLM orchestrator {orchestrationService} is not supported.");
-            return BadRequest($"The LLM orchestrator {orchestrationService} is not supported.");
-        }
-
         [AllowAnonymous]
         [HttpPost("completion", Name = "GetCompletion")]
         public async Task<IActionResult> GetCompletion(CompletionRequest completionRequest)
@@ -56,7 +42,7 @@ namespace FoundationaLLM.Core.API.Controllers
         [HttpPost("summary", Name = "GetSummary")]
         public async Task<IActionResult> GetSummary(SummaryRequest summaryRequest)
         {
-            var summaryResponse = await _gatekeeperAPIService.GetSummary(summaryRequest.Prompt);
+            var summaryResponse = await _gatekeeperAPIService.GetSummary(summaryRequest.UserPrompt);
 
             return Ok(summaryResponse);
         }

@@ -39,24 +39,5 @@ namespace FoundationaLLM.AgentFactory.API.Controllers
         {
             return await _agentFactoryService.GetSummary(content);
         }
-
-        /// <summary>
-        /// Sets the orchestration service to use for executing completion requests.
-        /// </summary>
-        /// <param name="orchestrationService">Name of the orchestration service to use.</param>
-        /// <returns>Returns true if setting the preferred service was successful. Otherwise, returns false.</returns>
-        [HttpPost("preference", Name = "SetOrchestratorChoice")]
-        public async Task<bool> SetPreference([FromBody] string orchestrationService)
-        {
-            var orchestrationPreferenceSet = _agentFactoryService.SetLLMOrchestrationPreference(orchestrationService);
-
-            if (orchestrationPreferenceSet)
-            {
-                return true;
-            }
-
-            _logger.LogError($"The LLM orchestrator {orchestrationService} is not supported.");
-            return false;
-        }
     }
 }

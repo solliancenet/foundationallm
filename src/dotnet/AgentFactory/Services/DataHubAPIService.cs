@@ -9,7 +9,7 @@ using FoundationaLLM.Common.Interfaces;
 
 namespace FoundationaLLM.AgentFactory.Core.Services;
 
-public class DataSourceHubAPIService : IDataSourceHubService
+public class DataSourceHubAPIService : IDataSourceHubAPIService
 {
     readonly DataSourceHubSettings _settings;
     readonly ILogger<DataSourceHubAPIService> _logger;

@@ -18,11 +18,11 @@ namespace FoundationaLLM.Common.Tests.Models.Orchestration
             // Act
             var summaryResponse = new SummaryResponse
             {
-                Info = expectedInfo
+                Summary = expectedInfo
             };
 
             // Assert
-            Assert.Equal(expectedInfo, summaryResponse.Info);
+            Assert.Equal(expectedInfo, summaryResponse.Summary);
         }
 
     }

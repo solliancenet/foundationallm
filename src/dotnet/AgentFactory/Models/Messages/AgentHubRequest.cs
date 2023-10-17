@@ -1,14 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿using FoundationaLLM.Common.Models.Orchestration;
+using Newtonsoft.Json;
 
 namespace FoundationaLLM.AgentFactory.Core.Models.Messages
 {
-    public record AgentHubRequest
+    public class AgentHubRequest : OrchestrationRequest
     {
-        [JsonProperty("user_prompt")]
-        public string UserPrompt { get; set; }
-
-        [JsonProperty("user_context")]
-        public string? UserContext { get; set; }
-
     }
 }
