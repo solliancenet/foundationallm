@@ -131,17 +131,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include=".gitignore" />
-    <Content Include="foundationallm\hubs\data_source\data_sources\blob_storage\__pycache__\blob_storage_authentication_metadata.cpython-311.pyc" />
-    <Content Include="foundationallm\hubs\data_source\data_sources\blob_storage\__pycache__\blob_storage_data_source_metadata.cpython-311.pyc" />
-    <Content Include="foundationallm\hubs\data_source\data_sources\blob_storage\__pycache__\blob_storage_file_type.cpython-311.pyc" />
-    <Content Include="foundationallm\hubs\data_source\data_sources\blob_storage\__pycache__\__init__.cpython-311.pyc" />
     <Content Include="requirements.txt" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="foundationallm\" />
     <Folder Include="foundationallm\hubs\data_source\data_sources\" />
     <Folder Include="foundationallm\hubs\data_source\data_sources\blob_storage\" />
-    <Folder Include="foundationallm\hubs\data_source\data_sources\blob_storage\__pycache__\" />
     <Folder Include="foundationallm\hubs\data_source\data_sources\sql\" />
     <Folder Include="foundationallm\hubs\agent\" />
     <Folder Include="foundationallm\hubs\data_source\" />

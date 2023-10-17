@@ -25,25 +25,16 @@ class AzureChatModel(OpenAIModelBase):
         """
         self.config = config
         self.config_value = json.loads(self.config.get_value(self.config_value_base_name))
-        
-        self.openai_api_base = self.config_value.EndPoint
+
+        self.openai_api_base = self.config_value["Endpoint"]
+        self.openai_api_version = self.config_value["Version"]
+        self.deployment_name = self.config_value["Completions"]["DeploymentName"]
+        self.max_tokens = self.config_value["Completions"]["MaxTokens"]
+        self.model_version = self.config_value["Completions"]["ModelVersion"]
+        self.temperature = self.config_value["Completions"]["Temperature"]
+
         self.openai_api_type = AzureOpenAIAPIType.AZURE
-        self.openai_api_version = self.config_value.Version
-        self.deployment_name = self.config_value.Completions.DeploymentName
-        self.max_tokens = self.config_value.Completions.MaxTokens
-        self.model_version = self.config_value.Completions.ModelVersion
-        self.temperature = self.config_value.Completions.Temperature
-
         self.openai_api_key = self.config.get_value(f'{self.config_value_base_name}:Key')
-
-        # self.openai_api_base = self.config.get_value(f'{self.config_value_base_name}:EndPoint')
-        # self.openai_api_key = self.config.get_value(f'{self.config_value_base_name}:Key')
-        # self.openai_api_type = AzureOpenAIAPIType.AZURE
-        # self.openai_api_version = self.config.get_value(f'{self.config_value_base_name}:Version')
-        # self.deployment_name = self.config.get_value(f'{self.config_value_base_name}:Completions:DeploymentName')
-        # self.max_tokens = self.config.get_value(f'{self.config_value_base_name}:Completions:MaxTokens')
-        # self.model_version = self.config.get_value(f'{self.config_value_base_name}:Completions:ModelVersion')
-        # self.temperature = self.config.get_value(f'{self.config_value_base_name}:Completions:Temperature')
          
     def get_language_model(self) -> BaseLanguageModel:
         """
@@ -61,6 +52,6 @@ class AzureChatModel(OpenAIModelBase):
             openai_api_type = self.openai_api_type,
             openai_api_version = self.openai_api_version,
             deployment_name = self.deployment_name,
-            max_tokens = self.max_tokens,
+            #max_tokens = self.max_tokens,
             model_version = self.model_version
         )
