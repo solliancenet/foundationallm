@@ -46,9 +46,23 @@ langChain:
   apiUrl: 'https://solliance-data-copilot-langchain-api.azurewebsites.net'
   apiKey: '{{langChainApiKey}}'
 apiUrl: {{apiUrl}}
-routePrefix: /api
+routePrefix: /core
 applicationInsights:
   connectionString: "{{aiConnectionString}}"
 langchainapi:
   keyVaultUrl: '{{keyVaultUrl}}'
   miClientId: '{{langChainApiMiClientId}}'
+appConfig:
+  uri: {{appConfigEndpoint}}
+  connectionString: {{appConfigConnectionString}}
+azureWorkloadIdentity:
+  agentFactoryApiClientId: {{langChainApiMiClientId}}
+  agentHubApiClientId: {{langChainApiMiClientId}}
+  chatUiClientId: {{langChainApiMiClientId}}
+  coreApiClientId: {{langChainApiMiClientId}}
+  dataSourceHubApiClientId: {{langChainApiMiClientId}}
+  gatekeeperApiClientId: {{langChainApiMiClientId}}
+  langChainApiClientId: {{langChainApiMiClientId}}
+  promptHubApiClientId: {{langChainApiMiClientId}}
+  semanticKernelApiClientId: {{langChainApiMiClientId}}
+  tenantId: {{tenantId}}

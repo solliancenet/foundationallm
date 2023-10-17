@@ -1,9 +1,10 @@
 FROM python:3.11
 
 WORKDIR /code
-COPY ./requirements.txt /code/requirements.txt
+COPY ./LangChainAPI/requirements.txt /code/requirements.txt
 RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
-COPY . /code/app
+COPY ./PythonSDK/foundationallm /code/app/foundationallm
+COPY ./LangChainAPI /code/app
 
 EXPOSE 80
 

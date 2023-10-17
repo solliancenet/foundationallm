@@ -56,6 +56,10 @@ else
 $apiUrl = "https://$domain"
 Write-Host "API URL: $apiUrl" -ForegroundColor Yellow
 
+$appConfig=$(az appconfig list -g $resourceGroup -o json | ConvertFrom-Json).name
+$appConfigEndpoint=$(az appconfig show -g $resourceGroup -n $appConfig --query 'endpoint' -o json | ConvertFrom-Json)
+$appConfigConnectionString=$(az appconfig credential list -n $appConfig -g $resourceGroup --query "[?name=='Primary Read Only'].{connectionString: connectionString}" -o json | ConvertFrom-Json).connectionString
+
 ## Getting CosmosDb info
 $docdb=$(az cosmosdb list -g $resourceGroup --query "[?kind=='GlobalDocumentDB'].{name: name, kind:kind, documentEndpoint:documentEndpoint}" -o json | ConvertFrom-Json)
 $docdb=EnsureAndReturnFirstItem $docdb "CosmosDB (Document Db)"
@@ -96,7 +100,15 @@ if ($appInsightsName -and $appInsightsName.Length -eq 1) {
 }
 Write-Host "App Insights Instrumentation Key: $appinsightsId" -ForegroundColor Yellow
 
-$resourcePrefix=$(az deployment show -n foundationallm-azuredeploy -g $resourceGroup --query "properties.outputs.resourcePrefix.value" -o json | ConvertFrom-Json)
+$resourcePrefix=$(az deployment group show -n foundationallm-azuredeploy -g $resourceGroup --query "properties.outputs.resourcePrefix.value" -o json | ConvertFrom-Json)
+$agentFactoryApiMiClientId=$(az identity show -g $resourceGroup -n $resourcePrefix-agent-factory-mi -o json | ConvertFrom-Json).clientId
+$agentHubApiMiClientId=$(az identity show -g $resourceGroup -n $resourcePrefix-agent-hub-mi -o json | ConvertFrom-Json).clientId
+$chatUiMiClientId=$(az identity show -g $resourceGroup -n $resourcePrefix-chat-ui-mi -o json | ConvertFrom-Json).clientId
+$coreApiMiClientId=$(az identity show -g $resourceGroup -n $resourcePrefix-data-source-hub-mi -o json | ConvertFrom-Json).clientId
+$dataSourceHubApiMiClientId=$(az identity show -g $resourceGroup -n $resourcePrefix-langchain-mi -o json | ConvertFrom-Json).clientId
+$langChainApiMiClientId=$(az identity show -g $resourceGroup -n $resourcePrefix-langchain-mi -o json | ConvertFrom-Json).clientId
+$langChainApiMiClientId=$(az identity show -g $resourceGroup -n $resourcePrefix-langchain-mi -o json | ConvertFrom-Json).clientId
+$langChainApiMiClientId=$(az identity show -g $resourceGroup -n $resourcePrefix-langchain-mi -o json | ConvertFrom-Json).clientId
 $langChainApiMiClientId=$(az identity show -g $resourceGroup -n $resourcePrefix-langchain-mi -o json | ConvertFrom-Json).clientId
 $tenantId=$(az account show --query homeTenantId --output tsv)
 
@@ -118,6 +130,8 @@ $tokens.aiConnectionString=$appinsightsConnectionString
 $tokens.keyVaultUrl=$keyvault.vaultUri
 $tokens.langChainApiMiClientId=$langChainApiMiClientId
 $tokens.tenantId=$tenantId
+$tokens.appConfigEndpoint=$appConfigEndpoint
+$tokens.appConfigConnectionString=$appConfigConnectionString
 
 # Standard fixed tokens
 $tokens.ingressclass=$ingressClass

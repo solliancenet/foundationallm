@@ -38,6 +38,21 @@
     }
   },
   "variables": {
+    "appConfigSettings": {
+      "name": "[format('{0}-appconfig', parameters('name'))]",
+      "configKeys": [
+        {
+          "key": "FoundationaLLM:APIs:AgentFactoryAPI:APIKey",
+          "value": "{\"uri\": \"https://solliance-aicopilot.vault.azure.net/secrets/foundationallm-agent-factory-api-key/6f6c885e1c264efdab44eed553781b85\"}",
+          "contentType": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
+        },
+        {
+          "key": "FoundationaLLM:APIs:AgentFactoryAPI:APIUrl",
+          "value": "https://localhost:7324",
+          "contentType": null
+        }
+      ]
+    },
     "cosmosDbSettings": {
       "name": "[format('{0}-cosmos-nosql', parameters('name'))]",
       "databaseName": "database"
@@ -103,8 +118,32 @@
     "keyVaultSettings": {
       "name": "[format('{0}-kv', parameters('name'))]"
     },
+    "agentFactorySettings": {
+      "miName": "[format('{0}-agent-factory-mi', parameters('name'))]"
+    },
+    "agentHubSettings": {
+      "miName": "[format('{0}-agent-hub-mi', parameters('name'))]"
+    },
+    "chatUiSettings": {
+      "miName": "[format('{0}-chat-ui-mi', parameters('name'))]"
+    },
+    "coreSettings": {
+      "miName": "[format('{0}-core-mi', parameters('name'))]"
+    },
+    "dataSourceHubSettings": {
+      "miName": "[format('{0}-data-source-hub-mi', parameters('name'))]"
+    },
+    "gatekeeperSettings": {
+      "miName": "[format('{0}-gatekeeper-mi', parameters('name'))]"
+    },
     "langChainSettings": {
       "miName": "[format('{0}-langchain-mi', parameters('name'))]"
+    },
+    "promptHubSettings": {
+      "miName": "[format('{0}-prompt-hub-mi', parameters('name'))]"
+    },
+    "semanticKernelSettings": {
+      "miName": "[format('{0}-semantic-kernel-mi', parameters('name'))]"
     },
     "roleIdMapping": {
       "Key Vault Administrator": "00482a5a-887f-4fb3-b363-3b7fe8e74483",
@@ -118,6 +157,37 @@
     }
   },
   "resources": [
+    {
+      "type": "Microsoft.AppConfiguration/configurationStores",
+      "apiVersion": "2023-03-01",
+      "name": "[variables('appConfigSettings').name]",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "standard"
+      },
+      "properties": {
+        "encryption": {},
+        "disableLocalAuth": false,
+        "softDeleteRetentionInDays": 7,
+        "enablePurgeProtection": false
+      }
+    },
+    {
+      "copy": {
+        "name": "configStoreKeyValue",
+        "count": "[length(variables('appConfigSettings').configKeys)]"
+      },
+      "type": "Microsoft.AppConfiguration/configurationStores/keyValues",
+      "apiVersion": "2021-10-01-preview",
+      "name": "[format('{0}/{1}', variables('appConfigSettings').name, variables('appConfigSettings').configKeys[copyIndex()].key)]",
+      "properties": {
+        "value": "[variables('appConfigSettings').configKeys[copyIndex()].value]",
+        "contentType": "[variables('appConfigSettings').configKeys[copyIndex()].contentType]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.AppConfiguration/configurationStores', variables('appConfigSettings').name)]"
+      ]
+    },
     {
       "type": "Microsoft.KeyVault/vaults",
       "apiVersion": "2022-07-01",
@@ -676,6 +746,138 @@
     {
       "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
       "apiVersion": "2023-01-31",
+      "name": "[variables('agentFactorySettings').miName]",
+      "location": "[parameters('location')]"
+    },
+    {
+      "type": "Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials",
+      "apiVersion": "2023-01-31",
+      "name": "[format('{0}/{1}', variables('agentFactorySettings').miName, 'agentFactoryId')]",
+      "properties": {
+        "audiences": [
+          "api://AzureADTokenExchange"
+        ],
+        "issuer": "[reference(resourceId('Microsoft.ContainerService/managedClusters', variables('aksSettings').name), providers('Microsoft.ContainerService','managedClusters').apiVersions[0]).oidcIssuerProfile.issuerURL]",
+        "subject": "system:serviceaccount:default:agent-factory-api"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.ContainerService/managedClusters', variables('aksSettings').name)]",
+        "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('agentFactorySettings').miName)]"
+      ]
+    },
+    {
+      "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+      "apiVersion": "2023-01-31",
+      "name": "[variables('agentHubSettings').miName]",
+      "location": "[parameters('location')]"
+    },
+    {
+      "type": "Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials",
+      "apiVersion": "2023-01-31",
+      "name": "[format('{0}/{1}', variables('agentHubSettings').miName, 'agentHubId')]",
+      "properties": {
+        "audiences": [
+          "api://AzureADTokenExchange"
+        ],
+        "issuer": "[reference(resourceId('Microsoft.ContainerService/managedClusters', variables('aksSettings').name), providers('Microsoft.ContainerService','managedClusters').apiVersions[0]).oidcIssuerProfile.issuerURL]",
+        "subject": "system:serviceaccount:default:agent-hub-api"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.ContainerService/managedClusters', variables('aksSettings').name)]",
+        "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('agentHubSettings').miName)]"
+      ]
+    },
+    {
+      "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+      "apiVersion": "2023-01-31",
+      "name": "[variables('chatUiSettings').miName]",
+      "location": "[parameters('location')]"
+    },
+    {
+      "type": "Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials",
+      "apiVersion": "2023-01-31",
+      "name": "[format('{0}/{1}', variables('chatUiSettings').miName, 'chatUiId')]",
+      "properties": {
+        "audiences": [
+          "api://AzureADTokenExchange"
+        ],
+        "issuer": "[reference(resourceId('Microsoft.ContainerService/managedClusters', variables('aksSettings').name), providers('Microsoft.ContainerService','managedClusters').apiVersions[0]).oidcIssuerProfile.issuerURL]",
+        "subject": "system:serviceaccount:default:chat-ui"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.ContainerService/managedClusters', variables('aksSettings').name)]",
+        "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('chatUiSettings').miName)]"
+      ]
+    },
+    {
+      "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+      "apiVersion": "2023-01-31",
+      "name": "[variables('coreSettings').miName]",
+      "location": "[parameters('location')]"
+    },
+    {
+      "type": "Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials",
+      "apiVersion": "2023-01-31",
+      "name": "[format('{0}/{1}', variables('coreSettings').miName, 'coreId')]",
+      "properties": {
+        "audiences": [
+          "api://AzureADTokenExchange"
+        ],
+        "issuer": "[reference(resourceId('Microsoft.ContainerService/managedClusters', variables('aksSettings').name), providers('Microsoft.ContainerService','managedClusters').apiVersions[0]).oidcIssuerProfile.issuerURL]",
+        "subject": "system:serviceaccount:default:core-api"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.ContainerService/managedClusters', variables('aksSettings').name)]",
+        "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('coreSettings').miName)]"
+      ]
+    },
+    {
+      "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+      "apiVersion": "2023-01-31",
+      "name": "[variables('dataSourceHubSettings').miName]",
+      "location": "[parameters('location')]"
+    },
+    {
+      "type": "Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials",
+      "apiVersion": "2023-01-31",
+      "name": "[format('{0}/{1}', variables('dataSourceHubSettings').miName, 'dataSourceHubId')]",
+      "properties": {
+        "audiences": [
+          "api://AzureADTokenExchange"
+        ],
+        "issuer": "[reference(resourceId('Microsoft.ContainerService/managedClusters', variables('aksSettings').name), providers('Microsoft.ContainerService','managedClusters').apiVersions[0]).oidcIssuerProfile.issuerURL]",
+        "subject": "system:serviceaccount:default:data-source-hub-api"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.ContainerService/managedClusters', variables('aksSettings').name)]",
+        "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('dataSourceHubSettings').miName)]"
+      ]
+    },
+    {
+      "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+      "apiVersion": "2023-01-31",
+      "name": "[variables('gatekeeperSettings').miName]",
+      "location": "[parameters('location')]"
+    },
+    {
+      "type": "Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials",
+      "apiVersion": "2023-01-31",
+      "name": "[format('{0}/{1}', variables('gatekeeperSettings').miName, 'gatekeeperId')]",
+      "properties": {
+        "audiences": [
+          "api://AzureADTokenExchange"
+        ],
+        "issuer": "[reference(resourceId('Microsoft.ContainerService/managedClusters', variables('aksSettings').name), providers('Microsoft.ContainerService','managedClusters').apiVersions[0]).oidcIssuerProfile.issuerURL]",
+        "subject": "system:serviceaccount:default:gatekeeper-api"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.ContainerService/managedClusters', variables('aksSettings').name)]",
+        "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('gatekeeperSettings').miName)]"
+      ]
+    },
+    {
+      "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+      "apiVersion": "2023-01-31",
       "name": "[variables('langChainSettings').miName]",
       "location": "[parameters('location')]"
     },
@@ -688,11 +890,55 @@
           "api://AzureADTokenExchange"
         ],
         "issuer": "[reference(resourceId('Microsoft.ContainerService/managedClusters', variables('aksSettings').name), providers('Microsoft.ContainerService','managedClusters').apiVersions[0]).oidcIssuerProfile.issuerURL]",
-        "subject": "system:serviceaccount:default:langChainSa"
+        "subject": "system:serviceaccount:default:langchain-api"
       },
       "dependsOn": [
         "[resourceId('Microsoft.ContainerService/managedClusters', variables('aksSettings').name)]",
         "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('langChainSettings').miName)]"
+      ]
+    },
+    {
+      "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+      "apiVersion": "2023-01-31",
+      "name": "[variables('promptHubSettings').miName]",
+      "location": "[parameters('location')]"
+    },
+    {
+      "type": "Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials",
+      "apiVersion": "2023-01-31",
+      "name": "[format('{0}/{1}', variables('promptHubSettings').miName, 'promptHubId')]",
+      "properties": {
+        "audiences": [
+          "api://AzureADTokenExchange"
+        ],
+        "issuer": "[reference(resourceId('Microsoft.ContainerService/managedClusters', variables('aksSettings').name), providers('Microsoft.ContainerService','managedClusters').apiVersions[0]).oidcIssuerProfile.issuerURL]",
+        "subject": "system:serviceaccount:default:prompt-hub-api"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.ContainerService/managedClusters', variables('aksSettings').name)]",
+        "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('promptHubSettings').miName)]"
+      ]
+    },
+    {
+      "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+      "apiVersion": "2023-01-31",
+      "name": "[variables('semanticKernelSettings').miName]",
+      "location": "[parameters('location')]"
+    },
+    {
+      "type": "Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials",
+      "apiVersion": "2023-01-31",
+      "name": "[format('{0}/{1}', variables('semanticKernelSettings').miName, 'semanticKernelId')]",
+      "properties": {
+        "audiences": [
+          "api://AzureADTokenExchange"
+        ],
+        "issuer": "[reference(resourceId('Microsoft.ContainerService/managedClusters', variables('aksSettings').name), providers('Microsoft.ContainerService','managedClusters').apiVersions[0]).oidcIssuerProfile.issuerURL]",
+        "subject": "system:serviceaccount:default:semantic-kernel-api"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.ContainerService/managedClusters', variables('aksSettings').name)]",
+        "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('semanticKernelSettings').miName)]"
       ]
     },
     {

@@ -22,15 +22,14 @@ spec:
       labels:
         app: {{ template "chat-ui.name" . }}
         release: {{ .Release.Name }}
+        azure.workload.identity/use: "true"
     spec:
-      {{ if .Values.serviceaccount -}}
-      serviceAccountName: {{ .Values.serviceaccount }}
+      serviceAccountName: {{ .Values.serviceAccountName }}
       {{ if .Values.imagePullSecrets -}}
       imagePullSecrets:
       {{ range .Values.imagePullSecrets -}}
         - name: {{ .name }}
       {{- end -}}
-      {{- end }}
       {{- end }}
       containers:
         - name: {{ .Chart.Name }}
@@ -49,6 +48,15 @@ spec:
               valueFrom:
                 configMapKeyRef:
                   name: {{ $cfgname }}
+                  key: {{ .name }}
+          {{- end -}}
+          {{- end }}
+          {{- if .Values.env.secret -}}
+          {{- range .Values.env.secret }}
+            - name: {{ .name }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $secretName }}
                   key: {{ .name }}
           {{- end -}}
           {{- end }}

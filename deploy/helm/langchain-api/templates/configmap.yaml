@@ -10,5 +10,4 @@ metadata:
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 data:
-  SOLLIANCEAICOPILOT__LANGCHAINAPI__KEYVAULTURL: {{ .Values.langchainapi.keyVaultUrl }}
-  SOLLIANCEAICOPILOT__LANGCHAINAPI__MICLIENTID: {{ .Values.langchainapi.miClientId }}
+  foundationallm-app-configuration-uri: {{ .Values.appConfig.uri }}
