@@ -1,7 +1,9 @@
 ﻿@page "/"
 @using global::FoundationaLLM.Common.Models.Chat;
+@using FoundationaLLM.Chat.Helpers
+@inject IBrandingService BrandingService
 
-<PageTitle>Associations North Community Workforce Survey</PageTitle>
+<PageTitle>@BrandingService.CurrentConfig?.PageTitle</PageTitle>
 <main class="h-100 d-flex flex-row justify-content-start">
     @if (!IsNavMenuCollapsed)
     {
