@@ -10,7 +10,7 @@ resource "azurerm_cognitive_account" "main" {
   name                          = "${var.resource_prefix}-content-safety"
   resource_group_name           = var.resource_group.name
   sku_name                      = "S0"
-  custom_subdomain_name         = "${var.resource_prefix}-content-safety"
+  custom_subdomain_name         = lower("${var.resource_prefix}-content-safety")
   public_network_access_enabled = false
 
   identity {

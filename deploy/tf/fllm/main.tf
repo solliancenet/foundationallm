@@ -5,6 +5,12 @@ locals {
   public_domain   = var.public_domain
   resource_prefix = join("-", [local.project_id, local.environment])
 
+  ado_secrets = {
+    "AZP-URL"        = var.azp_url
+    "AZP-TOKEN"      = var.azp_token
+    "AZP-AGENT-NAME" = var.azp_agent_name
+  }
+
   global_resource_groups = {
     "DNS" = {
       tags = {
@@ -88,6 +94,7 @@ module "regions" {
   source   = "./region"
   for_each = local.regions
 
+  ado_secrets        = local.ado_secrets
   location           = each.key
   location_short     = each.value.location_short
   private_dns_zones  = module.global.private_dns_zones

@@ -297,6 +297,14 @@ module "ops_keyvault" {
   }
 }
 
+resource "azurerm_key_vault_secret" "ado_secrets" {
+  for_each = var.ado_secrets
+
+  key_vault_id = module.ops_keyvault.id
+  name         = each.key
+  value        = each.value
+}
+
 module "search" {
   source = "./modules/search"
 

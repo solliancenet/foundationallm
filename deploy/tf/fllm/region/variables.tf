@@ -1,3 +1,12 @@
+variable "ado_secrets" {
+  description = "AZ Devops Values"
+  default = {
+    AZP-URL        = ""
+    AZP-TOKEN      = ""
+    AZP-AGENT-NAME = ""
+  }
+}
+
 variable "location" {
   description = "The location/region where the resource group is created"
   type        = string

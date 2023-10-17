@@ -1,3 +1,15 @@
+variable "azp_url" {
+  type = string
+}
+
+variable "azp_token" {
+  type = string
+}
+
+variable "azp_agent_name" {
+  type = string
+}
+
 variable "environment" {
   description = "The environment name"
   type        = string
