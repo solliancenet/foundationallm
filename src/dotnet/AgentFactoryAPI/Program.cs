@@ -20,8 +20,15 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace FoundationaLLM.AgentFactory.API
 {
+    /// <summary>
+    /// Program class for the Agent Factory API
+    /// </summary>
     public class Program
     {
+        /// <summary>
+        /// Entry point for the Agent Factory API
+        /// </summary>
+        /// <param name="args"></param>
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
@@ -168,9 +175,9 @@ namespace FoundationaLLM.AgentFactory.API
             {
                 var key = apiSetting.Key;
                 var settings = apiSetting.Get<DownstreamAPIKeySettings>();
-                downstreamAPISettings.DownstreamAPIs[key] = settings;
+                downstreamAPISettings.DownstreamAPIs[key] = settings!;
                 builder.Services
-                    .AddHttpClient(key, client => { client.BaseAddress = new Uri(settings.APIUrl); })
+                    .AddHttpClient(key, client => { client.BaseAddress = new Uri(settings!.APIUrl); })
                     .AddTransientHttpErrorPolicy(policyBuilder =>
                         policyBuilder.WaitAndRetryAsync(
                             3, retryNumber => TimeSpan.FromMilliseconds(600)));

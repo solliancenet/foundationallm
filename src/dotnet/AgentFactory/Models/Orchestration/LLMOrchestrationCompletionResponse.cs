@@ -2,19 +2,22 @@
 
 namespace FoundationaLLM.AgentFactory.Core.Models.Orchestration
 {
+    /// <summary>
+    /// LLMOrchestrationCompletionResponse class
+    /// </summary>
     public class LLMOrchestrationCompletionResponse
     {
         /// <summary>
         /// The completion response from the orchestration engine.
         /// </summary>
         [JsonProperty("completion")]
-        public string Completion { get; set; }
+        public string? Completion { get; set; }
 
         /// <summary>
         /// The prompt received from the user.
         /// </summary>
         [JsonProperty("user_prompt")]
-        public string UserPrompt { get; set; }
+        public string? UserPrompt { get; set; }
 
         /// <summary>
         /// The number of tokens in the prompt.

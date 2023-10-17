@@ -12,6 +12,6 @@ namespace FoundationaLLM.AgentFactory.Core.Models.Orchestration.Metadata
         /// CSV file configuration settings metadata.
         /// </summary>
         [JsonProperty("configuration")]
-        public CSVFileConfiguration Configuration { get; set; }
+        public CSVFileConfiguration? Configuration { get; set; }
     }
 }

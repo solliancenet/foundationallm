@@ -12,6 +12,6 @@ namespace FoundationaLLM.AgentFactory.Core.Models.Orchestration.Metadata
         /// SQL Database configuration settings metadata.
         /// </summary>
         [JsonProperty("configuration")]
-        public SQLDatabaseConfiguration Configuration { get; set; }
+        public SQLDatabaseConfiguration? Configuration { get; set; }
     }
 }

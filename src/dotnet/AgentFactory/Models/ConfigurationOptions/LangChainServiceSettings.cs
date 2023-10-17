@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace FoundationaLLM.AgentFactory.Models.ConfigurationOptions
 {
+    /// <summary>
+    /// The settings configuration options for a LangChain Service
+    /// </summary>
     public class LangChainServiceSettings : SettingsBase
     {
         

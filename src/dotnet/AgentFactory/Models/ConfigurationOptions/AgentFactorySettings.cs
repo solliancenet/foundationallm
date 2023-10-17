@@ -6,8 +6,14 @@ using System.Threading.Tasks;
 
 namespace FoundationaLLM.AgentFactory.Core.Models.ConfigurationOptions
 {
+    /// <summary>
+    /// Settings for an Agent Factory.  Currenlty only sets the default orchestration (Semantickernal, LangChain)
+    /// </summary>
     public record AgentFactorySettings
     {
-        public string DefaultOrchestrationService { init; get; }
+        /// <summary>
+        /// The default orchenstration service (SemanticKernal, LangChain)
+        /// </summary>
+        public string? DefaultOrchestrationService { init; get; }
     }
 }

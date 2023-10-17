@@ -11,6 +11,6 @@ namespace FoundationaLLM.AgentFactory.Core.Models.Orchestration.Metadata
         /// The prompt template to assign the agent.
         /// </summary>
         [JsonProperty("prompt_template")]
-        public string PromptTemplate { get; set; }
+        public string? PromptTemplate { get; set; }
     }
 }

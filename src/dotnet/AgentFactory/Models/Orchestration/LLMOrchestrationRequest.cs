@@ -11,6 +11,6 @@ namespace FoundationaLLM.AgentFactory.Core.Models.Orchestration
         /// Prompt entered by the user.
         /// </summary>
         [JsonProperty("user_prompt")]
-        public string UserPrompt { get; set; }
+        public string? UserPrompt { get; set; }
     }
 }

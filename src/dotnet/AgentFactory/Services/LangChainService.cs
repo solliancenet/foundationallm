@@ -76,7 +76,7 @@ namespace FoundationaLLM.AgentFactory.Services
 
                 return new LLMOrchestrationCompletionResponse
                 {
-                    Completion = completionResponse.Completion,
+                    Completion = completionResponse!.Completion,
                     UserPrompt = completionResponse.UserPrompt,
                     PromptTokens = completionResponse.PromptTokens,
                     CompletionTokens = completionResponse.CompletionTokens
@@ -132,7 +132,7 @@ namespace FoundationaLLM.AgentFactory.Services
             {
                 var responseContent = await responseMessage.Content.ReadAsStringAsync();
                 var summaryResponse = JsonConvert.DeserializeObject<LLMOrchestrationCompletionResponse>(responseContent);
-                return summaryResponse.Completion;
+                return summaryResponse!.Completion!;
             }
 
             return "A problem on my side prevented me from responding.";              

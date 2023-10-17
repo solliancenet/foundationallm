@@ -11,18 +11,18 @@ namespace FoundationaLLM.AgentFactory.Core.Models.Orchestration.Metadata
         /// Name property.
         /// </summary>
         [JsonProperty("name")]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         /// <summary>
         /// Type property.
         /// </summary>
         [JsonProperty("type")]
-        public string Type { get; set; }
+        public string? Type { get; set; }
 
         /// <summary>
         /// Description property.
         /// </summary>
         [JsonProperty("description")]
-        public string Description { get; set; }
+        public string? Description { get; set; }
     }
 }

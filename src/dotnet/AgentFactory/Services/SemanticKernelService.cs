@@ -12,6 +12,9 @@ using FoundationaLLM.AgentFactory.Core.Models.Orchestration;
 
 namespace FoundationaLLM.AgentFactory.Services
 {
+    /// <summary>
+    /// The FoundationaLLM Semantic Kernal Service
+    /// </summary>
     public class SemanticKernelService : ISemanticKernelService
     {
         readonly SemanticKernelServiceSettings _settings;
@@ -19,6 +22,12 @@ namespace FoundationaLLM.AgentFactory.Services
         private readonly IHttpClientFactoryService _httpClientFactoryService;
         readonly JsonSerializerSettings _jsonSerializerSettings;
 
+        /// <summary>
+        /// Constructor for the Semantic Kernal Service
+        /// </summary>
+        /// <param name="options"></param>
+        /// <param name="logger"></param>
+        /// <param name="httpClientFactoryService"></param>
         public SemanticKernelService(
             IOptions<SemanticKernelServiceSettings> options,
             ILogger<SemanticKernelService> logger,
@@ -30,10 +39,17 @@ namespace FoundationaLLM.AgentFactory.Services
             _jsonSerializerSettings = CommonJsonSerializerSettings.GetJsonSerializerSettings();
         }
 
-        #region ISemanticKernelOrchestrationService
-
+        /// <summary>
+        /// Checks the Semantic Service returns a call to signal it is initialized and ready for requests.
+        /// </summary>
         public bool IsInitialized => GetServiceStatus();
 
+        /// <summary>
+        /// Gets a completion from the Semantic Kernal
+        /// </summary>
+        /// <param name="userPrompt"></param>
+        /// <param name="messageHistory"></param>
+        /// <returns></returns>
         public async Task<CompletionResponse> GetCompletion(string userPrompt, List<MessageHistoryItem> messageHistory)
         {
             var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.SemanticKernelAPI);
@@ -46,8 +62,7 @@ namespace FoundationaLLM.AgentFactory.Services
             if (responseMessage.IsSuccessStatusCode)
             {
                 var responseContent = await responseMessage.Content.ReadAsStringAsync();
-                var completionResponse = JsonConvert.DeserializeObject<CompletionResponse>(responseContent);
-
+                var completionResponse = JsonConvert.DeserializeObject<CompletionResponse>(responseContent)!;
                 return completionResponse;
             }
             
@@ -61,6 +76,11 @@ namespace FoundationaLLM.AgentFactory.Services
             };
         }
 
+        /// <summary>
+        /// Gets a summary from the Semantic Kernal
+        /// </summary>
+        /// <param name="content"></param>
+        /// <returns></returns>
         public async Task<string> GetSummary(string content)
         {
             var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.SemanticKernelAPI);
@@ -75,23 +95,40 @@ namespace FoundationaLLM.AgentFactory.Services
                 var responseContent = await responseMessage.Content.ReadAsStringAsync();
                 var summaryResponse = JsonConvert.DeserializeObject<SummaryResponse>(responseContent);
 
-                return summaryResponse?.Info;
+                return summaryResponse!.Info;
             }
             else
                 return "A problem on my side prevented me from responding.";
         }
 
+        /// <summary>
+        /// Adds an item to memory
+        /// </summary>
+        /// <param name="item"></param>
+        /// <param name="itemName"></param>
+        /// <param name="vectorizer"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
         public Task AddMemory(object item, string itemName, Action<object, float[]> vectorizer)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Removes an item from memory
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
         public Task RemoveMemory(object item)
         {
             throw new NotImplementedException();
         }
-        #endregion
 
+        /// <summary>
+        /// Gets the target Semantic Kernal API status
+        /// </summary>
+        /// <returns></returns>
         private bool GetServiceStatus()
         {
             var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.SemanticKernelAPI);
@@ -101,6 +138,12 @@ namespace FoundationaLLM.AgentFactory.Services
             return responseMessage.Content.ToString() == "ready";
         }
 
+        /// <summary>
+        /// Makes a call to get a completion from the Semantic Kernal
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
         public Task<LLMOrchestrationCompletionResponse> GetCompletion(LLMOrchestrationCompletionRequest request)
         {
             throw new NotImplementedException();

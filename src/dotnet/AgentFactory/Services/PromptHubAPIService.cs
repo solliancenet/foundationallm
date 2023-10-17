@@ -9,6 +9,9 @@ using FoundationaLLM.Common.Interfaces;
 
 namespace FoundationaLLM.AgentFactory.Core.Services;
 
+/// <summary>
+/// Class for the PromptHub API Service
+/// </summary>
 public class PromptHubAPIService : IPromptHubService
 {
     readonly PromptHubSettings _settings;
@@ -16,6 +19,12 @@ public class PromptHubAPIService : IPromptHubService
     private readonly IHttpClientFactoryService _httpClientFactoryService;
     readonly JsonSerializerSettings _jsonSerializerSettings;
 
+    /// <summary>
+    /// Constructor for the PromptHub API Service
+    /// </summary>
+    /// <param name="options"></param>
+    /// <param name="logger"></param>
+    /// <param name="httpClientFactoryService"></param>
     public PromptHubAPIService(
             IOptions<PromptHubSettings> options,
             ILogger<PromptHubAPIService> logger,
@@ -27,6 +36,11 @@ public class PromptHubAPIService : IPromptHubService
         _jsonSerializerSettings = Common.Settings.CommonJsonSerializerSettings.GetJsonSerializerSettings();
     }
 
+
+    /// <summary>
+    /// Gets the status of the Prompt Hub API
+    /// </summary>
+    /// <returns></returns>
     public async Task<string> Status()
     {
         try
@@ -44,12 +58,19 @@ public class PromptHubAPIService : IPromptHubService
         catch (Exception ex)
         {
             _logger.LogError(ex, $"Error getting prompt hub status.");
-            throw ex;
+            throw;
         }
 
-        return null;
+        return "Error";
     }
 
+
+    /// <summary>
+    /// Used to get prompts for a target agent and user context.
+    /// </summary>
+    /// <param name="agentName"></param>
+    /// <param name="userContext"></param>
+    /// <returns></returns>
     public async Task<PromptHubResponse> ResolveRequest(string agentName, string userContext)
     {
         try
@@ -66,13 +87,13 @@ public class PromptHubAPIService : IPromptHubService
             {
                 var responseContent = await responseMessage.Content.ReadAsStringAsync();
                 var phr = JsonConvert.DeserializeObject<PromptHubResponse>(responseContent, _jsonSerializerSettings);
-                return phr;
+                return phr!;
             }
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, $"Error resolving request for prompt Hub.");
-            throw ex;
+            throw;
         }
 
         return new PromptHubResponse();

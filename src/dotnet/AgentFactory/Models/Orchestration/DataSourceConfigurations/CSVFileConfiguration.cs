@@ -11,7 +11,7 @@ namespace FoundationaLLM.AgentFactory.Core.Models.Orchestration.DataSourceConfig
         /// The location of the file.
         /// </summary>
         [JsonProperty("source_file_path")]
-        public string SourceFilePath { get; set; }
+        public string? SourceFilePath { get; set; }
 
         /// <summary>
         /// Flag indicating whether the source file path is a secret value

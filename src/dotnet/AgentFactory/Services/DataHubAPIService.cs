@@ -9,6 +9,9 @@ using FoundationaLLM.Common.Interfaces;
 
 namespace FoundationaLLM.AgentFactory.Core.Services;
 
+/// <summary>
+/// Class for the Data Source Hub API Service
+/// </summary>
 public class DataSourceHubAPIService : IDataSourceHubService
 {
     readonly DataSourceHubSettings _settings;
@@ -16,6 +19,12 @@ public class DataSourceHubAPIService : IDataSourceHubService
     private readonly IHttpClientFactoryService _httpClientFactoryService;
     readonly JsonSerializerSettings _jsonSerializerSettings;
 
+    /// <summary>
+    /// Constructor of the DataSource Hub API Service
+    /// </summary>
+    /// <param name="options"></param>
+    /// <param name="logger"></param>
+    /// <param name="httpClientFactoryService"></param>
     public DataSourceHubAPIService(
             IOptions<DataSourceHubSettings> options,
             ILogger<DataSourceHubAPIService> logger,
@@ -27,6 +36,11 @@ public class DataSourceHubAPIService : IDataSourceHubService
         _jsonSerializerSettings = Common.Settings.CommonJsonSerializerSettings.GetJsonSerializerSettings();
     }
 
+
+    /// <summary>
+    /// Gets the status of the DataSource Hub API
+    /// </summary>
+    /// <returns></returns>
     public async Task<string> Status()
     {
         try
@@ -43,13 +57,20 @@ public class DataSourceHubAPIService : IDataSourceHubService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error getting data source hub status.");
-            throw ex;
+            _logger.LogError(ex, $"Error getting data hub status.");
+            throw;
         }
 
-        return null;
+
+        return "Error";
     }
 
+    /// <summary>
+    /// Gets a list of DataSources from the DataSource Hub
+    /// </summary>
+    /// <param name="sources"></param>
+    /// <param name="userContext"></param>
+    /// <returns></returns>
     public async Task<DataSourceHubResponse> ResolveRequest(List<string> sources, string userContext)
     {
         try
@@ -66,13 +87,13 @@ public class DataSourceHubAPIService : IDataSourceHubService
                 var responseContent = await responseMessage.Content.ReadAsStringAsync();
                 var dshr = JsonConvert.DeserializeObject<DataSourceHubResponse>(responseContent, _jsonSerializerSettings);
                 
-                return dshr;
+                return dshr!;
             }
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, $"Error resolving request for data source hub.");
-            throw ex;
+            throw;
         }
 
         return new DataSourceHubResponse();

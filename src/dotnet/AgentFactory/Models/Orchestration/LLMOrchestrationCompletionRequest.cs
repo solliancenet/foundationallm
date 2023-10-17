@@ -15,13 +15,13 @@ namespace FoundationaLLM.AgentFactory.Core.Models.Orchestration
         /// Agent metadata
         /// </summary>
         [JsonProperty("agent")]
-        public Agent Agent { get; set; }
+        public Agent? Agent { get; set; }
 
         /// <summary>
         /// Data source metadata
         /// </summary>
         [JsonProperty("data_source")]
-        public SQLDatabaseDataSource DataSource { get; set; }
+        public SQLDatabaseDataSource? DataSource { get; set; }
         
            
 
@@ -29,12 +29,12 @@ namespace FoundationaLLM.AgentFactory.Core.Models.Orchestration
         /// Language model metadata.
         /// </summary>
         [JsonProperty("language_model")]
-        public LanguageModel LanguageModel { get; set; }
+        public LanguageModel? LanguageModel { get; set; }
 
         /// <summary>
         /// Message history list
         /// </summary>
         [JsonProperty("message_history")]
-        public List<MessageHistoryItem> MessageHistory { get; set; }
+        public List<MessageHistoryItem>? MessageHistory { get; set; }
     }
 }

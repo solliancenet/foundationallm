@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FoundationaLLM.AgentFactory.API.Controllers
 {
+    /// <summary>
+    /// OrchestrationController class
+    /// </summary>
     [ApiVersion(1.0)]
     [ApiController]
     [APIKeyAuthentication]
@@ -15,6 +18,12 @@ namespace FoundationaLLM.AgentFactory.API.Controllers
         private readonly IAgentFactoryService _agentFactoryService;
         private readonly ILogger<OrchestrationController> _logger;
 
+
+        /// <summary>
+        /// Constructor for the Agent Factory orchestration controller
+        /// </summary>
+        /// <param name="agentFactoryService"></param>
+        /// <param name="logger"></param>
         public OrchestrationController(
             IAgentFactoryService agentFactoryService,
             ILogger<OrchestrationController> logger)
@@ -24,7 +33,7 @@ namespace FoundationaLLM.AgentFactory.API.Controllers
         }
 
         /// <summary>
-        /// Retrieves a completion from an orchestration service
+        /// Gets a completion from the Agent Factory
         /// </summary>
         /// <param name="completionRequest"></param>
         /// <returns></returns>
@@ -34,6 +43,11 @@ namespace FoundationaLLM.AgentFactory.API.Controllers
             return await _agentFactoryService.GetCompletion(completionRequest);
         }
 
+        /// <summary>
+        /// Gets a summary from the Agent Factory
+        /// </summary>
+        /// <param name="content"></param>
+        /// <returns></returns>
         [HttpPost("summary")]
         public async Task<SummaryResponse> GetSummary([FromBody] SummaryRequest content)
         {
@@ -46,7 +60,7 @@ namespace FoundationaLLM.AgentFactory.API.Controllers
         /// <param name="orchestrationService">Name of the orchestration service to use.</param>
         /// <returns>Returns true if setting the preferred service was successful. Otherwise, returns false.</returns>
         [HttpPost("preference", Name = "SetOrchestratorChoice")]
-        public async Task<bool> SetPreference([FromBody] string orchestrationService)
+        public bool SetPreference([FromBody] string orchestrationService)
         {
             var orchestrationPreferenceSet = _agentFactoryService.SetLLMOrchestrationPreference(orchestrationService);
 
