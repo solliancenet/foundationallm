@@ -33,20 +33,52 @@ namespace FoundationaLLM.AgentFactory.Core.Agents
             var promptResponse = await _promptHubService.ResolveRequest(_agentMetadata.Name, userContext);
 
             //get data sources listed for the agent           
-            var datasourceResponse = await _dataSourceHubService.ResolveRequest(_agentMetadata.AllowedDataSourceNames, userContext);
+            var dataSourceResponse = await _dataSourceHubService.ResolveRequest(_agentMetadata.AllowedDataSourceNames, userContext);
 
-            //construct the configuration
-            var dataSourceConfig = new SQLDatabaseConfiguration()
+            MetadataBase dataSourceMetadata = null;
+
+            var dataSource = dataSourceResponse.DataSources[0];
+
+            switch (dataSource.UnderlyingImplementation)
             {
-                Dialect = datasourceResponse.DataSources[0].Dialect,
-                Host = datasourceResponse.DataSources[0].Authentication["host"],
-                Port = Convert.ToInt32(datasourceResponse.DataSources[0].Authentication["port"]),
-                DatabaseName = datasourceResponse.DataSources[0].Authentication["database"],
-                Username = datasourceResponse.DataSources[0].Authentication["username"],
-                PasswordSecretName = datasourceResponse.DataSources[0].Authentication["password_secret"],
-                IncludeTables = datasourceResponse.DataSources[0].IncludeTables,
-                FewShotExampleCount = datasourceResponse.DataSources[0].FewShotExampleCount ?? 0
-            };
+                case "blob-storage":
+                    dataSourceMetadata = new BlobStorageDataSource
+                    {
+                        Name = dataSource.Name,
+                        Type = dataSource.UnderlyingImplementation,
+                        Description = dataSource.Description,
+                        Configuration = new BlobStorageConfiguration
+                        {
+                            ConnectionStringSecretName = dataSource.Authentication["connection_string_secret"],
+                            ContainerName = dataSource.Container,
+                            Files = dataSource.Files
+                        }
+                    };
+                    break;
+                case "search-service":
+                    break;
+                case "sql":
+                    dataSourceMetadata = new SQLDatabaseDataSource
+                    {
+                        Name = dataSource.Name,
+                        Type = dataSource.UnderlyingImplementation,
+                        Description = dataSource.Description,
+                        Configuration = new SQLDatabaseConfiguration
+                        {
+                            Dialect = dataSource.Dialect,
+                            Host = dataSource.Authentication["host"],
+                            Port = Convert.ToInt32(dataSource.Authentication["port"]),
+                            DatabaseName = dataSource.Authentication["database"],
+                            Username = dataSource.Authentication["username"],
+                            PasswordSecretName = dataSource.Authentication["password_secret"],
+                            IncludeTables = dataSource.IncludeTables,
+                            FewShotExampleCount = dataSource.FewShotExampleCount ?? 0
+                        }
+                    };
+                    break;
+                default:
+                    throw new ArgumentException($"The {dataSourceResponse.DataSources[0].UnderlyingImplementation} data source type is not supported.");
+            }
 
             //create LLMOrchestrationCompletionRequest template
             _completionRequestTemplate = new LLMOrchestrationCompletionRequest()
@@ -55,7 +87,7 @@ namespace FoundationaLLM.AgentFactory.Core.Agents
                 Agent = new Agent()
                 {
                     Name = _agentMetadata.Name,
-                    Type = datasourceResponse.DataSources[0].UnderlyingImplementation,
+                    Type = dataSourceResponse.DataSources[0].UnderlyingImplementation,
                     Description = _agentMetadata.Description,
                     PromptTemplate = promptResponse.Prompts[0].Prompt
                 },
@@ -66,13 +98,7 @@ namespace FoundationaLLM.AgentFactory.Core.Agents
                     Temperature = _agentMetadata.LanguageModel.Temperature ?? 0f,
                     UseChat = _agentMetadata.LanguageModel.UseChat ?? true
                 },
-                DataSource = new SQLDatabaseDataSource()
-                {
-                    Name = datasourceResponse.DataSources[0].Name,
-                    Type = datasourceResponse.DataSources[0].UnderlyingImplementation,
-                    Description = datasourceResponse.DataSources[0].Description,
-                    Configuration = dataSourceConfig
-                },
+                DataSourceMetadata = dataSourceMetadata,
                 MessageHistory = null // to be filled in GetCompletion
             };
         }
