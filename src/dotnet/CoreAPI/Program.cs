@@ -33,6 +33,9 @@ namespace FoundationaLLM.Core.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Configuration.Sources.Clear();
+            builder.Configuration.AddJsonFile("appsettings.json", false, true);
+            builder.Configuration.AddEnvironmentVariables();
             builder.Configuration.AddAzureAppConfiguration(options =>
             {
                 options.Connect(builder.Configuration["FoundationaLLM:AppConfig:ConnectionString"]);
@@ -41,6 +44,7 @@ namespace FoundationaLLM.Core.API
                     options.SetCredential(new DefaultAzureCredential());
                 });
             });
+            builder.Configuration.AddJsonFile("appsettings.development.json", true, true);
               
             var allowAllCorsOrigins = "AllowAllOrigins";
             builder.Services.AddCors(policyBuilder =>
@@ -169,7 +173,7 @@ namespace FoundationaLLM.Core.API
             downstreamAPISettings.DownstreamAPIs[HttpClients.GatekeeperAPI] = gatekeeperAPISettings;
 
             builder.Services
-                    .AddHttpClient(gatekeeperAPISettings.APIKey,
+                    .AddHttpClient(HttpClients.GatekeeperAPI,
                         client => { client.BaseAddress = new Uri(gatekeeperAPISettings.APIUrl); })
                     .AddTransientHttpErrorPolicy(policyBuilder =>
                         policyBuilder.WaitAndRetryAsync(

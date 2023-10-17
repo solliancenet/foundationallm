@@ -15,7 +15,6 @@ namespace FoundationaLLM.Common.Services
     public class HttpClientFactoryService : IHttpClientFactoryService
     {
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly IConfigurationService _configurationService;
         private readonly IUserIdentityContext _userIdentityContext;
         private readonly IDownstreamAPISettings _apiSettings;
 
@@ -24,20 +23,16 @@ namespace FoundationaLLM.Common.Services
         /// </summary>
         /// <param name="httpClientFactory">A fully configured <see cref="IHttpClientFactory"/>
         /// that allows access to <see cref="HttpClient"/> instances by name.</param>
-        /// <param name="configurationService">An <see cref="IConfigurationService"/> instance
-        /// that standardizes accessing configuration values.</param>
         /// <param name="userIdentityContext">Stores a <see cref="UnifiedUserIdentity"/> object resolved from
         /// one or more services.</param>
         /// <param name="apiSettings">A <see cref="DownstreamAPISettings"/> class that
         /// contains the configured path to the desired API key.</param>
         /// <exception cref="ArgumentNullException"></exception>
-        public HttpClientFactoryService(IHttpClientFactory httpClientFactory, 
-            IConfigurationService configurationService,
+        public HttpClientFactoryService(IHttpClientFactory httpClientFactory,
             IUserIdentityContext userIdentityContext,
             IDownstreamAPISettings apiSettings)
         {
             _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
-            _configurationService = configurationService ?? throw new ArgumentNullException(nameof(configurationService));
             _userIdentityContext = userIdentityContext ?? throw new ArgumentNullException(nameof(userIdentityContext));
             _apiSettings = apiSettings ?? throw new ArgumentNullException(nameof(apiSettings));
         }
