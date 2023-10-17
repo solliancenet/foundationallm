@@ -8,7 +8,7 @@
 			<template v-else>
 				<span>Please select a session</span>
 			</template>
-			<button @click="signIn()">TEST</button>
+			<button @click="signIn()">Sign In</button>
 		</div>
 
 		<!-- Messages -->
@@ -41,6 +41,7 @@
 <script lang="ts">
 import type { PropType } from 'vue';
 import { Message, Session } from '@/js/types';
+import { msalInstance, loginRequest } from '@/js/auth'
 import api from '~/server/api';
 
 export default {
@@ -70,6 +71,11 @@ export default {
 	},
 
 	methods: {
+		async signIn() {
+			await msalInstance.initialize();
+			await msalInstance.loginPopup(loginRequest);
+		},
+
 		async getMessages() {
 			const data = await api.getMessages(this.session.id);
 			this.messages = data;
@@ -96,25 +102,7 @@ export default {
 			await api.sendMessage(this.session.id, text);
 			await this.getMessages();
 		},
-		async signIn() {
-			try {
-				const msalInstance = this.$msalInstance;
-				const loginRequest = this.$loginRequest;
-
-				const response = await msalInstance.loginPopup(loginRequest);
-
-				if (response) {
-
-				console.log('User is signed in.');
-				console.log(response);
-				} else {
-				console.log('User did not sign in.');
-				}
-			} catch (error) {
-				console.log(error);
-			}
-		},
-	},
+	}
 };
 </script>
 
