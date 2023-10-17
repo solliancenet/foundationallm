@@ -2,8 +2,8 @@
 
 public record AzureContentSafetySettings
 {
-    public string Endpoint { get; init; }
-    public string Key { get; init; }
+    public string APIUrl { get; init; }
+    public string APIKey { get; init; }
     public int HateSeverity { get; init; }
     public int ViolenceSeverity { get; init; }
     public int SelfHarmSeverity { get; init; }
