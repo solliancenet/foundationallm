@@ -51,7 +51,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AgentFactoryAPI", "dotnet\A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AgentFactory", "dotnet\AgentFactory\AgentFactory.csproj", "{59C6DEDC-F60D-4EB9-A2E5-793EC42F3895}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestingInfrastructure", "..\tests\dotnet\TestingInfrastructure\TestingInfrastructure.csproj", "{7F7CA6E9-F1F0-403D-B72D-2AC134F64CDE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestUtils", "..\tests\dotnet\TestUtils\TestUtils.csproj", "{7F7CA6E9-F1F0-403D-B72D-2AC134F64CDE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,12 +1,12 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 
-    <AssemblyName>FoundationaLLM.TestingInfrastructure</AssemblyName>
-    <RootNamespace>FoundationaLLM.TestingInfrastructure</RootNamespace>
+    <AssemblyName>FoundationaLLM.TestUtils</AssemblyName>
+    <RootNamespace>FoundationaLLM.TestUtils</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Net;
 
-namespace FoundationaLLM.TestingInfrastructure.Helpers
+namespace FoundationaLLM.TestUtils.Helpers
 {
     public class MockHttpMessageHandler : HttpMessageHandler
     {

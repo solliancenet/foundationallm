@@ -27,7 +27,7 @@
 
   <ItemGroup>
 	  <ProjectReference Include="..\..\..\src\dotnet\Core\Core.csproj" />
-    <ProjectReference Include="..\TestingInfrastructure\TestingInfrastructure.csproj" />
+    <ProjectReference Include="..\TestingInfrastructure\TestUtils.csproj" />
   </ItemGroup>
 
 </Project>
