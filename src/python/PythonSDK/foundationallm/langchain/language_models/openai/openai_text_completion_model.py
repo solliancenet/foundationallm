@@ -1,7 +1,7 @@
 from langchain.base_language import BaseLanguageModel
 from langchain.llms import OpenAI
-from foundationallm.config import Configuration
 
+from foundationallm.config import Configuration
 import foundationallm.models.metadata.language_model as LanguageModel
 from foundationallm.langchain.language_models.openai import OpenAIModelBase
 
@@ -21,11 +21,8 @@ class OpenAITextCompletionModel(OpenAIModelBase):
             Application configuration class for retrieving configuration settings.
         """
         self.config = config
-        self.config_value = self.config.get_value(self.config_value_base_name)
-        
-        self.openai_api_base = self.config_value["Endpoint"]
-        self.temperature = self.config_value["Temperature"]
-        
+        self.openai_api_base = self.config.get_value[f'{self.config_value_base_name}:Endpoint']
+        self.temperature = self.config.get_value[f'{self.config_value_base_name}:Temperature']
         self.openai_api_key = self.config.get_value(f'{self.config_value_base_name}:Key')
 
     def get_language_model(self) -> BaseLanguageModel:
@@ -38,7 +35,7 @@ class OpenAITextCompletionModel(OpenAIModelBase):
             Returns an AzureChatOpenAI chat model.
         """
         return OpenAI(
-            temperature = self.temperature,
             openai_api_base = self.openai_api_base,
-            openai_api_key = self.openai_api_key
+            openai_api_key = self.openai_api_key,
+            temperature = self.temperature
         )

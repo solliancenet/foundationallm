@@ -1,14 +1,9 @@
 import os
-#from re import A
-#from tkinter import N
-from azure.keyvault.secrets import SecretClient
-#from sqlalchemy import exc
 from tenacity import retry, wait_random_exponential, stop_after_attempt, RetryError
 import logging
 from azure.appconfiguration.provider import (
     AzureAppConfigurationKeyVaultOptions,
-    load,
-    #SettingSelector
+    load
 )
 from azure.identity import DefaultAzureCredential
 
@@ -16,28 +11,25 @@ class Configuration():
     def __init__(self):
         """Init"""
         try:
-            vault_url = os.environ['foundationallm-keyvault-uri']
+            app_config_uri = os.environ['foundationallm-app-configuration-uri']
         except Exception as e:
             raise e
         
         credential = DefaultAzureCredential()
-        secret_client = SecretClient(vault_url=vault_url, credential=credential)
-        app_config_secret_name = os.environ.get("foundationallm-app-configuration-secret-name")
-        connection_string = secret_client.get_secret(name=app_config_secret_name).value
         
-        # Connect to Azure App Configuration using a connection string.
-        self.__config = load(connection_string=connection_string, key_vault_options=AzureAppConfigurationKeyVaultOptions(credential=credential))
+        # Connect to Azure App Configuration.
+        self.__config = load(endpoint=app_config_uri, credential=credential, key_vault_options=AzureAppConfigurationKeyVaultOptions(credential=credential))
             
     def get_value(self, key: str) -> str:
         """
-        When prefer_secrets_store is true, retrieves the value from Key Vault.
+        Retrieves the value from Azure App Configuration.
         Otherwise, retrieves the value from the environment variable.
         If the value is not found the method raises an exception.
 
         Parameters
         ----------
-        - name : str
-            The name of the configuration variable to retrieve.
+        - key : str
+            The key name of the configuration setting to retrieve.
         
         Returns
         -------

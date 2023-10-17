@@ -48,6 +48,9 @@ namespace FoundationaLLM.Common.Models.Configuration.Branding
         /// </summary>
         public string BackgroundColor { get; set; }
         /// <summary>
+        /// Flag indicating whether we use kiosk mode or not
+        /// </summary>
+        public bool KioskMode { get; set; }
         /// The text color that overlays the <see cref="PrimaryColor"/> of the client in hex format.
         /// </summary>
         public string PrimaryTextColor { get; set; }
