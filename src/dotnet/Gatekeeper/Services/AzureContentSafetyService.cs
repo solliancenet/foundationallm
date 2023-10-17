@@ -25,7 +25,7 @@ namespace FoundationaLLM.Gatekeeper.Core.Services
             _configurationService = configurationService;
             _logger = logger;
 
-            _client = new ContentSafetyClient(new Uri(_settings.Endpoint), new AzureKeyCredential(_configurationService.GetValue<string>(_settings.APIKeySecretName)));
+            _client = new ContentSafetyClient(new Uri(_settings.APIUrl), new AzureKeyCredential(_settings.APIKey));
         }
 
         public async Task<AnalyzeTextFilterResult> AnalyzeText(string content)

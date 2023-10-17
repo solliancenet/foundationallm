@@ -34,7 +34,7 @@ namespace FoundationaLLM.Common.Authentication
             if (string.IsNullOrWhiteSpace(apiKey))
                 return false;
 
-            string? validApiKey = _configurationService.GetValue<string>(_settings.APIKeySecretName);
+            string? validApiKey = _settings.APIKey;
 
             if (validApiKey == null || validApiKey != apiKey)
                 return false;
