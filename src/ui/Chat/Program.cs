@@ -30,7 +30,7 @@ builder.Configuration.AddAzureAppConfiguration(options =>
 builder.Services.AddHttpClient(FoundationaLLM.Common.Constants.HttpClients.CoreAPI,
         httpClient =>
         {
-            httpClient.BaseAddress = new Uri(builder.Configuration["FoundationaLLM:ChatManager:APIUrl"]);
+            httpClient.BaseAddress = new Uri(builder.Configuration["FoundationaLLM:APIs:CoreAPI:APIUrl"]);
         })
     .AddTransientHttpErrorPolicy(policyBuilder =>
         policyBuilder.WaitAndRetryAsync(
