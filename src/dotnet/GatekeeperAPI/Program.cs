@@ -23,6 +23,9 @@ namespace FoundationaLLM.Gatekeeper.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Configuration.Sources.Clear();
+            builder.Configuration.AddJsonFile("appsettings.json", false, true);
+            builder.Configuration.AddEnvironmentVariables();
             builder.Configuration.AddAzureAppConfiguration(options =>
             {
                 options.Connect(builder.Configuration["FoundationaLLM:AppConfig:ConnectionString"]);
@@ -31,6 +34,7 @@ namespace FoundationaLLM.Gatekeeper.API
                     options.SetCredential(new DefaultAzureCredential());
                 });
             });
+            builder.Configuration.AddJsonFile("appsettings.development.json", true, true);
 
             // Add services to the container.
             builder.Services.AddApplicationInsightsTelemetry();
@@ -156,7 +160,7 @@ namespace FoundationaLLM.Gatekeeper.API
             downstreamAPISettings.DownstreamAPIs[HttpClients.AgentFactoryAPI] = agentFactoryAPISettings;
 
             builder.Services
-                    .AddHttpClient(agentFactoryAPISettings.APIKey,
+                    .AddHttpClient(HttpClients.AgentFactoryAPI,
                         client => { client.BaseAddress = new Uri(agentFactoryAPISettings.APIUrl); })
                     .AddTransientHttpErrorPolicy(policyBuilder =>
                         policyBuilder.WaitAndRetryAsync(

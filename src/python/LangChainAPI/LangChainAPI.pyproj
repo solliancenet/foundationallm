@@ -22,8 +22,7 @@
     <TestFramework>none</TestFramework>
     <UnitTestPattern>test*.py</UnitTestPattern>
     <UnitTestRootDirectory>.</UnitTestRootDirectory>
-    <Environment>foundationallm-app-configuration-uri=https://foundationallm.azconfig.io
-foundationallm-configuration-allow-environment-variables=True</Environment>
+    <Environment>foundationallm-configuration-allow-environment-variables=True</Environment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>

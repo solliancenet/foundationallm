@@ -28,9 +28,12 @@
                             <img src="@BrandingService.CurrentConfig?.LogoUrl" alt="@BrandingService.CurrentConfig?.CompanyName" style="max-width: 150px;" />
                         }
                     </div>
-                    <button class="navbar-toggler border-0" @onclick="ToggleNavMenu">
-                        <i class="bi bi-arrow-right-square-fill"></i>
-                    </button>
+                    @if (BrandingService.CurrentConfig == null || BrandingService.CurrentConfig.KioskMode == false)
+                    {
+                        <button class="navbar-toggler border-0" @onclick="ToggleNavMenu">
+                            <i class="bi bi-arrow-right-square-fill"></i>
+                        </button>
+                    }
                 </div>                
             </div>
         </div>

@@ -21,8 +21,8 @@ class OpenAIChatModel(OpenAIModelBase):
             Application configuration class for retrieving configuration settings.
         """
         self.config = config
-        self.openai_api_base = self.config.get_value[f'{self.config_value_base_name}:Endpoint']
-        self.temperature = self.config.get_value[f'{self.config_value_base_name}:Temperature']
+        self.openai_api_base = self.config.get_value(f'{self.config_value_base_name}:Endpoint')
+        self.temperature = self.config.get_value(f'{self.config_value_base_name}:Temperature')
         self.openai_api_key = self.config.get_value(f'{self.config_value_base_name}:Key')
          
     def get_language_model(self) -> BaseLanguageModel:
