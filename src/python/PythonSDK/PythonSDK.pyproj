@@ -65,6 +65,7 @@
     <Compile Include="foundationallm\hubs\resolver.py" />
     <Compile Include="foundationallm\hubs\__init__.py" />
     <Compile Include="foundationallm\langchain\agents\agent_base.py" />
+    <Compile Include="foundationallm\langchain\agents\blob_storage_agent.py" />
     <Compile Include="foundationallm\langchain\data_sources\blob\blob_storage_configuration.py" />
     <Compile Include="foundationallm\langchain\data_sources\blob\__init__.py" />
     <Compile Include="foundationallm\langchain\data_sources\sql\mariadb.py" />
