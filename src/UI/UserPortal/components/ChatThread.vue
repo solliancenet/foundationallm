@@ -100,18 +100,20 @@ export default {
 		},
 
 		async handleSend(text: string) {
-			this.messages.push({
+			const tempUserMessage: Message = {
 				completionPromptId: null,
-				id: "",
+				id: '',
 				rating: null,
-				sender: "User",
+				sender: 'User',
 				sessionId: this.session.id,
-				text: text,
-				timeStamp: Date.now(),
+				text,
+				timeStamp: new Date().toISOString(),
 				tokens: 0,
-				type: "Message",
+				type: 'Message',
 				vector: [],
-			});
+			};
+			this.messages.push(tempUserMessage);
+
 			await api.sendMessage(this.session.id, text);
 			await this.getMessages();
 
