@@ -1,3 +1,4 @@
+using Azure.Identity;
 using FoundationaLLM.Common.Authentication;
 using FoundationaLLM.Common.Interfaces;
 using FoundationaLLM.Common.Models.Configuration;
@@ -14,6 +15,15 @@ namespace FoundationaLLM.SemanticKernel.API
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Configuration.AddAzureAppConfiguration(options =>
+            {
+                options.Connect(builder.Configuration["FoundationaLLM:AppConfig:ConnectionString"]);
+                options.ConfigureKeyVault(options =>
+                {
+                    options.SetCredential(new DefaultAzureCredential());
+                });
+            });
 
             // Add services to the container.
             builder.Services.AddApplicationInsightsTelemetry();

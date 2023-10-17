@@ -22,6 +22,7 @@ using FoundationaLLM.Common.Models.Authentication;
 using FoundationaLLM.Common.Middleware;
 using FoundationaLLM.Common.Models.Configuration.Branding;
 using Newtonsoft.Json;
+using Azure.Identity;
 
 namespace FoundationaLLM.Core.API
 {
@@ -30,6 +31,15 @@ namespace FoundationaLLM.Core.API
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Configuration.AddAzureAppConfiguration(options =>
+            {
+                options.Connect(builder.Configuration["FoundationaLLM:AppConfig:ConnectionString"]);
+                options.ConfigureKeyVault(options =>
+                {
+                    options.SetCredential(new DefaultAzureCredential());
+                });
+            });
 
             builder.Services.AddOptions<CosmosDbSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:CosmosDB"));
@@ -174,7 +184,7 @@ namespace FoundationaLLM.Core.API
             builder.Services.AddScoped<IUserClaimsProviderService, EntraUserClaimsProviderService>();
 
             // Configure the scope used by the API controllers:
-            var requiredScope = builder.Configuration["FoundationaLLM:Entra:Scopes"];
+            var requiredScope = builder.Configuration["FoundationaLLM:CoreAPI:Entra:Scopes"];
             builder.Services.AddAuthorization(options =>
             {
                 options.AddPolicy("RequiredScope", policyBuilder =>
