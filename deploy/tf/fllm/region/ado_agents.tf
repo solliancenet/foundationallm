@@ -14,7 +14,7 @@ resource "azurerm_network_profile" "linux_network_profile" {
 }
 
 resource "azurerm_container_group" "linux-container-group" {
-  name                = "${local.resource_prefix}-ado-aci"
+  name                = "${lower(join("", split("-", local.resource_prefix)))}adoaci"
   location            = azurerm_resource_group.rgs["OPS"].location
   resource_group_name = azurerm_resource_group.rgs["OPS"].name
   ip_address_type     = "Private"
