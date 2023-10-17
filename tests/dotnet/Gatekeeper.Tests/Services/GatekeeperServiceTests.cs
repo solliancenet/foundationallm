@@ -18,7 +18,8 @@ namespace Gatekeeper.Tests.Services
             // Arrange
             var agentFactoryAPIService = Substitute.For<IAgentFactoryAPIService>();
             var refinementService = Substitute.For<IRefinementService>();
-            var service = new GatekeeperService(agentFactoryAPIService, refinementService);
+            var contentSafetyService = Substitute.For<IContentSafetyService>();
+            var service = new GatekeeperService(agentFactoryAPIService, refinementService, contentSafetyService);
             var completionRequest = new CompletionRequest { UserPrompt = "Prompt_1", MessageHistory = new List<FoundationaLLM.Common.Models.Chat.MessageHistoryItem>() };
 
             // Act
@@ -34,7 +35,8 @@ namespace Gatekeeper.Tests.Services
             // Arrange
             var agentFactoryAPIService = Substitute.For<IAgentFactoryAPIService>();
             var refinementService = Substitute.For<IRefinementService>();
-            var service = new GatekeeperService(agentFactoryAPIService, refinementService);
+            var contentSafetyService = Substitute.For<IContentSafetyService>();
+            var service = new GatekeeperService(agentFactoryAPIService, refinementService, contentSafetyService);
             var summaryRequest = new SummaryRequest { UserPrompt = "Prompt_1" };
 
             // Act
@@ -50,7 +52,8 @@ namespace Gatekeeper.Tests.Services
             // Arrange
             var agentFactoryAPIService = Substitute.For<IAgentFactoryAPIService>();
             var refinementService = Substitute.For<IRefinementService>();
-            var service = new GatekeeperService(agentFactoryAPIService, refinementService);
+            var contentSafetyService = Substitute.For<IContentSafetyService>();
+            var service = new GatekeeperService(agentFactoryAPIService, refinementService, contentSafetyService);
             var orchestrationService = "ServiceName";
 
             // Act
