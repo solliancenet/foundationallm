@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -26,16 +26,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Chat\" />
-    <Folder Include="Memory\" />
-    <Folder Include="MemorySource\" />
-    <Folder Include="TextEmbedding\" />
-    <Folder Include="Skills\" />
-    <Folder Include="Services\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\..\src\dotnet\SemanticKernel\SemanticKernel.csproj" />
+    <ProjectReference Include="..\TestUtils\TestUtils.csproj" />
   </ItemGroup>
 
 </Project>
