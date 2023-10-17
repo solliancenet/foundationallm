@@ -1,7 +1,7 @@
 <template>
-	<div class="chat-app">
-		<ChatSidebar @change-session="handleChangeSession" />
-		<ChatThread :session="currentSession" />
+	<div :style="style" class="chat-app">
+		<ChatSidebar ref="sidebar" :currentSession="currentSession" @change-session="handleChangeSession" />
+		<ChatThread :session="currentSession" @update-session="handleUpdateSession" />
 	</div>
 </template>
 
@@ -17,22 +17,42 @@ export default {
 		};
 	},
 
+	computed: {
+		style() {
+			return {
+				'--primary-bg': this.$config.public.BRANDING_BACKGROUND_COLOR,
+				'--primary-color': this.$config.public.BRANDING_PRIMARY_COLOR,
+				'--secondary-color': this.$config.public.BRANDING_SECONDARY_COLOR,
+				'--accent-color': this.$config.public.BRANDING_ACCENT_COLOR,
+			};
+		}
+	},
+
 	methods: {
 		handleChangeSession(session: Session) {
 			this.currentSession = session;
+		},
+
+		handleUpdateSession(session: Session) {
+			this.currentSession = session;
+			this.$refs.sidebar.getSessions();
 		},
 	},
 };
 </script>
 
-<style>
+<style lang="scss">
+:root {
+	--primary-text: white;
+}
+
 html,
 body,
 #__nuxt,
 #__layout {
 	height: 100%;
 	margin: 0;
-	font-family: 'Nunito', sans-serif;
+	font-family: 'Poppins', sans-serif;
 }
 </style>
 
@@ -40,6 +60,6 @@ body,
 .chat-app {
 	display: flex;
 	height: 100vh;
-	background-color: rgba(242, 242, 242, 1);
+	background-color: var(--primary-bg);
 }
 </style>

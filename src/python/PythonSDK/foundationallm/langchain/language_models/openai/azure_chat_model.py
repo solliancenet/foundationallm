@@ -1,9 +1,9 @@
 from langchain.base_language import BaseLanguageModel
 from langchain.chat_models import AzureChatOpenAI
-from foundationallm.config import Configuration
 
-import foundationallm.models.orchestration.metadata.language_model as LanguageModel
+from foundationallm.config import Configuration
 from foundationallm.langchain.language_models.openai import OpenAIModelBase, AzureOpenAIAPIType
+import foundationallm.models.metadata.language_model as LanguageModel
 
 class AzureChatModel(OpenAIModelBase):
     """Azure OpenAI chat model."""
@@ -14,7 +14,7 @@ class AzureChatModel(OpenAIModelBase):
     def __init__(self, language_model: LanguageModel, config: Configuration):
         """
         Initializes the Azure Open AI chat model.
-
+        Li
         Parameters
         ----------
         language_model: LanguageModel

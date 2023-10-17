@@ -20,6 +20,7 @@ using FoundationaLLM.Core.Models.Configuration;
 using FoundationaLLM.Common.Authentication;
 using FoundationaLLM.Common.Models.Authentication;
 using FoundationaLLM.Common.Middleware;
+using FoundationaLLM.Common.Models.Configuration.Branding;
 using Newtonsoft.Json;
 
 namespace FoundationaLLM.Core.API
@@ -30,11 +31,25 @@ namespace FoundationaLLM.Core.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            var allowAllCorsOrigins = "AllowAllOrigins";
+            builder.Services.AddCors(policyBuilder =>
+            {
+                policyBuilder.AddPolicy(allowAllCorsOrigins,
+                    policy =>
+                    {
+                        policy.AllowAnyOrigin();
+                        policy.AllowAnyHeader();
+                        policy.AllowAnyMethod();
+                    });
+            });
+
             builder.Services.AddOptions<CosmosDbSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:CosmosDB"));
             builder.Services.AddOptions<KeyVaultConfigurationServiceSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:Configuration"));
-            
+            builder.Services.AddOptions<ClientBrandingConfiguration>()
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:Branding"));
+
             // Register the downstream services and HTTP clients.
             RegisterDownstreamServices(builder);
 
@@ -52,7 +67,10 @@ namespace FoundationaLLM.Core.API
             RegisterAuthConfiguration(builder);
 
             builder.Services.AddApplicationInsightsTelemetry();
-            builder.Services.AddControllers();
+            builder.Services.AddControllers().AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.ContractResolver = Common.Settings.CommonJsonSerializerSettings.GetJsonSerializerSettings().ContractResolver;
+            });
             builder.Services.AddProblemDetails();
             builder.Services
                 .AddApiVersioning(options =>
@@ -117,6 +135,8 @@ namespace FoundationaLLM.Core.API
                 });
 
             app.MapControllers();
+
+            app.UseCors(allowAllCorsOrigins);
 
             app.Run();
         }

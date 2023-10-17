@@ -1,5 +1,4 @@
 ﻿using Asp.Versioning;
-using FoundationaLLM.Common.Controllers;
 using FoundationaLLM.Common.Interfaces;
 using FoundationaLLM.Common.Models.Chat;
 using FoundationaLLM.Common.Models.Configuration.Authentication;
@@ -18,7 +17,7 @@ namespace FoundationaLLM.Core.API.Controllers
     [ApiVersion(1.0)]
     [ApiController]
     [Route("[controller]")]
-    public class OrchestrationController : APIControllerBase
+    public class OrchestrationController : ControllerBase
     {
         private readonly IGatekeeperAPIService _gatekeeperAPIService;
         private readonly ILogger<OrchestrationController> _logger;

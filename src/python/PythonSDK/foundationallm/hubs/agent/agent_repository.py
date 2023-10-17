@@ -7,7 +7,7 @@ from typing import List
 class AgentRepository(Repository): 
     """ The AgentRepository is responsible for retrieving data source metadata from storage."""
     
-    def get_metadata_values(self, pattern:str) -> List[AgentMetadata]:
+    def get_metadata_values(self, pattern:str=None) -> List[AgentMetadata]:
         """
         Returns a list of AgentMetadata objects, optionally filtered by a pattern.
         

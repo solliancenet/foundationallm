@@ -32,6 +32,7 @@ public class AgentHubAPIService : IAgentHubService
         _settings = options.Value;
         _logger = logger;
         _httpClientFactoryService = httpClientFactoryService;
+        _jsonSerializerSettings = Common.Settings.CommonJsonSerializerSettings.GetJsonSerializerSettings();
     }
 
     public async Task<string> Status()
@@ -57,24 +58,23 @@ public class AgentHubAPIService : IAgentHubService
         return null;
     }
 
-    public async Task<List<AgentHubResponse>> ResolveRequest(string userPrompt, string userContext)
+    public async Task<AgentHubResponse> ResolveRequest(string userPrompt, string userContext)
     {
         try
         {
-            AgentHubMessage ahm = new AgentHubMessage { UserPrompt = userPrompt, UserContext = userContext };
+            AgentHubRequest ahm = new AgentHubRequest { UserPrompt=userPrompt, UserContext=userContext };
             
             var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.AgentHubAPI);
-
+                        
             var responseMessage = await client.PostAsync("/resolve_request", new StringContent(
-                    JsonConvert.SerializeObject(ahm),
+                    JsonConvert.SerializeObject(ahm, _jsonSerializerSettings),
                     Encoding.UTF8, "application/json"));
 
             if (responseMessage.IsSuccessStatusCode)
             {
                 var responseContent = await responseMessage.Content.ReadAsStringAsync();
-                var completionResponse = JsonConvert.DeserializeObject<List<AgentHubResponse>>(responseContent);
-
-                return completionResponse;
+                var ahr = JsonConvert.DeserializeObject<AgentHubResponse>(responseContent, _jsonSerializerSettings);                          
+                return ahr;
             }
         }
         catch (Exception ex)
@@ -83,6 +83,6 @@ public class AgentHubAPIService : IAgentHubService
             throw ex;
         }
 
-        return new List<AgentHubResponse>();
+        return new AgentHubResponse();
     }    
 }

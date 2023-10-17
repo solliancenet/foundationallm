@@ -1,5 +1,6 @@
 ﻿using Azure;
 using Azure.AI.ContentSafety;
+using FoundationaLLM.Common.Interfaces;
 using FoundationaLLM.Gatekeeper.Core.Interfaces;
 using FoundationaLLM.Gatekeeper.Core.Models.ConfigurationOptions;
 using FoundationaLLM.Gatekeeper.Core.Models.ContentSafety;
@@ -12,16 +13,19 @@ namespace FoundationaLLM.Gatekeeper.Core.Services
     {
         private readonly ContentSafetyClient _client;
         private readonly AzureContentSafetySettings _settings;
+        private readonly IConfigurationService _configurationService;
         private readonly ILogger _logger;
 
         public AzureContentSafetyService(
             IOptions<AzureContentSafetySettings> options,
+            IConfigurationService configurationService,
             ILogger<AzureContentSafetyService> logger)
         {
             _settings = options.Value;
+            _configurationService = configurationService;
             _logger = logger;
 
-            _client = new ContentSafetyClient(new Uri(_settings.Endpoint), new AzureKeyCredential(_settings.Key));
+            _client = new ContentSafetyClient(new Uri(_settings.Endpoint), new AzureKeyCredential(_configurationService.GetValue<string>(_settings.APIKeySecretName)));
         }
 
         public async Task<AnalyzeTextFilterResult> AnalyzeText(string content)

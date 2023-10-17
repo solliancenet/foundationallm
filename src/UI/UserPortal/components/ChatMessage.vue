@@ -1,10 +1,7 @@
 <template>
 	<div
 		class="message-row"
-		:class="{
-			'message--in': !(message.sender === 'User'),
-			'message--out': message.sender === 'User',
-		}"
+		:class="message.sender === 'User' ? 'message--out' : 'message--in'"
 	>
 		<div class="message">
 			<div class="message__header">
@@ -28,20 +25,22 @@
 					<!-- Like -->
 					<span>
 						<Button
-							:icon="message.rating ? 'pi pi-thumbs-up-fill' : 'pi pi-thumbs-up'"
 							size="small"
-							@click.stop="handleRate(message, true)"
+							text
+							:icon="message.rating ? 'pi pi-thumbs-up-fill' : 'pi pi-thumbs-up'"
 							:label="message.rating ? 'Message Liked!' : 'Like'"
+							@click.stop="handleRate(message, true)"
 						/>
 					</span>
 
 					<!-- Dislike -->
 					<span>
 						<Button
-							:icon="message.rating === false ? 'pi pi-thumbs-down-fill' : 'pi pi-thumbs-down'"
 							size="small"
-							@click.stop="handleRate(message, false)"
+							text
+							:icon="message.rating === false ? 'pi pi-thumbs-down-fill' : 'pi pi-thumbs-down'"
 							:label="message.rating === false ? 'Message Disliked.' : 'Dislike'"
+							@click.stop="handleRate(message, false)"
 						/>
 					</span>
 				</span>
@@ -49,10 +48,11 @@
 				<!-- View prompt -->
 				<span class="view-prompt">
 					<Button
-						icon="pi pi-book"
 						size="small"
-						@click.stop="handleViewPrompt"
+						text
+						icon="pi pi-book"
 						label="View Prompt"
+						@click.stop="handleViewPrompt"
 					/>
 
 					<!-- Prompt dialog -->
@@ -99,8 +99,8 @@ export default {
 	},
 
 	methods: {
-		handleRate(message: Message, like: Boolean) {
-			this.$emit('rate', { message, like: message.rating === like ? undefined : like })
+		handleRate(message: Message, like: boolean) {
+			this.$emit('rate', { message, like: message.rating === like ? null : like })
 		},
 
 		async handleViewPrompt() {
@@ -121,7 +121,6 @@ export default {
 
 .message {
 	padding: 16px;
-	border-radius: 8px;
 	width: 80%;
 	box-shadow: 0 5px 10px 0 rgba(27, 29, 33, 0.1);
 }
@@ -135,7 +134,8 @@ export default {
 .message--out {
 	flex-direction: row-reverse;
 	.message {
-		background-color: rgba(233, 235, 249, 1);
+		background-color: var(--primary-color);
+		color: var(--primary-text)
 	}
 }
 

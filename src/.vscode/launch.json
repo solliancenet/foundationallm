@@ -1,0 +1,52 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: AgentHubAPI",
+            "type": "python",
+            "request": "launch",
+            "module": "uvicorn",
+            "cwd" : "${workspaceFolder}/python/AgentHubAPI/app",
+            "env": {},
+            "args": ["main:app","--reload", "--port", "8742"]
+        },
+        {
+            "name": "Python: DataSourceHubAPI",
+            "type": "python",
+            "request": "launch",
+            "module": "uvicorn",
+            "cwd" : "${workspaceFolder}/python/DataSourceHubAPI/app",
+            "env": {},
+            "args": ["main:app","--reload", "--port", "8842"]
+        },
+        {
+            "name": "Python: PromptHubAPI",
+            "type": "python",
+            "request": "launch",
+            "module": "uvicorn",
+            "cwd" : "${workspaceFolder}/python/PromptHubAPI/app",
+            "env": {},
+            "args": ["main:app","--reload", "--port", "8642"]
+        },
+        {
+            "name": "Python: LangChainAPI",
+            "type": "python",
+            "request": "launch",
+            "module": "uvicorn",
+            "cwd" : "${workspaceFolder}/python/LangChainAPI/app",
+            "env": {},
+            "args": ["main:app","--reload", "--port", "8765"]
+        },
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        }
+    ]
+}

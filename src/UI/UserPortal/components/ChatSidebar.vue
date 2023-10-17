@@ -2,10 +2,22 @@
 	<div class="chat-sidebar">
 		<!-- Sidebar header -->
 		<div class="chat-sidebar__header">
+			<img :src="logoURL" />
+			<span>{{ logoText }}</span>
+		</div>
+
+		<!-- Sidebar section header -->
+		<div class="chat-sidebar__section-header">
 			<span>Chats</span>
-			<button @click="handleAddSession">
+			<!-- <button @click="handleAddSession">
 				<span class="text">+</span>
-			</button>
+			</button> -->
+			<Button
+				icon="pi pi-plus"
+				text
+				severity="secondary"
+				@click="handleAddSession"
+			/>
 		</div>
 
 		<!-- Chats -->
@@ -25,11 +37,13 @@
 					<span class="chat__name">{{ session.name }}</span>
 
 					<!-- Chat icons -->
-					<span class="p-buttonset chat__icons">
+					<span v-if="currentSession?.id === session.id" class="chat__icons">
 						<!-- Rename session -->
 						<Button
 							icon="pi pi-pencil"
 							size="small"
+							severity="secondary"
+							text
 							@click.stop="openRenameModal(session)"
 						/>
 
@@ -37,6 +51,8 @@
 						<Button
 							icon="pi pi-trash"
 							size="small"
+							severity="danger"
+							text
 							@click.stop="sessionToDelete = session"
 						/>
 					</span>
@@ -82,18 +98,29 @@
 </template>
 
 <script lang="ts">
+import type { PropType } from 'vue';
 import { Session } from '@/js/types';
 import api from '~/server/api';
 
 export default {
 	name: 'ChatSidebar',
 
+	props: {
+		currentSession: {
+			type: Object as PropType<Session> | null,
+			required: true,
+		}
+	},
+
 	emits: ['change-session'],
+
+	expose: ['getSessions'],
 
 	data() {
 		return {
+			logoText: this.$config.public.LOGO_TEXT,
+			logoURL: this.$config.public.LOGO_URL,
 			sessions: [] as Array<Session>,
-			currentSession: null as Session | null,
 			sessionToRename: null as Session | null,
 			newSessionName: '' as string,
 			sessionToDelete: null as Session | null,
@@ -135,7 +162,6 @@ export default {
 		},
 
 		handleSessionSelected(session: Session) {
-			this.currentSession = session;
 			this.$emit('change-session', session);
 		},
 
@@ -152,19 +178,41 @@ export default {
 .chat-sidebar {
 	width: 300px;
 	height: 100%;
-	border-right: 1px solid gray;
 	display: flex;
 	flex-direction: column;
+	background-color: var(--primary-color);
 }
 
 .chat-sidebar__header {
 	height: 70px;
+	width: 100%;
+	padding-right: 24px;
+	padding-left: 24px;
+	padding-top: 12px;
+	display: flex;
+	align-items: center;
+	color: var(--primary-text);
+
+	img {
+		max-height: 100%;
+		width: auto;
+		max-width: 148px;
+		margin-right: 12px;
+	}
+}
+
+.chat-sidebar__section-header {
+	height: 64px;
 	padding: 24px;
-	border-bottom: 1px solid gray;
+	padding-bottom: 12px;
 	display: flex;
 	justify-content: space-between;
-	background-color: rgba(32, 32, 32, 1);
-	color: white;
+	align-items: center;
+	color: var(--primary-text);
+	text-transform: uppercase;
+	// font-size: 14px;
+	font-size: 0.875rem;
+	font-weight: 600;
 }
 
 .chat-sidebar__chats {
@@ -173,12 +221,21 @@ export default {
 }
 
 .chat {
-	border-radius: 8px;
-	margin: 24px;
-	padding: 12px;
+	padding: 24px;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+	color: var(--primary-text);
+	transition: all 0.1s ease-in-out;
+	font-size: 13px;
+	font-size: 0.8125rem;
+	height: 72px;
+}
+
+.chat__name {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .chat__icons {
@@ -186,8 +243,12 @@ export default {
 	justify-content: space-between;
 }
 
+.chat:hover {
+	background-color: rgba(217, 217, 217, 0.05);
+}
 .chat--selected {
-	background-color: lightgray;
+	background-color: rgba(217, 217, 217, 0.1);
+	border-left: 4px solid rgba(217, 217, 217, 0.5);
 }
 
 .chat--selected .option {
