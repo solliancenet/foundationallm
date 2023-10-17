@@ -7,6 +7,7 @@ from foundationallm.models.orchestration import CompletionRequest, CompletionRes
 from langchain.document_loaders import AzureBlobStorageFileLoader, AzureBlobStorageContainerLoader
 from langchain.indexes import VectorstoreIndexCreator
 from langchain.indexes.vectorstore import VectorStoreIndexWrapper
+from foundationallm.models.orchestration import MessageHistoryItem
 
 class BlobStorageAgent(AgentBase):
     """
@@ -22,9 +23,9 @@ class BlobStorageAgent(AgentBase):
         completion_request : CompletionRequest
             The completion request object containing the user prompt to execute, message history,
             and agent and data source metadata.       
-        """
+        """        
         self.llm = llm.get_language_model()
-        self.prompt_prefix = completion_request.agent.prompt_template
+        self.prompt_prefix = completion_request.agent.prompt_template + self.__build_chat_history(completion_request.message_history)
         self.connection_string = config.get_value(completion_request.data_source.configuration.connection_string_secret)        
         self.container_name = completion_request.data_source.configuration.container        
         self.file_names = completion_request.data_source.configuration.files        
@@ -42,21 +43,25 @@ class BlobStorageAgent(AgentBase):
             for file_name in self.file_names:
                 loaders.append(AzureBlobStorageFileLoader(conn_str=self.connection_string, container=self.container_name, blob_name=file_name))
         
-        # Optional parameters for VectorStoreIndexCreator: embeddings (defaults to langchain's own embeddings), 
-        #                               text_splitter(defaults to TextSplitter), vectorstore_cls (defaults to Chroma)
+        # Optional parameters for VectorStoreIndexCreator: 
+        #       embeddings (defaults to langchain's own embeddings), 
+        #       text_splitter(defaults to TextSplitter)
+        #       vectorstore_cls (defaults to Chroma)
         index = VectorstoreIndexCreator().from_loaders(loaders)
-        return index
-             
-        # alternative if you want to deal with documents
-        #documents = []    
-        #if "*" in self.file_names:
-        #    # Load all files in the container
-        #    documents.extend(AzureBlobStorageContainerLoader(conn_str=self.connection_string, container=self.container_name).load_and_split())
-        #else:
-        #    # Load specific files
-        #    for file_name in self. file_names:
-        #        documents.extend(AzureBlobStorageFileLoader(conn_str=self.connection_string, container=self.container_name, blob_name=file_name).load_and_split())
-        #return documents
+        return index             
+
+    def __build_chat_history(self, messages:List[MessageHistoryItem]=None, human_label:str="Human", ai_label:str="Agent") -> str:
+        if messages is None or len(messages)==0:
+            return ""        
+        chat_history = "\n\nChat History:\n"
+        for msg in messages:
+            if msg.sender == "Agent":
+                chat_history += ai_label + ": " + msg.text + "\n"
+            else:
+                chat_history += human_label + ": " + msg.text + "\n"
+        chat_history += "\n\n"
+        return chat_history
+                    
  
        
     def run(self, prompt: str) -> CompletionResponse:
@@ -74,15 +79,27 @@ class BlobStorageAgent(AgentBase):
             Returns a CompletionResponse with the generated summary, the user_prompt,
             and token utilization and execution cost details.
         """
-        index = self.__get_vector_index()
-        completion = index.query(self.prompt_prefix +"\n"+ prompt + "\n", self.llm)
+        try:
+            index = self.__get_vector_index()
+            query = self.prompt_prefix +"\n"+ prompt + "\n"
+            print(f"************************ Query: {query}  ********************************")
+            completion = index.query(query, self.llm)
        
-        with get_openai_callback() as cb:
+            with get_openai_callback() as cb:
+                return CompletionResponse(
+                    completion = completion,
+                    user_prompt = prompt,
+                    completion_tokens = cb.completion_tokens,
+                    prompt_tokens = cb.prompt_tokens,
+                    total_tokens = cb.total_tokens,
+                    total_cost = cb.total_cost
+                )
+        except Exception as e:
             return CompletionResponse(
-                completion = completion,
-                user_prompt = prompt,
-                completion_tokens = cb.completion_tokens,
-                prompt_tokens = cb.prompt_tokens,
-                total_tokens = cb.total_tokens,
-                total_cost = cb.total_cost
-            )
+                    completion = "A problem on my side prevented me from responding.",
+                    user_prompt = prompt,
+                    completion_tokens = cb.completion_tokens,
+                    prompt_tokens = cb.prompt_tokens,
+                    total_tokens = cb.total_tokens,
+                    total_cost = cb.total_cost
+                )
