@@ -6,9 +6,7 @@ class AgentHubStorageManager(BlobStorageManager):
      """The AgentHubStorageManager class is responsible for fetching available agent values from Azure Blob Storage."""
      def __init__(self, config: Configuration = None):
          connection_string = config.get_value("FoundationaLLM:AgentHub:StorageManager:BlobStorage:ConnectionString")
-         
-         config_value = config.get_value("FoundationaLLM:AgentHub")
-         container_name = config_value["AgentMetadata"]["StorageContainer"]
+         container_name = config.get_value("FoundationaLLM:AgentHub:AgentMetadata:StorageContainer")
          
          super().__init__(blob_connection_string=connection_string,
                              container_name=container_name)
