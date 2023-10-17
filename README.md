@@ -1,6 +1,7 @@
 # Foundationa**LLM**: A platform accelerating delivery of secure, trustworthy enterprise copilots
 
-[![License](https://www.foundationallm.ai/license)]
+[![License](https://img.shields.io/badge/license-evaluation%20and%20demo-green)](https://www.foundationallm.ai/license)  
+[![Open Issues](https://img.shields.io/github/issues-raw/solliancenet/foundationallm)](https://github.com/solliancenet/foundationallm/issues)
 
 Foundationa**LLM** simplifies and streamlines building *knowledge management* (e.g., question/answer agents) and *analytic* (e.g., self-service business intelligence) copilots over the data sources present across your enterprise.  
 
