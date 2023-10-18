@@ -8,6 +8,7 @@ using FoundationaLLM.Core.Interfaces;
 using FoundationaLLM.Core.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using Microsoft.Extensions.Options;
 using Microsoft.Identity.Web;
@@ -17,6 +18,12 @@ using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders =
+        ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+});
 
 builder.Configuration.AddAzureAppConfiguration(options =>
 {
@@ -68,6 +75,14 @@ builder.Services.AddServerSideBlazor()
 builder.Services.RegisterServices();
 
 var app = builder.Build();
+
+app.Use((context, next) =>
+{
+    context.Request.Scheme = "https";
+    return next(context);
+});
+
+app.UseForwardedHeaders();
 
 if (!app.Environment.IsDevelopment())
 {

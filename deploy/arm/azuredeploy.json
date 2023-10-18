@@ -15,6 +15,7 @@
       "allowedValues": [
         "southcentralus",
         "eastus",
+        "EastUS",
         "westeurope"
       ],
       "metadata": {
@@ -314,7 +315,7 @@
         },
         {
           "key": "FoundationaLLM:Branding:LogoUrl",
-          "value": "customer-logo.png",
+          "value": "foundationallm-logo-white.svg",
           "contentType": null
         },
         {
