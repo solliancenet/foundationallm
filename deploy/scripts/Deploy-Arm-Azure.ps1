@@ -43,7 +43,7 @@ Write-Host "Begining the ARM deployment..." -ForegroundColor Yellow
 Push-Location $sourceFolder
 if ($deployAks)
 {
-    az deployment group create -g $resourceGroup -n $deploymentName --template-file $script --parameters k8sVersion=$aksLastVersion --parameters location=$location
+    az deployment group create -g $resourceGroup -n $deploymentName --template-file $script --parameters k8sVersion=$aksLastVersion --parameters location=$location --parameters openAiEndpoint=$openAiEndpoint --parameters openAiKey=$openAiKey
 }
 else
 {

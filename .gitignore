@@ -367,3 +367,6 @@ deploy/__values/
 
 **/env
 ***/.venv
+
+obj
+binlog

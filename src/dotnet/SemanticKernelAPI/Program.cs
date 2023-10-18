@@ -66,7 +66,7 @@ namespace FoundationaLLM.SemanticKernel.API
                 });
 
             builder.Services.AddOptions<SemanticKernelServiceSettings>()
-                .Bind(builder.Configuration.GetSection("FoundationaLLM:SemanticKernalAPI"));
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:SemanticKernelAPI"));
             builder.Services.AddSingleton<ISemanticKernelService, SemanticKernelService>();
 
             // Simple, static system prompt service
