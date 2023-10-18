@@ -7,3 +7,5 @@ FoundationaLLM deploys a secure, comprehensive and highly configurable copilot p
 - Hardened solution attacked by an LLM red team from inception.
 - Scalable solution load balances across multiple LLM endpoints.
 - Extensible to new data sources, new LLM orchestrators and LLMs.
+
+You can learn more about FoundationaLLM at https://foundationallm.ai
