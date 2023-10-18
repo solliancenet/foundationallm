@@ -6,9 +6,10 @@ router = APIRouter(
     prefix='/resolve',
     tags=['resolve'],
     dependencies=[Depends(validate_api_key_header)],
-    responses={404: {'description':'Not found'}}
+    responses={404: {'description':'Not found'}},
+    redirect_slashes=False
 )
 
-@router.post('/')
+@router.post('')
 async def resolve(request: AgentHubRequest) -> AgentHubResponse:    
     return AgentHub().resolve(request)
