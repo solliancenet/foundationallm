@@ -1,5 +1,6 @@
 using Azure.Identity;
 using FoundationaLLM.Common.Authentication;
+using FoundationaLLM.Common.Extensions;
 using FoundationaLLM.Common.Interfaces;
 using FoundationaLLM.Common.Models.Configuration;
 using FoundationaLLM.SemanticKernel.Core.Interfaces;
@@ -48,7 +49,22 @@ namespace FoundationaLLM.SemanticKernel.API
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+
+            builder.Services.AddSwaggerGen(
+                options =>
+                {
+                    // Add a custom operation filter which sets default values
+                    options.OperationFilter<SwaggerDefaultValues>();
+
+                    var fileName = typeof(Program).Assembly.GetName().Name + ".xml";
+                    var filePath = Path.Combine(AppContext.BaseDirectory, fileName);
+
+                    // Integrate xml comments
+                    options.IncludeXmlComments(filePath);
+
+                    // Adds auth via X-API-KEY header
+                    options.AddAPIKeyAuth();
+                });
 
             builder.Services.AddOptions<SemanticKernelServiceSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:SemanticKernalAPI"));

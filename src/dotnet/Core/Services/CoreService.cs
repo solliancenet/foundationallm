@@ -36,7 +36,7 @@ public class CoreService : ICoreService
         ICosmosDbService cosmosDbService,
         IGatekeeperAPIService gatekeeperAPIService,
         ILogger<CoreService> logger,
-            IOptions<ClientBrandingConfiguration> settings)
+        IOptions<ClientBrandingConfiguration> settings)
     {
         _cosmosDbService = cosmosDbService;
         _gatekeeperAPIService = gatekeeperAPIService;

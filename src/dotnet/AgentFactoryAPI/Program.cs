@@ -8,6 +8,7 @@ using FoundationaLLM.AgentFactory.Models.ConfigurationOptions;
 using FoundationaLLM.AgentFactory.Services;
 using FoundationaLLM.Common.Authentication;
 using FoundationaLLM.Common.Constants;
+using FoundationaLLM.Common.Extensions;
 using FoundationaLLM.Common.Interfaces;
 using FoundationaLLM.Common.Middleware;
 using FoundationaLLM.Common.Models.Authentication;
@@ -129,6 +130,9 @@ namespace FoundationaLLM.AgentFactory.API
 
                     // Integrate xml comments
                     options.IncludeXmlComments(filePath);
+
+                    // Adds auth via X-API-KEY header
+                    options.AddAPIKeyAuth();
                 });
 
             var app = builder.Build();

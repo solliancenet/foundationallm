@@ -1,8 +1,10 @@
 ﻿using FoundationaLLM.Common.Models.Chat;
+using FoundationaLLM.Common.Models.Configuration.Branding;
 using FoundationaLLM.Common.Models.Orchestration;
 using FoundationaLLM.Core.Interfaces;
 using FoundationaLLM.Core.Services;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 
@@ -15,10 +17,11 @@ namespace FoundationaLLM.Core.Tests.Services
         private readonly ICosmosDbService _cosmosDbService = Substitute.For<ICosmosDbService>();
         private readonly IGatekeeperAPIService _gatekeeperAPIService = Substitute.For<IGatekeeperAPIService>();
         private readonly ILogger<CoreService> _logger = Substitute.For<ILogger<CoreService>>();
+        private readonly IOptions<ClientBrandingConfiguration> _brandingConfig = Substitute.For<IOptions<ClientBrandingConfiguration>>();
 
         public CoreServiceTests()
         {
-            _testedService = new CoreService(_cosmosDbService, _gatekeeperAPIService, _logger);
+            _testedService = new CoreService(_cosmosDbService, _gatekeeperAPIService, _logger, _brandingConfig);
         }
 
         #region GetAllChatSessionsAsync
@@ -28,7 +31,7 @@ namespace FoundationaLLM.Core.Tests.Services
         {
             // Arrange
             var expectedSessions = new List<Session>() { new Session() };
-            _cosmosDbService.GetSessionsAsync().Returns(expectedSessions);
+            _cosmosDbService.GetSessionsAsync(Arg.Any<string>()).Returns(expectedSessions);
 
             // Act
             var actualSessions = await _testedService.GetAllChatSessionsAsync();

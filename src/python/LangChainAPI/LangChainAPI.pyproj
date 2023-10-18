@@ -11,7 +11,7 @@
     <SearchPath>..\PythonSDK</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <LaunchProvider>Standard Python launcher</LaunchProvider>
-    <WebBrowserUrl>https://localhost:8765/swagger</WebBrowserUrl>
+    <WebBrowserUrl>http://localhost:8765/swagger</WebBrowserUrl>
     <OutputPath>.</OutputPath>
     <SuppressCollectPythonCloudServiceFiles>true</SuppressCollectPythonCloudServiceFiles>
     <Name>LangChainAPI</Name>
@@ -22,7 +22,8 @@
     <TestFramework>none</TestFramework>
     <UnitTestPattern>test*.py</UnitTestPattern>
     <UnitTestRootDirectory>.</UnitTestRootDirectory>
-    <Environment>foundationallm-configuration-allow-environment-variables=True</Environment>
+    <Environment>
+    </Environment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
