@@ -7,5 +7,5 @@ class HubBase(ABC):
     def __init__(self, resolver: Resolver):
         self.resolver = resolver       
 
-    def resolve_request(self, request):        
+    def resolve(self, request):        
         return self.resolver.resolve(request)

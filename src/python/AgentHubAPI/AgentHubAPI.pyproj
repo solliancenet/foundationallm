@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>865a944e-76c4-4da9-b367-6d1cab66abcc</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>app\main.py</StartupFile>
+    <StartupFile>app/main.py</StartupFile>
     <SearchPath>..\PythonSDK</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <LaunchProvider>Standard Python launcher</LaunchProvider>
@@ -13,6 +13,10 @@
     <Name>AgentHubAPI</Name>
     <RootNamespace>AgentHubAPI</RootNamespace>
     <InterpreterId>MSBuild|env|$(MSBuildProjectFullPath)</InterpreterId>
+    <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
+    <Environment>
+    </Environment>
+    <IsWindowsApplication>False</IsWindowsApplication>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -25,7 +29,7 @@
   <ItemGroup>
     <Compile Include="app\dependencies.py" />
     <Compile Include="app\main.py" />
-    <Compile Include="app\routers\resolve_request.py" />
+    <Compile Include="app\routers\resolve.py" />
     <Compile Include="app\routers\status.py" />
     <Compile Include="app\routers\__init__.py" />
     <Compile Include="app\__init__.py" />

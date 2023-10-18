@@ -22,8 +22,6 @@ namespace FoundationaLLM.AgentFactory.Core.Models.Orchestration
         /// </summary>
         [JsonProperty("data_source")]
         public MetadataBase? DataSourceMetadata { get; set; }
-        
-           
 
         /// <summary>
         /// Language model metadata.

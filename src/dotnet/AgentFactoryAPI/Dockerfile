@@ -3,20 +3,29 @@
 FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
 WORKDIR /app
 EXPOSE 80
-EXPOSE 443
+
+ENV ASPNETCORE_URLS=http://+:80
+ENV ASPNETCORE_ENVIRONMENT=Development
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
-COPY ["AgentFactoryAPI/AgentFactoryAPI.csproj", "AgentFactoryAPI/"]
-RUN dotnet restore "AgentFactoryAPI/AgentFactoryAPI.csproj"
 COPY . .
-WORKDIR "/src/AgentFactoryAPI"
-RUN dotnet build "AgentFactoryAPI.csproj" -c Release -o /app/build
+
+RUN dotnet restore "dotnet/Common/Common.csproj"
+RUN dotnet build "dotnet/Common/Common.csproj" -c Release -o /app/build
+
+RUN dotnet restore "dotnet/AgentFactory/AgentFactory.csproj"
+RUN dotnet build "dotnet/AgentFactory/AgentFactory.csproj" -c Release -o /app/build
+
+RUN dotnet restore "dotnet/AgentFactoryAPI/AgentFactoryAPI.csproj"
+RUN dotnet build "dotnet/AgentFactoryAPI/AgentFactoryAPI.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "AgentFactoryAPI.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "dotnet/Common/Common.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "dotnet/AgentFactory/AgentFactory.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "dotnet/AgentFactoryAPI/AgentFactoryAPI.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "AgentFactoryAPI.dll"]
+ENTRYPOINT ["dotnet", "FoundationaLLM.AgentFactory.API.dll"]

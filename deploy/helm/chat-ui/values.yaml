@@ -3,7 +3,7 @@
 # Declare variables to be passed into your templates.
 
 replicaCount: 1
-
+serviceAccountName: chat-ui
 image:
   repository: bhm7vnpxv6irqcr.azurecr.io/searchwebapp
   pullPolicy: Always
@@ -35,13 +35,12 @@ ingress:
   - secretName: tls-prod
 
 env:
-  configmap:
-    - name: FoundationaLLM__ChatManager__APIUrl
+  configmap: 
+    - name: AZURE_CLIENT_ID
   secret:
-    - name: ApplicationInsights__ConnectionString 
+    - name: FoundationaLLM__AppConfig__ConnectionString
   values:
     - name: ASPNETCORE_ENVIRONMENT
       value: Production
-    - name: FoundationaLLM__ChatManager__APIRoutePrefix
-      value: /api
+
 

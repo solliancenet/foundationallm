@@ -60,7 +60,7 @@ namespace FoundationaLLM.Core.Services
 
             var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.GatekeeperAPI);
 
-            var responseMessage = await client.PostAsync("orchestration/summarize",
+            var responseMessage = await client.PostAsync("orchestration/summary",
                 new StringContent(
                     JsonConvert.SerializeObject(new SummaryRequest { UserPrompt = content }, _jsonSerializerSettings),
                     Encoding.UTF8, "application/json"));

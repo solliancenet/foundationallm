@@ -15,18 +15,15 @@ namespace FoundationaLLM.Chat.Helpers
         /// </summary>
         private List<Session> _sessions { get; set; }
 
-        private readonly ChatManagerSettings _settings;
         private readonly EntraSettings _entraSettings;
         private readonly IAuthenticatedHttpClientFactory _authenticatedHttpClientFactory;
         private readonly MicrosoftIdentityConsentAndConditionalAccessHandler _consentHandler;
 
         public ChatManager(
-            IOptions<ChatManagerSettings> settings,
             IOptions<EntraSettings> entraSettings,
             IAuthenticatedHttpClientFactory authenticatedHttpClientFactory,
             MicrosoftIdentityConsentAndConditionalAccessHandler consentHandler)
         {
-            _settings = settings.Value;
             _entraSettings = entraSettings.Value;
             _authenticatedHttpClientFactory = authenticatedHttpClientFactory;
             _consentHandler = consentHandler;
@@ -37,7 +34,7 @@ namespace FoundationaLLM.Chat.Helpers
         /// </summary>
         public async Task<List<Session>> GetAllChatSessionsAsync()
         {
-            _sessions = await SendRequest<List<Session>>(HttpMethod.Get, "/sessions");
+            _sessions = await SendRequest<List<Session>>(HttpMethod.Get, "sessions");
 
             return _sessions;
         }
@@ -56,7 +53,7 @@ namespace FoundationaLLM.Chat.Helpers
 
             var index = _sessions.FindIndex(s => s.SessionId == sessionId);
 
-            chatMessages = await SendRequest<List<Message>>(HttpMethod.Get, $"/sessions/{sessionId}/messages");
+            chatMessages = await SendRequest<List<Message>>(HttpMethod.Get, $"sessions/{sessionId}/messages");
 
             // Cache results
             _sessions[index].Messages = chatMessages;
@@ -69,7 +66,7 @@ namespace FoundationaLLM.Chat.Helpers
         /// </summary>
         public async Task CreateNewChatSessionAsync()
         {
-            var session = await SendRequest<Session>(HttpMethod.Post, "/sessions");
+            var session = await SendRequest<Session>(HttpMethod.Post, "sessions");
             _sessions.Add(session);
         }
 
@@ -86,7 +83,7 @@ namespace FoundationaLLM.Chat.Helpers
             if (!onlyUpdateLocalSessionsCollection)
             {
                 await SendRequest<Session>(HttpMethod.Post,
-                    $"/sessions/{sessionId}/rename?newChatSessionName={newChatSessionName}");
+                    $"sessions/{sessionId}/rename?newChatSessionName={newChatSessionName}");
             }
         }
 
@@ -100,7 +97,7 @@ namespace FoundationaLLM.Chat.Helpers
             var index = _sessions.FindIndex(s => s.SessionId == sessionId);
             _sessions.RemoveAt(index);
 
-            await SendRequest(HttpMethod.Delete, $"/sessions/{sessionId}");
+            await SendRequest(HttpMethod.Delete, $"sessions/{sessionId}");
         }
 
         /// <summary>
@@ -111,7 +108,7 @@ namespace FoundationaLLM.Chat.Helpers
             ArgumentNullException.ThrowIfNull(sessionId);
 
             var completion = await SendRequest<Completion>(HttpMethod.Post,
-                $"/sessions/{sessionId}/completion", userPrompt);
+                $"sessions/{sessionId}/completion", userPrompt);
             // Refresh the local messages cache:
             await GetChatSessionMessagesAsync(sessionId);
             return completion.Text;
@@ -123,7 +120,7 @@ namespace FoundationaLLM.Chat.Helpers
             ArgumentNullException.ThrowIfNullOrEmpty(completionPromptId);
 
             var completionPrompt = await SendRequest<CompletionPrompt>(HttpMethod.Get,
-                $"/sessions/{sessionId}/completionprompts/{completionPromptId}");
+                $"sessions/{sessionId}/completionprompts/{completionPromptId}");
             return completionPrompt;
         }
 
@@ -132,7 +129,7 @@ namespace FoundationaLLM.Chat.Helpers
             ArgumentNullException.ThrowIfNull(sessionId);
 
             var response = await SendRequest<Completion>(HttpMethod.Post,
-                $"/sessions/{sessionId}/summarize-name", prompt);
+                $"sessions/{sessionId}/summarize-name", prompt);
 
             await RenameChatSessionAsync(sessionId, response.Text, true);
 
@@ -148,8 +145,8 @@ namespace FoundationaLLM.Chat.Helpers
             ArgumentNullException.ThrowIfNull(sessionId);
 
             string url = rating.HasValue
-                ? $"/sessions/{sessionId}/message/{id}/rate?rating={rating}"
-                : $"/sessions/{sessionId}/message/{id}/rate";
+                ? $"sessions/{sessionId}/message/{id}/rate?rating={rating}"
+                : $"sessions/{sessionId}/message/{id}/rate";
 
             return await SendRequest<Message>(HttpMethod.Post, url);
         }
@@ -161,10 +158,10 @@ namespace FoundationaLLM.Chat.Helpers
             switch (method)
             {
                 case HttpMethod m when m == HttpMethod.Get:
-                    responseMessage = await client.GetAsync($"{_settings.APIRoutePrefix}{requestUri}");
+                    responseMessage = await client.GetAsync($"{requestUri}");
                     break;
                 case HttpMethod m when m == HttpMethod.Post:
-                    responseMessage = await client.PostAsync($"{_settings.APIRoutePrefix}{requestUri}",
+                    responseMessage = await client.PostAsync($"{requestUri}",
                         payload == null ? null : JsonContent.Create(payload, payload.GetType()));
                     break;
                 default:
@@ -181,7 +178,7 @@ namespace FoundationaLLM.Chat.Helpers
             switch (method)
             {
                 case HttpMethod m when m == HttpMethod.Delete:
-                    await client.DeleteAsync($"{_settings.APIRoutePrefix}{requestUri}");
+                    await client.DeleteAsync($"{requestUri}");
                     break;
                 default:
                     throw new NotImplementedException($"The Http method {method.Method} is not supported.");

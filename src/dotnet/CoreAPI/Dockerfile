@@ -11,15 +11,19 @@ FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 COPY . .
 
-RUN dotnet restore "Core/Core.csproj"
-RUN dotnet build "Core/Core.csproj" -c Release -o /app/build
+RUN dotnet restore "dotnet/Common/Common.csproj"
+RUN dotnet build "dotnet/Common/Common.csproj" -c Release -o /app/build
 
-RUN dotnet restore "CoreAPI/CoreAPI.csproj"
-RUN dotnet build "CoreAPI/CoreAPI.csproj" -c Release -o /app/build
+RUN dotnet restore "dotnet/Core/Core.csproj"
+RUN dotnet build "dotnet/Core/Core.csproj" -c Release -o /app/build
+
+RUN dotnet restore "dotnet/CoreAPI/CoreAPI.csproj"
+RUN dotnet build "dotnet/CoreAPI/CoreAPI.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "Core/Core.csproj" -c Release -o /app/publish /p:UseAppHost=false
-RUN dotnet publish "CoreAPI/CoreAPI.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "dotnet/Common/Common.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "dotnet/Core/Core.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "dotnet/CoreAPI/CoreAPI.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app

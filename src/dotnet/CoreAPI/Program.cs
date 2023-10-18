@@ -24,6 +24,7 @@ using FoundationaLLM.Common.Models.Configuration.Branding;
 using Newtonsoft.Json;
 using Azure.Identity;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
+using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 
 namespace FoundationaLLM.Core.API
 {
@@ -33,6 +34,9 @@ namespace FoundationaLLM.Core.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Configuration.Sources.Clear();
+            builder.Configuration.AddJsonFile("appsettings.json", false, true);
+            builder.Configuration.AddEnvironmentVariables();
             builder.Configuration.AddAzureAppConfiguration(options =>
             {
                 options.Connect(builder.Configuration["FoundationaLLM:AppConfig:ConnectionString"]);
@@ -41,6 +45,8 @@ namespace FoundationaLLM.Core.API
                     options.SetCredential(new DefaultAzureCredential());
                 });
             });
+            if (builder.Environment.IsDevelopment())
+                builder.Configuration.AddJsonFile("appsettings.development.json", true, true);
               
             var allowAllCorsOrigins = "AllowAllOrigins";
             builder.Services.AddCors(policyBuilder =>
@@ -75,7 +81,12 @@ namespace FoundationaLLM.Core.API
             // Register the authentication services
             RegisterAuthConfiguration(builder);
 
-            builder.Services.AddApplicationInsightsTelemetry();
+            builder.Services.AddApplicationInsightsTelemetry(new ApplicationInsightsServiceOptions
+            {
+                ConnectionString = builder.Configuration["FoundationaLLM:APIs:CoreAPI:AppInsightsConnectionString"],
+                DeveloperMode = builder.Environment.IsDevelopment()
+            });
+
             builder.Services.AddControllers().AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.ContractResolver = Common.Settings.CommonJsonSerializerSettings.GetJsonSerializerSettings().ContractResolver;
@@ -143,6 +154,7 @@ namespace FoundationaLLM.Core.API
                     }
                 });
 
+            app.UseHttpsRedirection();
             app.MapControllers();
 
             app.UseCors(allowAllCorsOrigins);
@@ -169,7 +181,7 @@ namespace FoundationaLLM.Core.API
             downstreamAPISettings.DownstreamAPIs[HttpClients.GatekeeperAPI] = gatekeeperAPISettings;
 
             builder.Services
-                    .AddHttpClient(gatekeeperAPISettings.APIKey,
+                    .AddHttpClient(HttpClients.GatekeeperAPI,
                         client => { client.BaseAddress = new Uri(gatekeeperAPISettings.APIUrl); })
                     .AddTransientHttpErrorPolicy(policyBuilder =>
                         policyBuilder.WaitAndRetryAsync(

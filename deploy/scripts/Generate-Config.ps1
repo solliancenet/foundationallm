@@ -56,48 +56,26 @@ else
 $apiUrl = "https://$domain"
 Write-Host "API URL: $apiUrl" -ForegroundColor Yellow
 
+$appConfig=$(az appconfig list -g $resourceGroup -o json | ConvertFrom-Json).name
+$appConfigEndpoint=$(az appconfig show -g $resourceGroup -n $appConfig --query 'endpoint' -o json | ConvertFrom-Json)
+$appConfigConnectionString=$(az appconfig credential list -n $appConfig -g $resourceGroup --query "[?name=='Primary Read Only'].{connectionString: connectionString}" -o json | ConvertFrom-Json).connectionString
+
 ## Getting CosmosDb info
 $docdb=$(az cosmosdb list -g $resourceGroup --query "[?kind=='GlobalDocumentDB'].{name: name, kind:kind, documentEndpoint:documentEndpoint}" -o json | ConvertFrom-Json)
 $docdb=EnsureAndReturnFirstItem $docdb "CosmosDB (Document Db)"
 $docdbKey=$(az cosmosdb keys list -g $resourceGroup -n $docdb.name -o json --query primaryMasterKey | ConvertFrom-Json)
 Write-Host "Document Db Account: $($docdb.name)" -ForegroundColor Yellow
 
-## Getting Storage info
-$blobAccount=$(az storage account list -g $resourceGroup -o json | ConvertFrom-Json).name
-$blobKey=$(az storage account keys list -g $resourceGroup -n $blobAccount -o json | ConvertFrom-Json)[0].value
-
-## Getting OpenAI info
-if ($openAiName) {
-    $openAi=$(az cognitiveservices account show -n $openAiName -g $openAiRg -o json | ConvertFrom-Json)
-} else {
-    $openAi=$(az cognitiveservices account list -g $resourceGroup -o json | ConvertFrom-Json)
-    $openAiRg=$resourceGroup
-}
-
-$openAiKey=$(az cognitiveservices account keys list -g $openAiRg -n $openAi.name -o json --query key1 | ConvertFrom-Json)
-
-## Getting Cognitive Search info
-$search=$(az search service list -g $resourceGroup --query "[].{name: name, kind:kind}" -o json | ConvertFrom-Json)
-$searchKey=$(az search admin-key show -g $resourceGroup --service-name $search.name -o json --query primaryKey | ConvertFrom-Json)
-
-## Getting KeyVault info
-$keyvault=$(az keyvault list -g $resourceGroup --query "[0].{name: name, vaultUri: properties.vaultUri}" -o json | ConvertFrom-Json)
-
-## Getting App Insights instrumentation key, if required
-$appinsightsId=@()
-$appInsightsName=$(az resource list -g $resourceGroup --resource-type Microsoft.Insights/components --query [].name | ConvertFrom-Json)
-if ($appInsightsName -and $appInsightsName.Length -eq 1) {
-    $appinsightsConfig=$(az monitor app-insights component show --app $appInsightsName -g $resourceGroup -o json | ConvertFrom-Json)
-
-    if ($appinsightsConfig) {
-        $appinsightsId = $appinsightsConfig.instrumentationKey
-        $appinsightsConnectionString = $appinsightsConfig.connectionString          
-    }
-}
-Write-Host "App Insights Instrumentation Key: $appinsightsId" -ForegroundColor Yellow
-
-$resourcePrefix=$(az deployment show -n foundationallm-azuredeploy -g $resourceGroup --query "properties.outputs.resourcePrefix.value" -o json | ConvertFrom-Json)
+$resourcePrefix=$(az deployment group show -n foundationallm-azuredeploy -g $resourceGroup --query "properties.outputs.resourcePrefix.value" -o json | ConvertFrom-Json)
+$agentFactoryApiMiClientId=$(az identity show -g $resourceGroup -n $resourcePrefix-agent-factory-mi -o json | ConvertFrom-Json).clientId
+$agentHubApiMiClientId=$(az identity show -g $resourceGroup -n $resourcePrefix-agent-hub-mi -o json | ConvertFrom-Json).clientId
+$chatUiMiClientId=$(az identity show -g $resourceGroup -n $resourcePrefix-chat-ui-mi -o json | ConvertFrom-Json).clientId
+$coreApiMiClientId=$(az identity show -g $resourceGroup -n $resourcePrefix-core-mi -o json | ConvertFrom-Json).clientId
+$dataSourceHubApiMiClientId=$(az identity show -g $resourceGroup -n $resourcePrefix-data-source-hub-mi -o json | ConvertFrom-Json).clientId
+$gatekeeperApiMiClientId=$(az identity show -g $resourceGroup -n $resourcePrefix-gatekeeper-mi -o json | ConvertFrom-Json).clientId
 $langChainApiMiClientId=$(az identity show -g $resourceGroup -n $resourcePrefix-langchain-mi -o json | ConvertFrom-Json).clientId
+$promptHubApiMiClientId=$(az identity show -g $resourceGroup -n $resourcePrefix-prompt-hub-mi -o json | ConvertFrom-Json).clientId
+$semanticKernelApiMiClientId=$(az identity show -g $resourceGroup -n $resourcePrefix-semantic-kernel-mi -o json | ConvertFrom-Json).clientId
 $tenantId=$(az account show --query homeTenantId --output tsv)
 
 ## Showing Values that will be used
@@ -106,18 +84,21 @@ Write-Host "===========================================================" -Foregr
 Write-Host "gvalues file will be generated with values:"
 
 $tokens.apiUrl=$apiUrl
-$tokens.blobStorageConnectionString="DefaultEndpointsProtocol=https;AccountName=$($blobAccount);AccountKey=$blobKey;EndpointSuffix=core.windows.net"
 $tokens.cosmosConnectionString="AccountEndpoint=$($docdb.documentEndpoint);AccountKey=$docdbKey"
 $tokens.cosmosEndpoint=$docdb.documentEndpoint
 $tokens.cosmosKey=$docdbKey
-$tokens.openAiEndpoint=$openAi.properties.endpoint
-$tokens.openAiKey=$openAiKey
-$tokens.searchEndpoint="https://$($search.name).search.windows.net/"
-$tokens.searchAdminKey=$searchKey
-$tokens.aiConnectionString=$appinsightsConnectionString
-$tokens.keyVaultUrl=$keyvault.vaultUri
+$tokens.agentFactoryApiMiClientId=$agentFactoryApiMiClientId
+$tokens.agentHubApiMiClientId=$agentHubApiMiClientId
+$tokens.chatUiMiClientId=$chatUiMiClientId
+$tokens.coreApiMiClientId=$coreApiMiClientId
+$tokens.dataSourceHubApiMiClientId=$dataSourceHubApiMiClientId
+$tokens.gatekeeperApiMiClientId=$gatekeeperApiMiClientId
 $tokens.langChainApiMiClientId=$langChainApiMiClientId
+$tokens.promptHubApiMiClientId=$promptHubApiMiClientId
+$tokens.semanticKernelApiMiClientId=$semanticKernelApiMiClientId
 $tokens.tenantId=$tenantId
+$tokens.appConfigEndpoint=$appConfigEndpoint
+$tokens.appConfigConnectionString=$appConfigConnectionString
 
 # Standard fixed tokens
 $tokens.ingressclass=$ingressClass

@@ -1,8 +1,9 @@
 using Azure.Identity;
 using FoundationaLLM.Common.Authentication;
+using FoundationaLLM.Common.Extensions;
 using FoundationaLLM.Common.Interfaces;
 using FoundationaLLM.Common.Models.Configuration;
-using FoundationaLLM.Common.Services;
+using FoundationaLLM.Common.OpenAPI;
 using FoundationaLLM.SemanticKernel.Core.Interfaces;
 using FoundationaLLM.SemanticKernel.Core.Models.ConfigurationOptions;
 using FoundationaLLM.SemanticKernel.Core.Services;
@@ -10,8 +11,15 @@ using FoundationaLLM.SemanticKernel.MemorySource;
 
 namespace FoundationaLLM.SemanticKernel.API
 {
+    /// <summary>
+    /// Program class for the Semantic Kernel API.
+    /// </summary>
     public class Program
     {
+        /// <summary>
+        /// Entry point for the Semantic Kernel API.
+        /// </summary>
+        /// <param name="args"></param>
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
@@ -42,7 +50,22 @@ namespace FoundationaLLM.SemanticKernel.API
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+
+            builder.Services.AddSwaggerGen(
+                options =>
+                {
+                    // Add a custom operation filter which sets default values
+                    options.OperationFilter<SwaggerDefaultValues>();
+
+                    var fileName = typeof(Program).Assembly.GetName().Name + ".xml";
+                    var filePath = Path.Combine(AppContext.BaseDirectory, fileName);
+
+                    // Integrate xml comments
+                    options.IncludeXmlComments(filePath);
+
+                    // Adds auth via X-API-KEY header
+                    options.AddAPIKeyAuth();
+                });
 
             builder.Services.AddOptions<SemanticKernelServiceSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:SemanticKernalAPI"));

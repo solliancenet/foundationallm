@@ -1,0 +1,14 @@
+{{- $name := include "agent-hub-api.fullname" . -}}
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "cfg-{{ $name }}"
+  labels:
+    app: {{ template "agent-hub-api.name" . }}
+    chart: {{ template "agent-hub-api.chart" .}}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data: 
+  AZURE_CLIENT_ID: {{ .Values.azureWorkloadIdentity.agentHubApiClientId }}
+  foundationallm-app-configuration-uri: {{ .Values.appConfig.uri }}

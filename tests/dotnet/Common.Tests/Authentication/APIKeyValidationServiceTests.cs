@@ -16,12 +16,9 @@ namespace FoundationaLLM.Common.Tests.Authentication
         public void APIKeyValidationService_IsValid_WithValidKey_ReturnsTrue()
         {
             // Arrange
-            var configurationService = Substitute.For<IConfigurationService>();
             var options = Options.Create(new APIKeyValidationSettings { APIKey = "ValidKey" });
-            var apiKeyValidationService = new APIKeyValidationService(configurationService, options);
+            var apiKeyValidationService = new APIKeyValidationService(options);
             var apiKey = "ValidKey";
-
-            configurationService.GetValue<string>("ValidKey").Returns(apiKey);
 
             // Act
             var isValid = apiKeyValidationService.IsValid(apiKey);
@@ -34,12 +31,9 @@ namespace FoundationaLLM.Common.Tests.Authentication
         public void APIKeyValidationService_IsValid_WithInvalidKey_ReturnsFalse()
         {
             // Arrange
-            var configurationService = Substitute.For<IConfigurationService>();
             var options = Options.Create(new APIKeyValidationSettings { APIKey = "ValidKey" });
-            var apiKeyValidationService = new APIKeyValidationService(configurationService, options);
+            var apiKeyValidationService = new APIKeyValidationService(options);
             var apiKey = "InvalidKey";
-
-            configurationService.GetValue<string>("ValidKey").Returns("ValidKey");
 
             // Act
             var isValid = apiKeyValidationService.IsValid(apiKey);
@@ -52,9 +46,8 @@ namespace FoundationaLLM.Common.Tests.Authentication
         public void APIKeyValidationService_IsValid_WithEmptyKey_ReturnsFalse()
         {
             // Arrange
-            var configurationService = Substitute.For<IConfigurationService>();
             var options = Options.Create(new APIKeyValidationSettings { APIKey = "ValidKey" });
-            var apiKeyValidationService = new APIKeyValidationService(configurationService, options);
+            var apiKeyValidationService = new APIKeyValidationService(options);
             var apiKey = "";
 
             // Act

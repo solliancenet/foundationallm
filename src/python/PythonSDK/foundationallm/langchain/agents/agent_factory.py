@@ -53,7 +53,7 @@ class AgentFactory:
                 return SqlDbAgent(self.completion_request, llm=self.llm, config=self.config)
             case 'summary':
                 return SummaryAgent(self.completion_request, llm=self.llm, config=self.config)
-            case 'blob':
+            case 'blob-storage':
                 return BlobStorageAgent(self.completion_request, llm=self.llm, config=self.config)
             case _:
                 return ConversationalAgent(self.completion_request, llm=self.llm, config=self.config)

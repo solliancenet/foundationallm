@@ -6,7 +6,7 @@
     <ProjectGuid>637b74c9-aeb1-4b1a-8e92-20ac35d111eb</ProjectGuid>
     <ProjectHome>.</ProjectHome>
     <ProjectTypeGuids>{1b580a1a-fdb3-4b32-83e1-6407eb2722e6};{349c5851-65df-11da-9384-00065b846f21};{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
-    <StartupFile>app\main.py</StartupFile>
+    <StartupFile>app/main.py</StartupFile>
     <SearchPath>..\PythonSDK</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <LaunchProvider>Standard Python launcher</LaunchProvider>
@@ -18,6 +18,8 @@
     <IsWindowsApplication>False</IsWindowsApplication>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
     <InterpreterId>MSBuild|env|$(MSBuildProjectFullPath)</InterpreterId>
+    <Environment>
+    </Environment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -30,7 +32,7 @@
   <ItemGroup>
     <Compile Include="app\dependencies.py" />
     <Compile Include="app\main.py" />
-    <Compile Include="app\routers\resolve_request.py" />
+    <Compile Include="app\routers\resolve.py" />
     <Compile Include="app\routers\status.py" />
     <Compile Include="app\routers\__init__.py" />
     <Compile Include="app\__init__.py" />

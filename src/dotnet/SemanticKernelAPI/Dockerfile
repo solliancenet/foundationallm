@@ -3,20 +3,29 @@
 FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
 WORKDIR /app
 EXPOSE 80
-EXPOSE 443
+
+ENV ASPNETCORE_URLS=http://+:80
+ENV ASPNETCORE_ENVIRONMENT=Development
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
-COPY ["SemanticKernelAPI/SemanticKernelAPI.csproj", "SemanticKernelAPI/"]
-RUN dotnet restore "SemanticKernelAPI/SemanticKernelAPI.csproj"
 COPY . .
-WORKDIR "/src/SemanticKernelAPI"
-RUN dotnet build "SemanticKernelAPI.csproj" -c Release -o /app/build
+
+RUN dotnet restore "dotnet/Common/Common.csproj"
+RUN dotnet build "dotnet/Common/Common.csproj" -c Release -o /app/build
+
+RUN dotnet restore "dotnet/SemanticKernel/SemanticKernel.csproj"
+RUN dotnet build "dotnet/SemanticKernel/SemanticKernel.csproj" -c Release -o /app/build
+
+RUN dotnet restore "dotnet/SemanticKernelAPI/SemanticKernelAPI.csproj"
+RUN dotnet build "dotnet/SemanticKernelAPI/SemanticKernelAPI.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "SemanticKernelAPI.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "dotnet/Common/Common.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "dotnet/SemanticKernel/SemanticKernel.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "dotnet/SemanticKernelAPI/SemanticKernelAPI.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "SemanticKernelAPI.dll"]
+ENTRYPOINT ["dotnet", "FoundationaLLM.SemanticKernel.API.dll"]

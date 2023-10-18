@@ -1,4 +1,4 @@
-﻿using FoundationaLLM.SemanticKernel.Chat;
+﻿using FoundationaLLM.SemanticKernel.Core.Services;
 
 namespace FoundationaLLM.SemanticKernel.Tests.Chat
 {

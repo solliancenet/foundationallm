@@ -8,12 +8,14 @@ using FoundationaLLM.AgentFactory.Models.ConfigurationOptions;
 using FoundationaLLM.AgentFactory.Services;
 using FoundationaLLM.Common.Authentication;
 using FoundationaLLM.Common.Constants;
+using FoundationaLLM.Common.Extensions;
 using FoundationaLLM.Common.Interfaces;
 using FoundationaLLM.Common.Middleware;
 using FoundationaLLM.Common.Models.Authentication;
 using FoundationaLLM.Common.Models.Configuration;
 using FoundationaLLM.Common.OpenAPI;
 using FoundationaLLM.Common.Services;
+using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 using Microsoft.Extensions.Options;
 using Polly;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -33,6 +35,9 @@ namespace FoundationaLLM.AgentFactory.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Configuration.Sources.Clear();
+            builder.Configuration.AddJsonFile("appsettings.json", false, true);
+            builder.Configuration.AddEnvironmentVariables();
             builder.Configuration.AddAzureAppConfiguration(options =>
             {
                 options.Connect(builder.Configuration["FoundationaLLM:AppConfig:ConnectionString"]);
@@ -41,9 +46,15 @@ namespace FoundationaLLM.AgentFactory.API
                     options.SetCredential(new DefaultAzureCredential());
                 });
             });
+            if (builder.Environment.IsDevelopment())
+                builder.Configuration.AddJsonFile("appsettings.development.json", true, true);
 
             // Add services to the container.
-            builder.Services.AddApplicationInsightsTelemetry();
+            builder.Services.AddApplicationInsightsTelemetry(new ApplicationInsightsServiceOptions
+            {
+                ConnectionString = builder.Configuration["FoundationaLLM:APIs:AgentFactoryAPI:AppInsightsConnectionString"],
+                DeveloperMode = builder.Environment.IsDevelopment()
+            });
             builder.Services.AddControllers().AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.ContractResolver = Common.Settings.CommonJsonSerializerSettings.GetJsonSerializerSettings().ContractResolver;
@@ -126,6 +137,9 @@ namespace FoundationaLLM.AgentFactory.API
 
                     // Integrate xml comments
                     options.IncludeXmlComments(filePath);
+
+                    // Adds auth via X-API-KEY header
+                    options.AddAPIKeyAuth();
                 });
 
             var app = builder.Build();
@@ -179,7 +193,7 @@ namespace FoundationaLLM.AgentFactory.API
             downstreamAPISettings.DownstreamAPIs[HttpClients.AgentHubAPI] = agentHubAPISettings;
 
             builder.Services
-                    .AddHttpClient(agentHubAPISettings.APIKey,
+                    .AddHttpClient(HttpClients.AgentHubAPI,
                         client => { client.BaseAddress = new Uri(agentHubAPISettings.APIUrl); })
                     .AddTransientHttpErrorPolicy(policyBuilder =>
                         policyBuilder.WaitAndRetryAsync(
@@ -193,7 +207,7 @@ namespace FoundationaLLM.AgentFactory.API
             downstreamAPISettings.DownstreamAPIs[HttpClients.DataSourceHubAPI] = dataSourceHubAPISettings;
 
             builder.Services
-                    .AddHttpClient(dataSourceHubAPISettings.APIKey,
+                    .AddHttpClient(HttpClients.DataSourceHubAPI,
                         client => { client.BaseAddress = new Uri(dataSourceHubAPISettings.APIUrl); })
                     .AddTransientHttpErrorPolicy(policyBuilder =>
                         policyBuilder.WaitAndRetryAsync(
@@ -207,7 +221,7 @@ namespace FoundationaLLM.AgentFactory.API
             downstreamAPISettings.DownstreamAPIs[HttpClients.PromptHubAPI] = promptHubAPISettings;
 
             builder.Services
-                    .AddHttpClient(promptHubAPISettings.APIKey,
+                    .AddHttpClient(HttpClients.PromptHubAPI,
                         client => { client.BaseAddress = new Uri(promptHubAPISettings.APIUrl); })
                     .AddTransientHttpErrorPolicy(policyBuilder =>
                         policyBuilder.WaitAndRetryAsync(
@@ -221,7 +235,7 @@ namespace FoundationaLLM.AgentFactory.API
             downstreamAPISettings.DownstreamAPIs[HttpClients.LangChainAPI] = langChainAPISettings;
 
             builder.Services
-                    .AddHttpClient(langChainAPISettings.APIKey,
+                    .AddHttpClient(HttpClients.LangChainAPI,
                         client => { client.BaseAddress = new Uri(langChainAPISettings.APIUrl); })
                     .AddTransientHttpErrorPolicy(policyBuilder =>
                         policyBuilder.WaitAndRetryAsync(
@@ -235,7 +249,7 @@ namespace FoundationaLLM.AgentFactory.API
             downstreamAPISettings.DownstreamAPIs[HttpClients.SemanticKernelAPI] = semanticKernelAPISettings;
 
             builder.Services
-                    .AddHttpClient(semanticKernelAPISettings.APIKey,
+                    .AddHttpClient(HttpClients.SemanticKernelAPI,
                         client => { client.BaseAddress = new Uri(semanticKernelAPISettings.APIUrl); })
                     .AddTransientHttpErrorPolicy(policyBuilder =>
                         policyBuilder.WaitAndRetryAsync(

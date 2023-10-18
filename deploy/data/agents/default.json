@@ -1,0 +1,10 @@
+{
+	"name": "default",
+	"description": "Useful for answering questions from users.",
+	"allowed_data_source_names": [ "about-foundationallm" ],
+	"language_model": {
+		"model_type": "openai",
+		"provider": "microsoft",
+		"temperature": 0
+	}
+}

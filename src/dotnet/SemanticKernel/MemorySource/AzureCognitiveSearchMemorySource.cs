@@ -1,13 +1,15 @@
-﻿using Azure.Search.Documents.Indexes;
-using Azure.Search.Documents;
-using Microsoft.Extensions.Logging;
-using Azure;
+﻿using Azure;
 using Azure.Core.Serialization;
-using System.Text.Json;
+using Azure.Search.Documents;
+using Azure.Search.Documents.Indexes;
 using Azure.Search.Documents.Models;
 using Azure.Storage.Blobs;
-using Newtonsoft.Json;
+using FoundationaLLM.SemanticKernel.Core.Interfaces;
+using FoundationaLLM.SemanticKernel.Core.Models.ConfigurationOptions;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace FoundationaLLM.SemanticKernel.MemorySource
 {
@@ -71,7 +73,8 @@ namespace FoundationaLLM.SemanticKernel.MemorySource
                         memories.Add(string.Format(
                             facetTemplates[facet.Key],
                             facetResult.Value, facetResult.Count));
-                        totalCount += facetResult.Count.Value;
+                        
+                        totalCount += facetResult.Count!.Value;
                     }
                 }
 
@@ -97,7 +100,12 @@ namespace FoundationaLLM.SemanticKernel.MemorySource
                 var reader = new StreamReader(await blobClient.OpenReadAsync());
                 var configContent = await reader.ReadToEndAsync();
 
-                _config = JsonConvert.DeserializeObject<AzureCognitiveSearchMemorySourceConfig>(configContent);
+                var config = JsonConvert.DeserializeObject<AzureCognitiveSearchMemorySourceConfig>(configContent);
+
+                if (config != null)
+                    _config = config;
+                else
+                    throw new Exception("Could not ensure that the Azure Cognitive Search Memory Source config was loaded.");
             }
         }
     }

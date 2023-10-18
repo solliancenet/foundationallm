@@ -3,7 +3,7 @@
 # Declare variables to be passed into your templates.
 
 replicaCount: 1
-serviceAccountName: langChainSa
+serviceAccountName: langchain-api
 image:
   repository: bhm7vnpxv6irqcr.azurecr.io/langchain-api
   pullPolicy: Always
@@ -35,8 +35,8 @@ ingress:
   - secretName: tls-prod
 
 env:
-  configmap:
-    - name: SOLLIANCEAICOPILOT__LANGCHAINAPI__KEYVAULTURL
-    - name: SOLLIANCEAICOPILOT__LANGCHAINAPI__MICLIENTID
+  configmap: 
+    - name: AZURE_CLIENT_ID
+    - name: foundationallm-app-configuration-uri
   secret: {}
   values: {}

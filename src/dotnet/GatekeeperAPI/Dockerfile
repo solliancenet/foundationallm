@@ -3,20 +3,29 @@
 FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
 WORKDIR /app
 EXPOSE 80
-EXPOSE 443
+
+ENV ASPNETCORE_URLS=http://+:80
+ENV ASPNETCORE_ENVIRONMENT=Development
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
-COPY ["GatekeeperAPI/GatekeeperAPI.csproj", "GatekeeperAPI/"]
-RUN dotnet restore "GatekeeperAPI/GatekeeperAPI.csproj"
 COPY . .
-WORKDIR "/src/GatekeeperAPI"
-RUN dotnet build "GatekeeperAPI.csproj" -c Release -o /app/build
+
+RUN dotnet restore "dotnet/Common/Common.csproj"
+RUN dotnet build "dotnet/Common/Common.csproj" -c Release -o /app/build
+
+RUN dotnet restore "dotnet/Gatekeeper/Gatekeeper.csproj"
+RUN dotnet build "dotnet/Gatekeeper/Gatekeeper.csproj" -c Release -o /app/build
+
+RUN dotnet restore "dotnet/GatekeeperAPI/GatekeeperAPI.csproj"
+RUN dotnet build "dotnet/GatekeeperAPI/GatekeeperAPI.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "GatekeeperAPI.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "dotnet/Common/Common.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "dotnet/Gatekeeper/Gatekeeper.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "dotnet/GatekeeperAPI/GatekeeperAPI.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "GatekeeperAPI.dll"]
+ENTRYPOINT ["dotnet", "FoundationaLLM.Gatekeeper.API.dll"]

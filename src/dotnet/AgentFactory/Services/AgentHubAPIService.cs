@@ -56,7 +56,7 @@ public class AgentHubAPIService : IAgentHubAPIService
         {
             var client = _httpClientFactoryService.CreateClient(HttpClients.AgentHubAPI);
 
-            var responseMessage = await client.GetAsync("/status");
+            var responseMessage = await client.GetAsync("status");
 
             if (responseMessage.IsSuccessStatusCode)
             {
@@ -86,8 +86,8 @@ public class AgentHubAPIService : IAgentHubAPIService
             AgentHubRequest ahm = new AgentHubRequest { UserPrompt = userPrompt };
 
             var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.AgentHubAPI);
-
-            var responseMessage = await client.PostAsync("/resolve_request", new StringContent(
+                        
+            var responseMessage = await client.PostAsync("resolve", new StringContent(
                     JsonConvert.SerializeObject(ahm, _jsonSerializerSettings),
                     Encoding.UTF8, "application/json"));
 

@@ -58,15 +58,6 @@
                                             </button>
                                         </div>
                                     </div>
-@*                                    <div class="card-footer d-flex align-items-between">
-                                        <span class="flex-grow-1"></span>
-                                        <div class="align-items-between">
-                                            <span class="me-2 badge rounded-pill bg-light">
-                                                Tokens Used: @session.TokensUsed
-                                            </span>
-                                        </div>
-                                        
-                                    </div>*@
                                 </div>
                             </div>
                         }
@@ -302,7 +293,17 @@
         }
 
         _loadingComplete = true;
-        await LoadCurrentChatAsync();
+
+        if (BrandingService.CurrentConfig is {KioskMode: true })
+        {
+            await NewChat();
+            await LoadCurrentChatAsync();
+            await ToggleNavMenu();
+        }
+        else
+        {
+            await LoadCurrentChatAsync();
+        }
 
     }
 

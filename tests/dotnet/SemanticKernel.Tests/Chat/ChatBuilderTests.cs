@@ -1,4 +1,5 @@
 ﻿using FoundationaLLM.SemanticKernel.Chat;
+using FoundationaLLM.SemanticKernel.Core.Interfaces;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.AI.ChatCompletion;
 using NSubstitute;

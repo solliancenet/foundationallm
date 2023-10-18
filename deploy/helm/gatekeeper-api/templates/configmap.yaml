@@ -1,0 +1,13 @@
+{{- $name := include "gatekeeper-api.fullname" . -}}
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "cfg-{{ $name }}"
+  labels:
+    app: {{ template "gatekeeper-api.name" . }}
+    chart: {{ template "gatekeeper-api.chart" .}}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data: 
+  AZURE_CLIENT_ID: {{ .Values.azureWorkloadIdentity.gatekeeperApiClientId }}
