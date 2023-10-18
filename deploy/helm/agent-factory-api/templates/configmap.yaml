@@ -9,4 +9,5 @@ metadata:
     chart: {{ template "agent-factory-api.chart" .}}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
-data: {}
+data: 
+  AZURE_CLIENT_ID: {{ .Values.azureWorkloadIdentity.agentFactoryApiClientId }}

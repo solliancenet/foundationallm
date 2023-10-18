@@ -3,8 +3,8 @@ FROM python:3.11
 WORKDIR /code
 COPY ./LangChainAPI/requirements.txt /code/requirements.txt
 RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
-COPY ./PythonSDK/foundationallm /code/app/foundationallm
-COPY ./LangChainAPI /code/app
+COPY ./PythonSDK/foundationallm /code/foundationallm
+COPY ./LangChainAPI /code
 
 EXPOSE 80
 

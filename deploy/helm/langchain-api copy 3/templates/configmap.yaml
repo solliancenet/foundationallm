@@ -9,5 +9,6 @@ metadata:
     chart: {{ template "prompt-hub-api.chart" .}}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
-data:
+data: 
+  AZURE_CLIENT_ID: {{ .Values.azureWorkloadIdentity.promptHubApiClientId }}
   foundationallm-app-configuration-uri: {{ .Values.appConfig.uri }}

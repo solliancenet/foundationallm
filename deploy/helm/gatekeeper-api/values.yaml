@@ -35,7 +35,8 @@ ingress:
   - secretName: tls-prod
 
 env:
-  configmap: {}
+  configmap: 
+    - name: AZURE_CLIENT_ID
   secret:
     - name: FoundationaLLM__AppConfig__ConnectionString
   values:

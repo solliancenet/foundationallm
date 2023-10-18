@@ -49,91 +49,98 @@
     },
     "appConfigSettings": {
       "name": "[format('{0}-appconfig', parameters('name'))]",
+      "apiUrlConfigKeys": [
+        {
+          "key": "FoundationaLLM:APIs:AgentFactoryAPI:APIUrl",
+          "value": "agent-factory",
+          "contentType": null
+        },
+        {
+          "key": "FoundationaLLM:APIs:AgentHubAPI:APIUrl",
+          "value": "agent-hub",
+          "contentType": null
+        },
+        {
+          "key": "FoundationaLLM:APIs:CoreAPI:APIUrl",
+          "value": "core",
+          "contentType": null
+        },
+        {
+          "key": "FoundationaLLM:APIs:DataSourceHubAPI:APIUrl",
+          "value": "data-source-hub",
+          "contentType": null
+        },
+        {
+          "key": "FoundationaLLM:APIs:GatekeeperAPI:APIUrl",
+          "value": "gatekeeper",
+          "contentType": null
+        },
+        {
+          "key": "FoundationaLLM:APIs:LangChainAPI:APIUrl",
+          "value": "langchain",
+          "contentType": null
+        },
+        {
+          "key": "FoundationaLLM:APIs:PromptHubAPI:APIUrl",
+          "value": "prompt-hub",
+          "contentType": null
+        },
+        {
+          "key": "FoundationaLLM:APIs:SemanticKernelAPI:APIUrl",
+          "value": "semantic-kernel",
+          "contentType": null
+        }
+      ],
       "configKeys": [
         {
           "key": "FoundationaLLM:APIs:CoreAPI:AppInsightsConnectionString",
-          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-app-insights-connection-string\"}, ')]",
+          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-app-insights-connection-string\"}')]",
           "contentType": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
         },
         {
           "key": "FoundationaLLM:APIs:GatekeeperAPI:AppInsightsConnectionString",
-          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-app-insights-connection-string\"}, ')]",
+          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-app-insights-connection-string\"}')]",
           "contentType": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
         },
         {
           "key": "FoundationaLLM:APIs:AgentFactoryAPI:AppInsightsConnectionString",
-          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-app-insights-connection-string\"}, ')]",
+          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-app-insights-connection-string\"}')]",
           "contentType": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
         },
         {
           "key": "FoundationaLLM:APIs:AgentFactoryAPI:APIKey",
-          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-apis-agentfactoryapi-apikey\"}, ')]",
+          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-apis-agentfactoryapi-apikey\"}')]",
           "contentType": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
-        },
-        {
-          "key": "FoundationaLLM:APIs:AgentFactoryAPI:APIUrl",
-          "value": "https://localhost:7324",
-          "contentType": null
         },
         {
           "key": "FoundationaLLM:APIs:AgentHubAPI:APIKey",
-          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-apis-agenthubapi-apikey\"}, ')]",
+          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-apis-agenthubapi-apikey\"}')]",
           "contentType": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
-        },
-        {
-          "key": "FoundationaLLM:APIs:AgentHubAPI:APIUrl",
-          "value": "http://localhost:8742/",
-          "contentType": null
         },
         {
           "key": "FoundationaLLM:APIs:DataSourceHubAPI:APIKey",
-          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-apis-datasourcehubapi-apikey\"}, ')]",
+          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-apis-datasourcehubapi-apikey\"}')]",
           "contentType": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
-        },
-        {
-          "key": "FoundationaLLM:APIs:DataSourceHubAPI:APIUrl",
-          "value": "http://localhost:8842/",
-          "contentType": null
         },
         {
           "key": "FoundationaLLM:APIs:GatekeeperAPI:APIKey",
-          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-apis-gatekeeperapi-apikey\"}, ')]",
+          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-apis-gatekeeperapi-apikey\"}')]",
           "contentType": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
-        },
-        {
-          "key": "FoundationaLLM:APIs:GatekeeperAPI:APIUrl",
-          "value": "http://localhost:5295/",
-          "contentType": null
         },
         {
           "key": "FoundationaLLM:APIs:LangChainAPI:APIKey",
-          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-apis-langchainapi-apikey\"}, ')]",
+          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-apis-langchainapi-apikey\"}')]",
           "contentType": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
-        },
-        {
-          "key": "FoundationaLLM:APIs:LangChainAPI:APIUrl",
-          "value": "http://localhost:8765",
-          "contentType": null
         },
         {
           "key": "FoundationaLLM:APIs:PromptHubAPI:APIKey",
-          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-apis-prompthubapi-apikey\"}, ')]",
+          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-apis-prompthubapi-apikey\"}')]",
           "contentType": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
-        },
-        {
-          "key": "FoundationaLLM:APIs:PromptHubAPI:APIUrl",
-          "value": "http://localhost:8642",
-          "contentType": null
         },
         {
           "key": "FoundationaLLM:APIs:SemanticKernelAPI:APIKey",
-          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-apis-semantickernelapi-apikey\"}, ')]",
+          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-apis-semantickernelapi-apikey\"}')]",
           "contentType": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
-        },
-        {
-          "key": "FoundationaLLM:APIs:SemanticKernelAPI:APIUrl",
-          "value": "http://localhost:7062",
-          "contentType": null
         },
         {
           "key": "FoundationaLLM:AgentFactory",
@@ -157,12 +164,12 @@
         },
         {
           "key": "FoundationaLLM:AgentHub:StorageManager:BlobStorage:ConnectionString",
-          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-agenthub-storagemanager-blobstorage-connectionstring\"}, ')]",
+          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-agenthub-storagemanager-blobstorage-connectionstring\"}')]",
           "contentType": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
         },
         {
           "key": "FoundationaLLM:AzureContentSafety:APIKey",
-          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-azurecontentsafety-apikey\"}, ')]",
+          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-azurecontentsafety-apikey\"}')]",
           "contentType": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
         },
         {
@@ -242,7 +249,7 @@
         },
         {
           "key": "FoundationaLLM:AzureOpenAI:API:Key",
-          "value": "[concat('{\"uri\":\"https://', variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-azureopenai-api-key\"}, ')]",
+          "value": "[concat('{\"uri\":\"https://', variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-azureopenai-api-key\"}')]",
           "contentType": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
         },
         {
@@ -252,12 +259,17 @@
         },
         {
           "key": "FoundationaLLM:AzureOpenAI:Key",
-          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-azureopenai-key\"}, ')]",
+          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-azureopenai-key\"}')]",
+          "contentType": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
+        },
+        {
+          "key": "FoundationaLLM:BlobStorage:ConnectionString",
+          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-blobstoragememorysource-blobstorageconnection\"}')]",
           "contentType": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
         },
         {
           "key": "FoundationaLLM:BlobStorageMemorySource:BlobStorageConnection",
-          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-blobstoragememorysource-blobstorageconnection\"}, ')]",
+          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-blobstoragememorysource-blobstorageconnection\"}')]",
           "contentType": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
         },
         {
@@ -342,7 +354,7 @@
         },
         {
           "key": "FoundationaLLM:Chat:Entra:ClientSecret",
-          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-chat-entra-clientsecret\"}, ')]",
+          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-chat-entra-clientsecret\"}')]",
           "contentType": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
         },
         {
@@ -361,18 +373,8 @@
           "contentType": null
         },
         {
-          "key": "FoundationaLLM:ChatManager:APIRoutePrefix",
-          "value": "",
-          "contentType": null
-        },
-        {
-          "key": "FoundationaLLM:ChatManager:APIUrl",
-          "value": "https://localhost:63279",
-          "contentType": null
-        },
-        {
           "key": "FoundationaLLM:CognitiveSearch:ConfigBlobStorageConnection",
-          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-cognitivesearch-configblobstorageconnection\"}, ')]",
+          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-cognitivesearch-configblobstorageconnection\"}')]",
           "contentType": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
         },
         {
@@ -387,7 +389,7 @@
         },
         {
           "key": "FoundationaLLM:CognitiveSearch:Key",
-          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-cognitivesearch-key\"}, ')]",
+          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-cognitivesearch-key\"}')]",
           "contentType": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
         },
         {
@@ -397,7 +399,7 @@
         },
         {
           "key": "FoundationaLLM:CognitiveSearchMemorySource:BlobStorageConnection",
-          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-cognitivesearchmemorysource-blobstorageconnection\"}, ')]",
+          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-cognitivesearchmemorysource-blobstorageconnection\"}')]",
           "contentType": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
         },
         {
@@ -422,7 +424,7 @@
         },
         {
           "key": "FoundationaLLM:CognitiveSearchMemorySource:Key",
-          "value": "[concat('{\"uri\":\"https://', variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-cognitivesearchmemorysource-key\"}, ')]",
+          "value": "[concat('{\"uri\":\"https://', variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-cognitivesearchmemorysource-key\"}')]",
           "contentType": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
         },
         {
@@ -442,7 +444,7 @@
         },
         {
           "key": "FoundationaLLM:CoreAPI:Entra:ClientSecret",
-          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-coreapi-entra-clientsecret\"}, ')]",
+          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-coreapi-entra-clientsecret\"}')]",
           "contentType": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
         },
         {
@@ -452,7 +454,7 @@
         },
         {
           "key": "FoundationaLLM:CoreAPI:Entra:Key",
-          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-coreapi-entra-key\"}, ')]",
+          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-coreapi-entra-key\"}')]",
           "contentType": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
         },
         {
@@ -487,7 +489,7 @@
         },
         {
           "key": "FoundationaLLM:CosmosDB:Key",
-          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-cosmosdb-key\"}, ')]",
+          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-cosmosdb-key\"}')]",
           "contentType": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
         },
         {
@@ -502,12 +504,12 @@
         },
         {
           "key": "FoundationaLLM:DataSourceHub:StorageManager:BlobStorage:ConnectionString",
-          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-datasourcehub-storagemanager-blobstorage-connectionstring\"}, ')]",
+          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-datasourcehub-storagemanager-blobstorage-connectionstring\"}')]",
           "contentType": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
         },
         {
           "key": "FoundationaLLM:DurableSystemPrompt:BlobStorageConnection",
-          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-durablesystemprompt-blobstorageconnection\"}, ')]",
+          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-durablesystemprompt-blobstorageconnection\"}')]",
           "contentType": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
         },
         {
@@ -517,12 +519,12 @@
         },
         {
           "key": "FoundationaLLM:LangChain:CSVFile:URL",
-          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-langchain-csvfile-url\"}, ')]",
+          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-langchain-csvfile-url\"}')]",
           "contentType": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
         },
         {
           "key": "FoundationaLLM:LangChain:SQLDatabase:TestDB:Password",
-          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-langchain-sqldatabase-testdb-password\"}, ')]",
+          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-langchain-sqldatabase-testdb-password\"}')]",
           "contentType": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
         },
         {
@@ -537,7 +539,7 @@
         },
         {
           "key": "FoundationaLLM:LangChainAPI:Key",
-          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-langchainapi-key\"}, ')]",
+          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-langchainapi-key\"}')]",
           "contentType": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
         },
         {
@@ -547,7 +549,7 @@
         },
         {
           "key": "FoundationaLLM:OpenAI:API:Key",
-          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-openai-api-key\"}, ')]",
+          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-openai-api-key\"}')]",
           "contentType": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
         },
         {
@@ -562,7 +564,7 @@
         },
         {
           "key": "FoundationaLLM:PromptHub:StorageManager:BlobStorage:ConnectionString",
-          "value": "[concat('{\"uri\":\"https://', variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-prompthub-storagemanager-blobstorage-connectionstring\"}, ')]",
+          "value": "[concat('{\"uri\":\"https://', variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-prompthub-storagemanager-blobstorage-connectionstring\"}')]",
           "contentType": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
         },
         {
@@ -642,7 +644,7 @@
         },
         {
           "key": "FoundationaLLM:SemanticKernalAPI:OpenAI:Key",
-          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-semantickernalapi-openai-key\"}, ')]",
+          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-semantickernalapi-openai-key\"}')]",
           "contentType": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
         }
       ]
@@ -750,27 +752,27 @@
   },
   "resources": [
     {
-            "type": "Microsoft.CognitiveServices/accounts",
-            "apiVersion": "2023-05-01",
-            "name": "[variables('safetySettings').name]",
-            "location": "[parameters('location')]",
-            "sku": {
-                "name": "S0"
-            },
-            "kind": "ContentSafety",
-            "identity": {
-                "type": "SystemAssigned"
-            },
-            "properties": {
-                "customSubDomainName": "[variables('safetySettings').name]",
-                "networkAcls": {
-                    "defaultAction": "Allow",
-                    "virtualNetworkRules": [],
-                    "ipRules": []
-                },
-                "publicNetworkAccess": "Enabled"
-            }
+        "type": "Microsoft.CognitiveServices/accounts",
+        "apiVersion": "2023-05-01",
+        "name": "[variables('safetySettings').name]",
+        "location": "[parameters('location')]",
+        "sku": {
+            "name": "S0"
         },
+        "kind": "ContentSafety",
+        "identity": {
+            "type": "SystemAssigned"
+        },
+        "properties": {
+            "customSubDomainName": "[variables('safetySettings').name]",
+            "networkAcls": {
+                "defaultAction": "Allow",
+                "virtualNetworkRules": [],
+                "ipRules": []
+            },
+            "publicNetworkAccess": "Enabled"
+        }
+    },
     {
       "type": "Microsoft.AppConfiguration/configurationStores",
       "apiVersion": "2023-03-01",
@@ -798,6 +800,22 @@
       "properties": {
         "value": "[variables('appConfigSettings').configKeys[copyIndex()].value]",
         "contentType": "[variables('appConfigSettings').configKeys[copyIndex()].contentType]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.AppConfiguration/configurationStores', variables('appConfigSettings').name)]"
+      ]
+    },
+    {
+      "copy": {
+        "name": "configStoreKeyValue",
+        "count": "[length(variables('appConfigSettings').apiUrlConfigKeys)]"
+      },
+      "type": "Microsoft.AppConfiguration/configurationStores/keyValues",
+      "apiVersion": "2021-10-01-preview",
+      "name": "[format('{0}/{1}', variables('appConfigSettings').name, variables('appConfigSettings').apiUrlConfigKeys[copyIndex()].key)]",
+      "properties": {
+        "value": "[concat('https://',reference(resourceId('Microsoft.ContainerService/managedClusters', variables('aksSettings').name), '2023-01-02-preview').addonProfiles.httpApplicationRouting.config.HTTPApplicationRoutingZoneName,'/', variables('appConfigSettings').apiUrlConfigKeys[copyIndex()].value,'/')]",
+        "contentType": "[variables('appConfigSettings').apiUrlConfigKeys[copyIndex()].contentType]"
       },
       "dependsOn": [
         "[resourceId('Microsoft.AppConfiguration/configurationStores', variables('appConfigSettings').name)]"
@@ -1880,8 +1898,107 @@
     {
       "type": "Microsoft.Authorization/roleAssignments",
       "apiVersion": "2022-04-01",
-      "scope": "[format('Microsoft.AppConfiguration/configurationStores/{0}', variables('appConfigSettings').name)]",
+      "scope": "[format('Microsoft.KeyVault/vaults/{0}', variables('keyVaultSettings').name)]",
       "name": "[guid(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}agentfactorymi', parameters('name'))), variables('keyVaultSettings').name)]",
+      "properties": {
+        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('roleIdMapping')['Key Vault Secrets User'])]",
+        "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('agentFactorySettings').miName), providers('Microsoft.ManagedIdentity', 'userAssignedIdentities').apiVersions[0]).principalId]",
+        "principalType": "ServicePrincipal"
+      }
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "scope": "[format('Microsoft.KeyVault/vaults/{0}', variables('keyVaultSettings').name)]",
+      "name": "[guid(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}agenthubmi', parameters('name'))), variables('keyVaultSettings').name)]",
+      "properties": {
+        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('roleIdMapping')['Key Vault Secrets User'])]",
+        "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('agentHubSettings').miName), providers('Microsoft.ManagedIdentity', 'userAssignedIdentities').apiVersions[0]).principalId]",
+        "principalType": "ServicePrincipal"
+      }
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "scope": "[format('Microsoft.KeyVault/vaults/{0}', variables('keyVaultSettings').name)]",
+      "name": "[guid(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}chatuimi', parameters('name'))), variables('keyVaultSettings').name)]",
+      "properties": {
+        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('roleIdMapping')['Key Vault Secrets User'])]",
+        "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('chatUiSettings').miName), providers('Microsoft.ManagedIdentity', 'userAssignedIdentities').apiVersions[0]).principalId]",
+        "principalType": "ServicePrincipal"
+      }
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "scope": "[format('Microsoft.KeyVault/vaults/{0}', variables('keyVaultSettings').name)]",
+      "name": "[guid(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}coremi', parameters('name'))), variables('keyVaultSettings').name)]",
+      "properties": {
+        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('roleIdMapping')['Key Vault Secrets User'])]",
+        "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('coreSettings').miName), providers('Microsoft.ManagedIdentity', 'userAssignedIdentities').apiVersions[0]).principalId]",
+        "principalType": "ServicePrincipal"
+      }
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "scope": "[format('Microsoft.KeyVault/vaults/{0}', variables('keyVaultSettings').name)]",
+      "name": "[guid(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}datasourcehubmi', parameters('name'))), variables('keyVaultSettings').name)]",
+      "properties": {
+        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('roleIdMapping')['Key Vault Secrets User'])]",
+        "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('dataSourceHubSettings').miName), providers('Microsoft.ManagedIdentity', 'userAssignedIdentities').apiVersions[0]).principalId]",
+        "principalType": "ServicePrincipal"
+      }
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "scope": "[format('Microsoft.KeyVault/vaults/{0}', variables('keyVaultSettings').name)]",
+      "name": "[guid(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}gatekeepermi', parameters('name'))), variables('keyVaultSettings').name)]",
+      "properties": {
+        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('roleIdMapping')['Key Vault Secrets User'])]",
+        "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('gatekeeperSettings').miName), providers('Microsoft.ManagedIdentity', 'userAssignedIdentities').apiVersions[0]).principalId]",
+        "principalType": "ServicePrincipal"
+      }
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "scope": "[format('Microsoft.KeyVault/vaults/{0}', variables('keyVaultSettings').name)]",
+      "name": "[guid(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}langchainmi', parameters('name'))), variables('keyVaultSettings').name)]",
+      "properties": {
+        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('roleIdMapping')['Key Vault Secrets User'])]",
+        "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('langChainSettings').miName), providers('Microsoft.ManagedIdentity', 'userAssignedIdentities').apiVersions[0]).principalId]",
+        "principalType": "ServicePrincipal"
+      }
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "scope": "[format('Microsoft.KeyVault/vaults/{0}', variables('keyVaultSettings').name)]",
+      "name": "[guid(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}prompthubmi', parameters('name'))), variables('keyVaultSettings').name)]",
+      "properties": {
+        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('roleIdMapping')['Key Vault Secrets User'])]",
+        "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('promptHubSettings').miName), providers('Microsoft.ManagedIdentity', 'userAssignedIdentities').apiVersions[0]).principalId]",
+        "principalType": "ServicePrincipal"
+      }
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "scope": "[format('Microsoft.KeyVault/vaults/{0}', variables('keyVaultSettings').name)]",
+      "name": "[guid(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}semantickernelmi', parameters('name'))), variables('keyVaultSettings').name)]",
+      "properties": {
+        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('roleIdMapping')['Key Vault Secrets User'])]",
+        "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('semanticKernelSettings').miName), providers('Microsoft.ManagedIdentity', 'userAssignedIdentities').apiVersions[0]).principalId]",
+        "principalType": "ServicePrincipal"
+      }
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "scope": "[format('Microsoft.AppConfiguration/configurationStores/{0}', variables('appConfigSettings').name)]",
+      "name": "[guid(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}agentfactorymi', parameters('name'))), variables('appConfigSettings').name)]",
       "properties": {
         "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('roleIdMapping')['App Configuration Data Reader'])]",
         "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('agentFactorySettings').miName), providers('Microsoft.ManagedIdentity', 'userAssignedIdentities').apiVersions[0]).principalId]",
@@ -1892,7 +2009,7 @@
       "type": "Microsoft.Authorization/roleAssignments",
       "apiVersion": "2022-04-01",
       "scope": "[format('Microsoft.AppConfiguration/configurationStores/{0}', variables('appConfigSettings').name)]",
-      "name": "[guid(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}agenthubmi', parameters('name'))), variables('keyVaultSettings').name)]",
+      "name": "[guid(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}agenthubmi', parameters('name'))), variables('appConfigSettings').name)]",
       "properties": {
         "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('roleIdMapping')['App Configuration Data Reader'])]",
         "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('agentHubSettings').miName), providers('Microsoft.ManagedIdentity', 'userAssignedIdentities').apiVersions[0]).principalId]",
@@ -1903,7 +2020,7 @@
       "type": "Microsoft.Authorization/roleAssignments",
       "apiVersion": "2022-04-01",
       "scope": "[format('Microsoft.AppConfiguration/configurationStores/{0}', variables('appConfigSettings').name)]",
-      "name": "[guid(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}chatuimi', parameters('name'))), variables('keyVaultSettings').name)]",
+      "name": "[guid(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}chatuimi', parameters('name'))), variables('appConfigSettings').name)]",
       "properties": {
         "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('roleIdMapping')['App Configuration Data Reader'])]",
         "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('chatUiSettings').miName), providers('Microsoft.ManagedIdentity', 'userAssignedIdentities').apiVersions[0]).principalId]",
@@ -1914,7 +2031,7 @@
       "type": "Microsoft.Authorization/roleAssignments",
       "apiVersion": "2022-04-01",
       "scope": "[format('Microsoft.AppConfiguration/configurationStores/{0}', variables('appConfigSettings').name)]",
-      "name": "[guid(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}coremi', parameters('name'))), variables('keyVaultSettings').name)]",
+      "name": "[guid(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}coremi', parameters('name'))), variables('appConfigSettings').name)]",
       "properties": {
         "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('roleIdMapping')['App Configuration Data Reader'])]",
         "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('coreSettings').miName), providers('Microsoft.ManagedIdentity', 'userAssignedIdentities').apiVersions[0]).principalId]",
@@ -1925,7 +2042,7 @@
       "type": "Microsoft.Authorization/roleAssignments",
       "apiVersion": "2022-04-01",
       "scope": "[format('Microsoft.AppConfiguration/configurationStores/{0}', variables('appConfigSettings').name)]",
-      "name": "[guid(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}datasourcehubmi', parameters('name'))), variables('keyVaultSettings').name)]",
+      "name": "[guid(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}datasourcehubmi', parameters('name'))), variables('appConfigSettings').name)]",
       "properties": {
         "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('roleIdMapping')['App Configuration Data Reader'])]",
         "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('dataSourceHubSettings').miName), providers('Microsoft.ManagedIdentity', 'userAssignedIdentities').apiVersions[0]).principalId]",
@@ -1936,7 +2053,7 @@
       "type": "Microsoft.Authorization/roleAssignments",
       "apiVersion": "2022-04-01",
       "scope": "[format('Microsoft.AppConfiguration/configurationStores/{0}', variables('appConfigSettings').name)]",
-      "name": "[guid(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}gatekeepermi', parameters('name'))), variables('keyVaultSettings').name)]",
+      "name": "[guid(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}gatekeepermi', parameters('name'))), variables('appConfigSettings').name)]",
       "properties": {
         "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('roleIdMapping')['App Configuration Data Reader'])]",
         "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('gatekeeperSettings').miName), providers('Microsoft.ManagedIdentity', 'userAssignedIdentities').apiVersions[0]).principalId]",
@@ -1947,7 +2064,7 @@
       "type": "Microsoft.Authorization/roleAssignments",
       "apiVersion": "2022-04-01",
       "scope": "[format('Microsoft.AppConfiguration/configurationStores/{0}', variables('appConfigSettings').name)]",
-      "name": "[guid(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}langchainmi', parameters('name'))), variables('keyVaultSettings').name)]",
+      "name": "[guid(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}langchainmi', parameters('name'))), variables('appConfigSettings').name)]",
       "properties": {
         "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('roleIdMapping')['App Configuration Data Reader'])]",
         "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('langChainSettings').miName), providers('Microsoft.ManagedIdentity', 'userAssignedIdentities').apiVersions[0]).principalId]",
@@ -1958,7 +2075,7 @@
       "type": "Microsoft.Authorization/roleAssignments",
       "apiVersion": "2022-04-01",
       "scope": "[format('Microsoft.AppConfiguration/configurationStores/{0}', variables('appConfigSettings').name)]",
-      "name": "[guid(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}prompthubmi', parameters('name'))), variables('keyVaultSettings').name)]",
+      "name": "[guid(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}prompthubmi', parameters('name'))), variables('appConfigSettings').name)]",
       "properties": {
         "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('roleIdMapping')['App Configuration Data Reader'])]",
         "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('promptHubSettings').miName), providers('Microsoft.ManagedIdentity', 'userAssignedIdentities').apiVersions[0]).principalId]",
@@ -1969,7 +2086,7 @@
       "type": "Microsoft.Authorization/roleAssignments",
       "apiVersion": "2022-04-01",
       "scope": "[format('Microsoft.AppConfiguration/configurationStores/{0}', variables('appConfigSettings').name)]",
-      "name": "[guid(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}semantickernelmi', parameters('name'))), variables('keyVaultSettings').name)]",
+      "name": "[guid(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}semantickernelmi', parameters('name'))), variables('appConfigSettings').name)]",
       "properties": {
         "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('roleIdMapping')['App Configuration Data Reader'])]",
         "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('semanticKernelSettings').miName), providers('Microsoft.ManagedIdentity', 'userAssignedIdentities').apiVersions[0]).principalId]",

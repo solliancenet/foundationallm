@@ -12,7 +12,7 @@ Param(
     [parameter(Mandatory=$false)][string]$openAiEmbeddingsDeployment=$null,
     [parameter(Mandatory=$false)][bool]$stepDeployArm=$true,
     [parameter(Mandatory=$false)][bool]$stepDeployOpenAi=$true,
-    [parameter(Mandatory=$false)][bool]$deployAks=$false,
+    [parameter(Mandatory=$false)][bool]$deployAks=$true,
     [parameter(Mandatory=$false)][bool]$stepBuildPush=$true,
     [parameter(Mandatory=$false)][bool]$stepDeployCertManager=$true,
     [parameter(Mandatory=$false)][bool]$stepDeployTls=$true,
