@@ -2,14 +2,13 @@ import uvicorn
 from fastapi import FastAPI
 from app.routers import orchestration, status
 
-# FastAPI metadata info: https://fastapi.tiangolo.com/tutorial/metadata/
 app = FastAPI(
     title='FoundationaLLM LangChainAPI',
     summary='API for interacting with language models using LangChain.',
     description='The FoundationaLLM LangChainAPI is a wrapper around LangChain functionality contained in the foundationallm.core Python SDK.',
-    version='0.1.0', # TODO: Figure out how to make this configurable
+    version='1.0.0',
     contact={
-        'name':'Sollaince, Inc.',
+        'name':'Solliance, Inc.',
         'email':'contact@solliance.net',
         'url':'https://solliance.net/' 
     },
