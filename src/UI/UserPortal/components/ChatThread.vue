@@ -1,7 +1,7 @@
 <template>
 	<div class="chat-thread">
 		<!-- Header -->
-		<div class="chat-thread__header" v-if="false">
+		<div class="chat-thread__header" v-if="sidebarClosed">
 			<template v-if="session">
 				<span>{{ session.name }}</span>
 			</template>
@@ -61,6 +61,11 @@ export default {
 		session: {
 			type: Object as PropType<Session>,
 			required: true,
+		},
+		sidebarClosed: {
+			type: Boolean,
+			required: false,
+			default: false,
 		},
 	},
 

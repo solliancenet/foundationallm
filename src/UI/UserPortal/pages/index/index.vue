@@ -1,9 +1,9 @@
 <template>
 	<div :style="style" class="chat-app">
-		<Navbar :currentSession="currentSession" />
+		<Navbar :currentSession="currentSession" @collapse-sidebar="collapseSidebar" />
 		<div class="chat-content">
-			<ChatSidebar ref="sidebar" :currentSession="currentSession" @change-session="handleChangeSession" />
-			<ChatThread :session="currentSession" @update-session="handleUpdateSession" />
+			<ChatSidebar ref="sidebar" :currentSession="currentSession" @change-session="handleChangeSession" v-show="!closeSidebar" />
+			<ChatThread :session="currentSession" :sidebar-closed="closeSidebar" @update-session="handleUpdateSession" />
 		</div>
 	</div>
 </template>
@@ -17,6 +17,7 @@ export default {
 	data() {
 		return {
 			currentSession: {} as Session,
+			closeSidebar: false,
 		};
 	},
 
@@ -39,6 +40,10 @@ export default {
 		handleUpdateSession(session: Session) {
 			this.currentSession = session;
 			this.$refs.sidebar.getSessions();
+		},
+
+		collapseSidebar(collapsed: boolean) {
+			this.closeSidebar = collapsed;
 		},
 	},
 };
