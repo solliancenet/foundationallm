@@ -17,6 +17,6 @@ namespace FoundationaLLM.AgentFactory.Core.Models.Orchestration.Metadata
         /// Blob storage configuration settings.
         /// </summary>
         [JsonProperty("configuration")]
-        public BlobStorageConfiguration Configuration { get; set; }
+        public BlobStorageConfiguration? Configuration { get; set; }
     }
 }

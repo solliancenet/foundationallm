@@ -35,21 +35,21 @@ public class AgentFactoryService : IAgentFactoryService
     private readonly ILogger<AgentFactoryService> _logger;
     private readonly IUserIdentityContext _userIdentity;
 
-    private LLMOrchestrationService _llmOrchestrationService = LLMOrchestrationService.LangChain;
+    //private LLMOrchestrationService _llmOrchestrationService = LLMOrchestrationService.LangChain;
 
     /// <summary>
     /// Constructor for the Agent Factory Service
     /// </summary>
-    /// <param name="semanticKernel"></param>
-    /// <param name="langChain"></param>
-    /// <param name="agentHubService"></param>
+    /// <param name="orchestrationServices"></param>
     /// <param name="agentFactorySettings"></param>
+    /// <param name="agentHubService"></param>
     /// <param name="agentHubSettings"></param>
     /// <param name="promptHubService"></param>
     /// <param name="promptHubSettings"></param>
     /// <param name="dataSourceHubService"></param>
     /// <param name="dataSourceHubSettings"></param>
     /// <param name="logger"></param>
+    /// <param name="userIdentity"></param>
     public AgentFactoryService(
         IEnumerable<ILLMOrchestrationService> orchestrationServices,
 

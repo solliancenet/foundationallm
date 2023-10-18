@@ -3,6 +3,9 @@ using FoundationaLLM.Common.Models.Orchestration;
 
 namespace FoundationaLLM.AgentFactory.Core.Interfaces;
 
+/// <summary>
+/// Interface for a prompt hub service
+/// </summary>
 public interface IPromptHubAPIService
 {
     /// <summary>

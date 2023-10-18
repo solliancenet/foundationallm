@@ -95,7 +95,7 @@ public class AgentHubAPIService : IAgentHubAPIService
             {
                 var responseContent = await responseMessage.Content.ReadAsStringAsync();
                 var ahr = JsonConvert.DeserializeObject<AgentHubResponse>(responseContent, _jsonSerializerSettings);
-                return ahr;
+                return ahr!;
             }
         }
         catch (Exception ex)
