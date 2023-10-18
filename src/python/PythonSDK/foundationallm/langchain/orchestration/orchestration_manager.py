@@ -9,7 +9,7 @@ from foundationallm.models.orchestration import CompletionRequest, CompletionRes
 class OrchestrationManager:
     """Client that acts as the entry point for interacting with the FoundationaLLM Python SDK."""
     
-    def __init__(self, completion_request: CompletionRequest, credential: Credential):
+    def __init__(self, completion_request: CompletionRequest, configuration: Configuration):
         """
         Initializes an instance of the OrchestrationManager.
         
@@ -22,8 +22,7 @@ class OrchestrationManager:
             The type of credential to use for authenticating against the SDK.
         """
         self.completion_request = completion_request
-        self.credential = credential
-        self.config = self.__get_configuration()
+        self.config = configuration
         self.llm = self.__get_llm(language_model=completion_request.language_model)
         self.agent = self.__create_agent(completion_request=completion_request)
     
@@ -31,12 +30,7 @@ class OrchestrationManager:
         """Creates an agent for executing completion requests."""
         agent = AgentFactory(completion_request=completion_request, llm=self.llm, config=self.config)
         return agent.get_agent()
-    
-    def __get_configuration(self):
-        """Retrieves an application configuration object for getting app settings."""
-        keyvault_name = Configuration().get_value(key='foundationallm-keyvault-name')
-        return Configuration(keyvault_name=keyvault_name, credential=self.credential)
-    
+ 
     def __get_llm(self, language_model: LanguageModel) -> BaseLanguageModel:
         """
         Retrieves the language model to use for the completion.

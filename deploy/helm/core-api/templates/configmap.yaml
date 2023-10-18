@@ -1,0 +1,13 @@
+{{- $name := include "core-api.fullname" . -}}
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "cfg-{{ $name }}"
+  labels:
+    app: {{ template "core-api.name" . }}
+    chart: {{ template "core-api.chart" .}}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data: 
+  AZURE_CLIENT_ID: {{ .Values.azureWorkloadIdentity.coreApiClientId }}

@@ -1,0 +1,61 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: AgentHubAPI",
+            "type": "python",
+            "request": "launch",
+            "module": "uvicorn",
+            "cwd" : "${workspaceFolder}/src/python/AgentHubAPI/app",
+            "env": {
+                "PYTHONPATH": "d:/repos/solliance-foundationallm/src/python/AgentHubAPI;d:/repos/solliance-foundationallm/src/python/PythonSDK"
+            },
+            "args": ["main:app","--reload", "--port", "8742"]
+        },
+        {
+            "name": "Python: DataSourceHubAPI",
+            "type": "python",
+            "request": "launch",
+            "module": "uvicorn",
+            "cwd" : "${workspaceFolder}/src/python/DataSourceHubAPI/app",
+            "env": {
+                "PYTHONPATH": "d:/repos/solliance-foundationallm/src/python/DataSourceHubAPI;d:/repos/solliance-foundationallm/src/python/PythonSDK"
+            },
+            "args": ["main:app","--reload", "--port", "8842"]
+        },
+        {
+            "name": "Python: PromptHubAPI",
+            "type": "python",
+            "request": "launch",
+            "module": "uvicorn",
+            "cwd" : "${workspaceFolder}/src/python/PromptHubAPI/app",
+            "env": {
+                "PYTHONPATH": "d:/repos/solliance-foundationallm/src/python/PromptHubAPI;d:/repos/solliance-foundationallm/src/python/PythonSDK"
+            },
+            "args": ["main:app","--reload", "--port", "8642"]
+        },
+        {
+            "name": "Python: LangChainAPI",
+            "type": "python",
+            "request": "launch",
+            "module": "uvicorn",
+            "cwd" : "${workspaceFolder}/src/python/LangChainAPI/app",
+            "env": {
+                "PYTHONPATH": "d:/repos/solliance-foundationallm/src/python/LangChainAPI;d:/repos/solliance-foundationallm/src/python/PythonSDK"
+            },
+            "args": ["main:app","--reload", "--port", "8765"],
+            "python": "${workspaceFolder}/src/python/LangChainAPI/env/Scripts/python.exe"
+        },
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        }
+    ]
+}

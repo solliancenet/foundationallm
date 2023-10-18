@@ -14,6 +14,7 @@ using FoundationaLLM.Common.Models.Authentication;
 using FoundationaLLM.Common.Models.Configuration;
 using FoundationaLLM.Common.OpenAPI;
 using FoundationaLLM.Common.Services;
+using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 using Microsoft.Extensions.Options;
 using Polly;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -26,8 +27,26 @@ namespace FoundationaLLM.AgentFactory.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Configuration.Sources.Clear();
+            builder.Configuration.AddJsonFile("appsettings.json", false, true);
+            builder.Configuration.AddEnvironmentVariables();
+            builder.Configuration.AddAzureAppConfiguration(options =>
+            {
+                options.Connect(builder.Configuration["FoundationaLLM:AppConfig:ConnectionString"]);
+                options.ConfigureKeyVault(options =>
+                {
+                    options.SetCredential(new DefaultAzureCredential());
+                });
+            });
+            if (builder.Environment.IsDevelopment())
+                builder.Configuration.AddJsonFile("appsettings.development.json", true, true);
+
             // Add services to the container.
-            builder.Services.AddApplicationInsightsTelemetry();
+            builder.Services.AddApplicationInsightsTelemetry(new ApplicationInsightsServiceOptions
+            {
+                ConnectionString = builder.Configuration["FoundationaLLM:APIs:AgentFactoryAPI:AppInsightsConnectionString"],
+                DeveloperMode = builder.Environment.IsDevelopment()
+            });
             builder.Services.AddControllers().AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.ContractResolver = Common.Settings.CommonJsonSerializerSettings.GetJsonSerializerSettings().ContractResolver;
@@ -38,35 +57,34 @@ namespace FoundationaLLM.AgentFactory.API
             builder.Services.AddScoped<IUserClaimsProviderService, NoOpUserClaimsProviderService>();
             builder.Services.AddScoped<APIKeyAuthenticationFilter>();
             builder.Services.AddOptions<APIKeyValidationSettings>()
-                .Bind(builder.Configuration.GetSection("FoundationaLLM:AgentFactoryAPI"));
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:APIs:AgentFactoryAPI"));
             builder.Services.AddTransient<IAPIKeyValidationService, APIKeyValidationService>();
 
             builder.Services.AddOptions<SemanticKernelServiceSettings>()
-                .Bind(builder.Configuration.GetSection("FoundationaLLM:DownstreamAPIs:SemanticKernelAPI"));
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:APIs:SemanticKernelAPI"));
 
             builder.Services.AddOptions<LangChainServiceSettings>()
-                .Bind(builder.Configuration.GetSection("FoundationaLLM:DownstreamAPIs:LangChainAPI"));
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:APIs:LangChainAPI"));
 
             builder.Services.AddOptions<AgentHubSettings>()
-                .Bind(builder.Configuration.GetSection("FoundationaLLM:DownstreamAPIs:AgentHubAPI"));
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:APIs:AgentHubAPI"));
 
             builder.Services.AddOptions<PromptHubSettings>()
-                .Bind(builder.Configuration.GetSection("FoundationaLLM:DownstreamAPIs:PromptHubAPI"));
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:APIs:PromptHubAPI"));
 
             builder.Services.AddOptions<AgentFactorySettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:AgentFactory"));
 
             builder.Services.AddOptions<KeyVaultConfigurationServiceSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:Configuration"));
-
-            builder.Services.AddSingleton<IConfigurationService, KeyVaultConfigurationService>();
             
-            builder.Services.AddScoped<ISemanticKernelService, SemanticKernelService>();
-            builder.Services.AddScoped<ILangChainService, LangChainService>();
+            builder.Services.AddScoped<ILLMOrchestrationService, SemanticKernelService>();
+            builder.Services.AddScoped<ILLMOrchestrationService, LangChainService>();
+
             builder.Services.AddScoped<IAgentFactoryService, AgentFactoryService>();
-            builder.Services.AddScoped<IAgentHubService, AgentHubAPIService>();
-            builder.Services.AddScoped<IDataSourceHubService, DataSourceHubAPIService>();
-            builder.Services.AddScoped<IPromptHubService, PromptHubAPIService>();
+            builder.Services.AddScoped<IAgentHubAPIService, AgentHubAPIService>();
+            builder.Services.AddScoped<IDataSourceHubAPIService, DataSourceHubAPIService>();
+            builder.Services.AddScoped<IPromptHubAPIService, PromptHubAPIService>();
             builder.Services.AddScoped<IUserIdentityContext, UserIdentityContext>();
             builder.Services.AddScoped<IHttpClientFactoryService, HttpClientFactoryService>();
             builder.Services.AddScoped<IUserClaimsProviderService, NoOpUserClaimsProviderService>();
@@ -155,17 +173,76 @@ namespace FoundationaLLM.AgentFactory.API
             {
                 DownstreamAPIs = new Dictionary<string, DownstreamAPIKeySettings>()
             };
-            foreach (var apiSetting in builder.Configuration.GetSection("FoundationaLLM:DownstreamAPIs").GetChildren())
+
+            var agentHubAPISettings = new DownstreamAPIKeySettings
             {
-                var key = apiSetting.Key;
-                var settings = apiSetting.Get<DownstreamAPIKeySettings>();
-                downstreamAPISettings.DownstreamAPIs[key] = settings;
-                builder.Services
-                    .AddHttpClient(key, client => { client.BaseAddress = new Uri(settings.APIUrl); })
+                APIUrl = builder.Configuration[$"FoundationaLLM:APIs:{HttpClients.AgentHubAPI}:APIUrl"],
+                APIKey = builder.Configuration[$"FoundationaLLM:APIs:{HttpClients.AgentHubAPI}:APIKey"]
+            };
+            downstreamAPISettings.DownstreamAPIs[HttpClients.AgentHubAPI] = agentHubAPISettings;
+
+            builder.Services
+                    .AddHttpClient(HttpClients.AgentHubAPI,
+                        client => { client.BaseAddress = new Uri(agentHubAPISettings.APIUrl); })
                     .AddTransientHttpErrorPolicy(policyBuilder =>
                         policyBuilder.WaitAndRetryAsync(
                             3, retryNumber => TimeSpan.FromMilliseconds(600)));
-            }
+
+            var dataSourceHubAPISettings = new DownstreamAPIKeySettings
+            {
+                APIUrl = builder.Configuration[$"FoundationaLLM:APIs:{HttpClients.DataSourceHubAPI}:APIUrl"],
+                APIKey = builder.Configuration[$"FoundationaLLM:APIs:{HttpClients.DataSourceHubAPI}:APIKey"]
+            };
+            downstreamAPISettings.DownstreamAPIs[HttpClients.DataSourceHubAPI] = dataSourceHubAPISettings;
+
+            builder.Services
+                    .AddHttpClient(HttpClients.DataSourceHubAPI,
+                        client => { client.BaseAddress = new Uri(dataSourceHubAPISettings.APIUrl); })
+                    .AddTransientHttpErrorPolicy(policyBuilder =>
+                        policyBuilder.WaitAndRetryAsync(
+                            3, retryNumber => TimeSpan.FromMilliseconds(600)));
+
+            var promptHubAPISettings = new DownstreamAPIKeySettings
+            {
+                APIUrl = builder.Configuration[$"FoundationaLLM:APIs:{HttpClients.PromptHubAPI}:APIUrl"],
+                APIKey = builder.Configuration[$"FoundationaLLM:APIs:{HttpClients.PromptHubAPI}:APIKey"]
+            };
+            downstreamAPISettings.DownstreamAPIs[HttpClients.PromptHubAPI] = promptHubAPISettings;
+
+            builder.Services
+                    .AddHttpClient(HttpClients.PromptHubAPI,
+                        client => { client.BaseAddress = new Uri(promptHubAPISettings.APIUrl); })
+                    .AddTransientHttpErrorPolicy(policyBuilder =>
+                        policyBuilder.WaitAndRetryAsync(
+                            3, retryNumber => TimeSpan.FromMilliseconds(600)));
+
+            var langChainAPISettings = new DownstreamAPIKeySettings
+            {
+                APIUrl = builder.Configuration[$"FoundationaLLM:APIs:{HttpClients.LangChainAPI}:APIUrl"],
+                APIKey = builder.Configuration[$"FoundationaLLM:APIs:{HttpClients.LangChainAPI}:APIKey"]
+            };
+            downstreamAPISettings.DownstreamAPIs[HttpClients.LangChainAPI] = langChainAPISettings;
+
+            builder.Services
+                    .AddHttpClient(HttpClients.LangChainAPI,
+                        client => { client.BaseAddress = new Uri(langChainAPISettings.APIUrl); })
+                    .AddTransientHttpErrorPolicy(policyBuilder =>
+                        policyBuilder.WaitAndRetryAsync(
+                            3, retryNumber => TimeSpan.FromMilliseconds(600)));
+
+            var semanticKernelAPISettings = new DownstreamAPIKeySettings
+            {
+                APIUrl = builder.Configuration[$"FoundationaLLM:APIs:{HttpClients.SemanticKernelAPI}:APIUrl"],
+                APIKey = builder.Configuration[$"FoundationaLLM:APIs:{HttpClients.SemanticKernelAPI}:APIKey"]
+            };
+            downstreamAPISettings.DownstreamAPIs[HttpClients.SemanticKernelAPI] = semanticKernelAPISettings;
+
+            builder.Services
+                    .AddHttpClient(HttpClients.SemanticKernelAPI,
+                        client => { client.BaseAddress = new Uri(semanticKernelAPISettings.APIUrl); })
+                    .AddTransientHttpErrorPolicy(policyBuilder =>
+                        policyBuilder.WaitAndRetryAsync(
+                            3, retryNumber => TimeSpan.FromMilliseconds(600)));
 
             builder.Services.AddSingleton<IDownstreamAPISettings>(downstreamAPISettings);
         }

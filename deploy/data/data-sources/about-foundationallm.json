@@ -1,0 +1,10 @@
+{
+    "name": "about-foundationallm",
+    "underlying_implementation": "blob-storage",    
+    "authentication": {
+        "connection_string_secret": "FoundationaLLM:BlobStorage:ConnectionString"
+    },   
+    "container": "foundationallm-source",
+    "files" : ["about.txt"],
+    "description": "Information about FoundationaLLM."
+}

@@ -9,6 +9,7 @@ class OpenAIModelBase(LanguageModelBase):
     openai_api_key: str
     openai_organization: str = ''
     max_retries: int = 6
+    max_tokens: int = 4097,
     verbose: bool = False
     temperature: Annotated[float, confloat(ge=0.0, le=1.0)] = 0
     

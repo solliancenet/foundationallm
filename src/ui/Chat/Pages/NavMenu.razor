@@ -3,13 +3,14 @@
 @using FoundationaLLM.Chat.Components
 @using global::FoundationaLLM.Common.Models.Chat;
 @inject IChatManager chatManager
+@inject IBrandingService BrandingService
 @inject IJSRuntime JSRuntime
 
-<div class="h-100 d-flex flex-column" style="min-width: 309px;">
-    <div class="flex-column navbar navbar-dark bg-gray" style="background-color: black">
+<div class="h-100 d-flex flex-column chat-sidebar" style="min-width: 309px;">
+    <div class="flex-column navbar">
         <div class="container-fluid justify-content-between">
             <div class="flex-fill">
-                <img src="customer-logo.png" style="max-width: 150px;" />
+                <img src="@BrandingService.CurrentConfig?.LogoUrl" alt="@BrandingService.CurrentConfig?.CompanyName" style="max-width: 150px;" />
             </div>
             <button class="navbar-toggler border-0" @onclick="ToggleNavMenu">
                 <i class="bi bi-arrow-left-square-fill"></i>
@@ -19,11 +20,11 @@
 
     @if (_loadingComplete == true)
     {
-        <div class="nav-item py-2 d-grid">
-            <NavLink style="cursor:pointer" class="btn rounded-0 btn-sm mx-1 btn-secondary d-flex flex-row align-items start" Match="NavLinkMatch.All" @onclick="@(e => NewChat())">
+        <div class="chat nav-item py-2 d-grid">
+            <NavLink style="cursor:pointer" class="btn rounded-0 btn-sm mx-1 d-flex flex-row align-items start" Match="NavLinkMatch.All" @onclick="@(e => NewChat())">
                 <i class="bi bi-plus"></i>
                 <span class="flex-fill">
-                    Create New Chat
+                    <strong>Create New Chat</strong>
                 </span>
             </NavLink>
         </div>
@@ -37,8 +38,8 @@
                         @foreach (var session in ChatSessions)
                         {
                             <div class="col">
-                                <div class="card rounded-0 @(IsActiveSession(session.SessionId) ? "bg-success text-light border-dark" : "bg-secondary text-light")" @onclick="@(e => LoadChat(session.SessionId,session.Name, session.TokensUsed))">
-                                    <div class="card-body">
+                                <div class="chat card rounded-0 @(IsActiveSession(session.SessionId) ? "chat--selected" : "")" @onclick="@(e => LoadChat(session.SessionId,session.Name, session.TokensUsed))">
+                                    <div class="card-body d-flex justify-content-between align-items-start">
                                         <a class="card-title text-decoration-none h6" @onclick="@(e => LoadChat(session.SessionId,session.Name, session.TokensUsed))">
                                             @if (IsActiveSession(session.SessionId))
                                             {
@@ -57,15 +58,6 @@
                                             </button>
                                         </div>
                                     </div>
-@*                                    <div class="card-footer d-flex align-items-between">
-                                        <span class="flex-grow-1"></span>
-                                        <div class="align-items-between">
-                                            <span class="me-2 badge rounded-pill bg-light">
-                                                Tokens Used: @session.TokensUsed
-                                            </span>
-                                        </div>
-                                        
-                                    </div>*@
                                 </div>
                             </div>
                         }
@@ -76,7 +68,30 @@
     </div>
 </div>
 
-
+<style type="text/css">
+    .chat-sidebar {
+        background-color: var(--primary-color);
+    }
+    .chat {
+        background: none;
+        color: var(--primary-text);
+    }
+    .chat a {
+        color: var(--primary-text);
+    }
+    .chat--selected {
+        color: var(--secondary-text);
+        background-color: var(--secondary-color);
+        border-left: 4px solid rgba(217, 217, 217, 0.5);
+    }
+    .chat:hover, .chat a:hover {
+        background-color: rgba(217, 217, 217, 0.05);
+        color: var(--primary-text);
+    }
+    .chat-sidebar .bi.bi-arrow-left-square-fill {
+        color: var(--primary-text);
+    }
+</style>
 
 @if (_deletePopUpOpen)
 {
@@ -278,7 +293,17 @@
         }
 
         _loadingComplete = true;
-        await LoadCurrentChatAsync();
+
+        if (BrandingService.CurrentConfig is {KioskMode: true })
+        {
+            await NewChat();
+            await LoadCurrentChatAsync();
+            await ToggleNavMenu();
+        }
+        else
+        {
+            await LoadCurrentChatAsync();
+        }
 
     }
 

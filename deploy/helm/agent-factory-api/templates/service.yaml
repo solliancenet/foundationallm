@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "agent-factory-api.fullname" . }}
+  labels:
+    app: {{ template "agent-factory-api.name" . }}
+    chart: {{ template "agent-factory-api.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: {{ template "agent-factory-api.name" . }}
+    release: {{ .Release.Name }}

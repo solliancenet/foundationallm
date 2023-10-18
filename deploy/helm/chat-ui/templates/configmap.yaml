@@ -10,5 +10,5 @@ metadata:
     chart: {{ template "chat-ui.chart" .}}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
-data:
-  FoundationaLLM__ChatManager__APIUrl: {{ .Values.apiUrl }}
+data: 
+  AZURE_CLIENT_ID: {{ .Values.azureWorkloadIdentity.chatUiClientId }}

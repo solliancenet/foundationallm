@@ -31,9 +31,9 @@ namespace FoundationaLLM.SemanticKernel.API.Controllers
         [HttpPost("summary")]
         public async Task<SummaryResponse> GetSummary([FromBody] SummaryRequest request)
         {
-            var info = await _semanticKernelService.GetSummary(request.Prompt);
+            var info = await _semanticKernelService.GetSummary(request.UserPrompt);
 
-            return new SummaryResponse() { Info = info };
+            return new SummaryResponse() { Summary = info };
         }
 
         [HttpPost("memory/add")]

@@ -7,14 +7,14 @@ import foundationallm.models.metadata.language_model as LanguageModel
 
 class AzureChatModel(OpenAIModelBase):
     """Azure OpenAI chat model."""
-    config_value_base_name: str = 'foundationallm-azure-openai-api'
+    config_value_base_name: str = 'FoundationaLLM:AzureOpenAI:API'
     deployment_name: str
     model_version: str
     
     def __init__(self, language_model: LanguageModel, config: Configuration):
         """
         Initializes the Azure Open AI chat model.
-        Li
+
         Parameters
         ----------
         language_model: LanguageModel
@@ -23,14 +23,15 @@ class AzureChatModel(OpenAIModelBase):
             Application configuration class for retrieving configuration settings.
         """
         self.config = config
-        self.openai_api_base = self.config.get_value(f'{self.config_value_base_name}-url')
-        self.openai_api_key = self.config.get_value(f'{self.config_value_base_name}-key')
         self.openai_api_type = AzureOpenAIAPIType.AZURE
-        self.openai_api_version = self.config.get_value(f'{self.config_value_base_name}-version')
-        self.deployment_name = self.config.get_value(f'{self.config_value_base_name}-completions-deployment')
-        self.model_version = self.config.get_value(f'{self.config_value_base_name}-completions-model-version')
-        self.temperature = language_model.temperature
-         
+        self.openai_api_key = self.config.get_value(f'{self.config_value_base_name}:Key')
+        self.openai_api_base = self.config.get_value(f'{self.config_value_base_name}:Endpoint')
+        self.openai_api_version = self.config.get_value(f'{self.config_value_base_name}:Version')
+        self.deployment_name = self.config.get_value(f'{self.config_value_base_name}:Completions:DeploymentName')
+        self.max_tokens = self.config.get_value(f'{self.config_value_base_name}:Completions:MaxTokens')
+        self.model_version = self.config.get_value(f'{self.config_value_base_name}:Completions:ModelVersion')
+        self.temperature = self.config.get_value(f'{self.config_value_base_name}:Completions:Temperature')
+        
     def get_language_model(self) -> BaseLanguageModel:
         """
         Returns the Azure OpenAI chat model.
@@ -47,5 +48,6 @@ class AzureChatModel(OpenAIModelBase):
             openai_api_type = self.openai_api_type,
             openai_api_version = self.openai_api_version,
             deployment_name = self.deployment_name,
+            #max_tokens = self.max_tokens,
             model_version = self.model_version
         )

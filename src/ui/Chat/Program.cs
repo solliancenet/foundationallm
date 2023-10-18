@@ -1,3 +1,4 @@
+using Azure.Identity;
 using FoundationaLLM.Chat.Helpers;
 using FoundationaLLM.Common.Interfaces;
 using FoundationaLLM.Common.Models.Configuration;
@@ -7,41 +8,48 @@ using FoundationaLLM.Core.Interfaces;
 using FoundationaLLM.Core.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.Extensions.Configuration.AzureAppConfiguration;
+using Microsoft.Extensions.Options;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 using Polly;
+using System;
 
 var builder = WebApplication.CreateBuilder(args);
+
+
+builder.Configuration.AddAzureAppConfiguration(options =>
+{
+    options.Connect(builder.Configuration["FoundationaLLM:AppConfig:ConnectionString"]);
+    options.ConfigureKeyVault(options =>
+    {
+        options.SetCredential(new DefaultAzureCredential());
+    });
+});
 
 builder.Services.AddHttpClient(FoundationaLLM.Common.Constants.HttpClients.CoreAPI,
         httpClient =>
         {
-            httpClient.BaseAddress = new Uri(builder.Configuration["FoundationaLLM:ChatManager:APIUrl"]);
+            httpClient.BaseAddress = new Uri(builder.Configuration["FoundationaLLM:APIs:CoreAPI:APIUrl"]);
         })
     .AddTransientHttpErrorPolicy(policyBuilder =>
         policyBuilder.WaitAndRetryAsync(
             3, retryNumber => TimeSpan.FromMilliseconds(600)));
 
-builder.Services.Configure<EntraSettings>(builder.Configuration.GetSection("FoundationaLLM:Entra"));
+builder.Services.Configure<EntraSettings>(builder.Configuration.GetSection("FoundationaLLM:Chat:Entra"));
 builder.Services.AddOptions<KeyVaultConfigurationServiceSettings>()
     .Bind(builder.Configuration.GetSection("FoundationaLLM:Configuration"));
 
-builder.Services.AddSingleton<IConfigurationService, KeyVaultConfigurationService>();
-
-var serviceProvider = builder.Services.BuildServiceProvider();
-var kvConfig = serviceProvider.GetRequiredService<FoundationaLLM.Common.Interfaces.IConfigurationService>();
-
-var azureAdSecret = kvConfig.GetValue<string>(builder.Configuration["FoundationaLLM:Entra:ClientSecretKeyName"]);
 builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
     .AddMicrosoftIdentityWebApp(options =>
     {
-        options.ClientSecret = azureAdSecret;
-        options.Instance = builder.Configuration["FoundationaLLM:Entra:Instance"];
-        options.TenantId = builder.Configuration["FoundationaLLM:Entra:TenantId"];
-        options.ClientId = builder.Configuration["FoundationaLLM:Entra:ClientId"];
-        options.CallbackPath = builder.Configuration["FoundationaLLM:Entra:CallbackPath"];
+        options.ClientSecret = builder.Configuration["FoundationaLLM:Chat:Entra:ClientSecret"]; ;
+        options.Instance = builder.Configuration["FoundationaLLM:Chat:Entra:Instance"];
+        options.TenantId = builder.Configuration["FoundationaLLM:Chat:Entra:TenantId"];
+        options.ClientId = builder.Configuration["FoundationaLLM:Chat:Entra:ClientId"];
+        options.CallbackPath = builder.Configuration["FoundationaLLM:Chat:Entra:CallbackPath"];
     })
-    .EnableTokenAcquisitionToCallDownstreamApi(new string[] { builder.Configuration["FoundationaLLM:Entra:Scopes"] })
+    .EnableTokenAcquisitionToCallDownstreamApi(new string[] { builder.Configuration["FoundationaLLM:Chat:Entra:Scopes"] })
     .AddInMemoryTokenCaches();
 builder.Services.AddControllersWithViews()
     .AddMicrosoftIdentityUI();
@@ -96,6 +104,8 @@ static class ProgramExtensions
     public static void RegisterServices(this IServiceCollection services)
     {
         services.AddScoped<IChatManager, ChatManager>();
+        services.AddScoped<IBrandManager, BrandManager>();
+        services.AddScoped<IBrandingService, BrandingService>();
         services.AddScoped<IAuthenticatedHttpClientFactory, EntraAuthenticatedHttpClientFactory>();
     }
 }

@@ -6,8 +6,8 @@
     public record APIKeyValidationSettings
     {
         /// <summary>
-        /// The name of the secret that contains the API key.
+        /// The API key.
         /// </summary>
-        public string APIKeySecretName { get; init; }
+        public string APIKey { get; init; }
     }
 }

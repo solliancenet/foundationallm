@@ -43,16 +43,6 @@ namespace FoundationaLLM.AgentFactory.Services
         /// </summary>
         public bool IsInitialized => GetServiceStatus();
 
-        /// <summary>
-        /// Executes a completion request against the orchestration service.
-        /// </summary>
-        /// <param name="userPrompt">The user entered prompt.</param>
-        /// <param name="messageHistory">List of previous user prompts.</param>
-        /// <returns>Returns a completion response from the orchestration engine.</returns>
-        public async Task<CompletionResponse> GetCompletion(string userPrompt, List<MessageHistoryItem> messageHistory)
-        {
-            throw new NotImplementedException();          
-        }
 
         /// <summary>
         /// Executes a completion request against the orchestration service.

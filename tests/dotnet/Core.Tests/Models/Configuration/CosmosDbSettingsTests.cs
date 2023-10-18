@@ -8,36 +8,36 @@ namespace FoundationaLLM.Core.Tests.Models.Configuration
         public static void Constructor_ShouldInitializeProperties()
         {
             // Arrange
-            string expectedendpoint = "endpoint";
-            string expectedkey = "key"; 
-            string expecteddatabase = "database";
-            string expectedcontainers = "containers";
-            string expectedmonitoredContainers = "monitoredContainers";
-            string expectedchangeFeedLeaseContainer = "changeFeedLeaseContainer";
-            string expectedchangeFeedSourceContainer = "changeFeedSourceContainer";
-            bool expectedenableTracing = false;
+            string expectedEndpoint = "endpoint";
+            string expectedKey = "key"; 
+            string expectedDatabase = "database";
+            string expectedContainers = "containers";
+            string expectedMonitoredContainers = "monitoredContainers";
+            string expectedChangeFeedLeaseContainer = "changeFeedLeaseContainer";
+            string expectedChangeFeedSourceContainer = "changeFeedSourceContainer";
+            bool expectedEnableTracing = false;
 
             // Act
             var cosmosDbSettings = CreateCosmosDbSettings(
-                expectedendpoint, 
-                expectedkey, 
-                expecteddatabase, 
-                expectedcontainers,
-                expectedmonitoredContainers,
-                expectedchangeFeedLeaseContainer, 
-                expectedchangeFeedSourceContainer,
-                expectedenableTracing
+                expectedEndpoint, 
+                expectedKey, 
+                expectedDatabase, 
+                expectedContainers,
+                expectedMonitoredContainers,
+                expectedChangeFeedLeaseContainer, 
+                expectedChangeFeedSourceContainer,
+                expectedEnableTracing
             );
 
             // Assert
-            Assert.Equal(expectedendpoint, cosmosDbSettings.Endpoint);
-            Assert.Equal(expectedkey, cosmosDbSettings.Key);
-            Assert.Equal(expecteddatabase, cosmosDbSettings.Database);
-            Assert.Equal(expectedcontainers, cosmosDbSettings.Containers);
-            Assert.Equal(expectedmonitoredContainers, cosmosDbSettings.MonitoredContainers);
-            Assert.Equal(expectedchangeFeedLeaseContainer, cosmosDbSettings.ChangeFeedLeaseContainer);
-            Assert.Equal(expectedchangeFeedSourceContainer, cosmosDbSettings.ChangeFeedSourceContainer);
-            Assert.Equal(expectedenableTracing, cosmosDbSettings.EnableTracing);
+            Assert.Equal(expectedEndpoint, cosmosDbSettings.Endpoint);
+            Assert.Equal(expectedKey, cosmosDbSettings.Key);
+            Assert.Equal(expectedDatabase, cosmosDbSettings.Database);
+            Assert.Equal(expectedContainers, cosmosDbSettings.Containers);
+            Assert.Equal(expectedMonitoredContainers, cosmosDbSettings.MonitoredContainers);
+            Assert.Equal(expectedChangeFeedLeaseContainer, cosmosDbSettings.ChangeFeedLeaseContainer);
+            Assert.Equal(expectedChangeFeedSourceContainer, cosmosDbSettings.ChangeFeedSourceContainer);
+            Assert.Equal(expectedEnableTracing, cosmosDbSettings.EnableTracing);
         }
 
         private static CosmosDbSettings CreateCosmosDbSettings(string endpoint, string key, string database, string containers, 

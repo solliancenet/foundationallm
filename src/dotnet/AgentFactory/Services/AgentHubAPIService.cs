@@ -14,10 +14,11 @@ using System.Net.Http;
 using System.Runtime;
 using System.Text;
 using FoundationaLLM.Common.Interfaces;
+using FoundationaLLM.Common.Constants;
 
 namespace FoundationaLLM.AgentFactory.Core.Services;
 
-public class AgentHubAPIService : IAgentHubService
+public class AgentHubAPIService : IAgentHubAPIService
 {
     readonly AgentHubSettings _settings;
     readonly ILogger<AgentHubAPIService> _logger;
@@ -39,7 +40,7 @@ public class AgentHubAPIService : IAgentHubService
     {
         try
         {
-            var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.AgentHubAPI);
+            var client = _httpClientFactoryService.CreateClient(HttpClients.AgentHubAPI);
 
             var responseMessage = await client.GetAsync("/status");
 
@@ -62,7 +63,7 @@ public class AgentHubAPIService : IAgentHubService
     {
         try
         {
-            AgentHubRequest ahm = new AgentHubRequest { UserPrompt=userPrompt, UserContext=userContext };
+            AgentHubRequest ahm = new AgentHubRequest { UserPrompt=userPrompt };
             
             var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.AgentHubAPI);
                         

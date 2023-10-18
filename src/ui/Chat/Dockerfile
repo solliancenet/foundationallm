@@ -10,12 +10,20 @@ ENV ASPNETCORE_ENVIRONMENT=Development
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 COPY . .
-RUN dotnet restore "Chat/Chat.csproj"
-WORKDIR "/src/Chat"
-RUN dotnet build "Chat.csproj" -c Release -o /app/build
+
+RUN dotnet restore "dotnet/Common/Common.csproj"
+RUN dotnet build "dotnet/Common/Common.csproj" -c Release -o /app/build
+
+RUN dotnet restore "dotnet/Core/Core.csproj"
+RUN dotnet build "dotnet/Core/Core.csproj" -c Release -o /app/build
+
+RUN dotnet restore "UI/Chat/Chat.csproj"
+RUN dotnet build "UI/Chat/Chat.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "Chat.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "dotnet/Common/Common.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "dotnet/Core/Core.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "UI/Chat/Chat.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app

@@ -1,3 +1,4 @@
+using Azure.Identity;
 using FoundationaLLM.Common.Authentication;
 using FoundationaLLM.Common.Interfaces;
 using FoundationaLLM.Common.Models.Configuration;
@@ -15,6 +16,15 @@ namespace FoundationaLLM.SemanticKernel.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Configuration.AddAzureAppConfiguration(options =>
+            {
+                options.Connect(builder.Configuration["FoundationaLLM:AppConfig:ConnectionString"]);
+                options.ConfigureKeyVault(options =>
+                {
+                    options.SetCredential(new DefaultAzureCredential());
+                });
+            });
+
             // Add services to the container.
             builder.Services.AddApplicationInsightsTelemetry();
             builder.Services.AddAuthorization();
@@ -25,18 +35,17 @@ namespace FoundationaLLM.SemanticKernel.API
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddScoped<APIKeyAuthenticationFilter>();
             builder.Services.AddOptions<APIKeyValidationSettings>()
-                .Bind(builder.Configuration.GetSection("FoundationaLLM:SemanticKernelOrchestration"));
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:APIs:SemanticKernelAPI"));
             builder.Services.AddOptions<KeyVaultConfigurationServiceSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:Configuration"));
             builder.Services.AddTransient<IAPIKeyValidationService, APIKeyValidationService>();
-            builder.Services.AddSingleton<IConfigurationService, KeyVaultConfigurationService>();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
             builder.Services.AddOptions<SemanticKernelServiceSettings>()
-                .Bind(builder.Configuration.GetSection("FoundationaLLM"));
+                .Bind(builder.Configuration.GetSection("FoundationaLLM:SemanticKernalAPI"));
             builder.Services.AddSingleton<ISemanticKernelService, SemanticKernelService>();
 
             // Simple, static system prompt service

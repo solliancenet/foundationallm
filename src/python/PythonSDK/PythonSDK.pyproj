@@ -27,8 +27,10 @@
     <Compile Include="foundationallm\credentials\__init__.py" />
     <Compile Include="foundationallm\hubs\data_source\data_sources\blob_storage\blob_storage_authentication_metadata.py" />
     <Compile Include="foundationallm\hubs\data_source\data_sources\blob_storage\blob_storage_data_source_metadata.py" />
-    <Compile Include="foundationallm\hubs\data_source\data_sources\blob_storage\blob_storage_file_type.py" />
     <Compile Include="foundationallm\hubs\data_source\data_sources\blob_storage\__init__.py" />
+    <Compile Include="foundationallm\hubs\data_source\data_sources\search_service\search_service_authentication_metadata.py" />
+    <Compile Include="foundationallm\hubs\data_source\data_sources\search_service\search_service_data_source_metadata.py" />
+    <Compile Include="foundationallm\hubs\data_source\data_sources\search_service\__init__.py" />
     <Compile Include="foundationallm\hubs\data_source\data_sources\sql\sql_authentication_metadata.py" />
     <Compile Include="foundationallm\hubs\data_source\data_sources\sql\sql_authentication_type.py" />
     <Compile Include="foundationallm\hubs\data_source\data_sources\sql\sql_data_source_metadata.py" />
@@ -66,6 +68,9 @@
     <Compile Include="foundationallm\hubs\resolver.py" />
     <Compile Include="foundationallm\hubs\__init__.py" />
     <Compile Include="foundationallm\langchain\agents\agent_base.py" />
+    <Compile Include="foundationallm\langchain\agents\blob_storage_agent.py" />
+    <Compile Include="foundationallm\langchain\data_sources\blob\blob_storage_configuration.py" />
+    <Compile Include="foundationallm\langchain\data_sources\blob\__init__.py" />
     <Compile Include="foundationallm\langchain\data_sources\sql\mariadb.py" />
     <Compile Include="foundationallm\langchain\language_models\language_model_types.py" />
     <Compile Include="foundationallm\langchain\language_models\openai\azure_openai_api_types.py" />
@@ -120,8 +125,6 @@
     <Compile Include="foundationallm\models\orchestration\__init__.py" />
     <Compile Include="foundationallm\models\session.py" />
     <Compile Include="foundationallm\models\__init__.py" />
-    <Compile Include="foundationallm\auth\api_key_validator.py" />
-    <Compile Include="foundationallm\auth\__init__.py" />
     <Compile Include="foundationallm\config\configuration.py" />
     <Compile Include="foundationallm\config\__init__.py" />
     <Compile Include="foundationallm\storage\blob_storage_manager.py" />
@@ -133,23 +136,20 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include=".gitignore" />
-    <Content Include="foundationallm\hubs\data_source\data_sources\blob_storage\__pycache__\blob_storage_authentication_metadata.cpython-311.pyc" />
-    <Content Include="foundationallm\hubs\data_source\data_sources\blob_storage\__pycache__\blob_storage_data_source_metadata.cpython-311.pyc" />
-    <Content Include="foundationallm\hubs\data_source\data_sources\blob_storage\__pycache__\blob_storage_file_type.cpython-311.pyc" />
-    <Content Include="foundationallm\hubs\data_source\data_sources\blob_storage\__pycache__\__init__.cpython-311.pyc" />
     <Content Include="requirements.txt" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="foundationallm\" />
     <Folder Include="foundationallm\hubs\data_source\data_sources\" />
     <Folder Include="foundationallm\hubs\data_source\data_sources\blob_storage\" />
-    <Folder Include="foundationallm\hubs\data_source\data_sources\blob_storage\__pycache__\" />
+    <Folder Include="foundationallm\hubs\data_source\data_sources\search_service\" />
     <Folder Include="foundationallm\hubs\data_source\data_sources\sql\" />
     <Folder Include="foundationallm\hubs\agent\" />
     <Folder Include="foundationallm\hubs\data_source\" />
     <Folder Include="foundationallm\hubs\prompt\" />
     <Folder Include="foundationallm\langchain\" />
     <Folder Include="foundationallm\langchain\agents\" />
+    <Folder Include="foundationallm\langchain\data_sources\blob\" />
     <Folder Include="foundationallm\langchain\data_sources\csv\" />
     <Folder Include="foundationallm\langchain\language_models\" />
     <Folder Include="foundationallm\langchain\language_models\openai\" />
@@ -167,7 +167,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="foundationallm\" />
-    <Folder Include="foundationallm\auth\" />
     <Folder Include="foundationallm\config\" />
   </ItemGroup>
   <ItemGroup>
