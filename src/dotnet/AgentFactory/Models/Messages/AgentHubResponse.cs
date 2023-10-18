@@ -35,6 +35,12 @@ namespace FoundationaLLM.AgentFactory.Core.Models.Messages
         public string? Description { get; set; }
 
         /// <summary>
+        /// The orchestration to execute.
+        /// </summary>
+        [JsonProperty("orchestrator")]
+        public string? Orchestrator { get; set; }
+
+        /// <summary>
         /// Datasources that are used or available to the agent.
         /// </summary>
         [JsonProperty("allowed_data_source_names")]
