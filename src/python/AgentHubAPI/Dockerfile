@@ -7,5 +7,6 @@ COPY ./PythonSDK/foundationallm /code/foundationallm
 COPY ./AgentHubAPI /code
 
 EXPOSE 80
+ENV FORWARDED_ALLOW_IPS *
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80", "--forwarded-allow-ips", "*", "--proxy-headers", "True"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80", "--forwarded-allow-ips", "*", "--proxy-headers"]
