@@ -12,8 +12,6 @@ export default defineNuxtPlugin(({ app }, inject) => {
         headers,
       };
 
-      console.log('Request made to Graph API at: ' + new Date().toString());
-
       try {
         const response = await app.$fetch(endpoint, options);
         return response;

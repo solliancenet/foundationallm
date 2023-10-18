@@ -62,15 +62,12 @@ export default {
 	async created() {
 		await msalInstance.initialize().then(async () => {
 			const accounts = await msalInstance.getAllAccounts();
-			console.log(accounts);
 			if (accounts.length > 0) {
 				this.signedIn = true;
 				this.accountName = accounts[0].name;
 				this.userName = accounts[0].username;
 			}
-		}).catch((error) => {
-			console.log(error);
-		})
+		});
 	},
 
 	methods: {
@@ -82,13 +79,10 @@ export default {
 		async signIn() {
 			await msalInstance.loginPopup(loginRequest).then((response) => {
 				if(response.account) {
-					console.log(response.account);
 					this.signedIn = true;
 					this.accountName = response.account.name;
 					this.userName = response.account.username;
 				}
-			}).catch((error) => {
-				console.log(error);
 			});
 		},
 
@@ -97,12 +91,9 @@ export default {
 				account: msalInstance.getAccountByUsername(this.userName)
 			};
 			await msalInstance.logoutPopup(logoutRequest).then((response) => {
-				console.log(response);
 				this.signedIn = false;
 				this.accountName = '';
 				this.userName = '';
-			}).catch((error) => {
-				console.log(error);
 			});
 			// await msalInstance.logout();
 		}
