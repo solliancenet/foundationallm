@@ -66,7 +66,7 @@ namespace FoundationaLLM.AgentFactory.Core.Agents
                     Temperature = _agentMetadata.LanguageModel.Temperature ?? 0f,
                     UseChat = _agentMetadata.LanguageModel.UseChat ?? true
                 },
-                DataSource = new SQLDatabaseDataSource()
+                DataSourceMetadata = new SQLDatabaseDataSource()
                 {
                     Name = datasourceResponse.DataSources[0].Name,
                     Type = datasourceResponse.DataSources[0].UnderlyingImplementation,
