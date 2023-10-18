@@ -6,12 +6,19 @@ using Microsoft.Extensions.Options;
 
 namespace FoundationaLLM.SemanticKernel.Core.Services;
 
+/// <summary>
+/// Implements the <see cref="ISystemPromptService"/> interface.
+/// </summary>
 public class DurableSystemPromptService : ISystemPromptService
 {
     readonly DurableSystemPromptServiceSettings _settings;
     readonly BlobContainerClient _storageClient;
     Dictionary<string, string> _prompts = new Dictionary<string, string>();
 
+    /// <summary>
+    /// Constructor for the Durable System Prompt service.
+    /// </summary>
+    /// <param name="settings">The configuration options for the Durable System Prompt service.</param>
     public DurableSystemPromptService(
         IOptions<DurableSystemPromptServiceSettings> settings)
     {
@@ -21,6 +28,12 @@ public class DurableSystemPromptService : ISystemPromptService
         _storageClient = blobServiceClient.GetBlobContainerClient(_settings.BlobStorageContainer);
     }
 
+    /// <summary>
+    /// Gets the specified system prompt.
+    /// </summary>
+    /// <param name="promptName">The system prompt name.</param>
+    /// <param name="forceRefresh">The flag that inform the System Prompt service to do a cache refresh.</param>
+    /// <returns>The system prompt text.</returns>
     public async Task<string> GetPrompt(string promptName, bool forceRefresh = false)
     {
         ArgumentNullException.ThrowIfNullOrEmpty(promptName, nameof(promptName));
@@ -37,6 +50,11 @@ public class DurableSystemPromptService : ISystemPromptService
         return prompt;
     }
 
+    /// <summary>
+    /// Gets the file path of the system prompt.
+    /// </summary>
+    /// <param name="promptName">The system prompt name.</param>
+    /// <returns>The file path of the system prompt.</returns>
     private string GetFilePath(string promptName)
     {
         var tokens = promptName.Split('.');

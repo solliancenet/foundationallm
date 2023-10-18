@@ -2,7 +2,6 @@ using Azure.Identity;
 using FoundationaLLM.Common.Authentication;
 using FoundationaLLM.Common.Interfaces;
 using FoundationaLLM.Common.Models.Configuration;
-using FoundationaLLM.Common.Services;
 using FoundationaLLM.SemanticKernel.Core.Interfaces;
 using FoundationaLLM.SemanticKernel.Core.Models.ConfigurationOptions;
 using FoundationaLLM.SemanticKernel.Core.Services;
@@ -10,8 +9,15 @@ using FoundationaLLM.SemanticKernel.MemorySource;
 
 namespace FoundationaLLM.SemanticKernel.API
 {
+    /// <summary>
+    /// Program class for the Semantic Kernel API.
+    /// </summary>
     public class Program
     {
+        /// <summary>
+        /// Entry point for the Semantic Kernel API.
+        /// </summary>
+        /// <param name="args"></param>
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);

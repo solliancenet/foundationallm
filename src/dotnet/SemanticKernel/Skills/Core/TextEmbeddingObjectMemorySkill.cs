@@ -1,13 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
-using Microsoft.SemanticKernel.AI.Embeddings;
 using Microsoft.SemanticKernel.Memory;
-using Microsoft.SemanticKernel.Orchestration;
 using Microsoft.SemanticKernel.SkillDefinition;
 using System.ComponentModel;
-using System.Numerics;
-using System.Runtime;
 using System.Text.Json;
-using FoundationaLLM.SemanticKernel.MemorySource;
 
 namespace FoundationaLLM.SemanticKernel.Skills.Core
 {
@@ -68,8 +63,6 @@ namespace FoundationaLLM.SemanticKernel.Skills.Core
         /// <param name="collection">Memories collection to search.</param>
         /// <param name="relevance">The relevance score, from 0.0 to 1.0, where 1.0 means perfect match.</param>
         /// <param name="limit">The maximum number of relevant memories to recall.</param>
-        /// <param name="context">Contains the memory to search.</param>
-        /// <param name="shortTermMemory">An optional volatile, short-term memory store.</param>
         [SKFunction()]
         public async Task<string> RecallAsync(
             [Description("The input text to find related memories for")] string text,
