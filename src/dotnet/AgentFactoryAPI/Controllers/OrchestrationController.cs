@@ -33,7 +33,7 @@ namespace FoundationaLLM.AgentFactory.API.Controllers
         }
 
         /// <summary>
-        /// Gets a completion from the Agent Factory
+        /// Retrieves a completion from an orchestration service
         /// </summary>
         /// <param name="completionRequest"></param>
         /// <returns></returns>
