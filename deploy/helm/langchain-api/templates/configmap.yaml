@@ -9,6 +9,6 @@ metadata:
     chart: {{ template "langchain-api.chart" .}}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
-data:
-  SOLLIANCEAICOPILOT__LANGCHAINAPI__KEYVAULTURL: {{ .Values.langchainapi.keyVaultUrl }}
-  SOLLIANCEAICOPILOT__LANGCHAINAPI__MICLIENTID: {{ .Values.langchainapi.miClientId }}
+data: 
+  AZURE_CLIENT_ID: {{ .Values.azureWorkloadIdentity.langChainApiClientId }}
+  foundationallm-app-configuration-uri: {{ .Values.appConfig.uri }}

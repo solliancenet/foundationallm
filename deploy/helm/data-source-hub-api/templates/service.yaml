@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ template "chat-api.fullname" . }}
+  name: {{ template "data-source-hub-api.fullname" . }}
   labels:
-    app: {{ template "chat-api.name" . }}
-    chart: {{ template "chat-api.chart" . }}
+    app: {{ template "data-source-hub-api.name" . }}
+    chart: {{ template "data-source-hub-api.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
@@ -15,5 +15,5 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app: {{ template "chat-api.name" . }}
+    app: {{ template "data-source-hub-api.name" . }}
     release: {{ .Release.Name }}

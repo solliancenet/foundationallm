@@ -1,37 +1,36 @@
-{{- $name := include "chat-api.fullname" . -}}
+{{- $name := include "data-source-hub-api.fullname" . -}}
 {{- $cfgname := printf "%s-%s" "cfg" $name -}}
 {{- $secretName := printf "%s-%s" "secret" $name -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ template "chat-api.fullname" . }}
+  name: {{ template "data-source-hub-api.fullname" . }}
   labels:
-    app: {{ template "chat-api.name" . }}
-    chart: {{ template "chat-api.chart" . }}
+    app: {{ template "data-source-hub-api.name" . }}
+    chart: {{ template "data-source-hub-api.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ template "chat-api.name" . }}
+      app: {{ template "data-source-hub-api.name" . }}
       release: {{ .Release.Name }}
   template:
     metadata:
       annotations:
         rollme: {{ randAlphaNum 5 | quote }}
       labels:
-        app: {{ template "chat-api.name" . }}
+        app: {{ template "data-source-hub-api.name" . }}
         release: {{ .Release.Name }}
+        azure.workload.identity/use: "true"
     spec:
-      {{ if .Values.serviceaccount -}}
-      serviceAccountName: {{ .Values.serviceaccount }}
+      serviceAccountName: {{ .Values.serviceAccountName }}
       {{ if .Values.imagePullSecrets -}}
       imagePullSecrets:
       {{ range .Values.imagePullSecrets -}}
         - name: {{ .name }}
       {{- end -}}
-      {{- end }}
       {{- end }}
       containers:
         - name: {{ .Chart.Name }}

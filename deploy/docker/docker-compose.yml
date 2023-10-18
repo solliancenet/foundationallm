@@ -1,9 +1,9 @@
 services:
-  chat-api:
-    image: ${REGISTRY:-foundationallm}/chat-api:${TAG:-latest}
+  core-api:
+    image: ${REGISTRY:-foundationallm}/core-api:${TAG:-latest}
     build:
       context: ../../src
-      dockerfile: ./ChatAPI/Dockerfile
+      dockerfile: ./dotnet/CoreAPI/Dockerfile
     ports:
     - "80:80"
     environment:
@@ -12,20 +12,86 @@ services:
       AllowedHosts: '*'
       Logging__Loglevel__Default: 'Debug'
       Logging__Loglevel__Microsoft__AspNetCore: 'Debug'
+
+  agent-factory-api:
+    image: ${REGISTRY:-foundationallm}/agent-factory-api:${TAG:-latest}
+    build:
+      context: ../../src/
+      dockerfile: ./dotnet/AgentFactoryAPI/Dockerfile
+    ports:
+    - "80:80"
+    environment:
+      DOTNET_URLS: http://+:80
+      ASPNETCORE_ENVIRONMENT: Production
+      AllowedHosts: '*'
+      Logging__Loglevel__Default: 'Debug'
+      Logging__Loglevel__Microsoft__AspNetCore: 'Debug'
+
+  gatekeeper-api:
+    image: ${REGISTRY:-foundationallm}/gatekeeper-api:${TAG:-latest}
+    build:
+      context: ../../src/
+      dockerfile: ./dotnet/GatekeeperAPI/Dockerfile
+    ports:
+    - "80:80"
+    environment:
+      DOTNET_URLS: http://+:80
+      ASPNETCORE_ENVIRONMENT: Production
+      AllowedHosts: '*'
+      Logging__Loglevel__Default: 'Debug'
+      Logging__Loglevel__Microsoft__AspNetCore: 'Debug'
+
+  semantic-kernel-api:
+    image: ${REGISTRY:-foundationallm}/semantic-kernel-api:${TAG:-latest}
+    build:
+      context: ../../src/
+      dockerfile: ./dotnet/SemanticKernelAPI/Dockerfile
+    ports:
+    - "80:80"
+    environment:
+      DOTNET_URLS: http://+:80
+      ASPNETCORE_ENVIRONMENT: Production
+      AllowedHosts: '*'
+      Logging__Loglevel__Default: 'Debug'
+      Logging__Loglevel__Microsoft__AspNetCore: 'Debug'
+
   langchain-api:
     image: ${REGISTRY:-foundationallm}/langchain-api:${TAG:-latest}
     build:
-      context: ../../src/LangChainAPI
-      dockerfile: ./Dockerfile
+      context: ../../src/python
+      dockerfile: ./LangChainAPI/Dockerfile
     ports:
     - "8081:80"
-    environment:
-      SOLLIANCEAICOPILOT__LANGCHAINAPI__KEYVAULTURL: "{{keyVaultUrl}}"
+
+  agent-hub-api:
+    image: ${REGISTRY:-foundationallm}/agent-hub-api:${TAG:-latest}
+    build:
+      context: ../../src/python
+      dockerfile: ./AgentHubAPI/Dockerfile
+    ports:
+    - "8081:80"
+
+  data-source-hub-api:
+    image: ${REGISTRY:-foundationallm}/data-source-hub-api:${TAG:-latest}
+    build:
+      context: ../../src/python
+      dockerfile: ./DataSourceHubAPI/Dockerfile
+    ports:
+    - "8081:80"
+
+  prompt-hub-api:
+    image: ${REGISTRY:-foundationallm}/prompt-hub-api:${TAG:-latest}
+    build:
+      context: ../../src/python
+      dockerfile: ./PromptHubAPI/Dockerfile
+    ports:
+    - "8081:80"
+
   chat-ui:
     image: ${REGISTRY:-foundationallm}/chat-ui:${TAG:-latest}
     build:
-      context: ../../src
-      dockerfile: ./Chat/Dockerfile
+      context: ../../src/
+      dockerfile: ./UI/Chat/Dockerfile
     ports:
     - "8080:80"
     environment:
