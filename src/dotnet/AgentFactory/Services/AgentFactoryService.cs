@@ -80,24 +80,8 @@ public class AgentFactoryService : IAgentFactoryService
         _dataSourceHubSettings = dataSourceHubSettings.Value;
 
         _logger = logger;
+        _userIdentity = userIdentity;
 
-        SetLLMOrchestrationPreference(_agentFactorySettings.DefaultOrchestrationService!);
-    }
-
-    /// <summary>
-    /// Sets the orchestration service used by the Agent Factory.
-    /// </summary>
-    /// <param name="orchestrationService"></param>
-    /// <returns></returns>
-    public bool SetLLMOrchestrationPreference(string orchestrationService)
-    {
-        if (Enum.TryParse(orchestrationService!, true, out LLMOrchestrationService llmOrchestrationService))
-        {
-            _llmOrchestrationService = llmOrchestrationService;
-            return true;
-        }
-        else
-            return false;
     }
 
     /// <summary>
