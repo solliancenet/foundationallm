@@ -81,21 +81,29 @@ public class AgentHubAPIService : IAgentHubAPIService
     /// <returns></returns>
     public async Task<AgentHubResponse> ResolveRequest(string userPrompt, string userContext)
     {
-        AgentHubRequest ahm = new AgentHubRequest { UserPrompt = userPrompt };
-
-        var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.AgentHubAPI);
-
-        var responseMessage = await client.PostAsync("/resolve_request", new StringContent(
-                JsonConvert.SerializeObject(ahm, _jsonSerializerSettings),
-                Encoding.UTF8, "application/json"));
-
-        if (responseMessage.IsSuccessStatusCode)
+        try
         {
-            var responseContent = await responseMessage.Content.ReadAsStringAsync();
-            var ahr = JsonConvert.DeserializeObject<AgentHubResponse>(responseContent, _jsonSerializerSettings);
-            return ahr!;
+            AgentHubRequest ahm = new AgentHubRequest { UserPrompt = userPrompt };
+
+            var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.AgentHubAPI);
+
+            var responseMessage = await client.PostAsync("resolve", new StringContent(
+                    JsonConvert.SerializeObject(ahm, _jsonSerializerSettings),
+                    Encoding.UTF8, "application/json"));
+
+            if (responseMessage.IsSuccessStatusCode)
+            {
+                var responseContent = await responseMessage.Content.ReadAsStringAsync();
+                var ahr = JsonConvert.DeserializeObject<AgentHubResponse>(responseContent, _jsonSerializerSettings);
+                return ahr;
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Error resolving request for Agent Hub.");
+            throw;
         }
 
-        return null!;
+        return new AgentHubResponse();
     }  
 }
