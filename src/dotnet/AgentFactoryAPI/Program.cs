@@ -173,11 +173,70 @@ namespace FoundationaLLM.AgentFactory.API
 
             var agentHubAPISettings = new DownstreamAPIKeySettings
             {
-                var key = apiSetting.Key;
-                var settings = apiSetting.Get<DownstreamAPIKeySettings>();
-                downstreamAPISettings.DownstreamAPIs[key] = settings!;
-                builder.Services
-                    .AddHttpClient(key, client => { client.BaseAddress = new Uri(settings!.APIUrl); })
+                APIUrl = builder.Configuration[$"FoundationaLLM:APIs:{HttpClients.AgentHubAPI}:APIUrl"],
+                APIKey = builder.Configuration[$"FoundationaLLM:APIs:{HttpClients.AgentHubAPI}:APIKey"]
+            };
+            downstreamAPISettings.DownstreamAPIs[HttpClients.AgentHubAPI] = agentHubAPISettings;
+
+            builder.Services
+                    .AddHttpClient(HttpClients.AgentHubAPI,
+                        client => { client.BaseAddress = new Uri(agentHubAPISettings.APIUrl); })
+                    .AddTransientHttpErrorPolicy(policyBuilder =>
+                        policyBuilder.WaitAndRetryAsync(
+                            3, retryNumber => TimeSpan.FromMilliseconds(600)));
+
+            var dataSourceHubAPISettings = new DownstreamAPIKeySettings
+            {
+                APIUrl = builder.Configuration[$"FoundationaLLM:APIs:{HttpClients.DataSourceHubAPI}:APIUrl"],
+                APIKey = builder.Configuration[$"FoundationaLLM:APIs:{HttpClients.DataSourceHubAPI}:APIKey"]
+            };
+            downstreamAPISettings.DownstreamAPIs[HttpClients.DataSourceHubAPI] = dataSourceHubAPISettings;
+
+            builder.Services
+                    .AddHttpClient(HttpClients.DataSourceHubAPI,
+                        client => { client.BaseAddress = new Uri(dataSourceHubAPISettings.APIUrl); })
+                    .AddTransientHttpErrorPolicy(policyBuilder =>
+                        policyBuilder.WaitAndRetryAsync(
+                            3, retryNumber => TimeSpan.FromMilliseconds(600)));
+
+            var promptHubAPISettings = new DownstreamAPIKeySettings
+            {
+                APIUrl = builder.Configuration[$"FoundationaLLM:APIs:{HttpClients.PromptHubAPI}:APIUrl"],
+                APIKey = builder.Configuration[$"FoundationaLLM:APIs:{HttpClients.PromptHubAPI}:APIKey"]
+            };
+            downstreamAPISettings.DownstreamAPIs[HttpClients.PromptHubAPI] = promptHubAPISettings;
+
+            builder.Services
+                    .AddHttpClient(HttpClients.PromptHubAPI,
+                        client => { client.BaseAddress = new Uri(promptHubAPISettings.APIUrl); })
+                    .AddTransientHttpErrorPolicy(policyBuilder =>
+                        policyBuilder.WaitAndRetryAsync(
+                            3, retryNumber => TimeSpan.FromMilliseconds(600)));
+
+            var langChainAPISettings = new DownstreamAPIKeySettings
+            {
+                APIUrl = builder.Configuration[$"FoundationaLLM:APIs:{HttpClients.LangChainAPI}:APIUrl"],
+                APIKey = builder.Configuration[$"FoundationaLLM:APIs:{HttpClients.LangChainAPI}:APIKey"]
+            };
+            downstreamAPISettings.DownstreamAPIs[HttpClients.LangChainAPI] = langChainAPISettings;
+
+            builder.Services
+                    .AddHttpClient(HttpClients.LangChainAPI,
+                        client => { client.BaseAddress = new Uri(langChainAPISettings.APIUrl); })
+                    .AddTransientHttpErrorPolicy(policyBuilder =>
+                        policyBuilder.WaitAndRetryAsync(
+                            3, retryNumber => TimeSpan.FromMilliseconds(600)));
+
+            var semanticKernelAPISettings = new DownstreamAPIKeySettings
+            {
+                APIUrl = builder.Configuration[$"FoundationaLLM:APIs:{HttpClients.SemanticKernelAPI}:APIUrl"],
+                APIKey = builder.Configuration[$"FoundationaLLM:APIs:{HttpClients.SemanticKernelAPI}:APIKey"]
+            };
+            downstreamAPISettings.DownstreamAPIs[HttpClients.SemanticKernelAPI] = semanticKernelAPISettings;
+
+            builder.Services
+                    .AddHttpClient(HttpClients.SemanticKernelAPI,
+                        client => { client.BaseAddress = new Uri(semanticKernelAPISettings.APIUrl); })
                     .AddTransientHttpErrorPolicy(policyBuilder =>
                         policyBuilder.WaitAndRetryAsync(
                             3, retryNumber => TimeSpan.FromMilliseconds(600)));
