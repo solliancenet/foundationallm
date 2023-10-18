@@ -32,7 +32,7 @@
   <ItemGroup>
     <Compile Include="app\dependencies.py" />
     <Compile Include="app\main.py" />
-    <Compile Include="app\routers\resolve_request.py" />
+    <Compile Include="app\routers\resolve.py" />
     <Compile Include="app\routers\status.py" />
     <Compile Include="app\routers\__init__.py" />
     <Compile Include="app\__init__.py" />

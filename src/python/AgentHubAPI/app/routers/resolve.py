@@ -3,12 +3,12 @@ from app.dependencies import validate_api_key_header
 from foundationallm.hubs.agent import AgentHub, AgentHubRequest, AgentHubResponse
 
 router = APIRouter(
-    prefix='/resolve_request',
-    tags=['resolve_request'],
+    prefix='/resolve',
+    tags=['resolve'],
     dependencies=[Depends(validate_api_key_header)],
     responses={404: {'description':'Not found'}}
 )
 
 @router.post('/')
-async def resolve_request(request: AgentHubRequest) -> AgentHubResponse:    
-    return AgentHub().resolve_request(request)
+async def resolve(request: AgentHubRequest) -> AgentHubResponse:    
+    return AgentHub().resolve(request)
