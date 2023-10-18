@@ -43,7 +43,7 @@ namespace FoundationaLLM.Gatekeeper.API.Controllers
         /// </summary>
         /// <param name="summaryRequest">The summarize request containing the user prompt.</param>
         /// <returns>The summary response.</returns>
-        [HttpPost("summarize")]
+        [HttpPost("summary")]
         public async Task<SummaryResponse> GetSummary(SummaryRequest summaryRequest)
         {
             return await _gatekeeperService.GetSummary(summaryRequest);
