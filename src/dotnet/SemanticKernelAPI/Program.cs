@@ -11,8 +11,15 @@ using FoundationaLLM.SemanticKernel.MemorySource;
 
 namespace FoundationaLLM.SemanticKernel.API
 {
+    /// <summary>
+    /// Program class for the Semantic Kernel API.
+    /// </summary>
     public class Program
     {
+        /// <summary>
+        /// Entry point for the Semantic Kernel API.
+        /// </summary>
+        /// <param name="args"></param>
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);

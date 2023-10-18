@@ -1,27 +1,50 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace FoundationaLLM.SemanticKernel.MemorySource
+﻿namespace FoundationaLLM.SemanticKernel.MemorySource
 {
+    /// <summary>
+    /// The Blob Storage memory source configuration class.
+    /// </summary>
     public class BlobStorageMemorySourceConfig
     {
+        /// <summary>
+        /// The maximum tokens for the text chunk.
+        /// </summary>
         public int TextChunkMaxTokens { get; init; }
 
-        public List<FileMemorySource> FileMemorySources { get; init; }
+        /// <summary>
+        /// The list of file memory sources.
+        /// </summary>
+        public required List<FileMemorySource> FileMemorySources { get; init; }
     }
 
+    /// <summary>
+    /// The FileMemorySource class.
+    /// </summary>
     public class FileMemorySource
     {
-        public string ContainerName { get; init; }
-        public List<FileMemorySourceFile> Files { get; init; }
+        /// <summary>
+        /// The name of the blob storage container.
+        /// </summary>
+        public required string ContainerName { get; init; }
+
+        /// <summary>
+        /// The list of file memory source files.
+        /// </summary>
+        public required List<FileMemorySourceFile> Files { get; init; }
     }
 
+    /// <summary>
+    /// The FileMemorySourceFile class.
+    /// </summary>
     public class FileMemorySourceFile
     {
-        public string FileName { get; init; }
+        /// <summary>
+        /// The name of the file.
+        /// </summary>
+        public required string FileName { get; init; }
+
+        /// <summary>
+        /// The flag representing if the file is split into chunks.
+        /// </summary>
         public bool SplitIntoChunks { get; init; }
     }
 }

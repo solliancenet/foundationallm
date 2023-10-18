@@ -1,14 +1,14 @@
 ﻿using FoundationaLLM.Common.Models;
 using FoundationaLLM.Common.Models.Chat;
+using FoundationaLLM.Common.Models.Orchestration;
 using FoundationaLLM.Common.Models.Search;
 using FoundationaLLM.SemanticKernel.Chat;
-using FoundationaLLM.SemanticKernel.Memory;
-using FoundationaLLM.SemanticKernel.Memory.AzureCognitiveSearch;
-using FoundationaLLM.SemanticKernel.MemorySource;
-using FoundationaLLM.SemanticKernel.Skills.Core;
-using FoundationaLLM.SemanticKernel.Text;
 using FoundationaLLM.SemanticKernel.Core.Interfaces;
 using FoundationaLLM.SemanticKernel.Core.Models.ConfigurationOptions;
+using FoundationaLLM.SemanticKernel.Memory;
+using FoundationaLLM.SemanticKernel.Memory.AzureCognitiveSearch;
+using FoundationaLLM.SemanticKernel.Skills.Core;
+using FoundationaLLM.SemanticKernel.Text;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.SemanticKernel;
@@ -17,10 +17,12 @@ using Microsoft.SemanticKernel.AI.Embeddings;
 using Microsoft.SemanticKernel.AI.TextCompletion;
 using Newtonsoft.Json;
 using System.Text.RegularExpressions;
-using FoundationaLLM.Common.Models.Orchestration;
 
 namespace FoundationaLLM.SemanticKernel.Core.Services;
 
+/// <summary>
+/// Implements the <see cref="ISemanticKernelService"/> interface.
+/// </summary>
 public class SemanticKernelService : ISemanticKernelService
 {
     readonly SemanticKernelServiceSettings _settings;
@@ -36,8 +38,20 @@ public class SemanticKernelService : ISemanticKernelService
 
     bool _memoryInitialized = false;
 
+    /// <summary>
+    /// Flag for the memory stores initialization.
+    /// </summary>
     public bool IsInitialized => _memoryInitialized;
 
+    /// <summary>
+    /// Constructor for the Semantic Kernel service.
+    /// </summary>
+    /// <param name="systemPromptService">The System Prompt service.</param>
+    /// <param name="memorySources">The list of memory sources.</param>
+    /// <param name="options">The configuration options for the Semantic Kernel service.</param>
+    /// <param name="cognitiveSearchMemorySourceSettings">The configuration options for the Azure Cognitive Search memory source.</param>
+    /// <param name="logger">The logger for the Semantic Kernel service.</param>
+    /// <param name="skLogger">The logger for the Semantic kernel.</param>
     public SemanticKernelService(
         ISystemPromptService systemPromptService,
         IEnumerable<IMemorySource> memorySources,
@@ -89,6 +103,10 @@ public class SemanticKernelService : ISemanticKernelService
         _logger.LogInformation("Semantic Kernel orchestration service initialized.");
     }
 
+    /// <summary>
+    /// Initialize the long-term and the short-term memory stores.
+    /// </summary>
+    /// <returns></returns>
     private async Task InitializeMemory()
     {
         try
@@ -121,6 +139,12 @@ public class SemanticKernelService : ISemanticKernelService
         }
     }
 
+    /// <summary>
+    /// Gets a completion from the Semantic Kernel service.
+    /// </summary>
+    /// <param name="userPrompt">The user prompt text.</param>
+    /// <param name="messageHistory">A list of previous messages.</param>
+    /// <returns>The completion text.</returns>
     public async Task<string> GetCompletion(string userPrompt, List<MessageHistoryItem> messageHistory)
     {
         var memorySkill = new TextEmbeddingObjectMemorySkill(
@@ -137,10 +161,9 @@ public class SemanticKernelService : ISemanticKernelService
         // Read the resulting user prompt embedding as soon as possile
         var userPromptEmbedding = memorySkill.LastInputTextEmbedding?.ToArray();
 
-        List<string> memoryCollection;
-        if (string.IsNullOrEmpty(memories))
-            memoryCollection = new List<string>();
-        else
+        var memoryCollection = new List<string>();
+
+        if (!string.IsNullOrEmpty(memories))
             memoryCollection = JsonConvert.DeserializeObject<List<string>>(memories);
 
         var chatHistory = new ChatBuilder(
@@ -151,7 +174,7 @@ public class SemanticKernelService : ISemanticKernelService
             .WithSystemPrompt(
                 await _systemPromptService.GetPrompt(_settings.OpenAI.ChatCompletionPromptName))
             .WithMemories(
-                memoryCollection)
+                memoryCollection ?? new List<string>())
             .WithMessageHistory(
                 messageHistory.Select(m => (new AuthorRole(m.Sender.ToLower()), m.Text.NormalizeLineEndings())).ToList())
             .Build();
@@ -171,6 +194,11 @@ public class SemanticKernelService : ISemanticKernelService
         return completion.Completion;
     }
 
+    /// <summary>
+    /// Gets a summary from the Semantic Kernel service.
+    /// </summary>
+    /// <param name="userPrompt">The user prompt text.</param>
+    /// <returns>The prompt summary.</returns>
     public async Task<string> GetSummary(string userPrompt)
     {
         var summarizerSkill = new GenericSummarizerSkill(
@@ -188,6 +216,13 @@ public class SemanticKernelService : ISemanticKernelService
         return summary;
     }
 
+    /// <summary>
+    /// Add an object instance and its associated vectorization to the underlying memory.
+    /// </summary>
+    /// <param name="item">The object instance to be added to the memory.</param>
+    /// <param name="itemName">The name of the object instance.</param>
+    /// <param name="vectorizer">The logic that sets the embedding vector as a property on the object.</param>
+    /// <returns></returns>
     public async Task AddMemory(object item, string itemName, Action<object, float[]> vectorizer)
     {
         if (item is EmbeddedEntity entity)
@@ -198,6 +233,11 @@ public class SemanticKernelService : ISemanticKernelService
         await _longTermMemory.AddMemory(item, itemName, vectorizer);
     }
 
+    /// <summary>
+    /// Removes an object instance and its associated vectorization from the underlying memory.
+    /// </summary>
+    /// <param name="item">The object instance to be removed from the memory.</param>
+    /// <returns></returns>
     public async Task RemoveMemory(object item)
     {
         await _longTermMemory.RemoveMemory(item);

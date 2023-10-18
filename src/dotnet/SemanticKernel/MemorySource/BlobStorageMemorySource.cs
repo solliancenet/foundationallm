@@ -1,4 +1,6 @@
 ﻿using Azure.Storage.Blobs;
+using FoundationaLLM.SemanticKernel.Core.Interfaces;
+using FoundationaLLM.SemanticKernel.Core.Models.ConfigurationOptions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.SemanticKernel.Text;
@@ -54,7 +56,13 @@ namespace FoundationaLLM.SemanticKernel.MemorySource
             if (_config == null)
             {
                 var configContent = await ReadConfigContent(_settings.ConfigBlobStorageContainer, _settings.ConfigFilePath);
-                _config = JsonConvert.DeserializeObject<BlobStorageMemorySourceConfig>(configContent);
+
+                var config = JsonConvert.DeserializeObject<BlobStorageMemorySourceConfig>(configContent);
+
+                if (config != null)
+                    _config = config;
+                else
+                    throw new Exception("Could not ensure that the Blob Storage Memory Source config was loaded.");
             }
         }
 
