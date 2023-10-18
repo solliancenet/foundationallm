@@ -1,10 +1,12 @@
 import { LogLevel, PublicClientApplication } from '@azure/msal-browser';
+declare const AUTH_CLIENT_ID: string;
+declare const AUTH_AUTHORITY: string;
 
 // Config object to be passed to Msal on creation
 export const msalConfig = {
 	auth: {
-		clientId: '0b08d115-b517-4d7f-b883-a1665191d14d',
-		authority: 'https://login.microsoftonline.com/common',
+		clientId: `${AUTH_CLIENT_ID}`,
+		authority: `${AUTH_AUTHORITY}`,
 		redirectUri: '/', // Must be registered as a SPA redirectURI on your app registration
 		postLogoutRedirectUri: '/', // Must be registered as a SPA redirectURI on your app registration
 	},

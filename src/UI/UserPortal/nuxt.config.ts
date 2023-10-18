@@ -25,6 +25,8 @@ export default defineNuxtConfig({
 	vite: {
 		define: {
 			API_URL: JSON.stringify(process.env.API_URL),
+			AUTH_CLIENT_ID: JSON.stringify(process.env.AUTH_CLIENT_ID),
+			AUTH_AUTHORITY: JSON.stringify(process.env.AUTH_AUTHORITY),
 		},
 	},
 	runtimeConfig: {
