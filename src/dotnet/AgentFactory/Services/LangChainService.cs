@@ -54,7 +54,7 @@ namespace FoundationaLLM.AgentFactory.Services
             var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.LangChainAPI);           
 
             var body = JsonConvert.SerializeObject(request, _jsonSerializerSettings);
-            var responseMessage = await client.PostAsync("/orchestration/completion",
+            var responseMessage = await client.PostAsync("orchestration/completion",
                 new StringContent(
                     body,
                     Encoding.UTF8, "application/json"));
@@ -113,7 +113,7 @@ namespace FoundationaLLM.AgentFactory.Services
             };
 
             var body = JsonConvert.SerializeObject(request, _jsonSerializerSettings);
-            var responseMessage = await client.PostAsync("/orchestration/completion",
+            var responseMessage = await client.PostAsync("orchestration/completion",
                 new StringContent(
                     body,
                     Encoding.UTF8, "application/json"));
@@ -136,7 +136,7 @@ namespace FoundationaLLM.AgentFactory.Services
         {
             var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.LangChainAPI);
             var responseMessage = client.Send(
-                new HttpRequestMessage(HttpMethod.Get, "/status"));
+                new HttpRequestMessage(HttpMethod.Get, "status"));
 
             return responseMessage.Content.ToString() == "ready";
         }
