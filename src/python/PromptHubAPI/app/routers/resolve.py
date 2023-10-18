@@ -9,6 +9,6 @@ router = APIRouter(
     responses={404: {'description':'Not found'}}
 )
 
-@router.post('/')
+@router.post('')
 async def resolve(request: PromptHubRequest) -> PromptHubResponse:
     return PromptHub().resolve(request)

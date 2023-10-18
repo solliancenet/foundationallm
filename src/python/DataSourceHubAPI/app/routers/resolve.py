@@ -9,6 +9,6 @@ router = APIRouter(
     responses={404: {'description':'Not found'}}
 )
 
-@router.post('/')
+@router.post('')
 async def resolve(request:DataSourceHubRequest) -> DataSourceHubResponse:    
     return DataSourceHub().resolve(request)
