@@ -26,7 +26,7 @@ namespace FoundationaLLM.Gatekeeper.API.Controllers
             return await _gatekeeperService.GetCompletion(completionRequest);
         }
 
-        [HttpPost("summarize")]
+        [HttpPost("summary")]
         public async Task<SummaryResponse> GetSummary(SummaryRequest summaryRequest)
         {
             return await _gatekeeperService.GetSummary(summaryRequest);
