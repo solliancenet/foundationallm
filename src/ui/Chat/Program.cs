@@ -25,6 +25,9 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
         ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
 });
 
+builder.Configuration.Sources.Clear();
+builder.Configuration.AddJsonFile("appsettings.json", false, true);
+builder.Configuration.AddEnvironmentVariables();
 builder.Configuration.AddAzureAppConfiguration(options =>
 {
     options.Connect(builder.Configuration["FoundationaLLM:AppConfig:ConnectionString"]);
@@ -33,6 +36,8 @@ builder.Configuration.AddAzureAppConfiguration(options =>
         options.SetCredential(new DefaultAzureCredential());
     });
 });
+if (builder.Environment.IsDevelopment())
+    builder.Configuration.AddJsonFile("appsettings.development.json", true, true);
 
 builder.Services.AddHttpClient(FoundationaLLM.Common.Constants.HttpClients.CoreAPI,
         httpClient =>
@@ -66,7 +71,6 @@ builder.Services.AddAuthorization(options =>
     options.FallbackPolicy = options.DefaultPolicy;
 });
 
-builder.RegisterConfiguration();
 builder.Services.AddRazorPages();
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
@@ -110,12 +114,6 @@ await app.RunAsync();
 
 static class ProgramExtensions
 {
-    public static void RegisterConfiguration(this WebApplicationBuilder builder)
-    {
-        builder.Services.AddOptions<ChatManagerSettings>()
-            .Bind(builder.Configuration.GetSection("FoundationaLLM:ChatManager"));
-    }
-
     public static void RegisterServices(this IServiceCollection services)
     {
         services.AddScoped<IChatManager, ChatManager>();

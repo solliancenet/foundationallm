@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>5d5fc907-72ad-4026-aa8d-db6ba578ae0d</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>app\main.py</StartupFile>
+    <StartupFile>app/main.py</StartupFile>
     <SearchPath>..\PythonSDK</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <LaunchProvider>Standard Python launcher</LaunchProvider>
@@ -16,6 +16,7 @@
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
     <Environment>
     </Environment>
+    <IsWindowsApplication>False</IsWindowsApplication>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>

@@ -2,6 +2,7 @@ using Asp.Versioning;
 using Azure.Identity;
 using FoundationaLLM.Common.Authentication;
 using FoundationaLLM.Common.Constants;
+using FoundationaLLM.Common.Extensions;
 using FoundationaLLM.Common.Interfaces;
 using FoundationaLLM.Common.Middleware;
 using FoundationaLLM.Common.Models.Authentication;
@@ -13,13 +14,21 @@ using FoundationaLLM.Gatekeeper.Core.Models.ConfigurationOptions;
 using FoundationaLLM.Gatekeeper.Core.Services;
 using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 using Microsoft.Extensions.Options;
+using Microsoft.OpenApi.Models;
 using Polly;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace FoundationaLLM.Gatekeeper.API
 {
+    /// <summary>
+    /// Program class for the Gatekeeper API.
+    /// </summary>
     public class Program
     {
+        /// <summary>
+        /// Entry point for Gatekeeper API.
+        /// </summary>
+        /// <param name="args"></param>
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
@@ -112,6 +121,9 @@ namespace FoundationaLLM.Gatekeeper.API
 
                     // Integrate xml comments
                     options.IncludeXmlComments(filePath);
+
+                    // Adds auth via X-API-KEY header
+                    options.AddAPIKeyAuth();
                 });
 
             var app = builder.Build();
@@ -160,9 +172,10 @@ namespace FoundationaLLM.Gatekeeper.API
 
             var agentFactoryAPISettings = new DownstreamAPIKeySettings
             {
-                APIUrl = builder.Configuration[$"FoundationaLLM:APIs:{HttpClients.AgentFactoryAPI}:APIUrl"],
-                APIKey = builder.Configuration[$"FoundationaLLM:APIs:{HttpClients.AgentFactoryAPI}:APIKey"]
+                APIUrl = builder.Configuration[$"FoundationaLLM:APIs:{HttpClients.AgentFactoryAPI}:APIUrl"] ?? "",
+                APIKey = builder.Configuration[$"FoundationaLLM:APIs:{HttpClients.AgentFactoryAPI}:APIKey"] ?? ""
             };
+
             downstreamAPISettings.DownstreamAPIs[HttpClients.AgentFactoryAPI] = agentFactoryAPISettings;
 
             builder.Services

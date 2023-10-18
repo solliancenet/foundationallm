@@ -38,7 +38,7 @@ namespace FoundationaLLM.AgentFactory.Services
         {
             var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.SemanticKernelAPI);
 
-            var responseMessage = await client.PostAsync("/orchestration/completion",
+            var responseMessage = await client.PostAsync("orchestration/completion",
                 new StringContent(
                     JsonConvert.SerializeObject(new CompletionRequest { UserPrompt = userPrompt, MessageHistory = messageHistory }, _jsonSerializerSettings),
                     Encoding.UTF8, "application/json"));
@@ -65,7 +65,7 @@ namespace FoundationaLLM.AgentFactory.Services
         {
             var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.SemanticKernelAPI);
 
-            var responseMessage = await client.PostAsync("/orchestration/summary",
+            var responseMessage = await client.PostAsync("orchestration/summary",
                 new StringContent(
                     JsonConvert.SerializeObject(new SummaryRequest { UserPrompt = content }, _jsonSerializerSettings),
                     Encoding.UTF8, "application/json"));
@@ -96,7 +96,7 @@ namespace FoundationaLLM.AgentFactory.Services
         {
             var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.SemanticKernelAPI);
             var responseMessage = client.Send(
-                new HttpRequestMessage(HttpMethod.Get, "/status"));
+                new HttpRequestMessage(HttpMethod.Get, "status"));
 
             return responseMessage.Content.ToString() == "ready";
         }

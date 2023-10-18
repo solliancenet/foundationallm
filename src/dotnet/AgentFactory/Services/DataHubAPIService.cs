@@ -33,7 +33,7 @@ public class DataSourceHubAPIService : IDataSourceHubAPIService
         {
             var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.DataSourceHubAPI);
 
-            var responseMessage = await client.GetAsync("/status");
+            var responseMessage = await client.GetAsync("status");
 
             if (responseMessage.IsSuccessStatusCode)
             {
@@ -57,7 +57,7 @@ public class DataSourceHubAPIService : IDataSourceHubAPIService
             DataSourceHubRequest phm = new DataSourceHubRequest { DataSources =  sources };
             var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.DataSourceHubAPI);
             
-            var responseMessage = await client.PostAsync("/resolve_request", new StringContent(
+            var responseMessage = await client.PostAsync("resolve_request", new StringContent(
                     JsonConvert.SerializeObject(phm, _jsonSerializerSettings),
                     Encoding.UTF8, "application/json"));
 

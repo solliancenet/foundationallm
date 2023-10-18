@@ -22,7 +22,7 @@ namespace FoundationaLLM.Chat.Helpers
         {
             var client = await _authenticatedHttpClientFactory.CreateClientAsync(HttpClients.CoreAPI, _entraSettings.Scopes);
 
-            return await client.GetFromJsonAsync<ClientBrandingConfiguration>($"/branding") ?? 
+            return await client.GetFromJsonAsync<ClientBrandingConfiguration>($"branding") ?? 
                    throw new InvalidOperationException("Could not retrieve the site branding configuration. Please try again.");
         }
     }
