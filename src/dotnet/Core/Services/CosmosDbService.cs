@@ -94,7 +94,7 @@ namespace FoundationaLLM.Core.Services
             _leases = database?.GetContainer(_settings.ChangeFeedLeaseContainer)
                 ?? throw new ArgumentException($"Unable to connect to the {_settings.ChangeFeedLeaseContainer} container required to listen to the CosmosDB change feed.");
 
-            Task.Run(() => StartChangeFeedProcessors());
+            //Task.Run(() => StartChangeFeedProcessors());
             _logger.LogInformation("Cosmos DB service initialized.");
         }
 
