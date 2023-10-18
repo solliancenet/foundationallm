@@ -31,7 +31,7 @@ class SummaryAgent(AgentBase):
             The language model to use for executing the completion request.
         config : Configuration
             Application configuration class for retrieving configuration settings.
-        """
+        """        
         self.config = config        
         self.summarizer_chain_prompt = PromptTemplate.from_template(completion_request.agent.prompt_template)
         self.llm = llm.get_language_model()
