@@ -20,8 +20,15 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace FoundationaLLM.Gatekeeper.API
 {
+    /// <summary>
+    /// Program class for the Gatekeeper API.
+    /// </summary>
     public class Program
     {
+        /// <summary>
+        /// Entry point for Gatekeeper API.
+        /// </summary>
+        /// <param name="args"></param>
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
@@ -165,9 +172,10 @@ namespace FoundationaLLM.Gatekeeper.API
 
             var agentFactoryAPISettings = new DownstreamAPIKeySettings
             {
-                APIUrl = builder.Configuration[$"FoundationaLLM:APIs:{HttpClients.AgentFactoryAPI}:APIUrl"],
-                APIKey = builder.Configuration[$"FoundationaLLM:APIs:{HttpClients.AgentFactoryAPI}:APIKey"]
+                APIUrl = builder.Configuration[$"FoundationaLLM:APIs:{HttpClients.AgentFactoryAPI}:APIUrl"] ?? "",
+                APIKey = builder.Configuration[$"FoundationaLLM:APIs:{HttpClients.AgentFactoryAPI}:APIKey"] ?? ""
             };
+
             downstreamAPISettings.DownstreamAPIs[HttpClients.AgentFactoryAPI] = agentFactoryAPISettings;
 
             builder.Services
