@@ -95,7 +95,7 @@ namespace FoundationaLLM.AgentFactory.Services
                 var responseContent = await responseMessage.Content.ReadAsStringAsync();
                 var summaryResponse = JsonConvert.DeserializeObject<SummaryResponse>(responseContent);
 
-                return summaryResponse!.Info;
+                return summaryResponse!.Summary;
             }
             else
                 return "A problem on my side prevented me from responding.";

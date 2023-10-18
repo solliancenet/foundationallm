@@ -6,7 +6,7 @@ namespace FoundationaLLM.AgentFactory.Core.Interfaces;
 /// <summary>
 /// Interface for the AgentHub Service
 /// </summary>
-public interface IAgentHubService
+public interface IAgentHubAPIService
 {
     /// <summary>
     /// Gets the status of the Agent Hub Service

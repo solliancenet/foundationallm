@@ -21,7 +21,7 @@ namespace FoundationaLLM.AgentFactory.Core.Services;
 /// <summary>
 /// Class for the Agent Hub API Service
 /// </summary>
-public class AgentHubAPIService : IAgentHubService
+public class AgentHubAPIService : IAgentHubAPIService
 {
     readonly AgentHubSettings _settings;
     readonly ILogger<AgentHubAPIService> _logger;
@@ -81,7 +81,7 @@ public class AgentHubAPIService : IAgentHubService
     /// <returns></returns>
     public async Task<AgentHubResponse> ResolveRequest(string userPrompt, string userContext)
     {
-        AgentHubRequest ahm = new AgentHubRequest { UserPrompt = userPrompt, UserContext = userContext };
+        AgentHubRequest ahm = new AgentHubRequest { UserPrompt = userPrompt };
 
         var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.AgentHubAPI);
 

@@ -12,7 +12,7 @@ namespace FoundationaLLM.AgentFactory.Core.Services;
 /// <summary>
 /// Class for the Data Source Hub API Service
 /// </summary>
-public class DataSourceHubAPIService : IDataSourceHubService
+public class DataSourceHubAPIService : IDataSourceHubAPIService
 {
     readonly DataSourceHubSettings _settings;
     readonly ILogger<DataSourceHubAPIService> _logger;

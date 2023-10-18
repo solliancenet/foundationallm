@@ -12,7 +12,7 @@ namespace FoundationaLLM.AgentFactory.Core.Services;
 /// <summary>
 /// Class for the PromptHub API Service
 /// </summary>
-public class PromptHubAPIService : IPromptHubService
+public class PromptHubAPIService : IPromptHubAPIService
 {
     readonly PromptHubSettings _settings;
     readonly ILogger<PromptHubAPIService> _logger;
