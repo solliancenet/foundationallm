@@ -63,8 +63,6 @@ namespace FoundationaLLM.Gatekeeper.API
             builder.Services.AddScoped<APIKeyAuthenticationFilter>();
             builder.Services.AddOptions<APIKeyValidationSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:APIs:GatekeeperAPI"));
-            builder.Services.AddOptions<KeyVaultConfigurationServiceSettings>()
-                .Bind(builder.Configuration.GetSection("FoundationaLLM:Configuration"));
 
             // Register the downstream services and HTTP clients.
             RegisterDownstreamServices(builder);

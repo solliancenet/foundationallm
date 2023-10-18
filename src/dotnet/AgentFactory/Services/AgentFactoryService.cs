@@ -21,18 +21,11 @@ public class AgentFactoryService : IAgentFactoryService
     private readonly IEnumerable<ILLMOrchestrationService> _orchestrationServices;
     private readonly IAgentHubAPIService _agentHubAPIService;
     private readonly AgentFactorySettings _agentFactorySettings;
-    private readonly AgentHubSettings _agentHubSettings;
-    
-    private readonly PromptHubSettings _promptHubSettings;
     private readonly IPromptHubAPIService _promptHubAPIService;
-
-    private readonly DataSourceHubSettings _dataSourceHubSettings;
     private readonly IDataSourceHubAPIService _dataSourceHubAPIService;
 
     private readonly ILogger<AgentFactoryService> _logger;
     private readonly IUserIdentityContext _userIdentity;
-
-    private LLMOrchestrationService _llmOrchestrationService = LLMOrchestrationService.LangChain;
 
     public AgentFactoryService(
         IEnumerable<ILLMOrchestrationService> orchestrationServices,
@@ -40,28 +33,19 @@ public class AgentFactoryService : IAgentFactoryService
         IOptions<AgentFactorySettings> agentFactorySettings,
 
         IAgentHubAPIService agentHubService,
-        IOptions<AgentHubSettings> agentHubSettings,
-
         IPromptHubAPIService promptHubService,
-        IOptions<PromptHubSettings> promptHubSettings,
-
         IDataSourceHubAPIService dataSourceHubService,
-        IOptions<DataSourceHubSettings> dataSourceHubSettings,
 
         ILogger<AgentFactoryService> logger,
         IUserIdentityContext userIdentity)
     {
         _orchestrationServices = orchestrationServices;
-        
-        _agentHubAPIService = agentHubService;
+
         _agentFactorySettings = agentFactorySettings.Value;
-        _agentHubSettings = agentHubSettings.Value;
 
+        _agentHubAPIService = agentHubService;
         _promptHubAPIService = promptHubService;
-        _promptHubSettings = promptHubSettings.Value;
-
         _dataSourceHubAPIService = dataSourceHubService;
-        _dataSourceHubSettings = dataSourceHubSettings.Value;
 
         _logger = logger;
         _userIdentity = userIdentity;

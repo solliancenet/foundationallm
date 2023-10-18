@@ -108,9 +108,5 @@ class BlobStorageAgent(AgentBase):
         except Exception as e:
             return CompletionResponse(
                     completion = "A problem on my side prevented me from responding.",
-                    user_prompt = prompt,
-                    completion_tokens = cb.completion_tokens,
-                    prompt_tokens = cb.prompt_tokens,
-                    total_tokens = cb.total_tokens,
-                    total_cost = cb.total_cost
+                    user_prompt = prompt
                 )

@@ -42,8 +42,6 @@ builder.Services.AddHttpClient(FoundationaLLM.Common.Constants.HttpClients.CoreA
             3, retryNumber => TimeSpan.FromMilliseconds(600)));
 
 builder.Services.Configure<EntraSettings>(builder.Configuration.GetSection("FoundationaLLM:Chat:Entra"));
-builder.Services.AddOptions<KeyVaultConfigurationServiceSettings>()
-    .Bind(builder.Configuration.GetSection("FoundationaLLM:Configuration"));
 
 builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
     .AddMicrosoftIdentityWebApp(options =>
