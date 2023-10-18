@@ -367,4 +367,10 @@ deploy/__values/
 
 **/env
 ***/.venv
-/src/python/PythonSDK/test.ipynb
+
+obj
+bin
+log
+
+*.csproj.user
+*.pyproj.user

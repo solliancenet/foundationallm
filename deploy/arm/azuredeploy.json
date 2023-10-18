@@ -15,6 +15,7 @@
       "allowedValues": [
         "southcentralus",
         "eastus",
+        "EastUS",
         "westeurope"
       ],
       "metadata": {
@@ -23,7 +24,7 @@
     },
     "name": {
       "type": "string",
-      "defaultValue": "[concat('f',uniqueString(resourceGroup().id))]",
+      "defaultValue": "[uniqueString(resourceGroup().id)]",
       "maxLength": 15,
       "metadata": {
         "description": "Unique name for the deployed services below. Max length 15 characters, alphanumeric only:\r\n- Azure Cosmos DB for NoSQL\r\n- Azure Cosmos DB for MongoDB vCore\r\n- Azure OpenAI\r\n- Azure App Service\r\n- Azure Functions\r\n\r\nThe name defaults to a unique string generated from the resource group identifier.\r\n"
@@ -35,14 +36,17 @@
       "metadata": {
         "description": "Specifies the version of Kubernetes to use for the Azure Kubernetes Service (AKS) cluster. Defaults to **1.26.3**"
       }
+    },
+    "openAiEndpoint": {
+      "type": "string"
+    },
+    "openAiKey": {
+      "type": "string"
     }
   },
   "variables": {
     "keyVaultSettings": {
       "name": "[format('{0}-kv', parameters('name'))]"
-    },
-    "openAISettings": {
-      "name": "[format('{0}', parameters('name'))]"
     },
     "safetySettings": {
       "name": "[format('{0}', parameters('name'))]"
@@ -143,21 +147,6 @@
           "contentType": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
         },
         {
-          "key": "FoundationaLLM:AgentFactory",
-          "value": "",
-          "contentType": null
-        },
-        {
-          "key": "FoundationaLLM:AgentFactory:DefaultOrchestrationService",
-          "value": "LangChain",
-          "contentType": null
-        },
-        {
-          "key": "FoundationaLLM:AgentFactoryAPI",
-          "value": "",
-          "contentType": null
-        },
-        {
           "key": "FoundationaLLM:AgentHub:AgentMetadata:StorageContainer",
           "value": "agents",
           "contentType": null
@@ -174,7 +163,7 @@
         },
         {
           "key": "FoundationaLLM:AzureContentSafety:APIUrl",
-          "value": "[concat('https://', variables('keyVaultSettings').name, '.cognitiveservices.azure.com/')]",
+          "value": "[concat('https://', variables('safetySettings').name, '.cognitiveservices.azure.com/')]",
           "contentType": null
         },
         {
@@ -244,7 +233,7 @@
         },
         {
           "key": "FoundationaLLM:AzureOpenAI:API:Endpoint",
-          "value": "[concat('https://', variables('openAISettings').name, '.openai.azure.com/')]",
+          "value": "[parameters('openAiEndpoint')]",
           "contentType": null
         },
         {
@@ -256,11 +245,6 @@
           "key": "FoundationaLLM:AzureOpenAI:API:Version",
           "value": "2023-05-15",
           "contentType": null
-        },
-        {
-          "key": "FoundationaLLM:AzureOpenAI:Key",
-          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-azureopenai-key\"}')]",
-          "contentType": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
         },
         {
           "key": "FoundationaLLM:BlobStorage:ConnectionString",
@@ -314,7 +298,7 @@
         },
         {
           "key": "FoundationaLLM:Branding:LogoUrl",
-          "value": "customer-logo.png",
+          "value": "foundationallm-logo-white.svg",
           "contentType": null
         },
         {
@@ -428,11 +412,6 @@
           "contentType": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
         },
         {
-          "key": "FoundationaLLM:Configuration:KeyVaultUri",
-          "value": "[concat('https://', variables('keyVaultSettings').name, '.vault.azure.net/')]",
-          "contentType": null
-        },
-        {
           "key": "FoundationaLLM:CoreAPI:Entra:CallbackPath",
           "value": "/signin-oidc",
           "contentType": null
@@ -451,11 +430,6 @@
           "key": "FoundationaLLM:CoreAPI:Entra:Instance",
           "value": "https://login.microsoftonline.com/",
           "contentType": null
-        },
-        {
-          "key": "FoundationaLLM:CoreAPI:Entra:Key",
-          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-coreapi-entra-key\"}')]",
-          "contentType": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
         },
         {
           "key": "FoundationaLLM:CoreAPI:Entra:Scopes",
@@ -544,7 +518,7 @@
         },
         {
           "key": "FoundationaLLM:OpenAI:API:Endpoint",
-          "value": "https://api.openai.com/",
+          "value": "[parameters('openAiEndpoint')]",
           "contentType": null
         },
         {
@@ -573,78 +547,78 @@
           "contentType": null
         },
         {
-          "key": "FoundationaLLM:SemanticKernalAPI:OpenAI.ChatCompletionPromptName",
+          "key": "FoundationaLLM:SemanticKernelAPI:OpenAI.ChatCompletionPromptName",
           "value": "RetailAssistant.Default",
           "contentType": null
         },
         {
-          "key": "FoundationaLLM:SemanticKernalAPI:OpenAI.CompletionsDeployment",
+          "key": "FoundationaLLM:SemanticKernelAPI:OpenAI.CompletionsDeployment",
           "value": "completions",
           "contentType": null
         },
         {
-          "key": "FoundationaLLM:SemanticKernalAPI:OpenAI.CompletionsDeploymentMaxTokens",
+          "key": "FoundationaLLM:SemanticKernelAPI:OpenAI.CompletionsDeploymentMaxTokens",
           "value": "8096",
           "contentType": null
         },
         {
-          "key": "FoundationaLLM:SemanticKernalAPI:OpenAI.EmbeddingsDeployment",
+          "key": "FoundationaLLM:SemanticKernelAPI:OpenAI.EmbeddingsDeployment",
           "value": "embeddings",
           "contentType": null
         },
         {
-          "key": "FoundationaLLM:SemanticKernalAPI:OpenAI.EmbeddingsDeploymentMaxTokens",
+          "key": "FoundationaLLM:SemanticKernelAPI:OpenAI.EmbeddingsDeploymentMaxTokens",
           "value": "8191",
           "contentType": null
         },
         {
-          "key": "FoundationaLLM:SemanticKernalAPI:OpenAI.Endpoint",
-          "value": "[concat('https://', variables('openAISettings').name, '.openai.azure.com/')]",
+          "key": "FoundationaLLM:SemanticKernelAPI:OpenAI.Endpoint",
+          "value": "[parameters('openAiEndpoint')]",
           "contentType": null
         },
         {
-          "key": "FoundationaLLM:SemanticKernalAPI:OpenAI.PromptOptimization.CompletionsMaxTokens",
+          "key": "FoundationaLLM:SemanticKernelAPI:OpenAI.PromptOptimization.CompletionsMaxTokens",
           "value": "300",
           "contentType": null
         },
         {
-          "key": "FoundationaLLM:SemanticKernalAPI:OpenAI.PromptOptimization.CompletionsMinTokens",
+          "key": "FoundationaLLM:SemanticKernelAPI:OpenAI.PromptOptimization.CompletionsMinTokens",
           "value": "50",
           "contentType": null
         },
         {
-          "key": "FoundationaLLM:SemanticKernalAPI:OpenAI.PromptOptimization.MemoryMaxTokens",
+          "key": "FoundationaLLM:SemanticKernelAPI:OpenAI.PromptOptimization.MemoryMaxTokens",
           "value": "3000",
           "contentType": null
         },
         {
-          "key": "FoundationaLLM:SemanticKernalAPI:OpenAI.PromptOptimization.MemoryMinTokens",
+          "key": "FoundationaLLM:SemanticKernelAPI:OpenAI.PromptOptimization.MemoryMinTokens",
           "value": "1500",
           "contentType": null
         },
         {
-          "key": "FoundationaLLM:SemanticKernalAPI:OpenAI.PromptOptimization.MessagesMaxTokens",
+          "key": "FoundationaLLM:SemanticKernelAPI:OpenAI.PromptOptimization.MessagesMaxTokens",
           "value": "3000",
           "contentType": null
         },
         {
-          "key": "FoundationaLLM:SemanticKernalAPI:OpenAI.PromptOptimization.MessagesMinTokens",
+          "key": "FoundationaLLM:SemanticKernelAPI:OpenAI.PromptOptimization.MessagesMinTokens",
           "value": "100",
           "contentType": null
         },
         {
-          "key": "FoundationaLLM:SemanticKernalAPI:OpenAI.PromptOptimization.SystemMaxTokens",
+          "key": "FoundationaLLM:SemanticKernelAPI:OpenAI.PromptOptimization.SystemMaxTokens",
           "value": "1500",
           "contentType": null
         },
         {
-          "key": "FoundationaLLM:SemanticKernalAPI:OpenAI.ShortSummaryPromptName",
+          "key": "FoundationaLLM:SemanticKernelAPI:OpenAI.ShortSummaryPromptName",
           "value": "Summarizer.TwoWords",
           "contentType": null
         },
         {
-          "key": "FoundationaLLM:SemanticKernalAPI:OpenAI:Key",
-          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-semantickernalapi-openai-key\"}')]",
+          "key": "FoundationaLLM:SemanticKernelAPI:OpenAI:Key",
+          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-semantickernelapi-openai-key\"}')]",
           "contentType": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
         }
       ]
@@ -890,7 +864,7 @@
       "dependsOn": [ "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultSettings').name)]" ],
       "properties": {
         "attributes": { "enabled": true },
-        "value": "[concat('f',uniqueString(resourceGroup().id))]"
+        "value": "[uniqueString(resourceGroup().id)]"
       }
     },
     {
@@ -901,7 +875,7 @@
       "dependsOn": [ "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultSettings').name)]" ],
       "properties": {
         "attributes": { "enabled": true },
-        "value": "[concat('f',uniqueString(resourceGroup().id))]"
+        "value": "[uniqueString(resourceGroup().id)]"
       }
     },
     {
@@ -912,7 +886,7 @@
       "dependsOn": [ "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultSettings').name)]" ],
       "properties": {
         "attributes": { "enabled": true },
-        "value": "[concat('f',uniqueString(resourceGroup().id))]"
+        "value": "[uniqueString(resourceGroup().id)]"
       }
     },
     {
@@ -923,7 +897,7 @@
       "dependsOn": [ "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultSettings').name)]" ],
       "properties": {
         "attributes": { "enabled": true },
-        "value": "[concat('f',uniqueString(resourceGroup().id))]"
+        "value": "[uniqueString(resourceGroup().id)]"
       }
     },
     {
@@ -934,7 +908,7 @@
       "dependsOn": [ "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultSettings').name)]" ],
       "properties": {
         "attributes": { "enabled": true },
-        "value": "[concat('f',uniqueString(resourceGroup().id))]"
+        "value": "[uniqueString(resourceGroup().id)]"
       }
     },
     {
@@ -945,7 +919,7 @@
       "dependsOn": [ "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultSettings').name)]" ],
       "properties": {
         "attributes": { "enabled": true },
-        "value": "[concat('f',uniqueString(resourceGroup().id))]"
+        "value": "[uniqueString(resourceGroup().id)]"
       }
     },
     {
@@ -956,7 +930,7 @@
       "dependsOn": [ "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultSettings').name)]" ],
       "properties": {
         "attributes": { "enabled": true },
-        "value": "[concat('f',uniqueString(resourceGroup().id))]"
+        "value": "[uniqueString(resourceGroup().id)]"
       }
     },
     {
@@ -989,20 +963,7 @@
       "dependsOn": [ "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultSettings').name)]" ],
       "properties": {
         "attributes": { "enabled": true },
-        //"value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('openAISettings').name), '2018-07-01').key1"
-        "value" : ""
-      }
-    },
-    {
-      "type": "Microsoft.KeyVault/vaults/secrets",
-      "apiVersion": "2023-02-01",
-      "name": "[concat(variables('keyVaultSettings').name, '/foundationallm-azureopenai-key')]",
-      "location": "[parameters('location')]",
-      "dependsOn": [ "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultSettings').name)]" ],
-      "properties": {
-        "attributes": { "enabled": true },
-        //"value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('openAISettings').name), '2018-07-01').key1"
-        "value": ""
+        "value": "[parameters('openAiKey')]"
       }
     },
     {
@@ -1085,23 +1046,12 @@
     {
       "type": "Microsoft.KeyVault/vaults/secrets",
       "apiVersion": "2023-02-01",
-      "name": "[concat(variables('keyVaultSettings').name, '/foundationallm-coreapi-entra-key')]",
-      "location": "[parameters('location')]",
-      "dependsOn": [ "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultSettings').name)]" ],
-      "properties": {
-        "attributes": { "enabled": true },
-        "value": ""
-      }
-    },
-    {
-      "type": "Microsoft.KeyVault/vaults/secrets",
-      "apiVersion": "2023-02-01",
       "name": "[concat(variables('keyVaultSettings').name, '/foundationallm-cosmosdb-key')]",
       "location": "[parameters('location')]",
       "dependsOn": [ "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultSettings').name)]", "[resourceId('Microsoft.DocumentDB/databaseAccounts', variables('cosmosDbSettings').name)]" ],
       "properties": {
         "attributes": { "enabled": true },
-        "value": "[listConnectionStrings(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('cosmosDbSettings').name), '2019-12-12').connectionStrings[0].connectionString]"
+        "value": "[listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('cosmosDbSettings').name), '2019-12-12').primaryMasterKey]"
       }
     },
     {
@@ -1156,7 +1106,7 @@
       "dependsOn": [ "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultSettings').name)]" ],
       "properties": {
         "attributes": { "enabled": true },
-        "value": "[concat('f',uniqueString(resourceGroup().id))]"
+        "value": "[uniqueString(resourceGroup().id)]"
       }
     },
     {
@@ -1167,7 +1117,7 @@
       "dependsOn": [ "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultSettings').name)]" ],
       "properties": {
         "attributes": { "enabled": true },
-        "value": ""
+        "value": "[parameters('openAiKey')]"
       }
     },
     {
@@ -1184,12 +1134,12 @@
     {
       "type": "Microsoft.KeyVault/vaults/secrets",
       "apiVersion": "2023-02-01",
-      "name": "[concat(variables('keyVaultSettings').name, '/foundationallm-semantickernalapi-openai-key')]",
+      "name": "[concat(variables('keyVaultSettings').name, '/foundationallm-semantickernelapi-openai-key')]",
       "location": "[parameters('location')]",
       "dependsOn": [ "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultSettings').name)]" ],
       "properties": {
         "attributes": { "enabled": true },
-        "value": ""
+        "value": "[parameters('openAiKey')]"
       }
     },
     {
