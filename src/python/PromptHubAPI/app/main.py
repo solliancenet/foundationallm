@@ -1,6 +1,6 @@
 import uvicorn
 from fastapi import FastAPI
-from app.routers import resolve_request, status
+from app.routers import resolve, status
 
 app = FastAPI(
     title='FoundationaLLM PromptHubAPI',
@@ -21,7 +21,7 @@ app = FastAPI(
     }
 )
 
-app.include_router(resolve_request.router)
+app.include_router(resolve.router)
 app.include_router(status.router)
 
 @app.get('/')

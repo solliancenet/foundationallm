@@ -3,9 +3,12 @@ using FoundationaLLM.SemanticKernel.Core.Interfaces;
 
 namespace FoundationaLLM.SemanticKernel.Core.Services;
 
+/// <summary>
+/// Implements the <see cref="ISystemPromptService"/> interface.
+/// </summary>
 public class InMemorySystemPromptService : ISystemPromptService
 {
-    readonly Dictionary<string, string> _prompts = new Dictionary<string, string>()
+    readonly Dictionary<string, string> _prompts = new()
     {
         { "RetailAssistant.Default", @"
 You are an intelligent assistant for the Cosmic Works Bike Company. 
@@ -29,6 +32,12 @@ Summarize this prompt in one or two words to use as a label in a button on a web
         }
     };
 
+    /// <summary>
+    /// Gets the specified system prompt.
+    /// </summary>
+    /// <param name="promptName">The system prompt name.</param>
+    /// <param name="forceRefresh">The flag that inform the System Prompt service to do a cache refresh.</param>
+    /// <returns>The system prompt text.</returns>
     public async Task<string> GetPrompt(string promptName, bool forceRefresh = false)
     {
         if (!_prompts.ContainsKey(promptName))

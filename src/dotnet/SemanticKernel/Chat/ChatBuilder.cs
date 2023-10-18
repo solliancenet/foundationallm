@@ -1,12 +1,16 @@
-﻿using Microsoft.SemanticKernel;
-using Microsoft.SemanticKernel.AI.ChatCompletion;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+﻿using FoundationaLLM.SemanticKernel.Core.Interfaces;
+using FoundationaLLM.SemanticKernel.Core.Services;
 using FoundationaLLM.SemanticKernel.Text;
 using FoundationaLLM.SemanticKernel.TextEmbedding;
+using Microsoft.SemanticKernel;
+using Microsoft.SemanticKernel.AI.ChatCompletion;
+using Newtonsoft.Json;
 
 namespace FoundationaLLM.SemanticKernel.Chat
 {
+    /// <summary>
+    /// The Chat Builder class the builds the chat message history representation <see cref="ChatHistory"/>.
+    /// </summary>
     public class ChatBuilder
     {
         readonly IKernel _kernel;
@@ -22,6 +26,14 @@ namespace FoundationaLLM.SemanticKernel.Chat
         List<object> _memories = new List<object>();
         List<(AuthorRole AuthorRole, string Content)> _messages = new List<(AuthorRole AuthorRole, string Content)>();
 
+        /// <summary>
+        /// Constructor for Chat Builder class.
+        /// </summary>
+        /// <param name="kernel">The Semantic kernel.</param>
+        /// <param name="maxTokens">The maximum number of tokens.</param>
+        /// <param name="memoryTypes">The dictionary of memory names and types.</param>
+        /// <param name="tokenizer">The Tokenizer service.</param>
+        /// <param name="promptOptimizationSettings">The configuration options for the prompt optimization.</param>
         public ChatBuilder(
             IKernel kernel,
             int maxTokens,
@@ -53,6 +65,11 @@ namespace FoundationaLLM.SemanticKernel.Chat
             _maxPromptTokens = _maxTokens - _promptOptimizationSettings.CompletionsMaxTokens - BufferTokens;
         }
 
+        /// <summary>
+        /// Constructor for Chat Builder class.
+        /// </summary>
+        /// <param name="prompt">The prompt text.</param>
+        /// <returns></returns>
         public ChatBuilder WithSystemPrompt(string prompt)
         {
             ArgumentNullException.ThrowIfNullOrEmpty(prompt, nameof(prompt));
@@ -60,6 +77,11 @@ namespace FoundationaLLM.SemanticKernel.Chat
             return this;
         }
 
+        /// <summary>
+        ///Constructor for Chat Builder class.
+        /// </summary>
+        /// <param name="memories">The list of memories.</param>
+        /// <returns></returns>
         public ChatBuilder WithMemories(List<string> memories)
         {
             ArgumentNullException.ThrowIfNull(memories, nameof(memories));
@@ -70,6 +92,11 @@ namespace FoundationaLLM.SemanticKernel.Chat
             return this;
         }
 
+        /// <summary>
+        /// Constructor for Chat Builder class.
+        /// </summary>
+        /// <param name="messages">The list of messages.</param>
+        /// <returns></returns>
         public ChatBuilder WithMessageHistory(List<(AuthorRole AuthorRole, string Content)> messages) 
         {
             ArgumentNullException.ThrowIfNull(messages, nameof(messages));
@@ -77,6 +104,10 @@ namespace FoundationaLLM.SemanticKernel.Chat
             return this;
         }
 
+        /// <summary>
+        /// Builds the chat message history object.
+        /// </summary>
+        /// <returns>The chat message history object.</returns>
         public ChatHistory Build()
         {
             OptimizePromptSize();
@@ -104,6 +135,10 @@ namespace FoundationaLLM.SemanticKernel.Chat
             return result;
         }
 
+        /// <summary>
+        /// Optimizes the prompt size.
+        /// </summary>
+        /// <exception cref="Exception"></exception>
         private void OptimizePromptSize()
         {
             return; 
@@ -251,7 +286,5 @@ namespace FoundationaLLM.SemanticKernel.Chat
             // Error! Most likely, the prompt optimization settings are inconsistent
             throw new Exception("Cannot produce a prompt using the current prompt optimization settings.");
         }
-
-
     }
 }

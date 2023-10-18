@@ -58,7 +58,7 @@ public class PromptHubAPIService : IPromptHubAPIService
             
             var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.PromptHubAPI);
             var body = JsonConvert.SerializeObject(phm, _jsonSerializerSettings);
-            var responseMessage = await client.PostAsync("resolve_request", new StringContent(
+            var responseMessage = await client.PostAsync("resolve", new StringContent(
                     body,
                     Encoding.UTF8, "application/json"));
 

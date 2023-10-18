@@ -42,8 +42,11 @@ namespace FoundationaLLM.SemanticKernel.Memory.AzureCognitiveSearch
         /// <summary>
         /// Create a new instance of semantic memory using Azure Cognitive Search.
         /// </summary>
-        /// <param name="endpoint">Azure Cognitive Search URI, e.g. "https://contoso.search.windows.net"</param>
-        /// <param name="apiKey">API Key</param>
+        /// <param name="endpoint">The Azure Cognitive Search endpoint, e.g. "https://contoso.search.windows.net"</param>
+        /// <param name="apiKey">The Azure Cognitive Search key</param>
+        /// <param name="indexName">The name of the search index.</param>
+        /// <param name="textEmbedding">The text embedding generation service.</param>
+        /// <param name="logger">The logger.</param>
         public AzureCognitiveSearchVectorMemory(string endpoint, string apiKey, string indexName, ITextEmbeddingGeneration textEmbedding, ILogger logger)
         {
             AzureKeyCredential credentials = new(apiKey);
@@ -59,6 +62,9 @@ namespace FoundationaLLM.SemanticKernel.Memory.AzureCognitiveSearch
         /// </summary>
         /// <param name="endpoint">Azure Cognitive Search URI, e.g. "https://contoso.search.windows.net"</param>
         /// <param name="credentials">Azure service</param>
+        /// <param name="indexName">The name of the search index.</param>
+        /// <param name="textEmbedding">The text embedding generation service.</param>
+        /// <param name="logger">The logger.</param>
         public AzureCognitiveSearchVectorMemory(string endpoint, TokenCredential credentials, string indexName, ITextEmbeddingGeneration textEmbedding, ILogger logger)
         {
             _adminClient = new SearchIndexClient(new Uri(endpoint), credentials, GetSearchClientOptions());
@@ -165,6 +171,11 @@ namespace FoundationaLLM.SemanticKernel.Memory.AzureCognitiveSearch
             }
         }
 
+        /// <summary>
+        /// Removes an object instance and its associated vectorization from the underlying memory.
+        /// </summary>
+        /// <param name="item">The object instance to be removed from the memory.</param>
+        /// <returns></returns>
         public async Task RemoveMemory(object item)
         {
             try
@@ -312,7 +323,7 @@ namespace FoundationaLLM.SemanticKernel.Memory.AzureCognitiveSearch
                     Size = limit
                 };
 
-                SearchResults<SearchDocument> searchResult = null;
+                SearchResults<SearchDocument>? searchResult = null;
                 try
                 {
                     searchResult = await client.SearchAsync<SearchDocument>(null, searchOptions);

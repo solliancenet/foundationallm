@@ -5,8 +5,18 @@ using System.Text;
 
 namespace FoundationaLLM.SemanticKernel.TextEmbedding
 {
+    /// <summary>
+    /// Text embedding utility class.
+    /// </summary>
     public static class EmbeddingUtility
     {
+        /// <summary>
+        /// Transforms an object into a JObject and string representation.
+        /// </summary>
+        /// <param name="item">The object to be transformed.</param>
+        /// <param name="maxRecursionLevels">The maximum number of recursion levels to traverse the input object.</param>
+        /// <returns>The transformed object.</returns>
+        /// <exception cref="ArgumentException"></exception>
         public static (JObject ObjectToEmbed, string TextToEmbed) Transform(object item, int maxRecursionLevels = 3)
         {
             if (maxRecursionLevels < 0)
@@ -25,6 +35,14 @@ namespace FoundationaLLM.SemanticKernel.TextEmbedding
                 embeddingTextBuilder.Length == 0 ? jObj.ToString() : embeddingTextBuilder.ToString());
         }
 
+        /// <summary>
+        /// Transforms an object into a JObject and string representation.
+        /// </summary>
+        /// <param name="item">The object to be transformed.</param>
+        /// <param name="types">The dictionary of property names and types for the input object.</param>
+        /// <param name="maxRecursionLevels">The maximum number of recursion levels to traverse the input object.</param>
+        /// <returns>The transformed object.</returns>
+        /// <exception cref="ArgumentException"></exception>
         public static (JObject ObjectToEmbed, string TextToEmbed) Transform(string item, Dictionary<string, Type> types, int maxRecursionLevels = 3)
         {
             if (maxRecursionLevels < 0)
@@ -48,6 +66,13 @@ namespace FoundationaLLM.SemanticKernel.TextEmbedding
                 embeddingTextBuilder.Length == 0 ? jObj.ToString() : embeddingTextBuilder.ToString());
         }
 
+        /// <summary>
+        /// Finds <see cref="EmbeddingFieldAttribute"/> fields.
+        /// </summary>
+        /// <param name="type">The object type.</param>
+        /// <param name="embeddingFields">The dictionary of object fields.</param>
+        /// <param name="currentPath">The current recursion path.</param>
+        /// <param name="remainingRecursionLevels">The remaining recursion levels.</param>
         static void FindEmbeddingFieldAttributes(Type type, Dictionary<string, string> embeddingFields, string currentPath, int remainingRecursionLevels)
         {
             // TODO: Improve the handling of various types
@@ -73,6 +98,14 @@ namespace FoundationaLLM.SemanticKernel.TextEmbedding
             }
         }
 
+        /// <summary>
+        /// Prepares a JObject for transform.
+        /// </summary>
+        /// <param name="item">The input JObject.</param>
+        /// <param name="embeddingFields">The dictionary of object fields.</param>
+        /// <param name="currentPath">The current recursion path.</param>
+        /// <param name="remainingRecursionLevels">The remaining recursion levels.</param>
+        /// <param name="embeddingTextBuilder">The embedding string builder.</param>
         static void PrepareOject(JObject item, Dictionary<string, string> embeddingFields, string currentPath, int remainingRecursionLevels, StringBuilder embeddingTextBuilder)
         {
             var childrenToRemove = new List<JProperty>();
