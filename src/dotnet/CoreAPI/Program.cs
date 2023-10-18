@@ -154,6 +154,7 @@ namespace FoundationaLLM.Core.API
                     }
                 });
 
+            app.UseHttpsRedirection();
             app.MapControllers();
 
             app.UseCors(allowAllCorsOrigins);
