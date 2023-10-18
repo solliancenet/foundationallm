@@ -369,4 +369,8 @@ deploy/__values/
 ***/.venv
 
 obj
-binlog
+bin
+log
+
+*.csproj.user
+*.pyproj.user
