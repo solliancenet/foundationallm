@@ -175,7 +175,7 @@
         },
         {
           "key": "FoundationaLLM:AzureContentSafety:APIUrl",
-          "value": "[concat('https://', variables('keyVaultSettings').name, '.cognitiveservices.azure.com/')]",
+          "value": "[concat('https://', variables('safetySettings').name, '.cognitiveservices.azure.com/')]",
           "contentType": null
         },
         {
@@ -1102,7 +1102,7 @@
       "dependsOn": [ "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultSettings').name)]", "[resourceId('Microsoft.DocumentDB/databaseAccounts', variables('cosmosDbSettings').name)]" ],
       "properties": {
         "attributes": { "enabled": true },
-        "value": "[listConnectionStrings(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('cosmosDbSettings').name), '2019-12-12').connectionStrings[0].connectionString]"
+        "value": "[listConnectionStrings(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('cosmosDbSettings').name), '2019-12-12').primaryMasterKey]"
       }
     },
     {
