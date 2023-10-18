@@ -1,7 +1,10 @@
 <template>
 	<div :style="style" class="chat-app">
-		<ChatSidebar ref="sidebar" :currentSession="currentSession" @change-session="handleChangeSession" />
-		<ChatThread :session="currentSession" @update-session="handleUpdateSession" />
+		<Navbar :currentSession="currentSession" />
+		<div class="chat-content">
+			<ChatSidebar ref="sidebar" :currentSession="currentSession" @change-session="handleChangeSession" />
+			<ChatThread :session="currentSession" @update-session="handleUpdateSession" />
+		</div>
 	</div>
 </template>
 
@@ -59,7 +62,14 @@ body,
 <style lang="scss" scoped>
 .chat-app {
 	display: flex;
+	flex-direction: column;
 	height: 100vh;
+	background-color: var(--primary-bg);
+}
+.chat-content {
+	display: flex;
+	flex-direction: row;
+	height: calc(100% - 70px);
 	background-color: var(--primary-bg);
 }
 </style>

@@ -1,14 +1,13 @@
 <template>
 	<div class="chat-thread">
 		<!-- Header -->
-		<div class="chat-thread__header">
+		<div class="chat-thread__header" v-if="false">
 			<template v-if="session">
 				<span>{{ session.name }}</span>
 			</template>
 			<template v-else>
 				<span>Please select a session</span>
 			</template>
-			<button @click="signIn()">Sign In</button>
 		</div>
 
 		<!-- Message list -->
@@ -53,7 +52,6 @@
 <script lang="ts">
 import type { PropType } from 'vue';
 import { Message, Session } from '@/js/types';
-import { msalInstance, loginRequest } from '@/js/auth'
 import api from '~/server/api';
 
 export default {
@@ -82,11 +80,6 @@ export default {
 	},
 
 	methods: {
-		async signIn() {
-			await msalInstance.initialize();
-			await msalInstance.loginPopup(loginRequest);
-		},
-
 		async getMessages() {
 			this.isLoading = true;
 			const data = await api.getMessages(this.session.id);

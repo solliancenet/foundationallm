@@ -9,7 +9,7 @@ export const msalConfig = {
 		postLogoutRedirectUri: '/', // Must be registered as a SPA redirectURI on your app registration
 	},
 	cache: {
-		cacheLocation: 'localStorage',
+		cacheLocation: 'sessionStorage',
 	},
 	system: {
 		loggerOptions: {
@@ -49,4 +49,5 @@ export const loginRequest = {
 // Add here the endpoints for MS Graph API services you would like to use.
 export const graphConfig = {
 	graphMeEndpoint: 'https://graph.microsoft.com/v1.0/me',
+	graphMailEndpoint: 'https://graph.microsoft.com/v1.0/me/messages',
 };
