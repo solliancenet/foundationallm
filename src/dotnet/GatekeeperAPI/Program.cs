@@ -13,6 +13,7 @@ using FoundationaLLM.Gatekeeper.Core.Models.ConfigurationOptions;
 using FoundationaLLM.Gatekeeper.Core.Services;
 using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 using Microsoft.Extensions.Options;
+using Microsoft.OpenApi.Models;
 using Polly;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -112,6 +113,30 @@ namespace FoundationaLLM.Gatekeeper.API
 
                     // Integrate xml comments
                     options.IncludeXmlComments(filePath);
+
+                    options.AddSecurityDefinition(Swagger.SecurityDefinitionName, new OpenApiSecurityScheme
+                    {
+                        Name = HttpHeaders.APIKey,
+                        In = ParameterLocation.Header,
+                        Type = SecuritySchemeType.ApiKey,
+                        Description = Swagger.SecuritySchemeDescription,
+                        Scheme = Swagger.SecuritySchemeName
+                    });
+
+                    options.AddSecurityRequirement(new OpenApiSecurityRequirement {
+                        {
+                            new OpenApiSecurityScheme()
+                            {
+                                Reference = new OpenApiReference
+                                {
+                                    Type = ReferenceType.SecurityScheme,
+                                    Id = Swagger.SecuritySchemeReferenceId
+                                },
+                                In = ParameterLocation.Header
+                            },
+                            new List<string>()
+                        }
+                    });
                 });
 
             var app = builder.Build();
