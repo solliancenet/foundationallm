@@ -2,6 +2,7 @@ using Asp.Versioning;
 using Azure.Identity;
 using FoundationaLLM.Common.Authentication;
 using FoundationaLLM.Common.Constants;
+using FoundationaLLM.Common.Extensions;
 using FoundationaLLM.Common.Interfaces;
 using FoundationaLLM.Common.Middleware;
 using FoundationaLLM.Common.Models.Authentication;
@@ -13,6 +14,7 @@ using FoundationaLLM.Gatekeeper.Core.Models.ConfigurationOptions;
 using FoundationaLLM.Gatekeeper.Core.Services;
 using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 using Microsoft.Extensions.Options;
+using Microsoft.OpenApi.Models;
 using Polly;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -112,6 +114,9 @@ namespace FoundationaLLM.Gatekeeper.API
 
                     // Integrate xml comments
                     options.IncludeXmlComments(filePath);
+
+                    // Adds auth via X-API-KEY header
+                    options.AddAPIKeyAuth();
                 });
 
             var app = builder.Build();
