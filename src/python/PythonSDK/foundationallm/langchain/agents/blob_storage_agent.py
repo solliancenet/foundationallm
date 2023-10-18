@@ -107,6 +107,6 @@ class BlobStorageAgent(AgentBase):
                 )
         except Exception as e:
             return CompletionResponse(
-                    completion = f"A problem on my side prevented me from responding. {e}",
+                    completion = "A problem on my side prevented me from responding.",
                     user_prompt = prompt
                 )

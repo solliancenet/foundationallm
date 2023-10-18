@@ -8,8 +8,6 @@ using Microsoft.Identity.Web;
 
 namespace FoundationaLLM.Core.API.Controllers
 {
-    [Authorize]
-    [Authorize(Policy = "RequiredScope")]
     [ApiVersion(1.0)]
     [ApiController]
     [Route("[controller]")]

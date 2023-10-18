@@ -75,9 +75,6 @@ namespace FoundationaLLM.AgentFactory.API
 
             builder.Services.AddOptions<AgentFactorySettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:AgentFactory"));
-
-            builder.Services.AddOptions<KeyVaultConfigurationServiceSettings>()
-                .Bind(builder.Configuration.GetSection("FoundationaLLM:Configuration"));
             
             builder.Services.AddScoped<ILLMOrchestrationService, SemanticKernelService>();
             builder.Services.AddScoped<ILLMOrchestrationService, LangChainService>();

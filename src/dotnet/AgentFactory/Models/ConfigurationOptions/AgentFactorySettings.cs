@@ -8,6 +8,6 @@ namespace FoundationaLLM.AgentFactory.Core.Models.ConfigurationOptions
 {
     public record AgentFactorySettings
     {
-        public string DefaultOrchestrationService { init; get; }
+        // TODO: integrate the agent factory settings
     }
 }

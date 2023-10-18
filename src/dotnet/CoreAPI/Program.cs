@@ -62,8 +62,6 @@ namespace FoundationaLLM.Core.API
 
             builder.Services.AddOptions<CosmosDbSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:CosmosDB"));
-            builder.Services.AddOptions<KeyVaultConfigurationServiceSettings>()
-                .Bind(builder.Configuration.GetSection("FoundationaLLM:Configuration"));
             builder.Services.AddOptions<ClientBrandingConfiguration>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:Branding"));
 

@@ -44,8 +44,6 @@ namespace FoundationaLLM.SemanticKernel.API
             builder.Services.AddScoped<APIKeyAuthenticationFilter>();
             builder.Services.AddOptions<APIKeyValidationSettings>()
                 .Bind(builder.Configuration.GetSection("FoundationaLLM:APIs:SemanticKernelAPI"));
-            builder.Services.AddOptions<KeyVaultConfigurationServiceSettings>()
-                .Bind(builder.Configuration.GetSection("FoundationaLLM:Configuration"));
             builder.Services.AddTransient<IAPIKeyValidationService, APIKeyValidationService>();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
