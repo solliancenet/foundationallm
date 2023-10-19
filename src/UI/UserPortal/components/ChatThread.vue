@@ -1,7 +1,7 @@
 <template>
 	<div class="chat-thread">
 		<!-- Header -->
-		<div class="chat-thread__header">
+		<div class="chat-thread__header" v-if="sidebarClosed">
 			<template v-if="session">
 				<span>{{ session.name }}</span>
 			</template>
@@ -62,6 +62,11 @@ export default {
 			type: Object as PropType<Session>,
 			required: true,
 		},
+		sidebarClosed: {
+			type: Boolean,
+			required: false,
+			default: false,
+		},
 	},
 
 	emits: ['update-session'],
@@ -93,6 +98,20 @@ export default {
 		},
 
 		async handleSend(text: string) {
+			const tempUserMessage: Message = {
+				completionPromptId: null,
+				id: '',
+				rating: null,
+				sender: 'User',
+				sessionId: this.session.id,
+				text,
+				timeStamp: new Date().toISOString(),
+				tokens: 0,
+				type: 'Message',
+				vector: [],
+			};
+			this.messages.push(tempUserMessage);
+
 			await api.sendMessage(this.session.id, text);
 			await this.getMessages();
 
@@ -104,7 +123,7 @@ export default {
 				this.$emit('update-session', updatedSession);
 			}
 		},
-	},
+	}
 };
 </script>
 

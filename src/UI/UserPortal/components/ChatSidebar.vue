@@ -1,11 +1,5 @@
 <template>
 	<div class="chat-sidebar">
-		<!-- Sidebar header -->
-		<div class="chat-sidebar__header">
-			<img :src="logoURL" :alt="companyName" />
-			<span>{{ logoText }}</span>
-		</div>
-
 		<!-- Sidebar section header -->
 		<div class="chat-sidebar__section-header">
 			<span>Chats</span>

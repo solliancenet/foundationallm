@@ -1,7 +1,10 @@
 <template>
 	<div :style="style" class="chat-app">
-		<ChatSidebar ref="sidebar" :currentSession="currentSession" @change-session="handleChangeSession" />
-		<ChatThread :session="currentSession" @update-session="handleUpdateSession" />
+		<Navbar :currentSession="currentSession" @collapse-sidebar="collapseSidebar" />
+		<div class="chat-content">
+			<ChatSidebar ref="sidebar" :currentSession="currentSession" @change-session="handleChangeSession" v-show="!closeSidebar" />
+			<ChatThread :session="currentSession" :sidebar-closed="closeSidebar" @update-session="handleUpdateSession" />
+		</div>
 	</div>
 </template>
 
@@ -14,6 +17,7 @@ export default {
 	data() {
 		return {
 			currentSession: {} as Session,
+			closeSidebar: false,
 		};
 	},
 
@@ -39,6 +43,10 @@ export default {
 			this.currentSession = session;
 			this.$refs.sidebar.getSessions();
 		},
+
+		collapseSidebar(collapsed: boolean) {
+			this.closeSidebar = collapsed;
+		},
 	},
 };
 </script>
@@ -61,7 +69,14 @@ body,
 <style lang="scss" scoped>
 .chat-app {
 	display: flex;
+	flex-direction: column;
 	height: 100vh;
+	background-color: var(--primary-bg);
+}
+.chat-content {
+	display: flex;
+	flex-direction: row;
+	height: calc(100% - 70px);
 	background-color: var(--primary-bg);
 }
 </style>
