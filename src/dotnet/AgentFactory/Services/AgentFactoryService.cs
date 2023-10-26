@@ -94,6 +94,7 @@ public class AgentFactoryService : IAgentFactoryService
         {
             var agent = await AgentBuilder.Build(
                 completionRequest.UserPrompt,
+                completionRequest.MessageHistory,
                 _userIdentity.CurrentUserIdentity.UPN,
                 _agentHubAPIService,
                 _orchestrationServices,
@@ -125,6 +126,7 @@ public class AgentFactoryService : IAgentFactoryService
         {
             var agent = await AgentBuilder.Build(
                 summaryRequest.UserPrompt,
+                new List<Common.Models.Chat.MessageHistoryItem>(),
                 _userIdentity.CurrentUserIdentity.UPN,
                 _agentHubAPIService,
                 _orchestrationServices,

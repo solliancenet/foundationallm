@@ -1,6 +1,7 @@
 ﻿using FoundationaLLM.AgentFactory.Core.Interfaces;
 using FoundationaLLM.AgentFactory.Interfaces;
 using FoundationaLLM.AgentFactory.Models.Orchestration;
+using FoundationaLLM.Common.Models.Chat;
 
 namespace FoundationaLLM.AgentFactory.Core.Agents
 {
@@ -22,13 +23,14 @@ namespace FoundationaLLM.AgentFactory.Core.Agents
         /// <exception cref="ArgumentException"></exception>
         public static async Task<AgentBase> Build(
             string userPrompt,
-            string userContext,
+            List<MessageHistoryItem> messageHistory,
+            string userContext,            
             IAgentHubAPIService agentHubAPIService,
             IEnumerable<ILLMOrchestrationService> orchestrationServices,
             IPromptHubAPIService promptHubAPIService,
             IDataSourceHubAPIService dataSourceHubAPIService)
         {
-            var agentResponse = await agentHubAPIService.ResolveRequest(userPrompt, userContext);
+            var agentResponse = await agentHubAPIService.ResolveRequest(userPrompt, messageHistory, userContext);
             var agentInfo = agentResponse.Agent;
 
             // TODO: Extend the Agent Hub API service response to include the orchestrator

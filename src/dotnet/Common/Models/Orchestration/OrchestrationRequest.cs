@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using FoundationaLLM.Common.Models.Chat;
+using Newtonsoft.Json;
 
 namespace FoundationaLLM.Common.Models.Orchestration
 {
@@ -12,5 +13,6 @@ namespace FoundationaLLM.Common.Models.Orchestration
         /// </summary>
         [JsonProperty("user_prompt")]
         public string UserPrompt { get; set; }
+        
     }
 }

@@ -1,4 +1,5 @@
 ﻿using FoundationaLLM.AgentFactory.Core.Models.Messages;
+using FoundationaLLM.Common.Models.Chat;
 using FoundationaLLM.Common.Models.Orchestration;
 
 namespace FoundationaLLM.AgentFactory.Core.Interfaces;
@@ -20,5 +21,5 @@ public interface IAgentHubAPIService
     /// <param name="userPrompt"></param>
     /// <param name="userContext"></param>
     /// <returns></returns>
-    Task<AgentHubResponse> ResolveRequest(string userPrompt, string userContext);
+    Task<AgentHubResponse> ResolveRequest(string userPrompt, List<MessageHistoryItem> messageHistory, string userContext);
 }

@@ -15,6 +15,7 @@ using System.Runtime;
 using System.Text;
 using FoundationaLLM.Common.Interfaces;
 using FoundationaLLM.Common.Constants;
+using FoundationaLLM.Common.Models.Chat;
 
 namespace FoundationaLLM.AgentFactory.Core.Services;
 
@@ -76,14 +77,15 @@ public class AgentHubAPIService : IAgentHubAPIService
     /// <summary>
     /// Gets a set of agents from the Agent Hub based on the prompt and user context.
     /// </summary>
-    /// <param name="userPrompt"></param>
-    /// <param name="userContext"></param>
+    /// <param name="userPrompt">The prompt that needs to be responded to.</param>
+    /// <param name="messageHistory">The current chat history of the current conversation.</param>
+    /// <param name="userContext">The identity of the user engaging in the conversation.</param>
     /// <returns></returns>
-    public async Task<AgentHubResponse> ResolveRequest(string userPrompt, string userContext)
+    public async Task<AgentHubResponse> ResolveRequest(string userPrompt, List<MessageHistoryItem> messageHistory, string userContext)
     {
         try
         {
-            AgentHubRequest ahm = new AgentHubRequest { UserPrompt = userPrompt };
+            AgentHubRequest ahm = new AgentHubRequest { UserPrompt = userPrompt, MessageHistory = messageHistory };
 
             var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.AgentHubAPI);
                         

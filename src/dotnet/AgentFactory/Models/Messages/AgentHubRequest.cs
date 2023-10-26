@@ -1,4 +1,5 @@
-﻿using FoundationaLLM.Common.Models.Orchestration;
+﻿using FoundationaLLM.Common.Models.Chat;
+using FoundationaLLM.Common.Models.Orchestration;
 using Newtonsoft.Json;
 
 namespace FoundationaLLM.AgentFactory.Core.Models.Messages
@@ -8,5 +9,10 @@ namespace FoundationaLLM.AgentFactory.Core.Models.Messages
     /// </summary>
     public class AgentHubRequest : OrchestrationRequest
     {
+        /// <summary>
+        /// Conversation history of the current chat session.
+        /// </summary>
+        [JsonProperty("message_history")]
+        public List<MessageHistoryItem>? MessageHistory { get; set; }
     }
 }

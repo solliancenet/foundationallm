@@ -24,8 +24,10 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="langchain\agents\resolvers\agent_resolver\foundationallm_agent_resolver_agent_tests.py" />
     <Compile Include="langchain\message_history\message_history_tests.py" />
     <Compile Include="pytest.ini" />
+    <Compile Include="langchain\agents\resolvers\resolver_configuration_repository_tests.py" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\python\PythonSDK\PythonSDK.pyproj">
@@ -39,7 +41,10 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="langchain\" />
+    <Folder Include="langchain\agents\resolvers\" />
+    <Folder Include="langchain\agents\resolvers\agent_resolver\" />
     <Folder Include="langchain\message_history\" />
+    <Folder Include="langchain\agents\" />
   </ItemGroup>
   <ItemGroup>
     <Interpreter Include="env\">

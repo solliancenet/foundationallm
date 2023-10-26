@@ -71,12 +71,12 @@ class BlobStorageAgent(AgentBase):
         Parameters
         ----------
         prompt : str
-            The prompt for which a summary completion is begin generated.
+            The prompt to use to query the vector index
         
         Returns
         -------
         CompletionResponse
-            Returns a CompletionResponse with the generated summary, the user_prompt,
+            Returns a CompletionResponse with the completion text, the user_prompt,
             and token utilization and execution cost details.
         """
         try:
