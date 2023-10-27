@@ -24,6 +24,7 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="hubs\agent\agent_resolver_tests.py" />
     <Compile Include="langchain\agents\resolvers\agent_resolver\foundationallm_agent_resolver_agent_tests.py" />
     <Compile Include="langchain\message_history\message_history_tests.py" />
     <Compile Include="pytest.ini" />
@@ -40,11 +41,13 @@
     <Content Include="requirements.txt" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="hubs\agent\" />
     <Folder Include="langchain\" />
     <Folder Include="langchain\agents\resolvers\" />
     <Folder Include="langchain\agents\resolvers\agent_resolver\" />
     <Folder Include="langchain\message_history\" />
     <Folder Include="langchain\agents\" />
+    <Folder Include="hubs\" />
   </ItemGroup>
   <ItemGroup>
     <Interpreter Include="env\">

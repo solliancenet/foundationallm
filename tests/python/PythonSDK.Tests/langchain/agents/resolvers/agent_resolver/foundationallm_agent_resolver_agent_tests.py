@@ -1,8 +1,7 @@
 import pytest
-from foundationallm.hubs.agent import AgentHubRequest, AgentRepository, AgentMetadata
+from foundationallm.hubs.agent import AgentHubRequest, AgentRepository
 from foundationallm.config import Configuration
 from foundationallm.langchain.agents.resolvers.agent_resolver import FoundationaLLMAgentResolverAgent
-from foundationallm.models.orchestration import MessageHistoryItem
 
 @pytest.fixture
 def agent_request():
