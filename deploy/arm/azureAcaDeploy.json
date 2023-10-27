@@ -492,7 +492,7 @@
         },
         {
           "key": "FoundationaLLM:DurableSystemPrompt:BlobStorageContainer",
-          "value": "system-prompt",
+          "value": "prompts",
           "contentType": null
         },
         {
@@ -537,7 +537,7 @@
         },
         {
           "key": "FoundationaLLM:PromptHub:PromptMetadata:StorageContainer",
-          "value": "system-prompt",
+          "value": "prompts",
           "contentType": null
         },
         {
@@ -548,6 +548,26 @@
         {
           "key": "FoundationaLLM:Refinement",
           "value": "",
+          "contentType": null
+        },
+        {
+          "key": "FoundationaLLM:SemanticKernelAPI:CognitiveSearch:EndPoint",
+          "value": "[concat('https://', variables('cognitiveSearchSettings').name, '.search.windows.net')]",
+          "contentType": null
+        },
+        {
+          "key": "FoundationaLLM:SemanticKernelAPI:CognitiveSearch:IndexName",
+          "value": "vector-index",
+          "contentType": null
+        },
+        {
+          "key": "FoundationaLLM:SemanticKernelAPI:CognitiveSearch:Key",
+          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-cognitivesearch-key\"}')]",
+          "contentType": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
+        },
+        {
+          "key": "FoundationaLLM:SemanticKernelAPI:CognitiveSearch:MaxVectorSearchResults",
+          "value": "10",
           "contentType": null
         },
         {
@@ -851,7 +871,7 @@
       "dependsOn": [ "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultSettings').name)]" ],
       "properties": {
         "attributes": { "enabled": true },
-        "value": "[uniqueString(resourceGroup().id)]"
+        "value": "[uniqueString(resourceGroup().id, 'agent-factory')]"
       }
     },
     {
@@ -862,7 +882,7 @@
       "dependsOn": [ "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultSettings').name)]" ],
       "properties": {
         "attributes": { "enabled": true },
-        "value": "[uniqueString(resourceGroup().id)]"
+        "value": "[uniqueString(resourceGroup().id, 'agent-hub')]"
       }
     },
     {
@@ -873,7 +893,7 @@
       "dependsOn": [ "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultSettings').name)]" ],
       "properties": {
         "attributes": { "enabled": true },
-        "value": "[uniqueString(resourceGroup().id)]"
+        "value": "[uniqueString(resourceGroup().id, 'data-source-hub')]"
       }
     },
     {
@@ -884,7 +904,7 @@
       "dependsOn": [ "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultSettings').name)]" ],
       "properties": {
         "attributes": { "enabled": true },
-        "value": "[uniqueString(resourceGroup().id)]"
+        "value": "[uniqueString(resourceGroup().id, 'gatekeeper')]"
       }
     },
     {
@@ -895,7 +915,7 @@
       "dependsOn": [ "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultSettings').name)]" ],
       "properties": {
         "attributes": { "enabled": true },
-        "value": "[uniqueString(resourceGroup().id)]"
+        "value": "[uniqueString(resourceGroup().id, 'langchain')]"
       }
     },
     {
@@ -906,7 +926,7 @@
       "dependsOn": [ "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultSettings').name)]" ],
       "properties": {
         "attributes": { "enabled": true },
-        "value": "[uniqueString(resourceGroup().id)]"
+        "value": "[uniqueString(resourceGroup().id, 'prompt-hub')]"
       }
     },
     {
@@ -917,7 +937,7 @@
       "dependsOn": [ "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultSettings').name)]" ],
       "properties": {
         "attributes": { "enabled": true },
-        "value": "[uniqueString(resourceGroup().id)]"
+        "value": "[uniqueString(resourceGroup().id, 'semantic-kernel')]"
       }
     },
     {

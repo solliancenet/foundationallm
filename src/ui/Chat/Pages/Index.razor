@@ -44,15 +44,15 @@
             ChatPane.ChangeCurrentChatSession(session);
         }
 
-        // Inform blazor the UI needs updating
+        // Inform Blazor the UI needs updating.
         await InvokeAsync(StateHasChanged);
     }
 
     public async void ForceRefreshAsync()
     {
-        // Inform blazor the UI needs updating
+        // Inform Blazor the UI needs updating.
         await InvokeAsync(StateHasChanged);
 
-        NavMenu?.UpdateNavMenuDisplay("Rename by Open AI");
+        NavMenu?.UpdateNavMenuDisplay("Rename by orchestrator");
     }
 }

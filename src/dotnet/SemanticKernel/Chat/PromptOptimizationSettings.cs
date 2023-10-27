@@ -6,37 +6,37 @@
     public record PromptOptimizationSettings
     {
         /// <summary>
-        /// Minimum number of tokens for Completions
+        /// Minimum number of tokens for Completions.
         /// </summary>
         public required int CompletionsMinTokens { get; init; }
 
         /// <summary>
-        /// Maximum number of tokens for Completions
+        /// Maximum number of tokens for Completions.
         /// </summary>
         public required int CompletionsMaxTokens { get; init; }
 
         /// <summary>
-        /// Maximum number of tokens for System
+        /// Maximum number of tokens for System.
         /// </summary>
         public required int SystemMaxTokens { get; init; }
 
         /// <summary>
-        /// Minimum number of tokens for Memory
+        /// Minimum number of tokens for Memory.
         /// </summary>
         public required int MemoryMinTokens { get; init; }
 
         /// <summary>
-        /// Maximum number of tokens for Memory
+        /// Maximum number of tokens for Memory.
         /// </summary>
         public required int MemoryMaxTokens { get; init; }
 
         /// <summary>
-        /// Minimum number of tokens for Messages
+        /// Minimum number of tokens for Messages.
         /// </summary>
         public required int MessagesMinTokens { get; init; }
 
         /// <summary>
-        /// Maximum number of tokens for Messages
+        /// Maximum number of tokens for Messages.
         /// </summary>
         public required int MessagesMaxTokens { get; init; }
     }

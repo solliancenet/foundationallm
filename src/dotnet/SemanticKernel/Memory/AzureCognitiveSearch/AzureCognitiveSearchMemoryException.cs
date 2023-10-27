@@ -7,7 +7,7 @@ namespace FoundationaLLM.SemanticKernel.Memory.AzureCognitiveSearch;
 #pragma warning disable RCS1194 // Implement exception constructors
 
 /// <summary>
-/// Exception thrown by the Azure Cognitive Search connector
+/// Exception thrown by the Azure Cognitive Search connector.
 /// </summary>
 public class AzureCognitiveSearchMemoryException : Exception
 {

@@ -2,8 +2,8 @@
 	<div class="navbar" :class="{ 'navbar-collapsed': collapseSidebar }">
 		<!-- Sidebar header -->
 		<div class="navbar__header">
-			<img :src="logoURL" />
-			<!-- <span>{{ logoText }}</span> -->
+			<img :src="logoURL" v-if="logoURL !== ''"/>
+			<span v-else>{{ logoText }}</span>
 			<Button v-if="collapsedSidebar" icon="pi pi-arrow-right" size="small" severity="secondary" @click="collapseSidebar(false)" />
 			<Button v-else icon="pi pi-arrow-left" size="small" severity="secondary" @click="collapseSidebar(true)" />
 		</div>
@@ -48,8 +48,9 @@
 
 <script lang="ts">
 import type { PropType } from 'vue';
-import { type Session } from '@/js/types';
-import { msalInstance, loginRequest } from '@/js/auth'
+import type { Session } from '@/js/types';
+import { msalInstance, loginRequest } from '@/js/auth';
+import getAppConfigSetting from '@/js/config';
 
 export default {
 	name: 'NavBar',
@@ -65,8 +66,8 @@ export default {
 
 	data() {
 		return {
-			logoText: this.$config.public.LOGO_TEXT,
-			logoURL: this.$config.public.LOGO_URL,
+			logoText: '',
+			logoURL: '',
 			collapsedSidebar: false,
 			signedIn: false,
 			accountName: '',
@@ -84,6 +85,8 @@ export default {
 				this.userName = accounts[0].username;
 			}
 		}
+		this.logoText = await getAppConfigSetting("FoundationaLLM:Branding:LogoText");
+		this.logoURL = await getAppConfigSetting("FoundationaLLM:Branding:LogoUrl");
 	},
 
 	methods: {

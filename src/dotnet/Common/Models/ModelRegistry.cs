@@ -4,12 +4,12 @@ using Newtonsoft.Json.Linq;
 namespace FoundationaLLM.Common.Models
 {
     /// <summary>
-    /// The model registry object
+    /// The model registry object.
     /// </summary>
     public class ModelRegistry
     {
         /// <summary>
-        /// Dictionary of model names and their corresponding entries in the registry
+        /// Dictionary of model names and their corresponding entries in the registry.
         /// </summary>
         public static Dictionary<string, ModelRegistryEntry> Models = new Dictionary<string, ModelRegistryEntry>
             {
@@ -52,7 +52,7 @@ namespace FoundationaLLM.Common.Models
             };
 
         /// <summary>
-        /// Identifies the type of the object based on its properties
+        /// Identifies the type of the object based on its properties.
         /// </summary>
         public static ModelRegistryEntry? IdentifyType(JObject obj)
         {
@@ -67,20 +67,20 @@ namespace FoundationaLLM.Common.Models
         }
     }
     /// <summary>
-    /// The model registry entry object
+    /// The model registry entry object.
     /// </summary>
     public class ModelRegistryEntry
     {
         /// <summary>
-        /// The Type associated with the model registry entry
+        /// The Type associated with the model registry entry.
         /// </summary>
         public Type? Type { get; init; }
         /// <summary>
-        /// The list of type-matching properties associated with the model registry entry
+        /// The list of type-matching properties associated with the model registry entry.
         /// </summary>
         public List<string>? TypeMatchingProperties { get; init; }
         /// <summary>
-        /// The list of naming properties associated with the model registry entry
+        /// The list of naming properties associated with the model registry entry.
         /// </summary>
         public List<string>? NamingProperties { get; init; }
     }

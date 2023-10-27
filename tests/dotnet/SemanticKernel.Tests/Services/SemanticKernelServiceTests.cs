@@ -1,4 +1,5 @@
-﻿using FoundationaLLM.SemanticKernel.Core.Interfaces;
+﻿using FoundationaLLM.Common.Models.Chat;
+using FoundationaLLM.SemanticKernel.Core.Interfaces;
 using FoundationaLLM.SemanticKernel.Core.Models.ConfigurationOptions;
 using FoundationaLLM.SemanticKernel.Core.Services;
 using Microsoft.Extensions.Logging;
@@ -38,7 +39,7 @@ namespace FoundationaLLM.SemanticKernel.Tests.Services
             _systemPromptService.GetPrompt(promptName).Returns(expectedCompletion);
 
             // Act
-            var actualCompletion = await _testedService.GetCompletion(userPrompt, null);
+            var actualCompletion = await _testedService.GetCompletion(userPrompt, new List<MessageHistoryItem>());
 
             // Assert
             Assert.Equal(expectedCompletion, actualCompletion);

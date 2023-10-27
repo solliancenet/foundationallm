@@ -26,7 +26,7 @@ namespace FoundationaLLM.SemanticKernel.Tests.Services
             var promptName = "promptName";
 
             // Act
-            var actual = await _testedService.GetPrompt("promptName");
+            var actual = await _testedService.GetPrompt(promptName);
 
             // Assert
             Assert.Equivalent(expected, actual);

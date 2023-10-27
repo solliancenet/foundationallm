@@ -3,62 +3,62 @@ using Azure.Search.Documents.Indexes;
 namespace FoundationaLLM.Common.Models.Chat;
 
 /// <summary>
-/// The message object
+/// The message object.
 /// </summary>
 public record Message
 {
     /// <summary>
-    /// Unique identifier
+    /// The unique identifier.
     /// </summary>
     [SearchableField(IsKey = true, IsFilterable = true)]
     public string Id { get; set; }
     /// <summary>
-    /// The type of the message
+    /// The type of the message.
     /// </summary>
     [SimpleField]
     public string Type { get; set; }
     /// <summary>
-    /// Partition key
+    /// The Partition key.
     /// </summary>
     [SimpleField]
     public string SessionId { get; set; }
     /// <summary>
-    /// The timestamp when the message was created
+    /// The timestamp when the message was created.
     /// </summary>
     [SimpleField]
     public DateTime TimeStamp { get; set; }
     /// <summary>
-    /// The sender of the message
+    /// The sender of the message.
     /// </summary>
     [SimpleField]
     public string Sender { get; set; }
     /// <summary>
-    /// The number of tokens associated with the message, if any
+    /// The number of tokens associated with the message, if any.
     /// </summary>
     [SimpleField]
     public int? Tokens { get; set; }
     /// <summary>
-    /// The text content of the message
+    /// The text content of the message.
     /// </summary>
     [SimpleField]
     public string Text { get; set; }
     /// <summary>
-    /// The rating associated with the message, if any
+    /// The rating associated with the message, if any.
     /// </summary>
     [SimpleField]
     public bool? Rating { get; set; }
     /// <summary>
-    /// The vector associated with the message
+    /// The vector associated with the message.
     /// </summary>
     [FieldBuilderIgnore]
     public float[]? Vector { get; set; }
     /// <summary>
-    /// The identifier for the completion prompt associated with the message
+    /// The identifier for the completion prompt associated with the message.
     /// </summary>
     public string? CompletionPromptId { get; set; }
 
     /// <summary>
-    /// Constructor for Message
+    /// Constructor for Message.
     /// </summary>
     public Message(string sessionId, string sender, int? tokens, string text, float[]? vector, bool? rating)
     {

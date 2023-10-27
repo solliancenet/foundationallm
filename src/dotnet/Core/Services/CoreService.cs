@@ -131,10 +131,10 @@ public class CoreService : ICoreService
                 MessageHistory = messageHistoryList
             };
 
-            // Generate the completion to return to the user
+            // Generate the completion to return to the user.
             var result = await _gatekeeperAPIService.GetCompletion(completionRequest);
 
-            // Add to prompt and completion to cache, then persist in Cosmos as transaction 
+            // Add to prompt and completion to cache, then persist in Cosmos as transaction.
             var promptMessage = new Message(sessionId, nameof(Participants.User), result.PromptTokens, userPrompt, result.UserPromptEmbedding, null);
             var completionMessage = new Message(sessionId, nameof(Participants.Assistant), result.CompletionTokens, result.Completion, null, null);
             var completionPrompt = new CompletionPrompt(sessionId, completionMessage.Id, result.UserPrompt);
@@ -193,7 +193,7 @@ public class CoreService : ICoreService
     {
         var session = await _cosmosDbService.GetSessionAsync(sessionId);
 
-        // Update session cache with tokens used
+        // Update session cache with tokens used.
         session.TokensUsed += promptMessage.Tokens;
         session.TokensUsed += completionMessage.Tokens;
 

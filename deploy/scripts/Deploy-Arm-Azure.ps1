@@ -3,7 +3,7 @@
 Param(
     [parameter(Mandatory = $true)][string]$resourceGroup,
     [parameter(Mandatory = $true)][string]$location,
-    [parameter(Mandatory = $false)][string]$template = "azuredeploy.json",
+    [parameter(Mandatory = $false)][string]$template = "azureAksDeploy.json",
     [parameter(Mandatory = $false)][string]$resourcePrefix,
     [parameter(Mandatory = $false)][string]$cosmosDbAccountName, 
     [parameter(Mandatory = $false)][bool]$deployAks,

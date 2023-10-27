@@ -65,13 +65,13 @@
         }
         else if (CurrentSession.SessionId == Interface.EMPTY_SESSION)
         {
-            <div class="alert alert-warning">
+            <div class="alert alert-success">
                 <h4 class="alert-heading">
-                    <i class="bi bi-exclamation-triangle-fill me-1" aria-hidden="true"></i>
-                    No chat messages available
+                    <i class="bi bi-lightbulb-fill me-1" aria-hidden="true"></i>
+                    We're starting out with a clean slate
                 </h4>
                 <p class="text-nowrap mb-0 fst-italic">
-                    Use the New Chat option to talk to the agent.
+                    There are currently no existing chat sessions. To get started, select <strong>Create New Chat</strong> in the left-hand menu to start a conversation with the agent.
                 </p>
             </div>
         }
@@ -267,6 +267,7 @@
     {
         _completionPromptPopUpOpen = false;
         _completionPromptContent = string.Empty;
+        await Task.CompletedTask;
     }
 
     private async Task ToggleNavMenu()
@@ -304,9 +305,10 @@
             return;
         }
 
-        if (CurrentSession.SessionId != Interface.EMPTY_SESSION & CurrentSession.SessionId is not null & !_loadingCompletion)
+        if (CurrentSession != null && CurrentSession.SessionId != Interface.EMPTY_SESSION &&
+            CurrentSession.SessionId != null && !_loadingCompletion)
         {
-            _messagesInChat = await chatManager.GetChatSessionMessagesAsync(CurrentSession?.SessionId);
+            _messagesInChat = await chatManager.GetChatSessionMessagesAsync(CurrentSession.SessionId);
         }
 
         _loadingComplete = true;
@@ -337,7 +339,7 @@
         var message = _messagesInChat?.FirstOrDefault(m => m.Id == messageId);
         if (message != null)
         {
-            var completionPrompt = await chatManager.GetCompletionPrompt(message.SessionId, message.CompletionPromptId);
+            var completionPrompt = await chatManager.GetCompletionPrompt(message.SessionId, message.CompletionPromptId ?? "");
             _completionPromptContent = completionPrompt.Prompt;
             _completionPromptPopUpOpen = true;
         }
@@ -350,7 +352,7 @@
 
     public async Task Enter(KeyboardEventArgs e)
     {
-        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        if (e.Code is "Enter" or "NumpadEnter")
         {
             await SubmitPromptAsync();
         }
@@ -370,10 +372,10 @@
 
         await SimulatePrompts();
 
-        var response = await chatManager.GetChatCompletionAsync(CurrentSession?.SessionId, UserPrompt);
+        var response = await chatManager.GetChatCompletionAsync(CurrentSession?.SessionId ?? Interface.EMPTY_SESSION, UserPrompt);
         _loadingCompletion = false;
 
-        if(_messagesInChat.Count() > 0)
+        if(_messagesInChat?.Count() > 0)
         {
             _messagesInChat.Last().Text = response;
         }
@@ -382,8 +384,8 @@
 
         if (_messagesInChat?.Count == 2)
         {
-            string newSessionName;
-            newSessionName = await chatManager.SummarizeChatSessionNameAsync(CurrentSession?.SessionId, string.Join(Environment.NewLine, _messagesInChat.Select(m => m.Text)));
+            var newSessionName = await chatManager.SummarizeChatSessionNameAsync(CurrentSession?.SessionId ?? Interface.EMPTY_SESSION,
+                string.Join(Environment.NewLine, _messagesInChat.Select(m => m.Text)));
 
             if (CurrentSession is not null)
             {
@@ -403,8 +405,8 @@
     private async Task SimulatePrompts()
     {
         _loadingCompletion = true;
-        _messagesInChat.Add(new Message(CurrentSession?.SessionId, "User", 0, UserPrompt, null, null));
-        _messagesInChat.Add(new Message(CurrentSession?.SessionId, "Assistant", 0, "Loading", null, null));
+        _messagesInChat?.Add(new Message(CurrentSession?.SessionId ?? Interface.EMPTY_SESSION, "User", 0, UserPrompt ?? "", null, null));
+        _messagesInChat?.Add(new Message(CurrentSession?.SessionId ?? Interface.EMPTY_SESSION, "Assistant", 0, "Loading", null, null));
         await OnChatUpdated.InvokeAsync();
         await ScrollLastChatToView();
     }
@@ -412,7 +414,7 @@
     private string GetChatSessionName() => CurrentSession switch
     {
         null => string.Empty,
-        (Session s) when s.SessionId == Interface.EMPTY_SESSION => string.Empty,
+        ({ } s) when s.SessionId == Interface.EMPTY_SESSION => string.Empty,
         _ => CurrentSession.Name
     };
 
@@ -422,7 +424,7 @@
     }
 
     /// <remarks>
-    /// This is a hack to get the scroll to work.  Need to find a better way to do this.
+    /// This method enables the scroll method.
     /// </remarks>
     private async Task ScrollLastChatToView()
     {

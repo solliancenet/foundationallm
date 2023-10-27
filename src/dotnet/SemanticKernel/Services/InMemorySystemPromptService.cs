@@ -43,6 +43,6 @@ Summarize this prompt in one or two words to use as a label in a button on a web
         if (!_prompts.ContainsKey(promptName))
             throw new ArgumentException($"The prompt {promptName} is not supported.");
 
-        return _prompts[promptName];
+        return await Task.FromResult(_prompts[promptName]);
     }
 }

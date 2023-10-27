@@ -19,7 +19,7 @@ public class OpenAiService : IOpenAiService
 
     private readonly OpenAIClient? _client;
 
-    //System prompts to send with user prompts to instruct the model for chat session
+    // System prompts to send with user prompts to instruct the model for chat session.
     private readonly string _systemPrompt = @"
         You are an AI assistant that helps people find information.
         Provide concise answers that are polite and professional." + Environment.NewLine;
@@ -36,7 +36,7 @@ public class OpenAiService : IOpenAiService
 
         Text of relevant information:";
 
-    //System prompt to send with user prompts to instruct the model for summarization
+    // System prompt to send with user prompts to instruct the model for summarization.
     private readonly string _summarizePrompt = @"
         Summarize this prompt in one or two words to use as a label in a button on a web page. Output words only." + Environment.NewLine;
 
@@ -85,7 +85,7 @@ public class OpenAiService : IOpenAiService
 
         try
         {
-            //Use this as endpoint in configuration to use non-Azure Open AI endpoint and OpenAI model names
+            // Use this as endpoint in configuration to use non-Azure Open AI endpoint and OpenAI model names.
             if (endpoint.Contains("api.openai.com"))
                 _client = new OpenAIClient(key, options);
             else
@@ -238,7 +238,7 @@ public class OpenAiService : IOpenAiService
         var completions = completionsResponse.Value;
         var output = completions.Choices[0].Message.Content;
 
-        //Remove all non-alpha numeric characters (Turbo has a habit of putting things in quotes even when you tell it not to
+        // Remove all non-alpha numeric characters (Turbo has a habit of putting things in quotes even when you tell it not to).
         var summary = Regex.Replace(output, @"[^a-zA-Z0-9\s]", "");
 
         return summary;

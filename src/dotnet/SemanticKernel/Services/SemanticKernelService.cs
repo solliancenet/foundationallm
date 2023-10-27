@@ -66,7 +66,7 @@ public class SemanticKernelService : ISemanticKernelService
         _logger = logger;
         _logger.LogInformation("Initializing the Semantic Kernel orchestration service...");
 
-        _memoryTypes = ModelRegistry.Models.ToDictionary(m => m.Key, m => m.Value.Type);
+        _memoryTypes = ModelRegistry.Models.ToDictionary(m => m.Key, m => m.Value.Type!);
 
         var builder = new KernelBuilder();
 
@@ -186,7 +186,7 @@ public class SemanticKernelService : ISemanticKernelService
 
         // TODO: Add validation and perhaps fall back to a standard response if no completions are generated.
         var reply = await completionResults[0].GetChatMessageAsync();
-        var rawResult = (completionResults[0] as ITextResult).ModelResult.GetOpenAIChatResult();
+        var rawResult = (completionResults[0] as ITextResult)!.ModelResult.GetOpenAIChatResult();
 
         var completion = new CompletionResponse(reply.Content, chatHistory[0].Content, rawResult.Usage.PromptTokens,
             rawResult.Usage.CompletionTokens, userPromptEmbedding);

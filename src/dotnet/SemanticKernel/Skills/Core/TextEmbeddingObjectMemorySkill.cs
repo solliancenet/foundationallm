@@ -40,7 +40,7 @@ namespace FoundationaLLM.SemanticKernel.Skills.Core
         private readonly ILogger _logger;
 
         /// <summary>
-        /// Creates a new instance of the TextEmbeddingMemorySkill
+        /// Creates a new instance of TextEmbeddingMemorySkill.
         /// </summary>
         public TextEmbeddingObjectMemorySkill(
             ISemanticTextMemory longTermMemory,
@@ -90,7 +90,7 @@ namespace FoundationaLLM.SemanticKernel.Skills.Core
             if (_shortTermMemory != null)
             {
                 List<(MemoryRecord Record, double Relevance)> shortTermRecords = await _shortTermMemory
-                    .GetNearestMatchesAsync("short-term", memories.First().Embedding.Value, limit.Value, relevance.Value)
+                    .GetNearestMatchesAsync("short-term", memories.First().Embedding!.Value, limit.Value, relevance.Value)
                     .ToListAsync ()
                     .ConfigureAwait(false);
 

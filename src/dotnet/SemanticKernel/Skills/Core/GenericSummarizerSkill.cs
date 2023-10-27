@@ -11,7 +11,6 @@ namespace FoundationaLLM.SemanticKernel.Skills.Core
     public class GenericSummarizerSkill
     {
         private readonly ISKFunction _summarizeConversation;
-        private readonly int _maxTokens = 10;
 
         /// <summary>
         /// Constructor for the Generic Summarizer Skill.

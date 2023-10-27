@@ -42,7 +42,7 @@ if (builder.Environment.IsDevelopment())
 builder.Services.AddHttpClient(FoundationaLLM.Common.Constants.HttpClients.CoreAPI,
         httpClient =>
         {
-            httpClient.BaseAddress = new Uri(builder.Configuration["FoundationaLLM:APIs:CoreAPI:APIUrl"]);
+            httpClient.BaseAddress = new Uri(builder.Configuration["FoundationaLLM:APIs:CoreAPI:APIUrl"] ?? "");
         })
     .AddTransientHttpErrorPolicy(policyBuilder =>
         policyBuilder.WaitAndRetryAsync(
@@ -53,19 +53,19 @@ builder.Services.Configure<EntraSettings>(builder.Configuration.GetSection("Foun
 builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
     .AddMicrosoftIdentityWebApp(options =>
     {
-        options.ClientSecret = builder.Configuration["FoundationaLLM:Chat:Entra:ClientSecret"]; ;
-        options.Instance = builder.Configuration["FoundationaLLM:Chat:Entra:Instance"];
+        options.ClientSecret = builder.Configuration["FoundationaLLM:Chat:Entra:ClientSecret"];
+        options.Instance = builder.Configuration["FoundationaLLM:Chat:Entra:Instance"] ?? "";
         options.TenantId = builder.Configuration["FoundationaLLM:Chat:Entra:TenantId"];
         options.ClientId = builder.Configuration["FoundationaLLM:Chat:Entra:ClientId"];
         options.CallbackPath = builder.Configuration["FoundationaLLM:Chat:Entra:CallbackPath"];
     })
-    .EnableTokenAcquisitionToCallDownstreamApi(new string[] { builder.Configuration["FoundationaLLM:Chat:Entra:Scopes"] })
+    .EnableTokenAcquisitionToCallDownstreamApi(new string[] { builder.Configuration["FoundationaLLM:Chat:Entra:Scopes"] ?? "" })
     .AddInMemoryTokenCaches();
 builder.Services.AddControllersWithViews()
     .AddMicrosoftIdentityUI();
 builder.Services.AddAuthorization(options =>
 {
-    // By default, all incoming requests will be authorized according to the default policy
+    // By default, all incoming requests will be authorized according to the default policy.
     options.FallbackPolicy = options.DefaultPolicy;
 });
 
@@ -101,7 +101,7 @@ app.UseAuthorization();
 
 app.UseEndpoints(endpoints =>
 {
-    endpoints.MapRazorPages(); // If Razor pages
+    endpoints.MapRazorPages(); // If Razor pages.
     endpoints.MapControllers();
 });
 

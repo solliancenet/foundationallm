@@ -12,7 +12,7 @@ namespace FoundationaLLM.Common.Authentication
         private readonly IAPIKeyValidationService _apiKeyValidation;
 
         /// <summary>
-        /// Initializes a new instance of the APIKeyAuthenticationFilter class
+        /// Initializes a new instance of the APIKeyAuthenticationFilter class.
         /// </summary>
         public APIKeyAuthenticationFilter(IAPIKeyValidationService apiKeyValidation)
         {

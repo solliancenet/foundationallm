@@ -13,12 +13,21 @@ namespace FoundationaLLM.Chat.Helpers
         /// <summary>
         /// All data is cached in the _sessions List object.
         /// </summary>
-        private List<Session> _sessions { get; set; }
+        private List<Session> _sessions { get; set; } = null!;
 
         private readonly EntraSettings _entraSettings;
         private readonly IAuthenticatedHttpClientFactory _authenticatedHttpClientFactory;
         private readonly MicrosoftIdentityConsentAndConditionalAccessHandler _consentHandler;
 
+        /// <summary>
+        /// Creates an instance of the <see cref="ChatManager"/> with injected properties.
+        /// </summary>
+        /// <param name="entraSettings">Contains settings for authenticating with Microsoft Entra.</param>
+        /// <param name="authenticatedHttpClientFactory">An instance of the <see cref="IAuthenticatedHttpClientFactory"/> that
+        /// enables the ChatManager to use preconfigured <see cref="HttpClient"/> instances that contain
+        /// standard authentication headers.</param>
+        /// <param name="consentHandler">This handler enables the ChatManager to raise the Microsoft Identity
+        /// consent handler as needed for user token-related exceptions.</param>
         public ChatManager(
             IOptions<EntraSettings> entraSettings,
             IAuthenticatedHttpClientFactory authenticatedHttpClientFactory,
@@ -30,7 +39,7 @@ namespace FoundationaLLM.Chat.Helpers
         }
 
         /// <summary>
-        /// Returns list of chat session ids and names for left-hand nav to bind to (display Name and ChatSessionId as hidden)
+        /// Returns list of chat session ids and names for left-hand nav to bind to (display Name and ChatSessionId as hidden).
         /// </summary>
         public async Task<List<Session>> GetAllChatSessionsAsync()
         {
@@ -40,7 +49,7 @@ namespace FoundationaLLM.Chat.Helpers
         }
 
         /// <summary>
-        /// Returns the chat messages to display on the main web page when the user selects a chat from the left-hand nav
+        /// Returns the chat messages to display on the main web page when the user selects a chat from the left-hand nav.
         /// </summary>
         public async Task<List<Message>> GetChatSessionMessagesAsync(string sessionId)
         {
@@ -71,8 +80,11 @@ namespace FoundationaLLM.Chat.Helpers
         }
 
         /// <summary>
-        /// Rename the Chat Ssssion from "New Chat" to the summary provided by OpenAI
+        /// Rename the chat session.
         /// </summary>
+        /// <param name="sessionId">The id of the session to rename.</param>
+        /// <param name="newChatSessionName">The new name for the session.</param>
+        /// <param name="onlyUpdateLocalSessionsCollection">If true, only update the local sessions collection.</param>
         public async Task RenameChatSessionAsync(string sessionId, string newChatSessionName, bool onlyUpdateLocalSessionsCollection = false)
         {
             ArgumentNullException.ThrowIfNull(sessionId);
@@ -88,8 +100,9 @@ namespace FoundationaLLM.Chat.Helpers
         }
 
         /// <summary>
-        /// User deletes a chat session
+        /// User deletes a chat session and related messages.
         /// </summary>
+        /// <param name="sessionId">The id of the session to delete.</param>
         public async Task DeleteChatSessionAsync(string sessionId)
         {
             ArgumentNullException.ThrowIfNull(sessionId);
@@ -101,8 +114,10 @@ namespace FoundationaLLM.Chat.Helpers
         }
 
         /// <summary>
-        /// Receive a prompt from a user, Vectorize it from _openAIService Get a completion from _openAiService
+        /// Receive a prompt from a user, vectorize it, and get a completion from the orchestration service.
         /// </summary>
+        /// <param name="sessionId">The id of the session for which to get a completion.</param>
+        /// <param name="userPrompt">The prompt to send to the orchestration service.</param>
         public async Task<string> GetChatCompletionAsync(string sessionId, string userPrompt)
         {
             ArgumentNullException.ThrowIfNull(sessionId);
@@ -111,9 +126,15 @@ namespace FoundationaLLM.Chat.Helpers
                 $"sessions/{sessionId}/completion", userPrompt);
             // Refresh the local messages cache:
             await GetChatSessionMessagesAsync(sessionId);
-            return completion.Text;
+            return completion.Text ?? string.Empty;
         }
 
+        /// <summary>
+        /// Returns the completion prompt for a given session and completion prompt id.
+        /// </summary>
+        /// <param name="sessionId">The session id from which to retrieve the completion prompt.</param>
+        /// <param name="completionPromptId">The id of the completion prompt to retrieve.</param>
+        /// <returns></returns>
         public async Task<CompletionPrompt> GetCompletionPrompt(string sessionId, string completionPromptId)
         {
             ArgumentNullException.ThrowIfNullOrEmpty(sessionId);
@@ -124,6 +145,11 @@ namespace FoundationaLLM.Chat.Helpers
             return completionPrompt;
         }
 
+        /// <summary>
+        /// Generate a name for a chat message, based on the passed in prompt.
+        /// </summary>
+        /// <param name="sessionId">The id of the session for which to generate a name.</param>
+        /// <param name="prompt">The prompt to use to generate the name.</param>
         public async Task<string> SummarizeChatSessionNameAsync(string sessionId, string prompt)
         {
             ArgumentNullException.ThrowIfNull(sessionId);
@@ -131,14 +157,20 @@ namespace FoundationaLLM.Chat.Helpers
             var response = await SendRequest<Completion>(HttpMethod.Post,
                 $"sessions/{sessionId}/summarize-name", prompt);
 
+            if (response.Text == null) return prompt;
             await RenameChatSessionAsync(sessionId, response.Text, true);
 
             return response.Text;
+
         }
 
         /// <summary>
-        /// Rate an assistant message. This can be used to discover useful AI responses for training, discoverability, and other benefits down the road.
+        /// Rate an assistant message. This can be used to discover useful AI responses for training,
+        /// discoverability, and other benefits down the road.
         /// </summary>
+        /// <param name="id">The id of the message to rate.</param>
+        /// <param name="sessionId">The id of the session to which the message belongs.</param>
+        /// <param name="rating">The rating to assign to the message.</param>
         public async Task<Message> RateMessageAsync(string id, string sessionId, bool? rating)
         {
             ArgumentNullException.ThrowIfNull(id);
@@ -151,9 +183,9 @@ namespace FoundationaLLM.Chat.Helpers
             return await SendRequest<Message>(HttpMethod.Post, url);
         }
 
-        private async Task<T> SendRequest<T>(HttpMethod method, string requestUri, object payload = null)
+        private async Task<T> SendRequest<T>(HttpMethod method, string requestUri, object? payload = null)
         {
-            var client = await GetHttpClientAsync(Common.Constants.HttpClients.CoreAPI, _entraSettings.Scopes);
+            var client = await GetHttpClientAsync(Common.Constants.HttpClients.CoreAPI, _entraSettings.Scopes ?? string.Empty);
             HttpResponseMessage responseMessage;
             switch (method)
             {
@@ -169,12 +201,12 @@ namespace FoundationaLLM.Chat.Helpers
             }
 
             var content = await responseMessage.Content.ReadAsStringAsync();
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(content);
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(content) ?? throw new InvalidOperationException();
         }
 
         private async Task SendRequest(HttpMethod method, string requestUri)
         {
-            var client = await GetHttpClientAsync(Common.Constants.HttpClients.CoreAPI, _entraSettings.Scopes);
+            var client = await GetHttpClientAsync(Common.Constants.HttpClients.CoreAPI, _entraSettings.Scopes ?? string.Empty);
             switch (method)
             {
                 case HttpMethod m when m == HttpMethod.Delete:

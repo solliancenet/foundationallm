@@ -3,7 +3,7 @@
 namespace FoundationaLLM.Common.Models.Search
 {
     /// <summary>
-    /// The short term memory object
+    /// The short term memory object.
     /// </summary>
     public class ShortTermMemory : EmbeddedEntity
     {

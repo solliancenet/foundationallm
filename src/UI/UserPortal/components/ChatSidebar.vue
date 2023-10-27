@@ -112,9 +112,6 @@ export default {
 
 	data() {
 		return {
-			logoText: this.$config.public.LOGO_TEXT,
-			logoURL: this.$config.public.LOGO_URL,
-			companyName: this.$config.public.BRANDING_COMPANY_NAME,
 			sessions: [] as Array<Session>,
 			sessionToRename: null as Session | null,
 			newSessionName: '' as string,

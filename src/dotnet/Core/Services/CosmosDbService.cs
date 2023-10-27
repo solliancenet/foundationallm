@@ -88,7 +88,7 @@ namespace FoundationaLLM.Core.Services
                         throw new ArgumentException("Unable to connect to existing Azure Cosmos DB database.");
 
 
-            //Dictionary of container references for all containers listed in config
+            // Dictionary of container references for all containers listed in config.
             _containers = new Dictionary<string, Container>();
 
             var containers = _settings.Containers.Split(',').ToList();
@@ -153,7 +153,7 @@ namespace FoundationaLLM.Core.Services
             var batchRef = Guid.NewGuid().ToString();
             _logger.LogInformation($"Starting to generate embeddings for {changes.Count} entities (batch ref {batchRef}).");
 
-            // Using dynamic type as this container has two different entities
+            // Using dynamic type as this container has two different entities.
             foreach (var item in changes)
             {
                 try
@@ -430,7 +430,7 @@ namespace FoundationaLLM.Core.Services
                 {
                     batch.DeleteItem(item.id.ToString());
                     count++;
-                    if (count >= 100) // Execute the batch after adding 100 items (100 actions per batch execution is the limit)
+                    if (count >= 100) // Execute the batch after adding 100 items (100 actions per batch execution is the limit).
                     {
                         await ExecuteBatchAsync();
                     }
@@ -477,7 +477,7 @@ namespace FoundationaLLM.Core.Services
         {
             try
             {
-                // Delete from Cosmos product container
+                // Delete from Cosmos DB product container.
                 await _product.DeleteItemAsync<Product>(id: productId, partitionKey: new PartitionKey(categoryId));
             }
             catch (CosmosException ex)

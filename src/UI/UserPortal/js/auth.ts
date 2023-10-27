@@ -1,12 +1,13 @@
 import { LogLevel, PublicClientApplication } from '@azure/msal-browser';
-declare const AUTH_CLIENT_ID: string;
-declare const AUTH_INSTANCE: string;
-declare const AUTH_TENANT_ID: string;
-declare const AUTH_SCOPES: string;
-declare const AUTH_CLIENT_SECRET: string;
-declare const AUTH_CALLBACK_PATH: string;
+import getAppConfigSetting from './config';
 
-// Config object to be passed to Msal on creation
+const AUTH_CLIENT_ID = await getAppConfigSetting("FoundationaLLM:Chat:Entra:ClientId");
+const AUTH_INSTANCE = await getAppConfigSetting("FoundationaLLM:Chat:Entra:Instance");
+const AUTH_TENANT_ID = await getAppConfigSetting("FoundationaLLM:Chat:Entra:TenantId");
+const AUTH_SCOPES = await getAppConfigSetting("FoundationaLLM:Chat:Entra:Scopes");
+const AUTH_CLIENT_SECRET = await getAppConfigSetting("FoundationaLLM:Chat:Entra:ClientSecret");
+const AUTH_CALLBACK_PATH = await getAppConfigSetting("FoundationaLLM:Chat:Entra:CallbackPath");
+
 export const msalConfig = {
 	auth: {
 		clientId: `${AUTH_CLIENT_ID}`,

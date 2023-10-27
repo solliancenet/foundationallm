@@ -27,28 +27,7 @@ export default defineNuxtConfig({
 	},
 	vite: {
 		define: {
-			API_URL: JSON.stringify(process.env.API_URL),
-			AUTH_CLIENT_ID: JSON.stringify(process.env.AUTH_CLIENT_ID),
-			AUTH_INSTANCE: JSON.stringify(process.env.AUTH_INSTANCE),
-			AUTH_TENANT_ID: JSON.stringify(process.env.AUTH_TENANT_ID),
-			AUTH_SCOPES: JSON.stringify(process.env.AUTH_SCOPES),
-			AUTH_CLIENT_SECRET: JSON.stringify(process.env.AUTH_CLIENT_SECRET),
-			AUTH_CALLBACK_PATH: JSON.stringify(process.env.AUTH_CALLBACK_PATH),
-		},
-	},
-	runtimeConfig: {
-		public: {
-			LOGO_URL: process.env.BRANDING_LOGO_URL,
-			LOGO_TEXT: process.env.BRANDING_LOGO_TEXT,
-			BRANDING_PRIMARY_COLOR: process.env.BRANDING_PRIMARY_COLOR,
-			BRANDING_SECONDARY_COLOR: process.env.BRANDING_SECONDARY_COLOR,
-			BRANDING_ACCENT_COLOR: process.env.BRANDING_ACCENT_COLOR,
-			BRANDING_BACKGROUND_COLOR: process.env.BRANDING_BACKGROUND_COLOR,
-			BRANDING_PRIMARY_TEXT_COLOR: process.env.BRANDING_PRIMARY_TEXT_COLOR,
-			BRANDING_SECONDARY_TEXT_COLOR: process.env.BRANDING_SECONDARY_TEXT_COLOR,
-			BRANDING_COMPANY_NAME: process.env.BRANDING_COMPANY_NAME,
-			BRANDING_FAV_ICON_URL: process.env.BRANDING_FAV_ICON_URL,
-			BRANDING_PAGE_TITLE: process.env.BRANDING_PAGE_TITLE,
+			APP_CONFIG_ENDPOINT: JSON.stringify(process.env.APP_CONFIG_ENDPOINT),
 		},
 	},
 });

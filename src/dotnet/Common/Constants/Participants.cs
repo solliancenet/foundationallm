@@ -6,12 +6,12 @@ namespace FoundationaLLM.Common.Constants;
 public enum Participants
 {
     /// <summary>
-    /// Represents a user type
+    /// Represents a user type.
     /// </summary>
     User = 0,
 
     /// <summary>
-    /// Represents an assistant  type
+    /// Represents an assistant  type.
     /// </summary>
     Assistant
 }

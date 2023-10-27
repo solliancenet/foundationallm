@@ -29,7 +29,7 @@ namespace FoundationaLLM.SemanticKernel.API.Controllers
         }
 
         /// <summary>
-        /// Gets a completion from the Gatekeeper service.
+        /// Gets a completion from the Semantic Kernel service.
         /// </summary>
         /// <param name="request">The completion request containing the user prompt and message history.</param>
         /// <returns>The completion response.</returns>
@@ -42,7 +42,7 @@ namespace FoundationaLLM.SemanticKernel.API.Controllers
         }
 
         /// <summary>
-        /// Gets a summary from the Gatekeeper service.
+        /// Gets a summary from the Semantic Kernel service.
         /// </summary>
         /// <param name="request">The summarize request containing the user prompt.</param>
         /// <returns>The summary response.</returns>

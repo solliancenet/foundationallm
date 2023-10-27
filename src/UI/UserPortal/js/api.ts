@@ -1,7 +1,9 @@
 /* eslint-disable prettier/prettier */
 import { Message, Session, CompletionPrompt } from '@/js/types';
 import { msalInstance } from '@/js/auth';
-declare const API_URL: string;
+import getAppConfigSetting from './config';
+
+const API_URL = await getAppConfigSetting("FoundationaLLM:APIs:CoreAPI:APIUrl");
 
 export default {
 	bearerToken: null as string | null,

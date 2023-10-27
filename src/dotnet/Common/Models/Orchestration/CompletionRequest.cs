@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 namespace FoundationaLLM.Common.Models.Orchestration;
 
 /// <summary>
-/// The completion request object
+/// The completion request object.
 /// </summary>
 public class CompletionRequest : OrchestrationRequest
 {

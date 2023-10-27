@@ -175,15 +175,12 @@
 
     private async Task OnConfirmationClose(bool isOk)
     {
-        bool updateCurrentChat = false;
-
-        if (CurrentSession is not null & _sessionId == CurrentSession?.SessionId)
-            updateCurrentChat = true;
+        var updateCurrentChat = CurrentSession is not null & _sessionId == CurrentSession?.SessionId;
 
         if (isOk)
         {
             _deletePopUpOpen = false;
-            await chatManager.DeleteChatSessionAsync(_sessionId);
+            if (_sessionId != null) await chatManager.DeleteChatSessionAsync(_sessionId);
 
             _deletePopUpOpen = false;
 
@@ -192,13 +189,15 @@
             if (!updateCurrentChat)
                 return;
 
-            CurrentSession = new Session();
-            CurrentSession.SessionId = Interface.EMPTY_SESSION;
-            CurrentSession.Name = string.Empty;
-
-            if (ChatSessions is not null & ChatSessions?.Count > 0)
+            CurrentSession = new Session
             {
-                var match = ChatSessions?.FirstOrDefault();
+                SessionId = Interface.EMPTY_SESSION,
+                Name = string.Empty
+            };
+
+            if (ChatSessions.Count > 0)
+            {
+                var match = ChatSessions.FirstOrDefault();
                 if (match is not null)
                 {
                     CurrentSession.SessionId = match.SessionId;
@@ -222,16 +221,11 @@
 
     private async Task OnInputClose(string newName)
     {
-        if (!String.IsNullOrWhiteSpace(newName))
+        if (!string.IsNullOrWhiteSpace(newName))
         {
-            bool updateCurrentChat = false;
+            var updateCurrentChat = _sessionId == CurrentSession?.SessionId;
 
-            if (_sessionId == CurrentSession?.SessionId)
-            {
-                updateCurrentChat = true;
-            }
-
-            await chatManager.RenameChatSessionAsync(_sessionId, newName);
+            if (_sessionId != null) await chatManager.RenameChatSessionAsync(_sessionId, newName);
 
             _renamePopUpOpen = false;
 
@@ -309,20 +303,22 @@
 
     private async Task<int> LoadCurrentChatAsync()
     {
-        int index = 0;
-        if (CurrentSession is not null & ChatSessions is not null & ChatSessions?.Count > 0)
+        var index = 0;
+        if (CurrentSession is not null & ChatSessions?.Count > 0)
         {
             index = ChatSessions?.FindIndex(s => s.SessionId == CurrentSession?.SessionId) ?? 0;
         }
         if (CurrentSession is null || index < 0)
         {
-            CurrentSession = new Session();
-            CurrentSession.SessionId = Interface.EMPTY_SESSION;
-            CurrentSession.Name = string.Empty;
-
-            if (ChatSessions is not null & ChatSessions?.Count > 0)
+            CurrentSession = new Session
             {
-                var match = ChatSessions?.FirstOrDefault();
+                SessionId = Interface.EMPTY_SESSION,
+                Name = string.Empty
+            };
+
+            if (ChatSessions.Count > 0)
+            {
+                var match = ChatSessions.FirstOrDefault();
                 if (match is not null)
                 {
                     CurrentSession.SessionId = match.SessionId;
@@ -337,7 +333,7 @@
         return 0;
     }
 
-    async private Task<int> LoadChat(string _sessionId, string sessionName, int? tokensUsed)
+    private async Task<int> LoadChat(string _sessionId, string sessionName, int? tokensUsed)
     {
         if (ChatSessions is null) return 0;
 
@@ -356,13 +352,13 @@
     private bool IsActiveSession(string _sessionId) => CurrentSession switch
     {
         null => true,
-        (Session s) when s.SessionId == _sessionId => true,
+        ({ } s) when s.SessionId == _sessionId => true,
         _ => false
     };
 
     public string SafeSubstring(string text, int maxLength) => text switch
     {
         null => string.Empty,
-        _ => text.Length > maxLength ? text.Substring(0, maxLength) + "..." : text
+        _ => text.Length > maxLength ? text[..maxLength] + "..." : text
     };
 }

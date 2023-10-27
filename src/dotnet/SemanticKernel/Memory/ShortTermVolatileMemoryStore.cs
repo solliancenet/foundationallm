@@ -54,7 +54,7 @@ namespace FoundationaLLM.SemanticKernel.Memory
                 await UpsertAsync(
                     _collectionName,
                     new MemoryRecord(
-                        new MemoryRecordMetadata(false, GetHash(itemToEmbed.TextToEmbed), null, null, null, JsonConvert.SerializeObject(memory)),
+                        new MemoryRecordMetadata(false, GetHash(itemToEmbed.TextToEmbed), null!, null!, null!, JsonConvert.SerializeObject(memory)),
                         embbedding,
                         null)); ;
             }

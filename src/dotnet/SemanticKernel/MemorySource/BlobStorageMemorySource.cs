@@ -5,15 +5,13 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.SemanticKernel.Text;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UglyToad.PdfPig;
 
 namespace FoundationaLLM.SemanticKernel.MemorySource
 {
+    /// <summary>
+    /// Azure Blob Storage memory source implementing <see cref="IMemorySource"/>.
+    /// </summary>
     public class BlobStorageMemorySource : IMemorySource
     {
         private readonly BlobStorageMemorySourceSettings _settings;
@@ -24,6 +22,11 @@ namespace FoundationaLLM.SemanticKernel.MemorySource
         private readonly BlobServiceClient _blobServiceClient;
         private readonly Dictionary<string, BlobContainerClient> _containerClients;
 
+        /// <summary>
+        /// Constructor for the Azure Blob Storage memory source.
+        /// </summary>
+        /// <param name="settings">The configuration options for the Azure Blob Storage memory source.</param>
+        /// <param name="logger">The logger for the Azure Blob Storage memory source.</param>
         public BlobStorageMemorySource(
             IOptions<BlobStorageMemorySourceSettings> settings,
             ILogger<BlobStorageMemorySource> logger)
@@ -35,6 +38,10 @@ namespace FoundationaLLM.SemanticKernel.MemorySource
             _containerClients = new Dictionary<string, BlobContainerClient>();
         }
 
+        /// <summary>
+        /// Gets a list of memories from the configured memory source.
+        /// </summary>
+        /// <returns>A list of memories.</returns>
         public async Task<List<string>> GetMemories()
         {
             await EnsureConfig();

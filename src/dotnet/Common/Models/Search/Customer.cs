@@ -4,80 +4,80 @@ using FoundationaLLM.Common.Models.TextEmbedding;
 namespace FoundationaLLM.Common.Models.Search
 {
     /// <summary>
-    /// The customer object
+    /// The customer object.
     /// </summary>
     public class Customer : EmbeddedEntity
     {
         /// <summary>
-        /// Unique identifier
+        /// The unique identifier.
         /// </summary>
         [SearchableField(IsKey = true, IsFilterable = true)]
         public string id { get; set; }
         /// <summary>
-        /// The customer type
+        /// The customer type.
         /// </summary>
         [SimpleField]
         [EmbeddingField(Label = "Customer type")]
         public string type { get; set; }
         /// <summary>
-        /// The customer id
+        /// The customer id.
         /// </summary>
         [SimpleField]
         public string customerId { get; set; }
         /// <summary>
-        /// The customer title
+        /// The customer title.
         /// </summary>
         [SimpleField]
         [EmbeddingField(Label = "Customer title")]
         public string title { get; set; }
         /// <summary>
-        /// The customer first name
+        /// The customer first name.
         /// </summary>
         [SimpleField]
         [EmbeddingField(Label = "Customer first name")]
         public string firstName { get; set; }
         /// <summary>
-        /// The customer last name
+        /// The customer last name.
         /// </summary>
         [SimpleField]
         [EmbeddingField(Label = "Customer last name")]
         public string lastName { get; set; }
         /// <summary>
-        /// The email of the customer
+        /// The email of the customer.
         /// </summary>
         [SimpleField]
         [EmbeddingField(Label = "Customer email address")]
         public string emailAddress { get; set; }
         /// <summary>
-        /// The customer phone number
+        /// The customer phone number.
         /// </summary>
         [SimpleField]
         [EmbeddingField(Label = "Customer phone number")]
         public string phoneNumber { get; set; }
         /// <summary>
-        /// The creation of the customer
+        /// The creation of the customer.
         /// </summary>
         [SimpleField]
         public string creationDate { get; set; }
         /// <summary>
-        /// The customer address of the customer
+        /// The customer address of the customer.
         /// </summary>
         [SimpleField]
         [EmbeddingField(Label = "Customer addresses")]
         public List<CustomerAddress> addresses { get; set; }
         /// <summary>
-        /// The customer password in hash and salt
+        /// The customer password in hash and salt.
         /// </summary>
         [SimpleField(IsHidden = true)]
         public Password password { get; set; }
         /// <summary>
-        /// The count of the sales order
+        /// The count of the sales order.
         /// </summary>
         [SimpleField]
         public double salesOrderCount { get; set; }
 
         /// <summary>
-        /// Constructor for Customer
+        /// Constructor for Customer.
         /// </summary>
         public Customer(string id, string type, string customerId, string title,
             string firstName, string lastName, string emailAddress, string phoneNumber,
@@ -101,23 +101,23 @@ namespace FoundationaLLM.Common.Models.Search
     }
 
     /// <summary>
-    /// The password object
+    /// The password object.
     /// </summary>
     public class Password
     {
         /// <summary>
-        /// The hashed representation of the password
+        /// The hashed representation of the password.
         /// </summary>
         [SimpleField(IsHidden = true)]
         public string hash { get; set; }
         /// <summary>
-        /// The salt value used during password hashing
+        /// The salt value used during password hashing.
         /// </summary>
         [SimpleField(IsHidden = true)]
         public string salt { get; set; }
 
         /// <summary>
-        /// Constructor for Password
+        /// Constructor for Password.
         /// </summary>
         public Password(string hash, string salt)
         {
@@ -127,54 +127,54 @@ namespace FoundationaLLM.Common.Models.Search
     }
 
     /// <summary>
-    /// The customer address object
+    /// The customer address object.
     /// </summary>
     public class CustomerAddress
     {
         /// <summary>
-        /// First line from customer address
+        /// First line from customer address.
         /// </summary>
         [SimpleField]
         [EmbeddingField(Label = "Customer address line 1")]
         public string addressLine1 { get; set; }
         /// <summary>
-        /// Second line from customer address
+        /// Second line from customer address.
         /// </summary>
         [SimpleField]
         [EmbeddingField(Label = "Customer address line 2")]
         public string addressLine2 { get; set; }
         /// <summary>
-        /// The customer city
+        /// The customer city.
         /// </summary>
         [SimpleField]
         [EmbeddingField(Label = "Customer address city")]
         public string city { get; set; }
         /// <summary>
-        /// The customer state
+        /// The customer state.
         /// </summary>
         [SimpleField]
         [EmbeddingField(Label = "Customer address state")]
         public string state { get; set; }
         /// <summary>
-        /// The customer country
+        /// The customer country.
         /// </summary>
         [SimpleField]
         [EmbeddingField(Label = "Customer address country")]
         public string country { get; set; }
         /// <summary>
-        /// The customer zip code
+        /// The customer zip code.
         /// </summary>
         [SimpleField]
         [EmbeddingField(Label = "Customer address zip code")]
         public string zipCode { get; set; }
         /// <summary>
-        /// The location of the customer
+        /// The location of the customer.
         /// </summary>
         [SimpleField]
         public Location location { get; set; }
 
         /// <summary>
-        /// Constructor for Customer Address
+        /// Constructor for Customer Address.
         /// </summary>
         public CustomerAddress(string addressLine1, string addressLine2, string city, string state, string country, string zipCode, Location location)
         {
@@ -189,23 +189,23 @@ namespace FoundationaLLM.Common.Models.Search
     }
 
     /// <summary>
-    /// The location object
+    /// The location object.
     /// </summary>
     public class Location
     {
         /// <summary>
-        /// The type of the location
+        /// The type of the location.
         /// </summary>
         [SimpleField]
         public string type { get; set; }
         /// <summary>
-        /// The coordinates of the location
+        /// The coordinates of the location.
         /// </summary>
         [FieldBuilderIgnore]
         public List<float> coordinates { get; set; }
 
         /// <summary>
-        /// Constructor for Location
+        /// Constructor for Location.
         /// </summary>
         public Location(string type, List<float> coordinates)
         {

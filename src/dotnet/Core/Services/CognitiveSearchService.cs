@@ -93,7 +93,6 @@ namespace FoundationaLLM.Core.Services
             }
             catch (Exception ex)
             {
-                //TODO: fix the logger. Output does not show up anywhere
                 _logger.LogError($"Exception: InsertVectors(): {ex.Message}");
                 throw;
             }
@@ -129,7 +128,6 @@ namespace FoundationaLLM.Core.Services
             }
             catch (Exception ex)
             {
-                //TODO: fix the logger. Output does not show up anywhere
                 _logger.LogError($"Exception: DeleteVector(): {ex.Message}");
                 throw;
             }
@@ -144,11 +142,11 @@ namespace FoundationaLLM.Core.Services
         {
             var retDocs = new List<string>();
 
-            string resultDocuments = string.Empty;
+            var resultDocuments = string.Empty;
 
             try
             {
-                // Perform the vector similarity search  
+                // Perform the vector similarity search.
                 var vector = new SearchQueryVector { K = _maxVectorSearchResults, Fields = VectorFieldName, Value = embeddings };
                 var searchOptions = new SearchOptions
                 {
@@ -177,8 +175,6 @@ namespace FoundationaLLM.Core.Services
                             filteredDocument[property.Key] = property.Value;
                         }
                     }
-                    //logger.LogInformation(filteredDocument);
-                    //logger.LogInformation($"Score: {result.Score}\n");
 
                     retDocs.Add(JsonSerializer.Serialize(filteredDocument, serializerOptions));
                 }
@@ -195,7 +191,6 @@ namespace FoundationaLLM.Core.Services
         }
 
         // Helper method to check if a value is an empty array or list.
-        // TODO: Move this to a helper utility within a shared library.
         private bool IsEmptyArrayOrList(object value)
         {
             if (value is Array array)

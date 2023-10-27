@@ -4,7 +4,7 @@ using FoundationaLLM.Common.Models.TextEmbedding;
 namespace FoundationaLLM.Common.Models.Search
 {
     /// <summary>
-    /// The embedded entity object
+    /// The embedded entity object.
     /// </summary>
     public class EmbeddedEntity
     {

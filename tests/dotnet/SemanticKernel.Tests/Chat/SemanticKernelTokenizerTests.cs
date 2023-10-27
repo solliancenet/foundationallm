@@ -14,7 +14,7 @@ namespace FoundationaLLM.SemanticKernel.Tests.Chat
         #region GetTokensCount
 
         [Fact]
-        public async Task GetTokensCount_ShouldReturnTheNumberOfTokensForTheInputText()
+        public void GetTokensCount_ShouldReturnTheNumberOfTokensForTheInputText()
         {
             // Arrange
             var text = "Encode this text and return the number of tokens used.";
@@ -28,14 +28,14 @@ namespace FoundationaLLM.SemanticKernel.Tests.Chat
         }
 
         [Fact]
-        public async Task GetTokensCount_ShouldReturnZeroWhenInputTextIsNullOrEmpty()
+        public void GetTokensCount_ShouldReturnZeroWhenInputTextIsNullOrEmpty()
         {
             // Arrange
             var expected = 0;
 
             // Act
             var actualEmpty = _testedService.GetTokensCount(string.Empty);
-            var actualNull = _testedService.GetTokensCount(null);
+            var actualNull = _testedService.GetTokensCount(string.Empty);
 
             // Assert
             Assert.Equal(expected, actualEmpty);

@@ -143,6 +143,7 @@ namespace FoundationaLLM.SemanticKernel.Chat
         {
             return; 
 
+            /*
             var systemPromptTokens = _tokenizer.GetTokensCount(_systemPrompt);
 
             var memories = _memories.Select(m => new
@@ -285,6 +286,7 @@ namespace FoundationaLLM.SemanticKernel.Chat
 
             // Error! Most likely, the prompt optimization settings are inconsistent
             throw new Exception("Cannot produce a prompt using the current prompt optimization settings.");
+            */
         }
     }
 }

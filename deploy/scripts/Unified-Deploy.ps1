@@ -99,7 +99,7 @@ if ($stepDeployArm) {
 
     if ([string]::IsNullOrEmpty($armTemplate)) {
         if ($deployAks) {
-            $armTemplate = "azuredeploy.json"
+            $armTemplate = "azureAksDeploy.json"
         }
         else {
             $armTemplate = "azureAcaDeploy.json"

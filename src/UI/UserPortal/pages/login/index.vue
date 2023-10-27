@@ -7,14 +7,19 @@
 
 <script lang="ts">
 import { msalInstance, loginRequest } from '@/js/auth';
+import getAppConfigSetting from '@/js/config';
 
 export default {
 	name: 'Login',
 
-	computed: {
-		logoURL() {
-			return this.$config.public.LOGO_URL;
-		},
+	data() {
+		return {
+			logoURL: '',
+		};
+	},
+
+	async created() {
+		this.logoURL = await getAppConfigSetting('FoundationaLLM:Branding:LogoUrl');
 	},
 
 	methods: {

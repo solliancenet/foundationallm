@@ -13,6 +13,9 @@ using System.Text.Json;
 
 namespace FoundationaLLM.SemanticKernel.MemorySource
 {
+    /// <summary>
+    /// Azure Cognitive Search memory source implementing <see cref="IMemorySource"/>.
+    /// </summary>
     public class AzureCognitiveSearchMemorySource : IMemorySource
     {
         private readonly SearchIndexClient _adminClient;
@@ -22,6 +25,11 @@ namespace FoundationaLLM.SemanticKernel.MemorySource
 
         private AzureCognitiveSearchMemorySourceConfig _config;
 
+        /// <summary>
+        /// Constructor for the Azure Cognitive Search memory source.
+        /// </summary>
+        /// <param name="settings">The configuration options for the Azure Cognitive Search memory source.</param>
+        /// <param name="logger">The logger for the Azure Cognitive Search memory source.</param>
         public AzureCognitiveSearchMemorySource(
             IOptions<AzureCognitiveSearchMemorySourceSettings> settings,
             ILogger<AzureCognitiveSearchMemorySource> logger)
@@ -43,6 +51,10 @@ namespace FoundationaLLM.SemanticKernel.MemorySource
             // Deferring the initialization to the GetMemories call (by that time, the index should be guranteed to exist).
         }
 
+        /// <summary>
+        /// Gets a list of memories from the configured memory source.
+        /// </summary>
+        /// <returns>A list of memories.</returns>
         public async Task<List<string>> GetMemories()
         {
             EnsureSearchClient();

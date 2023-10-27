@@ -24,7 +24,7 @@ namespace FoundationaLLM.SemanticKernel.Tests.Chat
         #region Build
 
         [Fact]
-        public async Task Build_ShouldReturnTheChatHistory()
+        public void Build_ShouldReturnTheChatHistory()
         {
             // Arrange
             var expected = new ChatHistory();

@@ -17,8 +17,8 @@ namespace FoundationaLLM.Core.Utils
         {
             var type = obj.GetType();
 
-            // Only string properties are considered
-            // Only properties with public getters are considered
+            // Only string properties are considered.
+            // Only properties with public getters are considered.
             return type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
                 .Where(p => p.PropertyType == typeof(string) && p.CanRead && propertyNames.Contains(p.Name))
                 .Select(p => p.GetGetMethod(false))

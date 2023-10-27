@@ -4,45 +4,45 @@ using FoundationaLLM.Common.Models.TextEmbedding;
 namespace FoundationaLLM.Common.Models.Search
 {
     /// <summary>
-    /// The sales order object
+    /// The sales order object.
     /// </summary>
     public class SalesOrder : EmbeddedEntity
     {
         /// <summary>
-        /// Unique identifier
+        /// The unique identifier.
         /// </summary>
         [SearchableField(IsKey = true, IsFilterable = true)]
         public string id { get; set; }
         /// <summary>
-        /// The type of the customer sales order
+        /// The type of the customer sales order.
         /// </summary>
         [SimpleField]
         [EmbeddingField(Label = "Customer sales order type")]
         public string type { get; set; }
         /// <summary>
-        /// The customer identifier associated with the sales order
+        /// The customer identifier associated with the sales order.
         /// </summary>
         [SimpleField]
         public string customerId { get; set; }
         /// <summary>
-        /// The date of the sales order
+        /// The date of the sales order.
         /// </summary>
         [SimpleField]
         public string orderDate { get; set; }
         /// <summary>
-        /// The date of the shipment associated with the sales order
+        /// The date of the shipment associated with the sales order.
         /// </summary>
         [SimpleField]
         public string shipDate { get; set; }
         /// <summary>
-        /// The details associated with the customer sales order
+        /// The details associated with the customer sales order.
         /// </summary>
         [SimpleField]
         [EmbeddingField(Label = "Customer sales order details")]
         public List<SalesOrderDetails> details { get; set; }
 
         /// <summary>
-        /// Constructor for Sales Order
+        /// Constructor for Sales Order.
         /// </summary>
         public SalesOrder(string id, string type, string customerId, string orderDate, string shipDate, List<SalesOrderDetails> details, float[]? vector = null)
         {

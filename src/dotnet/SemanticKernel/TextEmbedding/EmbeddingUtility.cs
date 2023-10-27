@@ -51,11 +51,11 @@ namespace FoundationaLLM.SemanticKernel.TextEmbedding
             var jObj = JObject.Parse(item);
 
             // If the object's type given by entityType__ is not available, leave the object unchanged
-            if (!types.ContainsKey((jObj["entityType__"] as JValue).Value.ToString()))
+            if (!types.ContainsKey((jObj["entityType__"] as JValue)!.Value!.ToString()!))
                 return (jObj, jObj.ToString());
 
             var embeddingFields = new Dictionary<string, string>();
-            FindEmbeddingFieldAttributes(types[(jObj["entityType__"] as JValue).Value.ToString()], embeddingFields, string.Empty, maxRecursionLevels);
+            FindEmbeddingFieldAttributes(types[(jObj["entityType__"] as JValue)!.Value!.ToString()!], embeddingFields, string.Empty, maxRecursionLevels);
 
             var embeddingTextBuilder = new StringBuilder();
             PrepareOject(jObj, embeddingFields, string.Empty, maxRecursionLevels, embeddingTextBuilder);
@@ -119,7 +119,7 @@ namespace FoundationaLLM.SemanticKernel.TextEmbedding
                     {
                         embeddingTextBuilder.AppendLine($"{embeddingFields[newCurrentPath]}:");
                         foreach (var value in array)
-                            PrepareOject(value as JObject, embeddingFields, newCurrentPath, remainingRecursionLevels - 1, embeddingTextBuilder);
+                            PrepareOject((value as JObject)!, embeddingFields, newCurrentPath, remainingRecursionLevels - 1, embeddingTextBuilder);
                     }
                     else
                         embeddingTextBuilder.AppendLine(embeddingFields[newCurrentPath] == null

@@ -132,7 +132,7 @@ namespace FoundationaLLM.Core.Tests.Services
             var vectorizer = new Action<object, float[]>((obj, flt) => { });
 
             //Act
-            var exception = Record.ExceptionAsync(async () => await _testedService.AddMemory(item, itemName, vectorizer));
+            var exception = await Record.ExceptionAsync(async () => await _testedService.AddMemory(item, itemName, vectorizer));
 
             //Assert
             Assert.Null(exception);
@@ -149,7 +149,7 @@ namespace FoundationaLLM.Core.Tests.Services
             var item = new { Prompt = "Test Prompt" };
 
             //Act
-            var exception = Record.ExceptionAsync(async () => await _testedService.RemoveMemory(item));
+            var exception = await Record.ExceptionAsync(async () => await _testedService.RemoveMemory(item));
 
             //Assert
             Assert.Null(exception);
