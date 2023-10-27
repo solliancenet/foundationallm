@@ -10,9 +10,7 @@ class FoundationaLLMAgentResolverAgentOutputParser(AgentOutputParser):
     def parse(self, text: str) -> str:
         """
         The first line of the response is the agent name. The prompt already
-            includes the Final Answer:label.
-        If not found, return the default value.
-        otherwise, return the parsed final answer from the completion.
+            includes the Final Answer:label.       
         """        
         final_answer = text.split("\n")[0].strip()       
         return final_answer
