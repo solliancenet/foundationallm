@@ -7,5 +7,5 @@ class AgentHub(HubBase):
     def __init__(self):        
         # initialize config       
         self.config = Configuration()
-        super().__init__(resolver=AgentResolver(AgentRepository(self.config)))
+        super().__init__(resolver=AgentResolver(repository=AgentRepository(config=self.config), config=self.config))
      

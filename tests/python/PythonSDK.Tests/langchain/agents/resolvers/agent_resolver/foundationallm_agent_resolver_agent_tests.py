@@ -50,3 +50,13 @@ class FoundationaLLMAgentResolverAgentTests:
         agent_resolver_agent = FoundationaLLMAgentResolverAgent(agent_request, agent_metadata_list, test_config)
         completion = agent_resolver_agent.run(agent_request.user_prompt)
         assert completion.completion == "default"
+        
+    
+    def test_run_should_resolve_about_solliance(self, agent_metadata_list, test_config):
+        agent_request = AgentHubRequest(
+            user_prompt="Tell me about Solliance in 10 words or less",
+            message_history=None
+        )
+        agent_resolver_agent = FoundationaLLMAgentResolverAgent(agent_request, agent_metadata_list, test_config)
+        completion = agent_resolver_agent.run(agent_request.user_prompt)
+        assert completion.completion == "zzzabout-solliance"
