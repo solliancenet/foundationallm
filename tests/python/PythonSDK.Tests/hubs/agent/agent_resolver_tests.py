@@ -1,4 +1,3 @@
-from cgi import test
 import pytest
 from foundationallm.config import Configuration
 from foundationallm.hubs.agent import AgentRepository, AgentResolver, AgentHubRequest
