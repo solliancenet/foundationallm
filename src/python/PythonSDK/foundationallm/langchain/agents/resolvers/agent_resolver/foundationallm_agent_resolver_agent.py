@@ -7,6 +7,7 @@ from foundationallm.langchain.agents.resolvers import ResolverConfigurationRepos
 from foundationallm.langchain.message_history import build_message_history
 from langchain.callbacks import get_openai_callback
 from foundationallm.models.orchestration import CompletionResponse
+from .foundationallm_agent_resolver_agent_output_parser import FoundationaLLMAgentResolverAgentOutputParser
 
 class FoundationaLLMAgentResolverAgent(AgentBase):
     """
@@ -23,10 +24,10 @@ class FoundationaLLMAgentResolverAgent(AgentBase):
         prompt_template = resolver_repo.get_agent_resolver_prompt()
         agents = self.build_agent_choices_list()
         message_history = build_message_history(agent_request.message_history)
+        if len(message_history) == 0:
+            message_history = "Message History:\n\nNo message history available."
         self.formatted_prompt = prompt_template.format(agents=agents, history=message_history, user_prompt=agent_request.user_prompt)
-    
-    
-
+       
     def build_agent_choices_list(self) -> str:
         """
         Builds a list of agent names and their descriptions for the resolver prompt.
@@ -55,8 +56,10 @@ class FoundationaLLMAgentResolverAgent(AgentBase):
             and token utilization and execution cost details.
         """
         try:           
-            with get_openai_callback() as cb:
-                completion = self.llm(prompt=self.formatted_prompt, callback=cb)                
+            with get_openai_callback() as cb:                
+                full_completion = self.llm(prompt=self.formatted_prompt)                
+                parser = FoundationaLLMAgentResolverAgentOutputParser()
+                completion = parser.parse(full_completion)               
                 return CompletionResponse(
                     completion = completion,
                     user_prompt = prompt,

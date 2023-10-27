@@ -41,4 +41,13 @@ class FoundationaLLMAgentResolverAgentTests:
        
     def test_run_should_resolve_weather(self, agent_request, agent_resolver_agent):
         completion = agent_resolver_agent.run(agent_request.user_prompt)
-        assert completion == "weather"
+        assert completion.completion == "weather"
+        
+    def test_run_should_resolve_default(self, agent_metadata_list, test_config):
+        agent_request = AgentHubRequest(
+            user_prompt="What is FoundationaLLM?",
+            message_history=None
+        )
+        agent_resolver_agent = FoundationaLLMAgentResolverAgent(agent_request, agent_metadata_list, test_config)
+        completion = agent_resolver_agent.run(agent_request.user_prompt)
+        assert completion.completion == "default"

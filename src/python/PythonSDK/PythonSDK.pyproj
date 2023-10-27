@@ -77,6 +77,7 @@
     <Compile Include="foundationallm\langchain\agents\agent_base.py" />
     <Compile Include="foundationallm\langchain\agents\blob_storage_agent.py" />
     <Compile Include="foundationallm\langchain\agents\resolvers\agent_resolver\foundationallm_agent_resolver_agent.py" />
+    <Compile Include="foundationallm\langchain\agents\resolvers\agent_resolver\foundationallm_agent_resolver_agent_output_parser.py" />
     <Compile Include="foundationallm\langchain\agents\resolvers\agent_resolver\__init__.py" />
     <Compile Include="foundationallm\langchain\agents\resolvers\__init__.py" />
     <Compile Include="foundationallm\langchain\data_sources\blob\blob_storage_configuration.py" />
