@@ -44,7 +44,10 @@ FoundationalLLM provides a simple command line driven approach to getting your f
 
 Follow the [Standard Deployment instructions](./docs/deployment/deployment-starter.md) to get Foundationa**LLM** deployed in your Azure subscription.
 
-
 ## Contributing to FoundationaLLM
 
 We are happy to accept contributions to the FoundationaLLM project in the form of feedback, bug reports, and pull requests. Please see [Contributing to FoundationaLLM](./CONTRIBUTING.md) for instructions.
+
+## Roadmap
+
+The FoundationaLLM roadmap is available [here](./docs/roadmap.md).
