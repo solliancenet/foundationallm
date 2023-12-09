@@ -731,8 +731,10 @@
     },
     "acrSettings": {
       "name": "[format('{0}cr', parameters('name'))]",
-      "sku": "Basic",
-      "tier": "Basic"
+      "sku": "Premium",
+      "tier": "Premium",
+      "keyName": "foundationallm-acr-key",
+      "miName": "[format('{0}-acr-mi', parameters('name'))]"
     },
     "aksSettings": {
       "name": "[format('{0}-aks', parameters('name'))]",
@@ -881,6 +883,7 @@
       "properties": {
         "createMode": "default",
         "enabledForDeployment": true,
+        "enablePurgeProtection" : true,
         "enableRbacAuthorization": true,
         "enableSoftDelete": true,
         "sku": {
@@ -922,6 +925,28 @@
       "dependsOn": [
         "[resourceId('Microsoft.DocumentDB/databaseAccounts', variables('cosmosDbSettings').name)]"
       ]
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults/keys",
+      "apiVersion": "2023-02-01",
+      "name": "[concat(variables('keyVaultSettings').name, '/foundationallm-acr-key')]",
+      "location": "[parameters('location')]",
+      "dependsOn": [ "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultSettings').name)]" ],
+      "properties": {
+        "attributes": {
+          "enabled": true
+        },
+        "kty": "RSA",
+        "keySize": 2048,
+        "keyOps": [
+          "encrypt",
+          "decrypt",
+          "sign",
+          "verify",
+          "wrapKey",
+          "unwrapKey"
+        ]
+      }
     },
     {
       "type": "Microsoft.KeyVault/vaults/secrets",
@@ -1311,8 +1336,15 @@
         "name": "[variables('acrSettings').sku]",
         "tier": "[variables('acrSettings').tier]"
       },
+      "dependsOn": [ "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultSettings').name)]" ],
+      "identity": {
+        "type": "UserAssigned",
+        "userAssignedIdentities": {
+          "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('acrSettings').miName)]": {}
+        }
+      },
       "properties": {
-        "adminUserEnabled": true,
+        "adminUserEnabled": false,
         "policies": {
           "quarantinePolicy": {
             "status": "disabled"
@@ -1333,11 +1365,15 @@
           },
           "softDeletePolicy": {
             "retentionDays": 7,
-            "status": "disabled"
+            "status": "enabled"
           }
         },
         "encryption": {
-          "status": "disabled"
+          "status": "enabled",
+          "keyVaultProperties": {
+            "identity": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('acrSettings').miName)).clientId]",
+            "keyIdentifier": "[reference(resourceId('Microsoft.KeyVault/vaults/keys', variables('keyVaultSettings').name, variables('acrSettings').keyName)).keyUri]"
+          }
         },
         "dataEndpointEnabled": false,
         "publicNetworkAccess": "Enabled",
@@ -1751,6 +1787,12 @@
       "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
       "apiVersion": "2023-01-31",
       "name": "[variables('agentHubSettings').miName]",
+      "location": "[parameters('location')]"
+    },
+        {
+      "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+      "apiVersion": "2023-01-31",
+      "name": "[variables('acrSettings').miName]",
       "location": "[parameters('location')]"
     },
     {
@@ -2223,6 +2265,20 @@
       },
       "dependsOn": [
         "[resourceId('Microsoft.AppConfiguration/configurationStores', variables('appConfigSettings').name)]"
+      ]
+    },
+        {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "scope": "[format('Microsoft.KeyVault/vaults/{0}', variables('keyVaultSettings').name)]",
+      "name": "[guid(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}acrmi', parameters('name'))), variables('keyVaultSettings').name)]",
+      "properties": {
+        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('roleIdMapping')['Key Vault Crypto User'])]",
+        "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('acrSettings').miName), providers('Microsoft.ManagedIdentity', 'userAssignedIdentities').apiVersions[0]).principalId]",
+        "principalType": "ServicePrincipal"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultSettings').name)]"
       ]
     }
   ],

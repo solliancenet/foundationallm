@@ -34,11 +34,6 @@ $acr = $(az acr show -g $resourceGroup -n $acrName -o json | ConvertFrom-Json)
 EnsureSuccess "ACR $acrName not found"
 $acrLoginServer = $acr.loginServer
 
-$acrCredentials = $(az acr credential show -g $resourceGroup -n $acrName -o json | ConvertFrom-Json)
-EnsureSuccess "ACR $acrName credentials not found"
-$acrPwd = $acrCredentials.passwords[0].value
-$acrUser = $acrCredentials.username
-
 $dockerComposeFile = "../docker/docker-compose.yml"
 
 
@@ -68,7 +63,7 @@ Pushing images to $acrLoginServer
     Write-Host $message -ForegroundColor Yellow
 
     Push-Location $sourceFolder
-    docker login -p $acrPwd -u $acrUser $acrLoginServer
+    az acr login -n $acrName
     EnsureSuccess "Docker login failed"
     $env:TAG = $dockerTag
     $env:REGISTRY = $acrLoginServer 
