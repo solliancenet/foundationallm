@@ -4,16 +4,18 @@ Foundationa**LLM** deploys into your own Azure Subscription. By default it will 
 
 ## Prerequisites
 
-- Azure Subscription (Subscription needs to be whitelisted for Azure OpenAI)
-- Subscription access to Azure OpenAI service. Start here to [Request Access to Azure OpenAI Service](https://customervoice.microsoft.com/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbR7en2Ais5pxKtso_Pz4b1_xUNTZBNzRKNlVQSFhZMU9aV09EVzYxWFdORCQlQCN0PWcu)
-- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
-- Docker Desktop
-- Azure CLI ([v2.51.0 or greater](https://docs.microsoft.com/cli/azure/install-azure-cli))
-- [Helm 3.11.1 or greater](https://helm.sh/docs/intro/install/)
-- Visual Studio 2022 (only needed if you plan to run/debug the solution locally)
-- Minimum quota of 65 CPUs across all VM family types. Start here to[Manage VM Quotas](https://learn.microsoft.com/azure/quotas/per-vm-quota-requests)
-- Should have the Owner role on the target Subscription
-- Two App Registrations created in your Entra ID tenant (AAD), and assigned resource will need to be initially added as Owners of said App Registrations so that authentication can be configured appropriately.
+- Azure Subscription (Subscription needs to be whitelisted for Azure OpenAI).
+- Subscription access to Azure OpenAI service. Start here to [Request Access to Azure OpenAI Service](https://customervoice.microsoft.com/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbR7en2Ais5pxKtso_Pz4b1_xUNTZBNzRKNlVQSFhZMU9aV09EVzYxWFdORCQlQCN0PWcu).
+- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0).
+- Docker Desktop.
+- Azure CLI ([v2.51.0 or greater](https://docs.microsoft.com/cli/azure/install-azure-cli)).
+- Helm ([v3.11.1 or greater](https://helm.sh/docs/intro/install/)).
+- Visual Studio 2022 (only needed if you plan to run/debug the solution locally).
+- Minimum quota of 65 CPUs across all VM family types. Start here to [Manage VM Quotas](https://learn.microsoft.com/azure/quotas/per-vm-quota-requests).
+- Two App Registrations created in the Entra ID tenant (Azure Active Directory).
+- User with the following role assignments:
+    - Owner on the target subscription;
+    - Owner on the two app registrations.
 
 ## Deployment steps
 
