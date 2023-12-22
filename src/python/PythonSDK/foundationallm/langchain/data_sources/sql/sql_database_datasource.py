@@ -37,6 +37,7 @@ class SQLDatabaseDataSource:
         self.sample_rows_in_table_info = 0 if sql_db_config.row_level_security_enabled \
                                             else sql_db_config.few_shot_example_count
         self.row_level_security_enabled = sql_db_config.row_level_security_enabled
+        self.schema = sql_db_config.schema
 
     def get_database(self) -> SQLDatabase:
         """
@@ -50,6 +51,7 @@ class SQLDatabaseDataSource:
         return SQLDatabase.from_uri(
             database_uri = self.get_connection_string(),
             include_tables=self.include_tables,
+            schema=self.schema,
             sample_rows_in_table_info=self.sample_rows_in_table_info
         )
 

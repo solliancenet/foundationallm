@@ -9,6 +9,7 @@ from foundationallm.langchain.data_sources.sql import SQLDatabaseFactory
 from foundationallm.langchain.language_models import LanguageModelBase
 from foundationallm.langchain.toolkits import SecureSQLDatabaseToolkit
 from foundationallm.models.orchestration import CompletionRequest, CompletionResponse
+from foundationallm.langchain.parsers import FLLMOutputParser
 
 class SqlDbAgent(AgentBase):
     """
@@ -16,7 +17,7 @@ class SqlDbAgent(AgentBase):
     """
 
     def __init__(self, completion_request: CompletionRequest, llm: LanguageModelBase,
-                 config: Configuration, context: Context):
+                 config: Configuration, context: Context, is_testing: bool = False):
         """
         Initializes a SQL database agent.
 
@@ -31,6 +32,8 @@ class SqlDbAgent(AgentBase):
             Application configuration class for retrieving configuration settings.
         context : Context
             User context under which to run the completion request.
+        is_testing : bool
+            Raises the iteration limit and enables a custom output parser for testing purposes
         """
         self.agent_prompt_prefix = completion_request.agent.prompt_prefix
         self.agent_prompt_suffix = completion_request.agent.prompt_suffix
@@ -39,9 +42,9 @@ class SqlDbAgent(AgentBase):
         self.sql_db_config: SQLDatabaseConfiguration = completion_request.data_source.configuration
         self.context = context
 
-        self.agent = create_sql_agent(
-            llm = self.llm,
-            toolkit = SecureSQLDatabaseToolkit(
+        create_sql_agent_args = {
+            'llm': self.llm,
+            'toolkit': SecureSQLDatabaseToolkit(
                 db = SQLDatabaseFactory(sql_db_config = self.sql_db_config,
                                         config = config).get_sql_database(),
                 llm=self.llm,
@@ -49,14 +52,22 @@ class SqlDbAgent(AgentBase):
                 username = self.context.get_upn(),
                 use_row_level_security = self.sql_db_config.row_level_security_enabled
             ),
-            agent_type = AgentType.ZERO_SHOT_REACT_DESCRIPTION,
-            verbose = True,
-            prefix = self.agent_prompt_prefix,
-            suffix = self.agent_prompt_suffix,
-            agent_executor_kwargs={
+            'agent_type': AgentType.ZERO_SHOT_REACT_DESCRIPTION,
+            'verbose': True,
+            'prefix': self.agent_prompt_prefix,
+            'suffix': self.agent_prompt_suffix,
+            'agent_executor_kwargs': {
                 'handle_parsing_errors': 'Check your output and make sure it conforms!'
             }
-        )
+        }
+
+        if is_testing:
+            create_sql_agent_args['max_iterations'] = 15
+
+        self.agent = create_sql_agent(**create_sql_agent_args)
+
+        if is_testing:
+            self.agent.agent.output_parser = FLLMOutputParser()
 
     @property
     def prompt_template(self) -> str:

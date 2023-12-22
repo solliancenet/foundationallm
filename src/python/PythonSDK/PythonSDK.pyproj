@@ -27,6 +27,8 @@
     <Compile Include="foundationallm\config\user_identity.py" />
     <Compile Include="foundationallm\models\agent_hint.py" />
     <Compile Include="foundationallm\langchain\language_models\openai\openai_model.py" />
+    <Compile Include="foundationallm\langchain\parsers\fllm_output_parser.py" />
+    <Compile Include="foundationallm\langchain\parsers\__init__.py" />
     <Compile Include="foundationallm\models\language_models\embedding_model.py" />
     <Compile Include="foundationallm\models\language_models\__init__.py" />
     <Compile Include="foundationallm\models\list_option.py" />
@@ -160,6 +162,7 @@
     <Folder Include="foundationallm\langchain\data_sources\" />
     <Folder Include="foundationallm\langchain\data_sources\sql\" />
     <Folder Include="foundationallm\langchain\message_history\" />
+    <Folder Include="foundationallm\langchain\parsers\" />
     <Folder Include="foundationallm\langchain\orchestration\" />
     <Folder Include="foundationallm\langchain\tools\" />
     <Folder Include="foundationallm\langchain\toolkits\" />

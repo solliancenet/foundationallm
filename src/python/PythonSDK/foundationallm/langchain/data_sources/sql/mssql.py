@@ -16,7 +16,7 @@ class MicrosoftSQLServer(SQLDatabaseDataSource):
             Returns a formatted connection string for connecting to the database.
         """
         # TODO: Driver in querystring should come from config.
-        return f'{self.dialect}+{self.driver}://{self.username}:{parse.quote_plus(self.password)}@{self.host}:{self.port}/{self.database_name}?driver={parse.quote_plus("ODBC Driver 18 for SQL Server")}'
+        return f'{self.dialect}+{self.driver}://{self.username}:{parse.quote_plus(self.password)}@{self.host}:{self.port}/{self.database_name}?driver={parse.quote_plus("ODBC Driver 18 for SQL Server")}&TrustServerCertificate=yes'
 
     def get_driver(self) -> str:
         """

@@ -13,3 +13,4 @@ class SQLDatabaseConfiguration(DataSourceConfiguration):
     exclude_tables: Optional[List[str]] = None
     few_shot_example_count: int = 0
     row_level_security_enabled: bool = False
+    schema: str = None
