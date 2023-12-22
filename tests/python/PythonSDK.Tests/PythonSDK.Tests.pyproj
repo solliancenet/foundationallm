@@ -24,6 +24,7 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="cache\cache_manager_tests.py" />
     <Compile Include="config\configuration_tests.py" />
     <Compile Include="hubs\agent\agent_resolver_tests.py" />
     <Compile Include="hubs\agent\agent_hub_tests.py" />
@@ -48,6 +49,7 @@
     <Content Include="requirements.txt" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="cache\" />
     <Folder Include="hubs\" />
     <Folder Include="hubs\agent\" />
     <Folder Include="hubs\data_source\" />
