@@ -14,6 +14,8 @@
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
     <TestFramework>Pytest</TestFramework>
     <InterpreterId>MSBuild|env|$(MSBuildProjectFullPath)</InterpreterId>
+    <Environment>
+    </Environment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -31,7 +33,9 @@
     <Compile Include="hubs\data_source\data_source_resolver_tests.py" />
     <Compile Include="hubs\prompt\prompt_resolver_tests.py" />
     <Compile Include="langchain\agents\blob_storage_agent_tests.py" />
+    <Compile Include="langchain\agents\conversational_agent_tests.py" />
     <Compile Include="langchain\agents\csv_agent_tests.py" />
+    <Compile Include="langchain\agents\summary_agent_tests.py" />
     <Compile Include="langchain\message_history\message_history_tests.py" />
     <Compile Include="pytest.ini" />
     <Compile Include="langchain\agents\generic_resolver_agent_tests.py" />
