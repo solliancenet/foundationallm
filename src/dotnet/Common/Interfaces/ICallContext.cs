@@ -27,9 +27,14 @@ namespace FoundationaLLM.Common.Interfaces
         Agent? AgentHint { get; set; }
 
         /// <summary>
-        /// The current <see cref="UnifiedUserIdentity"/> object resolved
-        /// from one or more services.
+        /// The current <see cref="UnifiedUserIdentity"/> object resolved from one
+        /// or more services.
         /// </summary>
         UnifiedUserIdentity? CurrentUserIdentity { get; set; }
+
+        /// <summary>
+        /// Contains the current access token for the authenticated user, if any.
+        /// </summary>
+        string? Token { get; set; }
     }
 }

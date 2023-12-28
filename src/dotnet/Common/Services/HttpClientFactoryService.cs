@@ -56,6 +56,12 @@ namespace FoundationaLLM.Common.Services
             {
                 var serializedIdentity = JsonConvert.SerializeObject(_callContext.CurrentUserIdentity);
                 httpClient.DefaultRequestHeaders.Add(Constants.HttpHeaders.UserIdentity, serializedIdentity);
+
+                // Add the bearer token header if present.
+                if (_callContext.Token != null)
+                {
+                    httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _callContext.Token);
+                }
             }
 
             // Add the agent hint header if present.
