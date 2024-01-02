@@ -14,6 +14,8 @@
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
     <TestFramework>Pytest</TestFramework>
     <InterpreterId>MSBuild|env|$(MSBuildProjectFullPath)</InterpreterId>
+    <Environment>
+    </Environment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -29,12 +31,19 @@
     <Compile Include="hubs\agent\agent_hub_tests.py" />
     <Compile Include="hubs\data_source\data_source_repository_tests.py" />
     <Compile Include="hubs\data_source\data_source_resolver_tests.py" />
+    <Compile Include="hubs\prompt\prompt_hub_storage_manager_tests.py" />
+    <Compile Include="hubs\prompt\prompt_repository_tests.py" />
     <Compile Include="hubs\prompt\prompt_resolver_tests.py" />
+    <Compile Include="langchain\agents\agent_factory_tests.py" />
     <Compile Include="langchain\agents\blob_storage_agent_tests.py" />
     <Compile Include="langchain\agents\csv_agent_tests.py" />
+    <Compile Include="langchain\language_models\language_model_factory_tests.py" />
     <Compile Include="langchain\message_history\message_history_tests.py" />
+    <Compile Include="langchain\tools\type_conversion_tool_tests.py" />
+    <Compile Include="langchain\tools\query_pandas_dataframe_tool_tests.py" />
     <Compile Include="pytest.ini" />
     <Compile Include="langchain\agents\generic_resolver_agent_tests.py" />
+    <Compile Include="storage\blob_storage_manager_tests.py" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\python\PythonSDK\PythonSDK.pyproj">
@@ -56,6 +65,9 @@
     <Folder Include="langchain\message_history\" />
     <Folder Include="config\" />
     <Folder Include="langchain\agents\" />
+    <Folder Include="langchain\language_models\" />
+    <Folder Include="langchain\tools\" />
+    <Folder Include="storage\" />
   </ItemGroup>
   <ItemGroup>
     <Interpreter Include="env\">
