@@ -30,6 +30,11 @@ main {
 	font-family: 'Poppins', sans-serif;
 }
 
+:root {
+	--primary-color: #131833;
+	--secondary-color: #334581;
+}
+
 .p-component {
 	border-radius: 0px;
 }
