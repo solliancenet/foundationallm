@@ -61,15 +61,7 @@ namespace FoundationaLLM.Gatekeeper.Core.Services
                 var responseContent = await responseMessage.Content.ReadAsStringAsync();
                 var analysisResults = JsonConvert.DeserializeObject<AnonymizeResponse>(responseContent);
 
-                var anonymizedText = text;
-
-                foreach (var result in analysisResults!.Results)
-                {
-                    anonymizedText = anonymizedText.Remove(result.StartIndex, (result.EndIndex - result.StartIndex + 1));
-                    anonymizedText = anonymizedText.Insert(result.StartIndex, result.AnonymizedText);
-                }
-
-                return anonymizedText;
+                return analysisResults!.Content;
             }
             else
                 return "A problem on my side prevented me from responding.";

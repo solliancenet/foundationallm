@@ -194,7 +194,7 @@ if ($charts.Contains("vectorization-job") -or  $charts.Contains("*")) {
 
 if ($charts.Contains("chat-ui") -or  $charts.Contains("*")) {
     Write-Host "Webapp chart - web" -ForegroundColor Yellow
-    $command = "helm upgrade --install $name-web oci://ghcr.io/solliancenet/foundationallm/helm/chat-ui -f $valuesFile --set ingress.hosts='{$aksHost}'"
+    $command = "helm upgrade --install $name-web oci://ghcr.io/solliancenet/foundationallm/helm/chat-ui -f $valuesFile --set ingress.hosts='{$aksHost}' --set ingress.annotations.'ingress\.kubernetes\.io/rewrite-target'='/' --set ingress.annotations.'nginx\.ingress\.kubernetes\.io/rewrite-target'='/'"
     $command = createHelmCommand $command
     Invoke-Expression "$command"
 }

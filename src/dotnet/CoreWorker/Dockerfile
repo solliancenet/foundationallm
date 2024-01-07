@@ -24,5 +24,5 @@ RUN dotnet publish "dotnet/CoreWorker/CoreWorker.csproj" -c Release -o /app/publ
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "CoreWorker.dll"]
+ENTRYPOINT ["dotnet", "FoundationaLLM.Core.Worker.dll"]
 LABEL org.opencontainers.image.source=https://github.com/solliancenet/foundationallm

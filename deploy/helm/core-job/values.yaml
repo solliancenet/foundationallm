@@ -22,6 +22,24 @@ tolerations: []
 
 affinity: {}
 
+ingress:
+  enabled: true
+  protocol: https
+  annotations:
+    kubernetes.io/ingress.class: addon-http-application-routing
+    ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/enable-cors:            "true"
+    nginx.ingress.kubernetes.io/secure-backends:        "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin:     "*"
+    nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+    nginx.ingress.kubernetes.io/cors-allow-headers:     "*"
+    nginx.ingress.kubernetes.io/cors-allow-methods:     "*"
+  tls:
+  - secretName: tls-prod
+
 env:
   configmap: 
     - name: AZURE_CLIENT_ID

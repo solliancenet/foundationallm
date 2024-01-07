@@ -23,7 +23,8 @@ FoundationaLLM uses Azure App Configuration to store configuration values, Key V
 | `FoundationaLLM:APIs:GatekeeperAPI:APIKey` | Key Vault secret name: `foundationallm-apis-gatekeeperapi-apikey` | This is a Key Vault reference. |
 | `FoundationaLLM:APIs:GatekeeperAPI:APIUrl` | Enter the URL to the service. |   |
 | `FoundationaLLM:APIs:GatekeeperAPI:AppInsightsConnectionString` | Key Vault secret name: `foundationallm-app-insights-connection-string` | This is a Key Vault reference. |
-| `FoundationaLLM:APIs:GatekeeperAPI:Configuration` | `{"EnableAzureContentSafety":true,"EnableMicrosoftPresidio":true}` | This is JSON object. |
+| `FoundationaLLM:APIs:GatekeeperAPI:Configuration:EnableAzureContentSafety` | true | By default, the Gatekeeper API has Azure Content Safety integration enabled. To disable this feature, set this value to false. |
+| `FoundationaLLM:APIs:GatekeeperAPI:Configuration:EnableMicrosoftPresidio` | true | By default, the Gatekeeper API has Microsoft Presidio integration enabled. To disable this feature, set this value to false. |
 | `FoundationaLLM:APIs:GatekeeperAPI:ForceHttpsRedirection` | true | By default, the Gatekeeper API forces HTTPS redirection. To override this behavior and allow it to handle HTTP requests, set this value to false. |
 | `FoundationaLLM:APIs:GatekeeperIntegrationAPI:APIKey` | Key Vault secret name: `foundationallm-apis-gatekeeperintegrationapi-apikey` | This is a Key Vault reference. |
 | `FoundationaLLM:APIs:GatekeeperIntegrationAPI:APIUrl` | Enter the URL to the service. |   |

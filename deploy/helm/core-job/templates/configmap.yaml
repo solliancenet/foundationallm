@@ -10,4 +10,4 @@ metadata:
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 data: 
-  AZURE_CLIENT_ID: {{ .Values.azureWorkloadIdentity.coreApiClientId }}
+  AZURE_CLIENT_ID: {{ .Values.azureWorkloadIdentity.coreJobClientId }}
