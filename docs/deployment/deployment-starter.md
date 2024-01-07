@@ -76,9 +76,9 @@ Follow the steps below to deploy the solution to your Azure subscription. You wi
 
 ## Post-deployment configuration
 
-### Microsoft Entra ID authentication setup
+### Authentication setup
 
-Follow the instructions in the [Microsoft Entra ID setup document](./authentication-setup-entra.md) to configure Microsoft Entra ID authentication for the solution.
+Follow the instructions in the [Authentication setup document](authentication/index.md) to configure authentication for the solution.
 
 ## Update individual APIs or portals
 
