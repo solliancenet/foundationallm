@@ -48,4 +48,7 @@ export default defineNuxtConfig({
 			: {}),
 		port: 3001,
 	},
+	runtimeConfig: {
+		APP_CONFIG_ENDPOINT: process.env.APP_CONFIG_ENDPOINT,
+	},
 });

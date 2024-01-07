@@ -15,16 +15,16 @@ definePageMeta({
 </script>
 
 <script lang="ts">
-// import { mapStores } from 'pinia';
+import { mapStores } from 'pinia';
 // import { useAppConfigStore } from '@/stores/appConfigStore';
-// import { useAuthStore } from '@/stores/authStore';
+import { useAuthStore } from '@/stores/authStore';
 
 export default {
 	name: 'Login',
 
 	computed: {
 		// ...mapStores(useAppConfigStore),
-		// ...mapStores(useAuthStore),
+		...mapStores(useAuthStore),
 	},
 
 	methods: {
