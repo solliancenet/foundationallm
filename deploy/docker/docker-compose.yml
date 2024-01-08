@@ -1,25 +1,15 @@
 services:
-  core-api:
-    image: ${REGISTRY:-foundationallm}/core-api:${TAG:-latest}
+  management-api:
+    image: ${REGISTRY:-foundationallm}/management-api:${TAG:-latest}
     build:
       context: ../../src
-      dockerfile: ./dotnet/CoreAPI/Dockerfile
+      dockerfile: ./dotnet/ManagementAPI/Dockerfile
     ports:
     - "80:80"
     environment:
       DOTNET_URLS: http://+:80
       ASPNETCORE_ENVIRONMENT: Production
       AllowedHosts: '*'
-      Logging__Loglevel__Default: 'Debug'
-      Logging__Loglevel__Microsoft__AspNetCore: 'Debug'
-
-  core-job:
-    image: ${REGISTRY:-foundationallm}/core-job:${TAG:-latest}
-    build:
-      context: ../../src
-      dockerfile: ./dotnet/CoreWorker/Dockerfile
-    environment:
-      ASPNETCORE_ENVIRONMENT: Production
       Logging__Loglevel__Default: 'Debug'
       Logging__Loglevel__Microsoft__AspNetCore: 'Debug'
 
@@ -129,6 +119,20 @@ services:
     image: ${REGISTRY:-foundationallm}/chat-ui:${TAG:-latest}
     build:
       context: ../../src/ui/UserPortal
+      dockerfile: ./Dockerfile
+    ports:
+    - "8080:80"
+    environment:
+      DOTNET_URLS: http://+:80
+      ASPNETCORE_ENVIRONMENT: Production
+      AllowedHosts: '*'
+      DetailedErrors: 'true'
+      Logging__Loglevel__Default: 'Debug'
+      Logging__Loglevel__Microsoft__AspNetCore: 'Debug'
+  management-ui:
+    image: ${REGISTRY:-foundationallm}/management-ui:${TAG:-latest}
+    build:
+      context: ../../src/ui/ManagementPortal
       dockerfile: ./Dockerfile
     ports:
     - "8080:80"

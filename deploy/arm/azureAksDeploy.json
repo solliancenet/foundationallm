@@ -64,6 +64,11 @@
           "contentType": null
         },
         {
+          "key": "FoundationaLLM:APIs:ManagementAPI:APIUrl",
+          "value": "management",
+          "contentType": null
+        },
+        {
           "key": "FoundationaLLM:APIs:DataSourceHubAPI:APIUrl",
           "value": "data-source-hub",
           "contentType": null
@@ -92,6 +97,11 @@
       "configKeys": [
         {
           "key": "FoundationaLLM:APIs:CoreAPI:AppInsightsConnectionString",
+          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-app-insights-connection-string\"}')]",
+          "contentType": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
+        },
+        {
+          "key": "FoundationaLLM:APIs:ManagementAPI:AppInsightsConnectionString",
           "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-app-insights-connection-string\"}')]",
           "contentType": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
         },
@@ -386,6 +396,36 @@
           "contentType": null
         },
         {
+          "key": "FoundationaLLM:Management:Entra:CallbackPath",
+          "value": "/signin-oidc",
+          "contentType": null
+        },
+        {
+          "key": "FoundationaLLM:Management:Entra:ClientId",
+          "value": "",
+          "contentType": null
+        },
+        {
+          "key": "FoundationaLLM:Management:Entra:ClientSecret",
+          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-management-entra-clientsecret\"}')]",
+          "contentType": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
+        },
+        {
+          "key": "FoundationaLLM:Management:Entra:Instance",
+          "value": "https://login.microsoftonline.com/",
+          "contentType": null
+        },
+        {
+          "key": "FoundationaLLM:Management:Entra:Scopes",
+          "value": "api://FoundationaLLM-Auth/Data.Read",
+          "contentType": null
+        },
+        {
+          "key": "FoundationaLLM:Management:Entra:TenantId",
+          "value": "",
+          "contentType": null
+        },
+        {
           "key": "FoundationaLLM:CognitiveSearch:EndPoint",
           "value": "[concat('https://', variables('cognitiveSearchSettings').name, '.search.windows.net')]",
           "contentType": null
@@ -462,6 +502,36 @@
         },
         {
           "key": "FoundationaLLM:CoreAPI:Entra:TenantId",
+          "value": "",
+          "contentType": null
+        },
+        {
+          "key": "FoundationaLLM:ManagementAPI:Entra:CallbackPath",
+          "value": "/signin-oidc",
+          "contentType": null
+        },
+        {
+          "key": "FoundationaLLM:ManagementAPI:Entra:ClientId",
+          "value": "",
+          "contentType": null
+        },
+        {
+          "key": "FoundationaLLM:ManagementAPI:Entra:ClientSecret",
+          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-managementapi-entra-clientsecret\"}')]",
+          "contentType": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
+        },
+        {
+          "key": "FoundationaLLM:ManagementAPI:Entra:Instance",
+          "value": "https://login.microsoftonline.com/",
+          "contentType": null
+        },
+        {
+          "key": "FoundationaLLM:ManagementAPI:Entra:Scopes",
+          "value": "Data.Read",
+          "contentType": null
+        },
+        {
+          "key": "FoundationaLLM:ManagementAPI:Entra:TenantId",
           "value": "",
           "contentType": null
         },
@@ -758,6 +828,12 @@
     },
     "coreJobSettings": {
       "miName": "[format('{0}-core-job-mi', parameters('name'))]"
+    },
+    "managementUiSettings": {
+      "miName": "[format('{0}-management-ui-mi', parameters('name'))]"
+    },
+    "managementSettings": {
+      "miName": "[format('{0}-management-mi', parameters('name'))]"
     },
     "dataSourceHubSettings": {
       "miName": "[format('{0}-data-source-hub-mi', parameters('name'))]"
@@ -1123,6 +1199,28 @@
       "type": "Microsoft.KeyVault/vaults/secrets",
       "apiVersion": "2023-02-01",
       "name": "[concat(variables('keyVaultSettings').name, '/foundationallm-coreapi-entra-clientsecret')]",
+      "location": "[parameters('location')]",
+      "dependsOn": [ "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultSettings').name)]" ],
+      "properties": {
+        "attributes": { "enabled": true },
+        "value": ""
+      }
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "apiVersion": "2023-02-01",
+      "name": "[concat(variables('keyVaultSettings').name, '/foundationallm-managementapi-entra-clientsecret')]",
+      "location": "[parameters('location')]",
+      "dependsOn": [ "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultSettings').name)]" ],
+      "properties": {
+        "attributes": { "enabled": true },
+        "value": ""
+      }
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "apiVersion": "2023-02-01",
+      "name": "[concat(variables('keyVaultSettings').name, '/foundationallm-management-entra-clientsecret')]",
       "location": "[parameters('location')]",
       "dependsOn": [ "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultSettings').name)]" ],
       "properties": {
@@ -1739,6 +1837,28 @@
     {
       "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
       "apiVersion": "2023-01-31",
+      "name": "[variables('managementSettings').miName]",
+      "location": "[parameters('location')]"
+    },
+    {
+      "type": "Microsoft.ManagedIdentity/userAssignedIdentities/federatedIdentityCredentials",
+      "apiVersion": "2023-01-31",
+      "name": "[format('{0}/{1}', variables('managementSettings').miName, 'managementId')]",
+      "properties": {
+        "audiences": [
+          "api://AzureADTokenExchange"
+        ],
+        "issuer": "[reference(resourceId('Microsoft.ContainerService/managedClusters', variables('aksSettings').name), providers('Microsoft.ContainerService','managedClusters').apiVersions[0]).oidcIssuerProfile.issuerURL]",
+        "subject": "system:serviceaccount:default:management-api"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.ContainerService/managedClusters', variables('aksSettings').name)]",
+        "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('managementSettings').miName)]"
+      ]
+    },
+    {
+      "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+      "apiVersion": "2023-01-31",
       "name": "[variables('coreJobSettings').miName]",
       "location": "[parameters('location')]"
     },
@@ -2008,6 +2128,20 @@
       "type": "Microsoft.Authorization/roleAssignments",
       "apiVersion": "2022-04-01",
       "scope": "[format('Microsoft.KeyVault/vaults/{0}', variables('keyVaultSettings').name)]",
+      "name": "[guid(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}managementmi', parameters('name'))), variables('keyVaultSettings').name)]",
+      "properties": {
+        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('roleIdMapping')['Key Vault Secrets User'])]",
+        "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('managementSettings').miName), providers('Microsoft.ManagedIdentity', 'userAssignedIdentities').apiVersions[0]).principalId]",
+        "principalType": "ServicePrincipal"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultSettings').name)]"
+      ]
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "scope": "[format('Microsoft.KeyVault/vaults/{0}', variables('keyVaultSettings').name)]",
       "name": "[guid(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}datasourcehubmi', parameters('name'))), variables('keyVaultSettings').name)]",
       "properties": {
         "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('roleIdMapping')['Key Vault Secrets User'])]",
@@ -2180,6 +2314,20 @@
       "properties": {
         "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('roleIdMapping')['App Configuration Data Reader'])]",
         "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('coreJobSettings').miName), providers('Microsoft.ManagedIdentity', 'userAssignedIdentities').apiVersions[0]).principalId]",
+        "principalType": "ServicePrincipal"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.AppConfiguration/configurationStores', variables('appConfigSettings').name)]"
+      ]
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "scope": "[format('Microsoft.AppConfiguration/configurationStores/{0}', variables('appConfigSettings').name)]",
+      "name": "[guid(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('{0}managementmi', parameters('name'))), variables('appConfigSettings').name)]",
+      "properties": {
+        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('roleIdMapping')['App Configuration Data Reader'])]",
+        "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('managementSettings').miName), providers('Microsoft.ManagedIdentity', 'userAssignedIdentities').apiVersions[0]).principalId]",
         "principalType": "ServicePrincipal"
       },
       "dependsOn": [

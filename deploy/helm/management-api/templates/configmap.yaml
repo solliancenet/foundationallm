@@ -1,0 +1,13 @@
+{{- $name := include "management-api.fullname" . -}}
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "cfg-{{ $name }}"
+  labels:
+    app: {{ template "management-api.name" . }}
+    chart: {{ template "management-api.chart" .}}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data: 
+  AZURE_CLIENT_ID: {{ .Values.azureWorkloadIdentity.managementApiClientId }}

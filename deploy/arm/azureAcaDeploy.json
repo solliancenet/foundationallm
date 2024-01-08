@@ -69,6 +69,11 @@
           "contentType": null
         },
         {
+          "key": "FoundationaLLM:APIs:ManagementAPI:APIUrl",
+          "value": "management",
+          "contentType": null
+        },
+        {
           "key": "FoundationaLLM:APIs:DataSourceHubAPI:APIUrl",
           "value": "datasourcehub",
           "contentType": null
@@ -132,6 +137,11 @@
         },
         {
           "key": "FoundationaLLM:APIs:CoreAPI:AppInsightsConnectionString",
+          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-app-insights-connection-string\"}')]",
+          "contentType": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
+        },
+        {
+          "key": "FoundationaLLM:APIs:ManagementAPI:AppInsightsConnectionString",
           "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-app-insights-connection-string\"}')]",
           "contentType": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
         },
@@ -396,6 +406,36 @@
           "contentType": null
         },
         {
+          "key": "FoundationaLLM:Management:Entra:CallbackPath",
+          "value": "/signin-oidc",
+          "contentType": null
+        },
+        {
+          "key": "FoundationaLLM:Management:Entra:ClientId",
+          "value": "",
+          "contentType": null
+        },
+        {
+          "key": "FoundationaLLM:Management:Entra:ClientSecret",
+          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-management-entra-clientsecret\"}')]",
+          "contentType": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
+        },
+        {
+          "key": "FoundationaLLM:Management:Entra:Instance",
+          "value": "https://login.microsoftonline.com/",
+          "contentType": null
+        },
+        {
+          "key": "FoundationaLLM:Management:Entra:Scopes",
+          "value": "api://FoundationaLLM-Auth/Data.Read",
+          "contentType": null
+        },
+        {
+          "key": "FoundationaLLM:Management:Entra:TenantId",
+          "value": "",
+          "contentType": null
+        },
+        {
           "key": "FoundationaLLM:CognitiveSearch:EndPoint",
           "value": "[concat('https://', variables('cognitiveSearchSettings').name, '.search.windows.net')]",
           "contentType": null
@@ -472,6 +512,36 @@
         },
         {
           "key": "FoundationaLLM:CoreAPI:Entra:TenantId",
+          "value": "",
+          "contentType": null
+        },
+        {
+          "key": "FoundationaLLM:ManagementAPI:Entra:CallbackPath",
+          "value": "/signin-oidc",
+          "contentType": null
+        },
+        {
+          "key": "FoundationaLLM:ManagementAPI:Entra:ClientId",
+          "value": "",
+          "contentType": null
+        },
+        {
+          "key": "FoundationaLLM:ManagementAPI:Entra:ClientSecret",
+          "value": "[concat('{\"uri\":\"https://',variables('keyVaultSettings').name, '.vault.azure.net/secrets/foundationallm-managementapi-entra-clientsecret\"}')]",
+          "contentType": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
+        },
+        {
+          "key": "FoundationaLLM:ManagementAPI:Entra:Instance",
+          "value": "https://login.microsoftonline.com/",
+          "contentType": null
+        },
+        {
+          "key": "FoundationaLLM:ManagementAPI:Entra:Scopes",
+          "value": "Data.Read",
+          "contentType": null
+        },
+        {
+          "key": "FoundationaLLM:ManagementAPI:Entra:TenantId",
           "value": "",
           "contentType": null
         },
@@ -745,6 +815,17 @@
           }
         },
         {
+          "key": "management",
+          "image": "ghcr.io/solliancenet/foundationallm/management-api",
+          "tag": "0.1",
+          "containerPort": 80,
+          "replicas": 1,
+          "resources": {
+            "cpu": 0.25,
+            "memory": "0.25Gi"
+          }
+        },
+        {
           "key": "gatekeeper",
           "image": "ghcr.io/solliancenet/foundationallm/gatekeeper-api",
           "tag": "0.1",
@@ -813,6 +894,17 @@
         {
           "key": "chatui",
           "image": "ghcr.io/solliancenet/foundationallm/chat-ui",
+          "tag": "0.1",
+          "containerPort": 3000,
+          "replicas": 1,
+          "resources": {
+            "cpu": 0.25,
+            "memory": "0.25Gi"
+          }
+        },
+        {
+          "key": "managementui",
+          "image": "ghcr.io/solliancenet/foundationallm/management-ui",
           "tag": "0.1",
           "containerPort": 3000,
           "replicas": 1,
@@ -1210,6 +1302,28 @@
       "type": "Microsoft.KeyVault/vaults/secrets",
       "apiVersion": "2023-02-01",
       "name": "[concat(variables('keyVaultSettings').name, '/foundationallm-coreapi-entra-clientsecret')]",
+      "location": "[parameters('location')]",
+      "dependsOn": [ "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultSettings').name)]" ],
+      "properties": {
+        "attributes": { "enabled": true },
+        "value": ""
+      }
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "apiVersion": "2023-02-01",
+      "name": "[concat(variables('keyVaultSettings').name, '/foundationallm-managementapi-entra-clientsecret')]",
+      "location": "[parameters('location')]",
+      "dependsOn": [ "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultSettings').name)]" ],
+      "properties": {
+        "attributes": { "enabled": true },
+        "value": ""
+      }
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "apiVersion": "2023-02-01",
+      "name": "[concat(variables('keyVaultSettings').name, '/foundationallm-management-entra-clientsecret')]",
       "location": "[parameters('location')]",
       "dependsOn": [ "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultSettings').name)]" ],
       "properties": {
@@ -2079,6 +2193,18 @@
       "type": "string",
       "value": "[reference(resourceId('Microsoft.App/containerApps', format('{0}coreca', parameters('name'))), providers('Microsoft.App', 'containerApps').apiVersions[0]).configuration.ingress.fqdn]"
     },
+    "managementWebUrl": {
+      "type": "string",
+      "value": "[concat('https://', reference(resourceId('Microsoft.App/containerApps', format('{0}managementuica', parameters('name'))), providers('Microsoft.App', 'containerApps').apiVersions[0]).configuration.ingress.fqdn)]"
+    },
+    "managementWebFqdn": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.App/containerApps', format('{0}managementuica', parameters('name'))), providers('Microsoft.App', 'containerApps').apiVersions[0]).configuration.ingress.fqdn]"
+    },
+    "managementApiFqdn": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.App/containerApps', format('{0}managementca', parameters('name'))), providers('Microsoft.App', 'containerApps').apiVersions[0]).configuration.ingress.fqdn]"
+    },
     "agentfactoryAcaName": {
       "type": "string",
       "value": "[format('{0}agentfactoryca', parameters('name'))]"
@@ -2094,6 +2220,10 @@
     "coreJobAcaName": {
       "type": "string",
       "value": "[format('{0}corejobca', parameters('name'))]"
+    },
+    "managementAcaName": {
+      "type": "string",
+      "value": "[format('{0}managementca', parameters('name'))]"
     },
     "datasourcehubAcaName": {
       "type": "string",
@@ -2126,6 +2256,10 @@
     "chatuiAcaName": {
       "type": "string",
       "value": "[format('{0}chatuica', parameters('name'))]"
+    },
+    "managementuiAcaName": {
+      "type": "string",
+      "value": "[format('{0}managementuica', parameters('name'))]"
     },
     "resourcePrefix": {
       "type": "string",
