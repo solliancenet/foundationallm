@@ -8,6 +8,7 @@ Param(
     [parameter(Mandatory = $false)][string]$openAiName = $null,
     [parameter(Mandatory = $false)][string]$openAiRg = $null,
     [parameter(Mandatory = $false)][string]$openAiCompletionsDeployment = $null,
+    [parameter(Mandatory = $false)][string]$openAiCompletionsDeployment4 = $null,
     [parameter(Mandatory = $false)][string]$openAiEmbeddingsDeployment = $null,
     [parameter(Mandatory = $false)][bool]$stepDeployArm = $true,
     [parameter(Mandatory = $false)][bool]$stepDeployOpenAi = $true,
@@ -49,7 +50,7 @@ if ($stepLoginAzure) {
 az account set --subscription $subscription
 
 if (-Not (az group list --query "[?name=='$resourceGroup'].name" -o json | ConvertFrom-Json) -Contains $resourceGroup) {
-    Write-Host("The resource group $resourceGroup was not found, creating it...")
+    Write-Host "The resource group $resourceGroup was not found, creating it..." -ForegroundColor Yellow
     $rg = $(az group create -g $resourceGroup -l $location --subscription $subscription)
     if (-Not (az group list --query "[?name=='$resourceGroup'].name" -o json | ConvertFrom-Json) -Contains $resourceGroup) {
         Write-Error("The resource group $resourceGroup was not found, and could not be created.")
@@ -78,11 +79,31 @@ if ($stepDeployOpenAi) {
         $openAiCompletionsDeployment = "completions"
     }
 
+    if (-not $openAiCompletionsDeployment4) {
+        $openAiCompletionsDeployment4 = "completions4"
+    }
+
     if (-not $openAiEmbeddingsDeployment) {
         $openAiEmbeddingsDeployment = "embeddings"
     }
 
-    & ./Deploy-OpenAi.ps1 -name $openAiName -resourceGroup $openAiRg -location $location -completionsDeployment $openAiCompletionsDeployment -embeddingsDeployment $openAiEmbeddingsDeployment
+    try {
+        & ./Deploy-OpenAi.ps1 `
+            -name $openAiName `
+            -resourceGroup $openAiRg `
+            -location $location `
+            -completionsDeployment $openAiCompletionsDeployment `
+            -completionsDeployment4 $openAiCompletionsDeployment4 `
+            -completionsModelVersion '0613' `
+            -embeddingsDeployment $openAiEmbeddingsDeployment
+    }
+    finally {
+        if ($LASTEXITCODE -ne 0) {
+            Write-Host "Error deploying OpenAI" -ForegroundColor Red
+            Pop-Location
+            exit $LASTEXITCODE
+        }
+    }
 }
 
 ## Getting OpenAI info
@@ -173,7 +194,8 @@ if ($deployAks) {
 
     $webappHostname = $(az aks show -n $aksName -g $resourceGroup -o json --query addonProfiles.httpApplicationRouting.config.HTTPApplicationRoutingZoneName | ConvertFrom-Json)
     $coreApiUri = "https://$webappHostname/core"
-} else {
+}
+else {
     $webappHostname = $(az deployment group show -g $resourceGroup -n foundationallm-azuredeploy -o json --query properties.outputs.webFqdn.value | ConvertFrom-Json)
     $coreApiHostname = $(az deployment group show -g $resourceGroup -n foundationallm-azuredeploy -o json --query properties.outputs.coreApiFqdn.value | ConvertFrom-Json)
     $coreApiUri = "https://$coreApiHostname"
