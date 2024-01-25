@@ -89,6 +89,16 @@ resource rg 'Microsoft.Resources/resourceGroups@2021-04-01' = {
 }
 
 // Modules
+module appConfiguration 'core/management/appconfiguration.bicep' = {
+  name: 'app-configuration-${timestamp}'
+  scope: resourceGroup(rg.name)
+  params: {
+    location: rg.location
+    name: '${abbrs.appConfiguration}-${resourceToken}'
+    tags: tags
+  }
+}
+
 module contentSafety 'core/ai/cognitiveservices.bicep' = {
   name: 'content-safety-${timestamp}'
   scope: resourceGroup(rg.name)
