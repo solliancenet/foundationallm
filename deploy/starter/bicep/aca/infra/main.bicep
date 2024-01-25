@@ -165,6 +165,18 @@ module openai 'core/ai/cognitiveservices.bicep' = {
   }
 }
 
+module searchService 'core/search/search-services.bicep' = {
+  name: 'search-service-${timestamp}'
+  scope: resourceGroup(rg.name)
+  params: {
+    authOptions: { apiKeyOnly: {} }
+    location: rg.location
+    name: '${abbrs.searchSearchServices}index-${resourceToken}'
+    sku: { name: 'basic' }
+    tags: tags
+  }
+}
+
 module secureSettings 'core/security/keyvault.bicep' = {
   name: 'secure-settings-${timestamp}'
   scope: resourceGroup(rg.name)
