@@ -154,6 +154,19 @@ module cosmosDb 'core/database/cosmos/sql/cosmos-sql-db.bicep' = {
   }
 }
 
+module monitoring 'core/monitor/monitoring.bicep' = {
+  name: 'monitoring-${timestamp}'
+  scope: resourceGroup(rg.name)
+  params: {
+    applicationInsightsDashboardName: '${abbrs.portalDashboards}${resourceToken}'
+    applicationInsightsName: '${abbrs.insightsComponents}${resourceToken}'
+    location: rg.location
+    logAnalyticsName: '${abbrs.operationalInsightsWorkspaces}${resourceToken}'
+    logAnalyticsSku: 'Standalone'
+    tags: tags
+  }
+}
+
 module openai 'core/ai/cognitiveservices.bicep' = {
   name: 'openai-${timestamp}'
   scope: resourceGroup(rg.name)

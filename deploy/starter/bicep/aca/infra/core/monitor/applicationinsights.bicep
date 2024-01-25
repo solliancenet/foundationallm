@@ -12,7 +12,13 @@ resource applicationInsights 'Microsoft.Insights/components@2020-02-02' = {
   kind: 'web'
   properties: {
     Application_Type: 'web'
+    Flow_Type: 'Bluefield'
+    IngestionMode: 'LogAnalytics'
+    Request_Source: 'rest'
+    RetentionInDays: 30
     WorkspaceResourceId: logAnalyticsWorkspaceId
+    publicNetworkAccessForIngestion: 'Enabled'
+    publicNetworkAccessForQuery: 'Enabled'
   }
 }
 

@@ -1,8 +1,9 @@
 metadata description = 'Creates an Application Insights instance and a Log Analytics workspace.'
-param logAnalyticsName string
-param applicationInsightsName string
 param applicationInsightsDashboardName string = ''
+param applicationInsightsName string
 param location string = resourceGroup().location
+param logAnalyticsName string
+param logAnalyticsSku string = 'PerGB2018'
 param tags object = {}
 
 module logAnalytics 'loganalytics.bicep' = {
@@ -11,6 +12,9 @@ module logAnalytics 'loganalytics.bicep' = {
     name: logAnalyticsName
     location: location
     tags: tags
+    sku: {
+      name: logAnalyticsSku
+    }
   }
 }
 
