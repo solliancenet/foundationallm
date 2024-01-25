@@ -1,20 +1,21 @@
 metadata description = 'Creates an Azure Cosmos DB for NoSQL account with a database.'
 param accountName string
-param databaseName string
-param location string = resourceGroup().location
-param tags object = {}
-
+param connectionStringKey string = 'AZURE-COSMOS-CONNECTION-STRING'
 param containers array = []
+param databaseName string
 param keyVaultName string
+param location string = resourceGroup().location
 param principalIds array = []
+param tags object = {}
 
 module cosmos 'cosmos-sql-account.bicep' = {
   name: 'cosmos-sql-account'
   params: {
-    name: accountName
-    location: location
-    tags: tags
+    connectionStringKey: connectionStringKey
     keyVaultName: keyVaultName
+    location: location
+    name: accountName
+    tags: tags
   }
 }
 
@@ -27,11 +28,18 @@ resource database 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2022-05-15
   resource list 'containers' = [for container in containers: {
     name: container.name
     properties: {
+      options: {
+        autoscaleSettings: { maxThroughput: container.maxThroughput }
+      }
+
       resource: {
         id: container.id
-        partitionKey: { paths: [ container.partitionKey ] }
+        partitionKey: {
+          kind: 'Hash'
+          paths: [ container.partitionKey ]
+          version: 2
+        }
       }
-      options: {}
     }
   }]
 

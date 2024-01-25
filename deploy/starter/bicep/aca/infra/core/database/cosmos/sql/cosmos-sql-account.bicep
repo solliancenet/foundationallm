@@ -1,14 +1,15 @@
 metadata description = 'Creates an Azure Cosmos DB for NoSQL account.'
-param name string
-param location string = resourceGroup().location
-param tags object = {}
-
+param connectionStringKey string = 'AZURE-COSMOS-CONNECTION-STRING'
 param keyVaultName string
+param location string = resourceGroup().location
+param name string
+param tags object = {}
 
 module cosmos '../../cosmos/cosmos-account.bicep' = {
   name: 'cosmos-account'
   params: {
     name: name
+    connectionStringKey: connectionStringKey
     location: location
     tags: tags
     keyVaultName: keyVaultName

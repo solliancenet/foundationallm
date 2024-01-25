@@ -21,8 +21,9 @@ var abbrs = loadJsonContent('./abbreviations.json')
 
 // tags that should be applied to all resources.
 var tags = {
-  // Tag all resources with the environment name.
-  'azd-env-name': environmentName
+  'env-name': environmentName
+  iac: 'starter/bicep/aca'
+  instance: instance
 }
 
 // Generate a unique token to be used in naming resources.
@@ -105,10 +106,51 @@ module contentSafety 'core/ai/cognitiveservices.bicep' = {
   name: 'content-safety-${timestamp}'
   scope: resourceGroup(rg.name)
   params: {
-    kind:'ContentSafety'
+    kind: 'ContentSafety'
     location: rg.location
     name: '${abbrs.cognitiveServicesAccounts}content-safety-${resourceToken}'
     tags: tags
+  }
+}
+
+module cosmosDb 'core/database/cosmos/sql/cosmos-sql-db.bicep' = {
+  name: 'cosmos-db-${timestamp}'
+  scope: resourceGroup(rg.name)
+
+  params: {
+    accountName: '${abbrs.documentDBDatabaseAccounts}nosql-${resourceToken}'
+    connectionStringKey: 'foundationallm-cosmosdb-key'
+    databaseName: 'database'
+    keyVaultName: secureSettings.outputs.name
+    location: rg.location
+    tags: tags
+
+    containers: [
+      {
+        id: 'UserSessions'
+        maxThroughput: 1000
+        name: 'UserSessions'
+        partitionKey: '/upn'
+      }
+      {
+        id: 'UserProfiles'
+        maxThroughput: 1000
+        name: 'UserProfiles'
+        partitionKey: '/upn'
+      }
+      {
+        id: 'Sessions'
+        maxThroughput: 1000
+        name: 'Sessions'
+        partitionKey: '/sessionId'
+      }
+      {
+        id: 'leases'
+        maxThroughput: 1000
+        name: 'leases'
+        partitionKey: '/id'
+      }
+    ]
   }
 }
 

@@ -15,19 +15,19 @@ resource cosmos 'Microsoft.DocumentDB/databaseAccounts@2022-08-15' = {
   location: location
   tags: tags
   properties: {
+    apiProperties: (kind == 'MongoDB') ? { serverVersion: '4.2' } : {}
     consistencyPolicy: { defaultConsistencyLevel: 'Session' }
-    locations: [
-      {
-        locationName: location
-        failoverPriority: 0
-        isZoneRedundant: false
-      }
-    ]
     databaseAccountOfferType: 'Standard'
     enableAutomaticFailover: false
     enableMultipleWriteLocations: false
-    apiProperties: (kind == 'MongoDB') ? { serverVersion: '4.2' } : {}
-    capabilities: [ { name: 'EnableServerless' } ]
+
+    locations: [
+      {
+        failoverPriority: 0
+        isZoneRedundant: false
+        locationName: location
+      }
+    ]
   }
 }
 
