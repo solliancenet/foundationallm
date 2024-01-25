@@ -8,6 +8,8 @@ param environmentName string
 @description('Should the cognitive services account include a deployment for GPT-4?')
 param deployGpt4 bool = true
 
+param instance string = 'fllm'
+
 @description('Primary location for all resources')
 @minLength(1)
 param location string
@@ -26,7 +28,7 @@ var tags = {
 // Generate a unique token to be used in naming resources.
 // Remove linter suppression after using.
 #disable-next-line no-unused-vars
-var resourceToken = toLower(uniqueString(subscription().id, environmentName, location))
+var resourceToken = toLower(uniqueString(subscription().id, environmentName, location, instance))
 
 // Name of the service defined in azure.yaml
 #disable-next-line no-unused-vars
@@ -117,6 +119,16 @@ module openai 'core/ai/cognitiveservices.bicep' = {
     deployments: deployments
     location: rg.location
     name: '${abbrs.cognitiveServicesAccounts}openai-${resourceToken}'
+    tags: tags
+  }
+}
+
+module secureSettings 'core/security/keyvault.bicep' = {
+  name: 'secure-settings-${timestamp}'
+  scope: resourceGroup(rg.name)
+  params: {
+    location: rg.location
+    name: '${abbrs.keyVaultVaults}sec-set-${resourceToken}'
     tags: tags
   }
 }
