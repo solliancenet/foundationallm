@@ -26,6 +26,9 @@ resource account 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
   location: location
   tags: tags
   kind: kind
+  identity: {
+    type: 'SystemAssigned'
+  }
   properties: {
     customSubDomainName: customSubDomainName
     publicNetworkAccess: publicNetworkAccess

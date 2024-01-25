@@ -88,9 +88,18 @@ resource rg 'Microsoft.Resources/resourceGroups@2021-04-01' = {
   tags: tags
 }
 
-// Add resources to be provisioned below.
-// A full example that leverages azd bicep modules can be seen in the todo-python-mongo template:
-// https://github.com/Azure-Samples/todo-python-mongo/tree/main/infra
+// Modules
+module contentSafety 'core/ai/cognitiveservices.bicep' = {
+  name: 'content-safety-${timestamp}'
+  scope: resourceGroup(rg.name)
+  params: {
+    kind:'ContentSafety'
+    location: rg.location
+    name: '${abbrs.cognitiveServicesAccounts}content-safety-${resourceToken}'
+    tags: tags
+  }
+}
+
 module openai 'core/ai/cognitiveservices.bicep' = {
   name: 'openai-${timestamp}'
   scope: resourceGroup(rg.name)
