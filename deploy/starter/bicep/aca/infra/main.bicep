@@ -200,6 +200,17 @@ module secureSettings 'core/security/keyvault.bicep' = {
   }
 }
 
+module storage 'core/storage/storage-account.bicep' = {
+  name: 'storage-${timestamp}'
+  scope: resourceGroup(rg.name)
+  params: {
+    location: rg.location
+    isHnsEnabled:true
+    name: '${abbrs.storageStorageAccounts}dl${resourceToken}'
+    tags: tags
+  }
+}
+
 // Add outputs from the deployment here, if needed.
 //
 // This allows the outputs to be referenced by other bicep deployments in the deployment pipeline,
