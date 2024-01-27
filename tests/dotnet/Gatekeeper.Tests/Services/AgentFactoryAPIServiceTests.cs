@@ -5,18 +5,21 @@ using FoundationaLLM.Gatekeeper.Core.Services;
 using FoundationaLLM.TestUtils.Helpers;
 using NSubstitute;
 using System.Net;
+using FoundationaLLM.Common.Constants;
+using FoundationaLLM.Common.Services.API;
 
 namespace Gatekeeper.Tests.Services
 {
     public class AgentFactoryAPIServiceTests
     {
-        private readonly AgentFactoryAPIService _testedService;
+        private readonly DownstreamAPIService _testedService;
 
         private readonly IHttpClientFactoryService _httpClientFactoryService = Substitute.For<IHttpClientFactoryService>();
         
         public AgentFactoryAPIServiceTests()
         {
-            _testedService = new AgentFactoryAPIService(_httpClientFactoryService);
+            _testedService = new DownstreamAPIService(HttpClients.AgentHubAPI, 
+                _httpClientFactoryService);
         }
 
         [Fact]

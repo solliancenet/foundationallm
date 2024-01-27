@@ -76,8 +76,8 @@ namespace FoundationaLLM.Vectorization.Services.RequestSources
         }
 
         /// <inheritdoc/>
-        public async Task DeleteRequest(string requestId, string popReceipt) =>
-            await _queueClient.DeleteMessageAsync(requestId, popReceipt);
+        public async Task DeleteRequest(string messageId, string popReceipt) =>
+            await _queueClient.DeleteMessageAsync(messageId, popReceipt);
 
         /// <inheritdoc/>
         public async Task SubmitRequest(VectorizationRequest request)

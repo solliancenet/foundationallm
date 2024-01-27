@@ -73,7 +73,8 @@ namespace FoundationaLLM.SemanticKernel.API
 
                     // Adds auth via X-API-KEY header
                     options.AddAPIKeyAuth();
-                });
+                })
+                .AddSwaggerGenNewtonsoftSupport();
 
             builder.Services.AddOptions<SemanticKernelServiceSettings>()
                 .Bind(builder.Configuration.GetSection(AppConfigurationKeySections.FoundationaLLM_SemanticKernelAPI));
@@ -100,6 +101,11 @@ namespace FoundationaLLM.SemanticKernel.API
             builder.Services.AddOptions<BlobStorageMemorySourceSettings>()
                 .Bind(builder.Configuration.GetSection(AppConfigurationKeySections.FoundationaLLM_BlobStorageMemorySource));
             builder.Services.AddTransient<IMemorySource, BlobStorageMemorySource>();
+
+            builder.Services.Configure<RouteOptions>(options =>
+            {
+                options.LowercaseUrls = true;
+            });
 
             var app = builder.Build();
 

@@ -29,33 +29,31 @@ namespace FoundationaLLM.Common.Services
         /// <summary>
         ///  Initializes a new instance of the <see cref="StorageServiceBase"/> with the specified options and logger.
         /// </summary>
-        /// <param name="options">The options object containing the <see cref="BlobStorageServiceSettings"/> object with the settings.</param>
+        /// <param name="storageOptions">The options object containing the <see cref="BlobStorageServiceSettings"/> object with the settings.</param>
         /// <param name="logger">The logger used for logging.</param>
         public StorageServiceBase(
-            IOptions<BlobStorageServiceSettings> options,
+            IOptions<BlobStorageServiceSettings> storageOptions,
             ILogger<StorageServiceBase> logger)
         {
-            _settings = options.Value;
+            _settings = storageOptions.Value;
             _logger = logger;
 
-            switch (_settings.AuthenticationType)
-            {
-                case BlobStorageAuthenticationTypes.ConnectionString:
-                    ValidateConnectionString(_settings.ConnectionString);
-                    CreateClientFromConnectionString(_settings.ConnectionString!);
-                    break;
-                case BlobStorageAuthenticationTypes.AccountKey:
-                    ValidateAccountName(_settings.AccountName);
-                    ValidateAccountKey(_settings.AccountKey);
-                    CreateClientFromAccountKey(_settings.AccountName!, _settings.AccountKey!);
-                    break;
-                case BlobStorageAuthenticationTypes.AzureIdentity:
-                    ValidateAccountName(_settings.AccountName);
-                    CreateClientFromIdentity(_settings.AccountName!);
-                    break;
-                default:
-                    throw new InvalidEnumArgumentException($"The authentication type {_settings.AuthenticationType} is not supported.");
-            }
+            Initialize();
+        }
+
+        /// <summary>
+        ///  Initializes a new instance of the <see cref="StorageServiceBase"/> with the specified settings and logger.
+        /// </summary>
+        /// <param name="settings">The <see cref="BlobStorageServiceSettings"/> object with the settings.</param>
+        /// <param name="logger">The logger used for logging.</param>
+        public StorageServiceBase(
+            BlobStorageServiceSettings settings,
+            ILogger<StorageServiceBase> logger)
+        {
+            _settings = settings;
+            _logger = logger;
+
+            Initialize();
         }
 
         /// <summary>
@@ -101,6 +99,28 @@ namespace FoundationaLLM.Common.Services
             {
                 _logger.LogCritical("The Azure blob storage account connection string is invalid.");
                 throw new ConfigurationValueException("The Azure blob storage account connection string is invalid.");
+            }
+        }
+
+        private void Initialize()
+        {
+            switch (_settings.AuthenticationType)
+            {
+                case BlobStorageAuthenticationTypes.ConnectionString:
+                    ValidateConnectionString(_settings.ConnectionString);
+                    CreateClientFromConnectionString(_settings.ConnectionString!);
+                    break;
+                case BlobStorageAuthenticationTypes.AccountKey:
+                    ValidateAccountName(_settings.AccountName);
+                    ValidateAccountKey(_settings.AccountKey);
+                    CreateClientFromAccountKey(_settings.AccountName!, _settings.AccountKey!);
+                    break;
+                case BlobStorageAuthenticationTypes.AzureIdentity:
+                    ValidateAccountName(_settings.AccountName);
+                    CreateClientFromIdentity(_settings.AccountName!);
+                    break;
+                default:
+                    throw new InvalidEnumArgumentException($"The authentication type {_settings.AuthenticationType} is not supported.");
             }
         }
     }

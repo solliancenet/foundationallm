@@ -9,6 +9,7 @@ using FoundationaLLM.Common.Middleware;
 using FoundationaLLM.Common.Models.Context;
 using FoundationaLLM.Common.OpenAPI;
 using FoundationaLLM.Common.Services;
+using FoundationaLLM.Common.Services.API;
 using FoundationaLLM.Common.Settings;
 using FoundationaLLM.Gatekeeper.Core.Interfaces;
 using FoundationaLLM.Gatekeeper.Core.Models.ConfigurationOptions;
@@ -81,8 +82,6 @@ namespace FoundationaLLM.Gatekeeper.API
             builder.Services.AddOptions<AzureContentSafetySettings>()
                 .Bind(builder.Configuration.GetSection(AppConfigurationKeySections.FoundationaLLM_AzureContentSafety));
             builder.Services.AddScoped<IContentSafetyService, AzureContentSafetyService>();
-
-            builder.Services.AddScoped<IAgentFactoryAPIService, AgentFactoryAPIService>();
             builder.Services.AddScoped<IGatekeeperIntegrationAPIService, GatekeeperIntegrationAPIService>();
 
             builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
@@ -131,7 +130,13 @@ namespace FoundationaLLM.Gatekeeper.API
 
                     // Adds auth via X-API-KEY header
                     options.AddAPIKeyAuth();
-                });
+                })
+                .AddSwaggerGenNewtonsoftSupport();
+
+            builder.Services.Configure<RouteOptions>(options =>
+            {
+                options.LowercaseUrls = true;
+            });
 
             var app = builder.Build();
 
@@ -226,6 +231,8 @@ namespace FoundationaLLM.Gatekeeper.API
                         });
 
             builder.Services.AddSingleton<IDownstreamAPISettings>(downstreamAPISettings);
+            builder.Services.AddScoped<IDownstreamAPIService, DownstreamAPIService>((serviceProvider)
+                => new DownstreamAPIService(HttpClients.AgentFactoryAPI, serviceProvider.GetService<IHttpClientFactoryService>()!));
         }
     }
 }

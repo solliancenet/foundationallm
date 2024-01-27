@@ -1,37 +1,12 @@
-from io import StringIO
 from operator import itemgetter
-import pandas as pd
-import os
 
-from azure.identity import DefaultAzureCredential
 from azure.core.credentials import AzureKeyCredential
-from azure.storage.blob import BlobServiceClient
-from azure.storage.blob import ContainerClient
 
-from langchain.agents import AgentExecutor, ZeroShotAgent
-from langchain.chains import LLMChain
+from langchain.chains import ConversationalRetrievalChain
 from langchain.memory import ConversationBufferMemory
-from langchain.callbacks import get_openai_callback
-from langchain.prompts import PromptTemplate
-from langchain.chat_models import AzureChatOpenAI, ChatOpenAI
-
-from langchain.text_splitter import CharacterTextSplitter
-from langchain.document_loaders import PyPDFLoader
-
-#Move to new langchain...
-#from langchain_community.document_loaders import UnstructuredXMLLoader
-#from langchain_community.document_loaders import TextLoader
-#rom langchain_community.vectorstores.azuresearch import AzureSearch
-#from langchain_openai import AzureOpenAIEmbeddings
-from langchain.embeddings.openai import OpenAIEmbeddings
-
-from langchain.document_loaders import UnstructuredXMLLoader
-from langchain.document_loaders import TextLoader
-from langchain.vectorstores.azuresearch import AzureSearch
-
-from langchain.document_loaders.csv_loader import CSVLoader
-from langchain.vectorstores import Chroma
-from langchain.chains import ConversationalRetrievalChain, RetrievalQAWithSourcesChain
+from langchain_community.callbacks import get_openai_callback
+from langchain_community.vectorstores.chroma import Chroma
+from langchain_core.prompts import PromptTemplate
 
 from foundationallm.config import Configuration
 from foundationallm.langchain.agents import AgentBase
@@ -44,8 +19,11 @@ class CXOAgent(AgentBase):
     Agent for providing CXO analysis.
     """
 
-    def __init__(self, completion_request: CompletionRequest,
-                 llm: LanguageModelBase, config: Configuration):
+    def __init__(
+            self,
+            completion_request: CompletionRequest,
+            llm: LanguageModelBase,
+            config: Configuration):
         """
         Initializes a CXO agent.
 
@@ -63,25 +41,14 @@ class CXOAgent(AgentBase):
         """
         self.prompt_prefix = completion_request.agent.prompt_prefix
         self.prompt_suffix = completion_request.agent.prompt_suffix
-        self.question = completion_request.user_prompt
         self.message_history = completion_request.message_history
-
         self.ds_config = completion_request.data_sources[0].configuration
 
         self.vector_store_address = config.get_value(self.ds_config.endpoint)
         self.vector_store_password = config.get_value(self.ds_config.key_secret)
 
-        azure_endpoint = config.get_value(completion_request.language_model.api_endpoint)
-        azure_key = config.get_value(completion_request.language_model.api_key)
-        embedding_model = config.get_value(completion_request.embedding_model.deployment)
-
-        self.embeddings = OpenAIEmbeddings(
-                deployment=embedding_model,
-                #model="text-embedding-ada-002",
-                openai_api_base=azure_endpoint,
-                openai_api_key=azure_key,
-                openai_api_type="azure",
-            )
+        self.llm = llm.get_completion_model(completion_request.language_model)
+        self.embeddings = llm.get_embedding_model(completion_request.embedding_model)
 
         # Load the CSV file
         company = self.ds_config.company
@@ -102,8 +69,6 @@ class CXOAgent(AgentBase):
             local_path = f"/temp/{company}"
             self.retriever = self.get_chroma_retiever(local_path)
 
-        tools = []
-
         max_message_histroy = 1 * -2
         self.message_history = self.message_history[max_message_histroy:]
         memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
@@ -119,16 +84,8 @@ class CXOAgent(AgentBase):
 
         prompt = PromptTemplate(
             template=self.prompt_prefix,
-            input_variables=["context", "question"], #"summaries", "question"
+            input_variables=["context", "question"]
         )
-
-        self.llm = AzureChatOpenAI(deployment_name=config.get_value(completion_request.language_model.deployment),
-                              temperature=0,
-                              openai_api_base=azure_endpoint,
-                              openai_api_key=azure_key,
-                              openai_api_type="azure",
-                              openai_api_version=config.get_value(completion_request.language_model.api_version),
-                              model_version=config.get_value(completion_request.language_model.version))
 
         self.llm_chain = ConversationalRetrievalChain.from_llm(
             llm=self.llm,
@@ -160,8 +117,8 @@ class CXOAgent(AgentBase):
 
         with get_openai_callback() as cb:
             return CompletionResponse(
-                completion = self.llm_chain.invoke(self.question, return_only_outputs=True)['answer'],
-                user_prompt = self.question,
+                completion = self.llm_chain.invoke(prompt, return_only_outputs=True)['answer'],
+                user_prompt = prompt,
                 completion_tokens = cb.completion_tokens,
                 prompt_tokens = cb.prompt_tokens,
                 total_tokens = cb.total_tokens,

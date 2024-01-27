@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
-from langchain.base_language import BaseLanguageModel
-from langchain.embeddings.base import Embeddings
+
+from langchain_core.embeddings import Embeddings
+from langchain_core.language_models import BaseLanguageModel
+
 from foundationallm.config import Configuration
 from foundationallm.models.language_models import EmbeddingModel, LanguageModel
 

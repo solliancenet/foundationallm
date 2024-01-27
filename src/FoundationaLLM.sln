@@ -11,7 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "dotnet\Core\Core.csproj", "{5AA7F0B6-30E6-451A-B1BE-F003BD3EC203}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SemanticKernel", "dotnet\SemanticKernel\SemanticKernel.csproj", "{503CE23D-63D7-4A26-8475-AA71A45D519B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SemanticKernel-obsolete", "dotnet\SemanticKernel-obsolete\SemanticKernel-obsolete.csproj", "{503CE23D-63D7-4A26-8475-AA71A45D519B}"
 EndProject
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "LangChainAPI", "python\LangChainAPI\LangChainAPI.pyproj", "{DF3AF954-1999-4244-A783-BCE96EE17816}"
 EndProject
@@ -80,6 +80,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Management", "dotnet\Management\Management.csproj", "{46FB5F1B-57C6-4CA3-B626-887DF6D806DD}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ManagementAPI", "dotnet\ManagementAPI\ManagementAPI.csproj", "{2D54392A-8D86-4F54-9993-FB3B6C4C090E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SemanticKernel", "dotnet\SemanticKernel\SemanticKernel.csproj", "{CDB843FE-108B-435A-BF17-68052C64F500}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -194,6 +196,10 @@ Global
 		{2D54392A-8D86-4F54-9993-FB3B6C4C090E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2D54392A-8D86-4F54-9993-FB3B6C4C090E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2D54392A-8D86-4F54-9993-FB3B6C4C090E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CDB843FE-108B-435A-BF17-68052C64F500}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CDB843FE-108B-435A-BF17-68052C64F500}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CDB843FE-108B-435A-BF17-68052C64F500}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CDB843FE-108B-435A-BF17-68052C64F500}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -232,6 +238,7 @@ Global
 		{6330DD34-9B05-4BD9-98E7-507134751CCA} = {23275624-C0DA-4E93-9291-081D75E8CCD2}
 		{46FB5F1B-57C6-4CA3-B626-887DF6D806DD} = {B6DC1190-2873-44A3-85B3-63D7BDE99231}
 		{2D54392A-8D86-4F54-9993-FB3B6C4C090E} = {B6DC1190-2873-44A3-85B3-63D7BDE99231}
+		{CDB843FE-108B-435A-BF17-68052C64F500} = {B6DC1190-2873-44A3-85B3-63D7BDE99231}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FF5DE858-4B85-4EE8-8A6D-46E8E4FBA078}

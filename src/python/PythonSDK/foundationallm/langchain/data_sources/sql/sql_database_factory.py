@@ -1,4 +1,4 @@
-from langchain.sql_database import SQLDatabase
+from langchain_community.utilities.sql_database import SQLDatabase
 
 from foundationallm.config import Configuration
 from foundationallm.langchain.data_sources.sql import SQLDatabaseConfiguration

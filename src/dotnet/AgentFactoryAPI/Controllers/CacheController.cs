@@ -31,7 +31,7 @@ namespace FoundationaLLM.AgentFactory.API.Controllers
         /// <summary>
         /// Removes all objects belonging to a category from the cache.
         /// </summary>
-        /// <param name="name">The name of the object to be removed from the cache.</param>
+        /// <param name="name">The name of the category of objects to be removed from the cache.</param>
         [HttpPost("category/{name}/remove")]
         public IActionResult RemoveCategory(string name)
         {

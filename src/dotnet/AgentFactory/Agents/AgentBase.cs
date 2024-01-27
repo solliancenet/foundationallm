@@ -1,6 +1,7 @@
 ﻿using FoundationaLLM.AgentFactory.Core.Interfaces;
-using FoundationaLLM.AgentFactory.Core.Models.Messages;
 using FoundationaLLM.AgentFactory.Interfaces;
+using FoundationaLLM.Common.Interfaces;
+using FoundationaLLM.Common.Models.Messages;
 using FoundationaLLM.Common.Models.Orchestration;
 
 namespace FoundationaLLM.AgentFactory.Core.Agents

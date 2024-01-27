@@ -1,8 +1,6 @@
-from langchain.base_language import BaseLanguageModel
-from langchain.chat_models import AzureChatOpenAI, ChatOpenAI
-from langchain.embeddings import OpenAIEmbeddings
-from langchain.embeddings.base import Embeddings
-from langchain.llms import AzureOpenAI, OpenAI
+from langchain_core.embeddings import Embeddings
+from langchain_core.language_models import BaseLanguageModel
+from langchain_openai import AzureOpenAI, OpenAI, AzureChatOpenAI, ChatOpenAI, AzureOpenAIEmbeddings, OpenAIEmbeddings
 
 from foundationallm.config import Configuration
 from foundationallm.langchain.language_models import LanguageModelBase
@@ -41,51 +39,49 @@ class OpenAIModel(LanguageModelBase):
         """
         use_chat = language_model.use_chat
 
-        if language_model.provider == LanguageModelProvider.MICROSOFT:        
-            openai_api_type = AzureOpenAIAPIType.AZURE
-        else:        
-            openai_api_type = None
+        # if language_model.provider == LanguageModelProvider.MICROSOFT:        
+        #     openai_api_type = AzureOpenAIAPIType.AZURE
+        # else:        
+        #     openai_api_type = None
 
-        openai_api_base = self.config.get_value(language_model.api_endpoint)
+        openai_base_url = self.config.get_value(language_model.api_endpoint)
         openai_api_key = self.config.get_value(language_model.api_key)
         openai_api_version = self.config.get_value(language_model.api_version)
-        openai_deployment_name = self.config.get_value(language_model.deployment)
+        azure_deployment_name = self.config.get_value(language_model.deployment)
         
         temperature = language_model.temperature or 0
 
-        if openai_api_type == AzureOpenAIAPIType.AZURE:
+        if language_model.provider == LanguageModelProvider.MICROSOFT:        
             if use_chat:
                 return AzureChatOpenAI(
-                    temperature = temperature,
-                    openai_api_base = openai_api_base,
-                    openai_api_key = openai_api_key,
-                    openai_api_type = openai_api_type,
-                    openai_api_version = openai_api_version,
+                    api_key = openai_api_key,
+                    api_version = openai_api_version,
+                    azure_deployment = azure_deployment_name,
+                    azure_endpoint = openai_base_url,
+                    #max_tokens = self.config.get_value(f'{config_value_base_name}:Completions:MaxTokens'),
                     model_version = self.config.get_value(language_model.version),
-                    deployment_name = openai_deployment_name
-                    #max_tokens = self.config.get_value(f'{config_value_base_name}:Completions:MaxTokens')
+                    temperature = temperature
                 )
             else:
                 return AzureOpenAI(
-                    temperature = temperature,
-                    openai_api_base = openai_api_base,
-                    openai_api_key = openai_api_key,
-                    openai_api_type = openai_api_type,
-                    openai_api_version = openai_api_version,
-                    deployment_name = openai_deployment_name
-                    #max_tokens = self.config.get_value(f'{config_value_base_name}:Completions:MaxTokens')
+                    api_key = openai_api_key,
+                    api_version = openai_api_version,
+                    azure_deployment = azure_deployment_name,
+                    azure_endpoint = openai_base_url,
+                    #max_tokens = self.config.get_value(f'{config_value_base_name}:Completions:MaxTokens'),
+                    temperature = temperature
                 )
         else:
             if use_chat:
                 return ChatOpenAI(
-                    openai_api_base = openai_api_base,
-                    openai_api_key = openai_api_key,
+                    base_url = openai_base_url,
+                    api_key = openai_api_key,
                     temperature = temperature
                 )
             else:
                 return OpenAI(
-                    openai_api_base = openai_api_base,
-                    openai_api_key = openai_api_key,
+                    base_url = openai_base_url,
+                    api_key = openai_api_key,
                     temperature = temperature
                 )
 
@@ -101,17 +97,21 @@ class OpenAIModel(LanguageModelBase):
         if embedding_model is None:
             raise ValueError('Expected populated embedding_model, got None.')
 
-        if embedding_model.provider == LanguageModelProvider.MICROSOFT:            
-            openai_api_type = AzureOpenAIAPIType.AZURE
+        if embedding_model.provider == LanguageModelProvider.MICROSOFT:
+            return AzureOpenAIEmbeddings(
+                openai_api_key = self.config.get_value(embedding_model.api_key),
+                openai_api_version = self.config.get_value(embedding_model.api_version),
+                deployment = self.config.get_value(embedding_model.deployment),
+                azure_endpoint = self.config.get_value(embedding_model.api_endpoint),
+                chunk_size = embedding_model.chunk_size,
+                model = self.config.get_value(embedding_model.model)
+            )
         else:
-            openai_api_type = None
-
-        return OpenAIEmbeddings(
-            openai_api_base = self.config.get_value(embedding_model.api_endpoint),
-            openai_api_key = self.config.get_value(embedding_model.api_key),
-            openai_api_type = openai_api_type,
-            openai_api_version = self.config.get_value(embedding_model.api_version),
-            chunk_size = embedding_model.chunk_size,
-            deployment = self.config.get_value(embedding_model.deployment),
-            model = self.config.get_value(embedding_model.model)
-        )
+            return OpenAIEmbeddings(
+                api_key = self.config.get_value(embedding_model.api_key),
+                api_version = self.config.get_value(embedding_model.api_version),
+                base_url = self.config.get_value(embedding_model.api_endpoint),
+                chunk_size = embedding_model.chunk_size or 1000,
+                deployment = self.config.get_value(embedding_model.deployment),
+                model = self.config.get_value(embedding_model.model)
+            )

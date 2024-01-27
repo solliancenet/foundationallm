@@ -1,10 +1,12 @@
 import json
 from typing import List
 from pydantic import parse_obj_as
-from langchain.prompts import PromptTemplate
-from langchain.schema.messages import AIMessage
-from langchain.callbacks import get_openai_callback
-from langchain.base_language import BaseLanguageModel
+
+from langchain_community.callbacks import get_openai_callback
+from langchain_core.language_models import BaseLanguageModel
+from langchain_core.messages import AIMessage
+from langchain_core.prompts import PromptTemplate
+
 from foundationallm.langchain.agents.agent_base import AgentBase
 from foundationallm.config import Configuration
 from foundationallm.models.orchestration import CompletionRequest, CompletionResponse
@@ -20,8 +22,11 @@ class GenericResolverAgent(AgentBase):
         This agent determines the best matches based on the incoming user_prompt.
         The user prompt may request one or more options from the list.   
     """
-    def __init__(self, completion_request: CompletionRequest,
-                    llm: BaseLanguageModel, config: Configuration):
+    def __init__(
+            self,
+            completion_request: CompletionRequest,
+            llm: BaseLanguageModel,
+            config: Configuration):
         
         ds_config = {}
         for ds in completion_request.data_sources:

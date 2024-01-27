@@ -81,6 +81,15 @@ If you performed an **Azure Kubernetes Service (AKS)** deployment, follow these 
 
 <!-- 8. Under **Front-channel logout URL**, enter `<YOUR_CHAT_APP_URL>/signout-oidc`. -->
 
+If you wish to [configure authentication in Postman](../../development/directly-calling-apis.md#postman-collection) for executing calls against the Core API, you will need to add a **Redirect URI** under **Mobile and desktop applications** for Postman. Enter `https://oauth.pstmn.io/v1/callback` for the URI. To do this, complete the following steps:
+
+1. Under **Platform configurations**, select **Add a platform**. In the pane that opens, select **Mobile and desktop applications**.
+2. Enter `https://oauth.pstmn.io/v1/callback` for the **Custom redirect URIs** value.
+
+    ![The Authentication left-hand menu item and redirect URIs are highlighted.](media/entra-app-client-authentication-uris-postman.png)
+
+3. Select **Configure** to apply the changes.
+
 #### Implicit grant and hybrid flows for the client application
 
 1. Check **Access tokens** and **ID tokens** under **Implicit grant**.

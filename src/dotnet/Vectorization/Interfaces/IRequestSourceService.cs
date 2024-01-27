@@ -33,10 +33,10 @@ namespace FoundationaLLM.Vectorization.Interfaces
         /// Removes a specified vectorization request from the source.
         /// This should happen when the request was successfully processed.
         /// </summary>
-        /// <param name="requestId">The identifier of the request being removed.</param>
+        /// <param name="messageId">The underlying message identifier of the request being removed.</param>
         /// <param name="popReceipt">This value is required to delete the request.</param>
         /// <returns></returns>
-        Task DeleteRequest(string requestId, string popReceipt);
+        Task DeleteRequest(string messageId, string popReceipt);
 
         /// <summary>
         /// Submits a new vectorization request to the source.

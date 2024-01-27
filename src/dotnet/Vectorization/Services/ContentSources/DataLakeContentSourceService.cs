@@ -28,7 +28,7 @@ namespace FoundationaLLM.Vectorization.Services.ContentSources
             _storageSettings = storageSettings;
             _logger = loggerFactory.CreateLogger<DataLakeContentSourceService>();
             _dataLakeStorageService = new DataLakeStorageService(
-                Options.Create<BlobStorageServiceSettings>(_storageSettings),
+                _storageSettings,
                 loggerFactory.CreateLogger<DataLakeStorageService>());
         }
 

@@ -1,4 +1,5 @@
-from langchain.base_language import BaseLanguageModel
+from langchain_core.language_models import BaseLanguageModel
+
 from foundationallm.config import Configuration
 from foundationallm.models.language_models import LanguageModelType, LanguageModel
 from foundationallm.langchain.language_models.openai import OpenAIModel

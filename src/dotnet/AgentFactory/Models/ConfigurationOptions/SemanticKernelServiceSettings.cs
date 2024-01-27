@@ -1,4 +1,5 @@
 ﻿using FoundationaLLM.AgentFactory.Core.Models.ConfigurationOptions;
+using FoundationaLLM.Common.Models.Configuration.API;
 
 namespace FoundationaLLM.AgentFactory.Models.ConfigurationOptions
 {

@@ -1,13 +1,14 @@
 import pandas as pd
 from sqlalchemy import create_engine
 
-from langchain.agents import create_sql_agent, create_pandas_dataframe_agent, initialize_agent, Tool
-from langchain.agents.agent_toolkits import create_python_agent
-from langchain.agents.agent_types import AgentType
-from langchain.callbacks import get_openai_callback
-from langchain.prompts import PromptTemplate
-from langchain.tools.python.tool import PythonREPLTool
-from langchain.schema.output_parser import OutputParserException
+from langchain.agents import AgentType, initialize_agent
+from langchain_community.agent_toolkits import create_sql_agent
+from langchain_community.callbacks import get_openai_callback
+from langchain_core.exceptions import OutputParserException
+from langchain_core.prompts import PromptTemplate
+from langchain_core.tools import Tool
+from langchain_experimental.agents.agent_toolkits import create_pandas_dataframe_agent, create_python_agent
+from langchain_experimental.tools.python.tool import PythonREPLTool
 
 from foundationallm.config import Configuration
 from foundationallm.langchain.agents import AgentBase
@@ -17,7 +18,6 @@ from foundationallm.langchain.toolkits import SecureSQLDatabaseToolkit
 from foundationallm.models.orchestration import CompletionRequest, CompletionResponse
 from foundationallm.langchain.data_sources.sql import SQLDatabaseConfiguration
 from foundationallm.langchain.data_sources.sql.mssql import MicrosoftSQLServer
-
 from foundationallm.langchain.toolkits import AnomalyDetectionToolkit
 
 class AnomalyDetectionAgent(AgentBase):

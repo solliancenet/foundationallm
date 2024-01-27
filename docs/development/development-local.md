@@ -69,6 +69,10 @@ The `UserPortal` project is a Vue.js (Nuxt) project. To configure it to run loca
     "APIs": {
       "GatekeeperAPI": {
         "APIUrl": "<...>" // Default local value: https://localhost:7180/
+      },
+      ,
+      "AgentFactoryAPI": {
+        "APIUrl": "<...>" // Default local value: "https://localhost:7324/"
       }
     }
   }

@@ -26,6 +26,8 @@ items:
     href: development/index.md
   - name: Configure local development environment
     href: development/development-local.md
+  - name: Directly calling the APIs
+    href: development/directly-calling-apis.md
   - name: FoundationaLLM DevOps rules and guidelines
     href: development/development-approach.md
   - name: Contributing
@@ -44,6 +46,8 @@ items:
   items:
   - name: Setup guides
     href: setup-guides/index.md
+  - name: Quickstart guide
+    href: setup-guides/quickstart.md
   - name: Agents
     href: setup-guides/agents/index.md
     items:
@@ -51,6 +55,15 @@ items:
       href: setup-guides/agents/index.md
     - name: SQL database agent setup procedures
       href: setup-guides/agents/sql-database-agents.md
+  - name: Vectorization
+    href: setup-guides/vectorization/index.md
+    items:
+    - name: Vectorization
+      href: setup-guides/vectorization/index.md
+    - name: Vectorization API
+      href: setup-guides/vectorization/vectorization-api.md
+    - name: Vectorization Worker
+      href: setup-guides/vectorization/vectorization-worker.md
 - name: Operations
   href: operations/index.md
   items:

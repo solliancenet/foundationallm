@@ -19,7 +19,7 @@ namespace FoundationaLLM.Vectorization.Interfaces
         /// <param name="request">The <see cref="VectorizationRequest"/> for which the step should be handled.</param>
         /// <param name="state">The <see cref="VectorizationState"/> holding the state associated with the vectorization request.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> to monitor for cancellation requests.</param>
-        /// <returns></returns>
-        Task Invoke(VectorizationRequest request, VectorizationState state, CancellationToken cancellationToken);
+        /// <returns>True if the vectorization step request was handled successfully.</returns>
+        Task<bool> Invoke(VectorizationRequest request, VectorizationState state, CancellationToken cancellationToken);
     }
 }

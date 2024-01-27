@@ -1,13 +1,15 @@
 from typing import List
-from langchain.base_language import BaseLanguageModel
-from langchain.callbacks import get_openai_callback
-from langchain.document_loaders import AzureBlobStorageFileLoader, AzureBlobStorageContainerLoader
+
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.vectorstores.chroma import Chroma
-from langchain.prompts import PromptTemplate
-from langchain.schema.document import Document
-from langchain.schema.runnable import RunnablePassthrough, RunnableLambda
-from langchain.schema import StrOutputParser
+from langchain_community.callbacks import get_openai_callback
+from langchain_community.document_loaders import AzureBlobStorageFileLoader, AzureBlobStorageContainerLoader
+from langchain_community.vectorstores.chroma import Chroma
+from langchain_core.documents import Document
+from langchain_core.language_models import BaseLanguageModel
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import PromptTemplate
+from langchain_core.runnables import RunnablePassthrough, RunnableLambda
+
 from foundationallm.config import Configuration
 from foundationallm.langchain.agents.agent_base import AgentBase
 from foundationallm.langchain.data_sources.blob.blob_storage_configuration import BlobStorageConfiguration
@@ -21,8 +23,11 @@ class BlobStorageAgent(AgentBase):
     Agent for reading, indexing, and querying blobs from a blob storage container.
     """
 
-    def __init__(self, completion_request: CompletionRequest,
-                 llm: BaseLanguageModel, config: Configuration):
+    def __init__(
+            self,
+            completion_request: CompletionRequest,
+            llm: BaseLanguageModel,
+            config: Configuration):
         """
         Initializes a blob storage in-memory query agent.
 

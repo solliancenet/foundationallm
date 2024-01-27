@@ -6,24 +6,16 @@
     <Nullable>enable</Nullable>
     <AssemblyName>FoundationaLLM.SemanticKernel.Core</AssemblyName>
     <RootNamespace>FoundationaLLM.SemanticKernel.Core</RootNamespace>
-    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
   </PropertyGroup>
-  
-	<ItemGroup>
-	    <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
-	    <PackageReference Include="Azure.Storage.Blobs" Version="12.19.1" />
-		<PackageReference Include="Microsoft.Extensions.Options" Version="8.0.0" />
-	    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-	    <PackageReference Include="Azure.Search.Documents" Version="11.5.0-beta.5" />
-	    <PackageReference Include="Microsoft.ML.Tokenizers" Version="0.21.0-preview.23511.1" />
-	    <PackageReference Include="Microsoft.SemanticKernel" Version="1.0.0-beta4" />
-	    <PackageReference Include="Microsoft.SemanticKernel.Connectors.Memory.AzureCognitiveSearch" Version="1.0.0-beta4" />
-	    <PackageReference Include="PdfPig" Version="0.1.8" />
-		<PackageReference Include="System.Linq.Async" Version="6.0.1" />
-	</ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SemanticKernel" Version="1.2.0" />
+    <PackageReference Include="Microsoft.SemanticKernel.Connectors.AzureAISearch" Version="1.2.0-alpha" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj" />
   </ItemGroup>
-  
+
 </Project>

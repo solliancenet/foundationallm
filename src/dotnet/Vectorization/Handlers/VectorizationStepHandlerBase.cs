@@ -10,23 +10,29 @@ namespace FoundationaLLM.Vectorization.Handlers
     /// Implements basic vectorization step handler functionality.
     /// </summary>
     /// <param name="stepId">The identifier of the vectorization step.</param>
+    /// <param name="messageId">The identifier of underlying message retrieved from the request source.</param>
     /// <param name="parameters">The dictionary of named parameters used to configure the handler.</param>
     /// <param name="stepsConfiguration">The app configuration section containing the configuration for vectorization pipeline steps.</param>
-    /// <param name="contentSourceManagerService">The <see cref="IContentSourceManagerService"/> that manages content sources.</param>
     /// <param name="stateService">The <see cref="IVectorizationStateService"/> that manages vectorization state.</param>
+    /// <param name="serviceProvider">The <see cref="IServiceProvider"/> implemented by the dependency injection container.</param>
     /// <param name="loggerFactory">The logger factory used to create loggers for logging.</param>
     public class VectorizationStepHandlerBase(
         string stepId,
+        string messageId,
         Dictionary<string, string> parameters,
         IConfigurationSection? stepsConfiguration,
-        IContentSourceManagerService contentSourceManagerService,
         IVectorizationStateService stateService,
+        IServiceProvider serviceProvider,
         ILoggerFactory loggerFactory) : IVectorizationStepHandler
     {
         /// <summary>
         /// The identifier of the vectorization step.
         /// </summary>
         protected readonly string _stepId = stepId;
+        /// <summary>
+        /// The identifier of underlying message retrieved from the request source.
+        /// </summary>
+        protected readonly string _messageId = messageId;
         /// <summary>
         /// The dictionary of named parameters used to configure the handler.
         /// </summary>
@@ -36,13 +42,13 @@ namespace FoundationaLLM.Vectorization.Handlers
         /// </summary>
         protected readonly IConfigurationSection? _stepsConfiguration = stepsConfiguration;
         /// <summary>
-        /// The content source manager service.
-        /// </summary>
-        protected readonly IContentSourceManagerService _contentSourceManagerService = contentSourceManagerService;
-        /// <summary>
         /// The vectorization state service.
         /// </summary>
         protected readonly IVectorizationStateService _stateService = stateService;
+        /// <summary>
+        /// The service provider implemented by the dependency injection container.
+        /// </summary>
+        protected readonly IServiceProvider _serviceProvider = serviceProvider;
         /// <summary>
         /// The logger used for logging.
         /// </summary>
@@ -53,12 +59,14 @@ namespace FoundationaLLM.Vectorization.Handlers
         public string StepId => _stepId;
 
         /// <inheritdoc/>
-        public async Task Invoke(VectorizationRequest request, VectorizationState state, CancellationToken cancellationToken)
+        public async Task<bool> Invoke(VectorizationRequest request, VectorizationState state, CancellationToken cancellationToken)
         {
+            var success = true;
+
             try
             {
-                state.LogHandlerStart(this, request.Id);
-                _logger.LogInformation("Starting handler {HandlerId} for request {RequestId}", _stepId, request.Id);
+                state.LogHandlerStart(this, request.Id, _messageId);
+                _logger.LogInformation("Starting handler [{HandlerId}] for request {RequestId} (message id {MessageId}).", _stepId, request.Id, _messageId);
 
                 var stepConfiguration = default(IConfigurationSection);
 
@@ -82,14 +90,17 @@ namespace FoundationaLLM.Vectorization.Handlers
                 ValidateRequest(request);
                 await ProcessRequest(request, state, stepConfiguration, cancellationToken);
 
-                state.LogHandlerEnd(this, request.Id);
-                _logger.LogInformation("Finished handler {HandlerId} for request {RequestId}", _stepId, request.Id);
+                state.LogHandlerEnd(this, request.Id, _messageId);
+                _logger.LogInformation("Finished handler [{HandlerId}] for request {RequestId} (message id {MessageId}).", _stepId, request.Id, _messageId);
             }
             catch (Exception ex)
             {
-                state.LogHandlerError(this, request.Id, ex);
-                _logger.LogError(ex, "Error in executing [extract] step handler for request {VectorizationRequestId}.", request.Id);
+                success = false;
+                state.LogHandlerError(this, request.Id, _messageId, ex);
+                _logger.LogError(ex, "Error in executing [{HandlerId}] step handler for request {VectorizationRequestId} (message id {MessageId}).", _stepId, request.Id, _messageId);
             }
+
+            return success;
         }
 
         private void ValidateRequest(VectorizationRequest request)

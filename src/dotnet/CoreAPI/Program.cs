@@ -8,6 +8,7 @@ using FoundationaLLM.Common.Models.Configuration.Branding;
 using FoundationaLLM.Common.Models.Context;
 using FoundationaLLM.Common.OpenAPI;
 using FoundationaLLM.Common.Services;
+using FoundationaLLM.Common.Services.API;
 using FoundationaLLM.Common.Settings;
 using FoundationaLLM.Core.Interfaces;
 using FoundationaLLM.Core.Models.Configuration;
@@ -125,7 +126,13 @@ namespace FoundationaLLM.Core.API
 
                     // Integrate xml comments
                     options.IncludeXmlComments(filePath);
-                });
+                })
+                .AddSwaggerGenNewtonsoftSupport();
+
+            builder.Services.Configure<RouteOptions>(options =>
+            {
+                options.LowercaseUrls = true;
+            });
 
             var app = builder.Build();
 

@@ -1,10 +1,9 @@
 from typing import Optional
-from langchain.tools import BaseSQLDatabaseTool
-from langchain.tools.base import BaseTool
-from langchain.pydantic_v1 import Field
-from langchain.callbacks.manager import (
-    CallbackManagerForToolRun
-)
+
+from langchain_community.tools.sql_database.tool import BaseSQLDatabaseTool
+from langchain_core.callbacks import CallbackManagerForToolRun
+from langchain_core.pydantic_v1 import Field
+from langchain_core.tools import BaseTool
 
 class SecureSQLDatabaseQueryTool(BaseSQLDatabaseTool, BaseTool):
     """Tool for querying a SQL database."""

@@ -1,10 +1,10 @@
 ﻿using FoundationaLLM.AgentFactory.Core.Interfaces;
-using FoundationaLLM.AgentFactory.Core.Models.Messages;
 using FoundationaLLM.AgentFactory.Core.Models.Orchestration.Metadata;
 using FoundationaLLM.AgentFactory.Core.Services;
 using FoundationaLLM.Common.Interfaces;
 using FoundationaLLM.Common.Models.Cache;
 using System.Runtime.CompilerServices;
+using FoundationaLLM.Common.Models.Messages;
 
 namespace FoundationaLLM.AgentFactory.API
 {

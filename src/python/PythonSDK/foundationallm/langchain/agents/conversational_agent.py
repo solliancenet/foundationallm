@@ -1,12 +1,12 @@
-from langchain.agents import AgentType, initialize_agent, Tool
+from langchain.agents import AgentType, initialize_agent
 from langchain.memory import ConversationBufferMemory
-from langchain.callbacks import get_openai_callback
-from langchain.tools import DuckDuckGoSearchRun
+from langchain_community.callbacks import get_openai_callback
+from langchain_community.tools import DuckDuckGoSearchRun
+from langchain_core.tools import Tool
 
 from foundationallm.config import Configuration
 from foundationallm.langchain.agents import AgentBase
 from foundationallm.langchain.language_models import LanguageModelBase
-
 from foundationallm.models.orchestration import CompletionRequest, CompletionResponse
 
 class ConversationalAgent(AgentBase):
@@ -14,8 +14,11 @@ class ConversationalAgent(AgentBase):
     Default agent with basic conversational capabilities.
     """
 
-    def __init__(self, completion_request: CompletionRequest,
-                 llm: LanguageModelBase, config: Configuration):
+    def __init__(
+            self,
+            completion_request: CompletionRequest,
+            llm: LanguageModelBase,
+            config: Configuration):
         """
         Initializes a DefaultAgent
 

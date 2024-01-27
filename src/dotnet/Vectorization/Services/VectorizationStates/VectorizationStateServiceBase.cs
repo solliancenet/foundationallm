@@ -1,10 +1,6 @@
-﻿using FoundationaLLM.Vectorization.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using FoundationaLLM.Common.Models.TextEmbedding;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace FoundationaLLM.Vectorization.Services.VectorizationStates
 {
@@ -16,17 +12,17 @@ namespace FoundationaLLM.Vectorization.Services.VectorizationStates
         /// <summary>
         /// Gets the location of the vectorization state based on the content identifier.
         /// </summary>
-        /// <param name="contentIdentifier">The <see cref="VectorizationContentIdentifier"/> holding the content identification information.</param>
+        /// <param name="contentIdentifier">The <see cref="ContentIdentifier"/> holding the content identification information.</param>
         /// <returns></returns>
-        protected string GetPersistenceIdentifier(VectorizationContentIdentifier contentIdentifier) =>
+        protected string GetPersistenceIdentifier(ContentIdentifier contentIdentifier) =>
             $"{contentIdentifier.CanonicalId}_state_{HashContentIdentifier(contentIdentifier)}";
 
         /// <summary>
         /// Computes the MD5 hash of the content identifier.
         /// </summary>
-        /// <param name="contentIdentifier">The <see cref="VectorizationContentIdentifier"/> holding the content identification information.</param>
+        /// <param name="contentIdentifier">The <see cref="ContentIdentifier"/> holding the content identification information.</param>
         /// <returns></returns>
-        protected static string HashContentIdentifier(VectorizationContentIdentifier contentIdentifier)
+        protected static string HashContentIdentifier(ContentIdentifier contentIdentifier)
         {
             var byteHash = MD5.HashData(
                 Encoding.UTF8.GetBytes(

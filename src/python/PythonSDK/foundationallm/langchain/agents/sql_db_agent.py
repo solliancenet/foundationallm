@@ -1,6 +1,6 @@
-from langchain.agents import create_sql_agent
-from langchain.agents.agent_types import AgentType
-from langchain.callbacks import get_openai_callback
+from langchain.agents import AgentType
+from langchain_community.agent_toolkits import create_sql_agent
+from langchain_community.callbacks import get_openai_callback
 
 from foundationallm.config import Configuration, Context
 from foundationallm.langchain.agents import AgentBase
@@ -15,8 +15,12 @@ class SqlDbAgent(AgentBase):
     Agent for interacting with SQL databases.
     """
 
-    def __init__(self, completion_request: CompletionRequest, llm: LanguageModelBase,
-                 config: Configuration, context: Context):
+    def __init__(
+            self,
+            completion_request: CompletionRequest,
+            llm: LanguageModelBase,
+            config: Configuration,
+            context: Context):
         """
         Initializes a SQL database agent.
 
@@ -43,6 +47,18 @@ class SqlDbAgent(AgentBase):
         self.sql_db_config: SQLDatabaseConfiguration = ds_config
         self.context = context
 
+        FORMAT_INSTRUCTIONS = """Use the following format:
+Question: the input question you must answer
+Thought: you should always think about what to do
+Action: the action to take, can only be one of: {tool_names}
+Action Input: the input to the action, never add backticks "`" or single quotes "'" around the action input
+Observation: the result of the action
+(this Thought/Action/Action Input/Observation can repeat N times)
+Thought: I now know the final answer
+Final Answer: the final answer to the original input question
+Please respect the order of the steps Thought/Action/Action Input/Observation
+"""
+
         self.agent = create_sql_agent(
             llm = self.llm,
             toolkit = SecureSQLDatabaseToolkit(
@@ -56,22 +72,12 @@ class SqlDbAgent(AgentBase):
             agent_type = AgentType.ZERO_SHOT_REACT_DESCRIPTION,
             verbose = True,
             prefix = self.agent_prompt_prefix,
+            format_instructions = FORMAT_INSTRUCTIONS,
             suffix = self.agent_prompt_suffix,
             agent_executor_kwargs={
                 'handle_parsing_errors': 'Check your output and make sure it conforms!'
             }
         )
-
-    @property
-    def prompt_template(self) -> str:
-        """
-        Property for viewing the agent's prompt template.
-        
-        Returns
-        str
-            Returns the prompt template for the agent.
-        """
-        return self.agent.agent.llm_chain.prompt.template
 
     def run(self, prompt: str) -> CompletionResponse:
         """
@@ -89,9 +95,11 @@ class SqlDbAgent(AgentBase):
             the user_prompt, and token utilization and execution cost details.
         """
         with get_openai_callback() as cb:
+            completion = self.agent.invoke({'input':prompt})
+
             return CompletionResponse(
-                completion = self.agent.run(prompt),
-                user_prompt= prompt,
+                completion = completion['output'],
+                user_prompt = prompt,
                 completion_tokens = cb.completion_tokens,
                 prompt_tokens = cb.prompt_tokens,
                 total_tokens = cb.total_tokens,

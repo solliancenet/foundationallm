@@ -2,21 +2,19 @@
 Class: SearchServiceRetriever
 Description: LangChain retriever for Azure AI Search.
 """
-from langchain.schema import BaseRetriever
+from typing import List, Optional
 
-#new langchain
-#from langchain_openai import AzureOpenAIEmbeddings
-from langchain.embeddings.openai import OpenAIEmbeddings
-
-from langchain.callbacks.manager import (
+from langchain_openai import OpenAIEmbeddings , AzureOpenAIEmbeddings
+from langchain_core.callbacks import (
     AsyncCallbackManagerForRetrieverRun,
     CallbackManagerForRetrieverRun,
 )
+from langchain_core.documents import Document
+from langchain_core.retrievers import BaseRetriever
+
 from azure.search.documents import SearchClient
 from azure.search.documents.models import VectorizedQuery
 from azure.core.credentials import AzureKeyCredential
-from typing import List, Optional
-from langchain.schema.document import Document
 
 class SearchServiceFilterRetriever(BaseRetriever):
     """

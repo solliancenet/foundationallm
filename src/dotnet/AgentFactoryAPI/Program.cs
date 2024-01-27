@@ -11,9 +11,11 @@ using FoundationaLLM.Common.Constants;
 using FoundationaLLM.Common.Extensions;
 using FoundationaLLM.Common.Interfaces;
 using FoundationaLLM.Common.Middleware;
+using FoundationaLLM.Common.Models.Configuration.API;
 using FoundationaLLM.Common.Models.Context;
 using FoundationaLLM.Common.OpenAPI;
 using FoundationaLLM.Common.Services;
+using FoundationaLLM.Common.Services.API;
 using FoundationaLLM.Common.Settings;
 using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 using Microsoft.Extensions.Options;
@@ -142,7 +144,13 @@ namespace FoundationaLLM.AgentFactory.API
 
                     // Adds auth via X-API-KEY header
                     options.AddAPIKeyAuth();
-                });
+                })
+                .AddSwaggerGenNewtonsoftSupport();
+
+            builder.Services.Configure<RouteOptions>(options =>
+            {
+                options.LowercaseUrls = true;
+            });
 
             var app = builder.Build();
 

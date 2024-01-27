@@ -1,4 +1,5 @@
-﻿using FoundationaLLM.Common.Models.Orchestration;
+﻿using FoundationaLLM.Common.Interfaces;
+using FoundationaLLM.Common.Models.Orchestration;
 using FoundationaLLM.Gatekeeper.Core.Interfaces;
 using FoundationaLLM.Gatekeeper.Core.Models.ConfigurationOptions;
 using Microsoft.Extensions.Options;
@@ -16,12 +17,12 @@ namespace FoundationaLLM.Gatekeeper.Core.Services
     /// <param name="gatekeeperIntegrationAPIService">The Gatekeeper Integration API client.</param>
     /// <param name="gatekeeperServiceSettings">The configuration options for the Gatekeeper service.</param>
     public class GatekeeperService(
-        IAgentFactoryAPIService agentFactoryAPIService,
+        IDownstreamAPIService agentFactoryAPIService,
         IContentSafetyService contentSafetyService,
         IGatekeeperIntegrationAPIService gatekeeperIntegrationAPIService,
         IOptions<GatekeeperServiceSettings> gatekeeperServiceSettings) : IGatekeeperService
     {
-        private readonly IAgentFactoryAPIService _agentFactoryAPIService = agentFactoryAPIService;
+        private readonly IDownstreamAPIService _agentFactoryAPIService = agentFactoryAPIService;
         private readonly IContentSafetyService _contentSafetyService = contentSafetyService;
         private readonly IGatekeeperIntegrationAPIService _gatekeeperIntegrationAPIService = gatekeeperIntegrationAPIService;
         private readonly GatekeeperServiceSettings _gatekeeperServiceSettings = gatekeeperServiceSettings.Value;

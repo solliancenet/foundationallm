@@ -1,16 +1,16 @@
 """Toolkit for securely interacting with SQL databases."""
 from typing import List
 
-from langchain.agents.agent_toolkits.base import BaseToolkit
-from langchain.pydantic_v1 import Field
-from langchain.schema.language_model import BaseLanguageModel
-from langchain.tools import BaseTool
-from langchain.tools.sql_database.tool import (
+from langchain_community.agent_toolkits.base import BaseToolkit
+from langchain_community.tools.sql_database.tool import (
     InfoSQLDatabaseTool,
     ListSQLDatabaseTool,
     QuerySQLCheckerTool
 )
-from langchain.utilities.sql_database import SQLDatabase
+from langchain_community.utilities.sql_database import SQLDatabase
+from langchain_core.language_models import BaseLanguageModel
+from langchain_core.pydantic_v1 import Field
+from langchain_core.tools import BaseTool
 
 from foundationallm.langchain.tools import SecureSQLDatabaseQueryTool
 

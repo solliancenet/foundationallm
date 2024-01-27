@@ -650,10 +650,6 @@ namespace FoundationaLLM.Common.Constants
         /// </summary>
         public const string FoundationaLLM_SemanticKernelAPI_OpenAI_ShortSummaryPromptName = "FoundationaLLM:SemanticKernelAPI:OpenAI.ShortSummaryPromptName";
         /// <summary>
-        /// The key section for the FoundationaLLM:Vectorization:ContentSourceManagerService app configuration setting.
-        /// </summary>
-        public const string FoundationaLLM_Vectorization_ContentSourceManagerService = "FoundationaLLM:Vectorization:ContentSourceManagerService";
-        /// <summary>
         /// The key section for the FoundationaLLM:Vectorization:VectorizationWorker app configuration setting.
         /// </summary>
         public const string FoundationaLLM_Vectorization_VectorizationWorker = "FoundationaLLM:Vectorization:VectorizationWorker";
@@ -807,10 +803,7 @@ namespace FoundationaLLM.Common.Constants
         /// The key section for the FoundationaLLM:BlobStorageMemorySource app configuration settings.
         /// </summary>
         public const string FoundationaLLM_BlobStorageMemorySource = "FoundationaLLM:BlobStorageMemorySource";
-        /// <summary>
-        /// The key section for the FoundationaLLM:Vectorization:ContentSources app configuration settings.
-        /// </summary>
-        public const string FoundationaLLM_Vectorization_ContentSources = "FoundationaLLM:Vectorization:ContentSources";
+
         /// <summary>
         /// The key section for the FoundationaLLM:Vectorization:Steps app configuration settings.
         /// </summary>
@@ -820,8 +813,25 @@ namespace FoundationaLLM.Common.Constants
         /// </summary>
         public const string FoundationaLLM_Vectorization_Queues = "FoundationaLLM:Vectorization:Queues";
         /// <summary>
-        /// The key section for the FoundationaLLM:Vectorization:StateService app configuration settings.
+        /// The key section for the FoundationaLLM:Vectorization:StateService:Storage app configuration settings.
         /// </summary>
-        public const string FoundationaLLM_Vectorization_StateService = "FoundationaLLM:Vectorization:StateService";
+        public const string FoundationaLLM_Vectorization_StateService = "FoundationaLLM:Vectorization:StateService:Storage";
+        /// <summary>
+        /// The key section for the FoundationaLLM:Vectorization:ResourceProviderService:Storage app configuration settings.
+        /// </summary>
+        public const string FoundationaLLM_Vectorization_ResourceProviderService_Storage = "FoundationaLLM:Vectorization:ResourceProviderService:Storage";
+        /// <summary>
+        /// The key section for the FoundationaLLM:Vectorization:ContentSources app configuration settings.
+        /// </summary>
+        public const string FoundationaLLM_Vectorization_ContentSources = "FoundationaLLM:Vectorization:ContentSources";
+        /// <summary>
+        /// The key section for the FoundationaLLM:Vectorization:SemanticKernelTextEmbeddingService app configuration settings.
+        /// </summary>
+        public const string FoundationaLLM_Vectorization_SemanticKernelTextEmbeddingService = "FoundationaLLM:Vectorization:SemanticKernelTextEmbeddingService";
+
+        /// <summary>
+        /// The key section for the FoundationaLLM:Vectorization:AzureAISearchIndexingService app configuration settings.
+        /// </summary>
+        public const string FoundationaLLM_Vectorization_AzureAISearchIndexingService = "FoundationaLLM:Vectorization:AzureAISearchIndexingService";
     }
 }

@@ -33,7 +33,11 @@ namespace FoundationaLLM.Vectorization.Services.VectorizationStates
         }
 
         /// <inheritdoc/>
-        public async Task LoadArtifacts(VectorizationState state, VectorizationArtifactType artifactType) => throw new NotImplementedException();
+        public async Task LoadArtifacts(VectorizationState state, VectorizationArtifactType artifactType)
+        {
+            await Task.CompletedTask;
+            throw new NotImplementedException();
+        }
 
         /// <inheritdoc/>
         public async Task SaveState(VectorizationState state)

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace FoundationaLLM.Common.Exceptions
+﻿namespace FoundationaLLM.Common.Exceptions
 {
     /// <summary>
     /// Represents an error with a configuration value.

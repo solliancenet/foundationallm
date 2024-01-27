@@ -18,5 +18,9 @@
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Models\Messages\" />
+  </ItemGroup>
   
 </Project>

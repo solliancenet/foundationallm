@@ -1,11 +1,12 @@
 from typing import List
 import tiktoken
-from langchain.callbacks import get_openai_callback
+
 from langchain.chains.combine_documents.base import BaseCombineDocumentsChain
 from langchain.chains.summarize import load_summarize_chain
-from langchain.docstore.document import Document
-from langchain.prompts import PromptTemplate
 from langchain.text_splitter import CharacterTextSplitter
+from langchain_community.callbacks import get_openai_callback
+from langchain_core.documents import Document
+from langchain_core.prompts import PromptTemplate
 
 from foundationallm.config import Configuration
 from foundationallm.langchain.agents.agent_base import AgentBase
@@ -17,8 +18,11 @@ class SummaryAgent(AgentBase):
     Agent for summarizing input text.
     """
 
-    def __init__(self, completion_request: CompletionRequest,
-                 llm: LanguageModelBase, config: Configuration):
+    def __init__(
+            self,
+            completion_request: CompletionRequest,
+            llm: LanguageModelBase,
+            config: Configuration):
         """
         Initializes a SummaryAgent
 

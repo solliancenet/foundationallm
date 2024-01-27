@@ -13,18 +13,33 @@ namespace FoundationaLLM.Common.Services
     /// <summary>
     /// Provides access to Azure Data Lake blob storage.
     /// </summary>
-    /// <remarks>
-    ///  Initializes a new instance of the <see cref="DataLakeStorageService"/> with the specified options and logger.
-    /// </remarks>
-    /// <param name="options">The options object containing the <see cref="BlobStorageServiceSettings"/> object with the settings.</param>
-    /// <param name="logger">The logger used for logging.</param>
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-    public class DataLakeStorageService(
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-        IOptions<BlobStorageServiceSettings> options,
-        ILogger<DataLakeStorageService> logger) : StorageServiceBase(options, logger), IStorageService
+    public class DataLakeStorageService : StorageServiceBase, IStorageService
     {
         private DataLakeServiceClient _dataLakeClient;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DataLakeStorageService"/> with the specified options and logger.
+        /// </summary>
+        /// <param name="options">The options object containing the <see cref="BlobStorageServiceSettings"/> object with the blob storage settings.</param>
+        /// <param name="logger">The logger used for logging.</param>
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+        public DataLakeStorageService(
+            IOptions<BlobStorageServiceSettings> options,
+            ILogger<DataLakeStorageService> logger) : base(options, logger)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DataLakeStorageService"/> with the specified options and logger.
+        /// </summary>
+        /// <param name="storageSettings">The <see cref="BlobStorageServiceSettings"/> object with the blob storage settings.</param>
+        /// <param name="logger">The logger used for logging.</param>
+        public DataLakeStorageService(
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+            BlobStorageServiceSettings storageSettings,
+            ILogger<DataLakeStorageService> logger) : base(storageSettings, logger)
+        {
+        }
 
         /// <inheritdoc/>
         public async Task<BinaryData> ReadFileAsync(

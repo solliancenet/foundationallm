@@ -1,11 +1,6 @@
-﻿using FoundationaLLM.Vectorization.Interfaces;
-using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using FoundationaLLM.Common.Models.TextEmbedding;
+using FoundationaLLM.Vectorization.Interfaces;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace FoundationaLLM.Vectorization.Models
 {
@@ -24,11 +19,11 @@ namespace FoundationaLLM.Vectorization.Models
         public required string CurrentRequestId { get; set; }
 
         /// <summary>
-        /// The <see cref="VectorizationContentIdentifier"/> object identifying the content being vectorized.
+        /// The <see cref="ContentIdentifier"/> object identifying the content being vectorized.
         /// </summary>
         [JsonPropertyOrder(1)]
         [JsonPropertyName("content_identifier")]
-        public required VectorizationContentIdentifier ContentIdentifier { get; set; }
+        public required ContentIdentifier ContentIdentifier { get; set; }
 
         /// <summary>
         /// The vectorization artifacts associated with the vectorization state.
@@ -36,6 +31,13 @@ namespace FoundationaLLM.Vectorization.Models
         [JsonPropertyOrder(2)]
         [JsonPropertyName("artifacts")]
         public List<VectorizationArtifact> Artifacts { get; set; } = [];
+
+        /// <summary>
+        /// The name of the content source profile.
+        /// </summary>
+        [JsonPropertyOrder(3)]
+        [JsonPropertyName("content_source_profile_name")]
+        public string? ContentSourceProfileName { get; set; }
 
         /// <summary>
         /// The list of log entries associated with actions executed by the vectorization pipeline.
@@ -50,38 +52,42 @@ namespace FoundationaLLM.Vectorization.Models
         /// </summary>
         /// <param name="handler">The vectorization step handler executing the action.</param>
         /// <param name="requestId">The identifier of the vectorization request.</param>
+        /// <param name="messageId">The identifier of underlying message retrieved from the request source.</param>
         /// <param name="text">The string content of the log entry.</param>
-        public void Log(IVectorizationStepHandler handler, string requestId, string text) =>
+        public void Log(IVectorizationStepHandler handler, string requestId, string messageId, string text) =>
             LogEntries.Add(new VectorizationLogEntry(
-                requestId, handler.StepId, text));
+                requestId, messageId, handler.StepId, text));
 
         /// <summary>
         /// Adds a log entry marking the start of handling.
         /// </summary>
         /// <param name="handler">The vectorization step handler executing the action.</param>
         /// <param name="requestId">The identifier of the vectorization request.</param>
-        public void LogHandlerStart(IVectorizationStepHandler handler, string requestId) =>
+        /// <param name="messageId">The identifier of underlying message retrieved from the request source.</param>
+        public void LogHandlerStart(IVectorizationStepHandler handler, string requestId, string messageId) =>
             LogEntries.Add(new VectorizationLogEntry(
-                requestId, handler.StepId, "Started handling step."));
+                requestId, messageId, handler.StepId, "Started handling step."));
 
         /// <summary>
         /// Adds a log entry marking the completion of handling.
         /// </summary>
         /// <param name="handler">The vectorization step handler executing the action.</param>
         /// <param name="requestId">The identifier of the vectorization request.</param>
-        public void LogHandlerEnd(IVectorizationStepHandler handler, string requestId) =>
+        /// <param name="messageId">The identifier of underlying message retrieved from the request source.</param>
+        public void LogHandlerEnd(IVectorizationStepHandler handler, string requestId, string messageId) =>
             LogEntries.Add(new VectorizationLogEntry(
-                requestId, handler.StepId, "Finished handling step."));
+                requestId, messageId, handler.StepId, "Finished handling step."));
 
         /// <summary>
         /// Adds a log entry for a handling exception.
         /// </summary>
         /// <param name="handler">The vectorization step handler executing the action.</param>
         /// <param name="requestId">The identifier of the vectorization request.</param>
+        /// <param name="messageId">The identifier of underlying message retrieved from the request source.</param>
         /// <param name="ex">The exception being logged.</param>
-        public void LogHandlerError(IVectorizationStepHandler handler, string requestId, Exception ex) =>
+        public void LogHandlerError(IVectorizationStepHandler handler, string requestId, string messageId, Exception ex) =>
             LogEntries.Add(new VectorizationLogEntry(
-                requestId, handler.StepId, $"ERROR: {ex.Message}"));
+                requestId, messageId, handler.StepId, $"ERROR: {ex.Message}"));
 
         /// <summary>
         /// Creates a new <see cref="VectorizationState"/> instance based on a specified vectorization request.

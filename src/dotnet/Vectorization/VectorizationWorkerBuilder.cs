@@ -23,7 +23,7 @@ namespace FoundationaLLM.Vectorization
         private CancellationToken _cancellationToken = default;
         private ILoggerFactory? _loggerFactory;
         private IConfigurationSection? _stepsConfiguration;
-        private IContentSourceManagerService? _contentSourceManagerService;
+        private IServiceProvider? _serviceProvider;
 
         private readonly RequestSourcesBuilder _requestSourcesBuilder = new();
 
@@ -50,8 +50,8 @@ namespace FoundationaLLM.Vectorization
             if (_loggerFactory == null)
                 throw new VectorizationException("Cannot build a vectorization worker without a valid logger factory.");
 
-            if (_contentSourceManagerService == null)
-                throw new VectorizationException("Cannot build a vectorization worker without a valid content sources manager.");
+            if (_serviceProvider == null)
+                throw new VectorizationException("Cannot build a vectorization worker without a valid DI service provider.");
 
             var requestSourceServices = _requestSourcesBuilder.Build();
 
@@ -61,7 +61,7 @@ namespace FoundationaLLM.Vectorization
                     requestSourceServices,
                     _stateService,
                     _stepsConfiguration,
-                    _contentSourceManagerService,
+                    _serviceProvider,
                     _loggerFactory,
                     _cancellationToken))
                 .ToList();
@@ -146,13 +146,13 @@ namespace FoundationaLLM.Vectorization
         }
 
         /// <summary>
-        /// Specifies the content source manager service.
+        /// Specifies the dependency injection service provider.
         /// </summary>
-        /// <param name="contentSourceManagerService">The <see cref="IContentSourceManagerService"/> that manages content sources.</param>
+        /// <param name="serviceProvider">The <see cref="IServiceProvider"/> implemented by the dependency injection container.</param>
         /// <returns>The updated instance of the builder.</returns>
-        public VectorizationWorkerBuilder WithContentSourceManager(IContentSourceManagerService contentSourceManagerService)
+        public VectorizationWorkerBuilder WithServiceProvider(IServiceProvider serviceProvider)
         {
-            _contentSourceManagerService = contentSourceManagerService;
+            _serviceProvider = serviceProvider;
             return this;
         }
 

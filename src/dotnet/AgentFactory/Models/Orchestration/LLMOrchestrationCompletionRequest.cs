@@ -1,6 +1,8 @@
 ﻿using FoundationaLLM.AgentFactory.Core.Models.Orchestration.Metadata;
 using FoundationaLLM.Common.Models.Chat;
+using FoundationaLLM.Common.Models.Metadata;
 using Newtonsoft.Json;
+using Agent = FoundationaLLM.AgentFactory.Core.Models.Orchestration.Metadata.Agent;
 
 namespace FoundationaLLM.AgentFactory.Core.Models.Orchestration
 {

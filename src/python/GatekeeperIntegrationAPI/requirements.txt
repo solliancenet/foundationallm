@@ -1,10 +1,9 @@
-fastapi==0.109.0
-uvicorn==0.27.0
-tenacity==8.2.3
-presidio-analyzer==2.2.351
-presidio-anonymizer==2.2.351
 azure-appconfiguration-provider==1.0.0
 azure-identity==1.14.0
 azure-keyvault-secrets==4.7.0
 azure-monitor-opentelemetry==1.1.0
+fastapi==0.109.0
+presidio-analyzer==2.2.351
+presidio-anonymizer==2.2.351
 pylint==3.0.2
+uvicorn==0.27.0

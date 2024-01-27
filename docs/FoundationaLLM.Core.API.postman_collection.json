@@ -1,0 +1,1385 @@
+{
+	"info": {
+		"_postman_id": "9ad62116-3057-4166-abfc-ece23923bff5",
+		"name": "FoundationaLLM.Core.API",
+		"description": "FoundationaLLM.Core.API\n\nContact Support:\n Name: Solliance, Inc.\n Email: contact@solliance.net",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "269456"
+	},
+	"item": [
+		{
+			"name": "branding",
+			"item": [
+				{
+					"name": "Retrieves the branding information for the client.",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/branding?api-version=1.0",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"branding"
+							],
+							"query": [
+								{
+									"key": "api-version",
+									"value": "1.0",
+									"description": "The requested API version"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/branding?api-version=1.0",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"branding"
+									],
+									"query": [
+										{
+											"key": "api-version",
+											"value": "1.0",
+											"description": "The requested API version"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "orchestration",
+			"item": [
+				{
+					"name": "completion",
+					"item": [
+						{
+							"name": "Requests a completion from the downstream APIs.",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "X-AGENT-HINT",
+										"value": "{{agentHint}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"user_prompt\": \"<string>\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/orchestration/completion?api-version=1.0",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"orchestration",
+										"completion"
+									],
+									"query": [
+										{
+											"key": "api-version",
+											"value": "1.0",
+											"description": "The requested API version"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Success",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"user_prompt\": \"<string>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/orchestration/completion?api-version=1.0",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"orchestration",
+												"completion"
+											],
+											"query": [
+												{
+													"key": "api-version",
+													"value": "1.0",
+													"description": "The requested API version"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "sessions",
+			"item": [
+				{
+					"name": "{sessionId}",
+					"item": [
+						{
+							"name": "messages",
+							"item": [
+								{
+									"name": "Returns the chat messages related to an existing session.",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "text/plain"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/sessions/:sessionId/messages?api-version=1.0",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"sessions",
+												":sessionId",
+												"messages"
+											],
+											"query": [
+												{
+													"key": "api-version",
+													"value": "1.0",
+													"description": "The requested API version"
+												}
+											],
+											"variable": [
+												{
+													"key": "sessionId",
+													"value": "<string>",
+													"description": "(Required) The id of the session for which to retrieve chat messages."
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Success",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "text/plain"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/sessions/:sessionId/messages?api-version=1.0",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"sessions",
+														":sessionId",
+														"messages"
+													],
+													"query": [
+														{
+															"key": "api-version",
+															"value": "1.0",
+															"description": "The requested API version"
+														}
+													],
+													"variable": [
+														{
+															"key": "sessionId"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"id\": \"<string>\",\n    \"type\": \"<string>\",\n    \"sessionId\": \"<string>\",\n    \"timeStamp\": \"<dateTime>\",\n    \"sender\": \"<string>\",\n    \"senderDisplayName\": \"<string>\",\n    \"tokens\": \"<integer>\",\n    \"text\": \"<string>\",\n    \"rating\": \"<boolean>\",\n    \"upn\": \"<string>\",\n    \"deleted\": \"<boolean>\",\n    \"vector\": [\n      \"<float>\",\n      \"<float>\"\n    ],\n    \"completionPromptId\": \"<string>\"\n  },\n  {\n    \"id\": \"<string>\",\n    \"type\": \"<string>\",\n    \"sessionId\": \"<string>\",\n    \"timeStamp\": \"<dateTime>\",\n    \"sender\": \"<string>\",\n    \"senderDisplayName\": \"<string>\",\n    \"tokens\": \"<integer>\",\n    \"text\": \"<string>\",\n    \"rating\": \"<boolean>\",\n    \"upn\": \"<string>\",\n    \"deleted\": \"<boolean>\",\n    \"vector\": [\n      \"<float>\",\n      \"<float>\"\n    ],\n    \"completionPromptId\": \"<string>\"\n  }\n]"
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "message",
+							"item": [
+								{
+									"name": "{messageId}",
+									"item": [
+										{
+											"name": "rate",
+											"item": [
+												{
+													"name": "Rate an assistant message. This can be used to discover useful AI responses for training,\r\ndiscoverability, and other benefits down the road.",
+													"request": {
+														"method": "POST",
+														"header": [
+															{
+																"key": "Accept",
+																"value": "text/plain"
+															}
+														],
+														"url": {
+															"raw": "{{baseUrl}}/sessions/:sessionId/message/:messageId/rate?rating=<boolean>&api-version=1.0",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"sessions",
+																":sessionId",
+																"message",
+																":messageId",
+																"rate"
+															],
+															"query": [
+																{
+																	"key": "rating",
+																	"value": "<boolean>",
+																	"description": "The rating to assign to the message."
+																},
+																{
+																	"key": "api-version",
+																	"value": "1.0",
+																	"description": "The requested API version"
+																}
+															],
+															"variable": [
+																{
+																	"key": "sessionId",
+																	"value": "<string>",
+																	"description": "(Required) The id of the session to which the message belongs."
+																},
+																{
+																	"key": "messageId",
+																	"value": "<string>",
+																	"description": "(Required) The id of the message to rate."
+																}
+															]
+														}
+													},
+													"response": [
+														{
+															"name": "Success",
+															"originalRequest": {
+																"method": "POST",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "text/plain"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/sessions/:sessionId/message/:messageId/rate?rating=<boolean>&api-version=1.0",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"sessions",
+																		":sessionId",
+																		"message",
+																		":messageId",
+																		"rate"
+																	],
+																	"query": [
+																		{
+																			"key": "rating",
+																			"value": "<boolean>",
+																			"description": "The rating to assign to the message."
+																		},
+																		{
+																			"key": "api-version",
+																			"value": "1.0",
+																			"description": "The requested API version"
+																		}
+																	],
+																	"variable": [
+																		{
+																			"key": "sessionId"
+																		},
+																		{
+																			"key": "messageId"
+																		}
+																	]
+																}
+															},
+															"status": "OK",
+															"code": 200,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"id\": \"<string>\",\n  \"type\": \"<string>\",\n  \"sessionId\": \"<string>\",\n  \"timeStamp\": \"<dateTime>\",\n  \"sender\": \"<string>\",\n  \"senderDisplayName\": \"<string>\",\n  \"tokens\": \"<integer>\",\n  \"text\": \"<string>\",\n  \"rating\": \"<boolean>\",\n  \"upn\": \"<string>\",\n  \"deleted\": \"<boolean>\",\n  \"vector\": [\n    \"<float>\",\n    \"<float>\"\n  ],\n  \"completionPromptId\": \"<string>\"\n}"
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "completionprompts",
+							"item": [
+								{
+									"name": "{completionPromptId}",
+									"item": [
+										{
+											"name": "Returns the completion prompt for a given session and completion prompt id.",
+											"request": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "text/plain"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/sessions/:sessionId/completionprompts/:completionPromptId?api-version=1.0",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"sessions",
+														":sessionId",
+														"completionprompts",
+														":completionPromptId"
+													],
+													"query": [
+														{
+															"key": "api-version",
+															"value": "1.0",
+															"description": "The requested API version"
+														}
+													],
+													"variable": [
+														{
+															"key": "sessionId",
+															"value": "<string>",
+															"description": "(Required) The session id from which to retrieve the completion prompt."
+														},
+														{
+															"key": "completionPromptId",
+															"value": "<string>",
+															"description": "(Required) The id of the completion prompt to retrieve."
+														}
+													]
+												}
+											},
+											"response": [
+												{
+													"name": "Success",
+													"originalRequest": {
+														"method": "GET",
+														"header": [
+															{
+																"key": "Accept",
+																"value": "text/plain"
+															}
+														],
+														"url": {
+															"raw": "{{baseUrl}}/sessions/:sessionId/completionprompts/:completionPromptId?api-version=1.0",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"sessions",
+																":sessionId",
+																"completionprompts",
+																":completionPromptId"
+															],
+															"query": [
+																{
+																	"key": "api-version",
+																	"value": "1.0",
+																	"description": "The requested API version"
+																}
+															],
+															"variable": [
+																{
+																	"key": "sessionId"
+																},
+																{
+																	"key": "completionPromptId"
+																}
+															]
+														}
+													},
+													"status": "OK",
+													"code": 200,
+													"_postman_previewlanguage": "json",
+													"header": [
+														{
+															"key": "Content-Type",
+															"value": "application/json"
+														}
+													],
+													"cookie": [],
+													"body": "{\n  \"id\": \"<string>\",\n  \"type\": \"<string>\",\n  \"sessionId\": \"<string>\",\n  \"messageId\": \"<string>\",\n  \"prompt\": \"<string>\",\n  \"deleted\": \"<boolean>\"\n}"
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "rename",
+							"item": [
+								{
+									"name": "Rename the chat session.",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "text/plain"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/sessions/:sessionId/rename?newChatSessionName=<string>&api-version=1.0",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"sessions",
+												":sessionId",
+												"rename"
+											],
+											"query": [
+												{
+													"key": "newChatSessionName",
+													"value": "<string>",
+													"description": "The new name for the session."
+												},
+												{
+													"key": "api-version",
+													"value": "1.0",
+													"description": "The requested API version"
+												}
+											],
+											"variable": [
+												{
+													"key": "sessionId",
+													"value": "<string>",
+													"description": "(Required) The id of the session to rename."
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Success",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "text/plain"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/sessions/:sessionId/rename?newChatSessionName=<string>&api-version=1.0",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"sessions",
+														":sessionId",
+														"rename"
+													],
+													"query": [
+														{
+															"key": "newChatSessionName",
+															"value": "<string>",
+															"description": "The new name for the session."
+														},
+														{
+															"key": "api-version",
+															"value": "1.0",
+															"description": "The requested API version"
+														}
+													],
+													"variable": [
+														{
+															"key": "sessionId"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"id\": \"<string>\",\n  \"type\": \"<string>\",\n  \"sessionId\": \"<string>\",\n  \"tokensUsed\": \"<integer>\",\n  \"name\": \"<string>\",\n  \"upn\": \"<string>\",\n  \"deleted\": \"<boolean>\"\n}"
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "completion",
+							"item": [
+								{
+									"name": "Receive a prompt from a user, vectorize it, and get a completion from the orchestration service.",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "text/plain"
+											},
+											{
+												"key": "X-AGENT-HINT",
+												"value": "{{agentHint}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "<string>",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/sessions/:sessionId/completion?api-version=1.0",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"sessions",
+												":sessionId",
+												"completion"
+											],
+											"query": [
+												{
+													"key": "api-version",
+													"value": "1.0",
+													"description": "The requested API version"
+												}
+											],
+											"variable": [
+												{
+													"key": "sessionId",
+													"value": "<string>",
+													"description": "(Required) The id of the session for which to get a completion."
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Success",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "text/plain"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "<string>",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/sessions/:sessionId/completion?api-version=1.0",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"sessions",
+														":sessionId",
+														"completion"
+													],
+													"query": [
+														{
+															"key": "api-version",
+															"value": "1.0",
+															"description": "The requested API version"
+														}
+													],
+													"variable": [
+														{
+															"key": "sessionId"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"text\": \"<string>\"\n}"
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "summarize-name",
+							"item": [
+								{
+									"name": "Generate a name for a chat message, based on the passed in prompt.",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "text/plain"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "<string>",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/sessions/:sessionId/summarize-name?api-version=1.0",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"sessions",
+												":sessionId",
+												"summarize-name"
+											],
+											"query": [
+												{
+													"key": "api-version",
+													"value": "1.0",
+													"description": "The requested API version"
+												}
+											],
+											"variable": [
+												{
+													"key": "sessionId",
+													"value": "<string>",
+													"description": "(Required) The id of the session for which to generate a name."
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Success",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "text/plain"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "<string>",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/sessions/:sessionId/summarize-name?api-version=1.0",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"sessions",
+														":sessionId",
+														"summarize-name"
+													],
+													"query": [
+														{
+															"key": "api-version",
+															"value": "1.0",
+															"description": "The requested API version"
+														}
+													],
+													"variable": [
+														{
+															"key": "sessionId"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"text\": \"<string>\"\n}"
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "Delete a chat session and related messages.",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/sessions/:sessionId?api-version=1.0",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"sessions",
+										":sessionId"
+									],
+									"query": [
+										{
+											"key": "api-version",
+											"value": "1.0",
+											"description": "The requested API version"
+										}
+									],
+									"variable": [
+										{
+											"key": "sessionId",
+											"value": "<string>",
+											"description": "(Required) "
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Success",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/sessions/:sessionId?api-version=1.0",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"sessions",
+												":sessionId"
+											],
+											"query": [
+												{
+													"key": "api-version",
+													"value": "1.0",
+													"description": "The requested API version"
+												}
+											],
+											"variable": [
+												{
+													"key": "sessionId"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Returns list of chat session ids and names.",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/plain"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/sessions?api-version=1.0",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"sessions"
+							],
+							"query": [
+								{
+									"key": "api-version",
+									"value": "1.0",
+									"description": "The requested API version"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "text/plain"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/sessions?api-version=1.0",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"sessions"
+									],
+									"query": [
+										{
+											"key": "api-version",
+											"value": "1.0",
+											"description": "The requested API version"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[\n  {\n    \"id\": \"<string>\",\n    \"type\": \"<string>\",\n    \"sessionId\": \"<string>\",\n    \"tokensUsed\": \"<integer>\",\n    \"name\": \"<string>\",\n    \"upn\": \"<string>\",\n    \"deleted\": \"<boolean>\"\n  },\n  {\n    \"id\": \"<string>\",\n    \"type\": \"<string>\",\n    \"sessionId\": \"<string>\",\n    \"tokensUsed\": \"<integer>\",\n    \"name\": \"<string>\",\n    \"upn\": \"<string>\",\n    \"deleted\": \"<boolean>\"\n  }\n]"
+						}
+					]
+				},
+				{
+					"name": "Creates a new chat session.",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/plain"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/sessions?api-version=1.0",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"sessions"
+							],
+							"query": [
+								{
+									"key": "api-version",
+									"value": "1.0",
+									"description": "The requested API version"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "text/plain"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/sessions?api-version=1.0",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"sessions"
+									],
+									"query": [
+										{
+											"key": "api-version",
+											"value": "1.0",
+											"description": "The requested API version"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"id\": \"<string>\",\n  \"type\": \"<string>\",\n  \"sessionId\": \"<string>\",\n  \"tokensUsed\": \"<integer>\",\n  \"name\": \"<string>\",\n  \"upn\": \"<string>\",\n  \"deleted\": \"<boolean>\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "status",
+			"item": [
+				{
+					"name": "auth",
+					"item": [
+						{
+							"name": "Returns OK if the requester is authenticated and allowed to execute\r\nrequests against this service.",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/status/auth?api-version=1.0",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"status",
+										"auth"
+									],
+									"query": [
+										{
+											"key": "api-version",
+											"value": "1.0",
+											"description": "The requested API version"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Success",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/status/auth?api-version=1.0",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"status",
+												"auth"
+											],
+											"query": [
+												{
+													"key": "api-version",
+													"value": "1.0",
+													"description": "The requested API version"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Returns the status of the Core API service.",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/status?api-version=1.0",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"status"
+							],
+							"query": [
+								{
+									"key": "api-version",
+									"value": "1.0",
+									"description": "The requested API version"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/status?api-version=1.0",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"status"
+									],
+									"query": [
+										{
+											"key": "api-version",
+											"value": "1.0",
+											"description": "The requested API version"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "Returns the allowed HTTP methods for the Core API service.",
+					"request": {
+						"method": "OPTIONS",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/status?api-version=1.0",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"status"
+							],
+							"query": [
+								{
+									"key": "api-version",
+									"value": "1.0",
+									"description": "The requested API version"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "OPTIONS",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/status?api-version=1.0",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"status"
+									],
+									"query": [
+										{
+											"key": "api-version",
+											"value": "1.0",
+											"description": "The requested API version"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "userprofiles",
+			"item": [
+				{
+					"name": "agents",
+					"item": [
+						{
+							"name": "Retrieves a list of global and private agents.",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "text/plain"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/userprofiles/agents?api-version=1.0",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"userprofiles",
+										"agents"
+									],
+									"query": [
+										{
+											"key": "api-version",
+											"value": "1.0",
+											"description": "The requested API version"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Success",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "text/plain"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/userprofiles/agents?api-version=1.0",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"userprofiles",
+												"agents"
+											],
+											"query": [
+												{
+													"key": "api-version",
+													"value": "1.0",
+													"description": "The requested API version"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "[\n  {\n    \"name\": \"<string>\",\n    \"private\": \"<boolean>\"\n  },\n  {\n    \"name\": \"<string>\",\n    \"private\": \"<boolean>\"\n  }\n]"
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Retrieves the branding information for the client.",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/userprofiles?api-version=1.0",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"userprofiles"
+							],
+							"query": [
+								{
+									"key": "api-version",
+									"value": "1.0",
+									"description": "The requested API version"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/userprofiles?api-version=1.0",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"userprofiles"
+									],
+									"query": [
+										{
+											"key": "api-version",
+											"value": "1.0",
+											"description": "The requested API version"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://localhost:63279"
+		},
+		{
+			"key": "agentHint",
+			"value": "{\"name\": \"default\", \"private\": false}",
+			"type": "string"
+		}
+	]
+}

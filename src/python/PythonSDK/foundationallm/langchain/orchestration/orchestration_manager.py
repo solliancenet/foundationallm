@@ -1,4 +1,5 @@
-from langchain.base_language import BaseLanguageModel
+from langchain_core.language_models import BaseLanguageModel
+
 from foundationallm.config import Configuration, Context
 from foundationallm.langchain.language_models import LanguageModelFactory
 from foundationallm.langchain.agents import AgentFactory, AgentBase

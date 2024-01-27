@@ -4,13 +4,15 @@ Description: A RAG agent for performing hybrid searches on Azure AI Search.
 """
 from typing import List
 from azure.core.credentials import AzureKeyCredential
-from langchain.callbacks.tracers import ConsoleCallbackHandler
-from langchain.base_language import BaseLanguageModel
-from langchain.callbacks import get_openai_callback
-from langchain.prompts import PromptTemplate
-from langchain.schema.document import Document
-from langchain.schema.runnable import RunnablePassthrough, RunnableLambda
-from langchain.schema import StrOutputParser
+
+from langchain_community.callbacks import get_openai_callback
+from langchain_core.documents import Document
+from langchain_core.language_models import BaseLanguageModel
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import PromptTemplate
+from langchain_core.runnables import RunnablePassthrough, RunnableLambda
+from langchain_core.tracers.stdout import ConsoleCallbackHandler
+
 from foundationallm.config import Configuration
 from foundationallm.langchain.agents.agent_base import AgentBase
 from foundationallm.langchain.data_sources.search_service.search_service_configuration import SearchServiceConfiguration
@@ -23,8 +25,11 @@ class SearchServiceAgent(AgentBase):
     A RAG agent for performing hybrid searches on Azure AI Search.
     """
 
-    def __init__(self, completion_request: CompletionRequest,
-                 llm: BaseLanguageModel, config: Configuration):
+    def __init__(
+            self,
+            completion_request: CompletionRequest,
+            llm: BaseLanguageModel,
+            config: Configuration):
         """
         Initializes an Azure AI Search agent.
 
@@ -42,7 +47,7 @@ class SearchServiceAgent(AgentBase):
         for ds in completion_request.data_sources:
             ds_config: SearchServiceConfiguration = ds.configuration
 
-        self.llm = llm.get_completion_model(completion_request.language_model)        
+        self.llm = llm.get_completion_model(completion_request.language_model)
         self.prompt_prefix = completion_request.agent.prompt_prefix        
         self.retriever = SearchServiceRetriever( 
             endpoint = config.get_value(ds_config.endpoint),

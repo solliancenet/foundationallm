@@ -1,5 +1,4 @@
 ﻿using FoundationaLLM.AgentFactory.Core.Interfaces;
-using FoundationaLLM.AgentFactory.Core.Models.Messages;
 using FoundationaLLM.AgentFactory.Core.Models.Orchestration.DataSourceConfigurations;
 using FoundationaLLM.AgentFactory.Core.Models.Orchestration.Metadata;
 using FoundationaLLM.AgentFactory.Core.Models.Orchestration;
@@ -7,9 +6,13 @@ using FoundationaLLM.AgentFactory.Interfaces;
 using FoundationaLLM.Common.Models.Orchestration;
 using FoundationaLLM.Common.Interfaces;
 using FoundationaLLM.AgentFactory.Core.Services;
+using FoundationaLLM.Common.Constants;
 using FoundationaLLM.Common.Models.Cache;
 using FoundationaLLM.Common.Models.Context;
+using FoundationaLLM.Common.Models.Messages;
+using FoundationaLLM.Common.Models.Metadata;
 using Microsoft.Extensions.Logging;
+using Agent = FoundationaLLM.AgentFactory.Core.Models.Orchestration.Metadata.Agent;
 
 namespace FoundationaLLM.AgentFactory.Core.Agents
 {
@@ -60,7 +63,7 @@ namespace FoundationaLLM.AgentFactory.Core.Agents
             // Get prompts for the agent from the prompt hub.
             var promptResponse = _callContext.AgentHint != null
                 ? await _cacheService.Get<PromptHubResponse>(
-                    new CacheKey(_callContext.AgentHint.Name!, "prompt"),
+                    new CacheKey(_callContext.AgentHint.Name!, CacheCategories.Prompt),
                     async () => {
                         return await _promptHubService.ResolveRequest(
                             _agentMetadata.PromptContainer ?? _agentMetadata.Name!,
@@ -83,7 +86,7 @@ namespace FoundationaLLM.AgentFactory.Core.Agents
             // Get data sources listed for the agent.
             var dataSourceResponse = _callContext.AgentHint != null
                 ? await _cacheService.Get<DataSourceHubResponse>(
-                    new CacheKey(_callContext.AgentHint.Name!, "datasource"),
+                    new CacheKey(_callContext.AgentHint.Name!, CacheCategories.DataSource),
                     async () => { return await _dataSourceHubService.ResolveRequest(_agentMetadata.AllowedDataSourceNames!, sessionId); },
                     false,
                     TimeSpan.FromHours(1))

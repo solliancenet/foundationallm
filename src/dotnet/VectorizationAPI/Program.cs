@@ -103,7 +103,13 @@ builder.Services.AddSwaggerGen(
 
         // Integrate xml comments
         options.IncludeXmlComments(filePath);
-    });
+    })
+    .AddSwaggerGenNewtonsoftSupport();
+
+builder.Services.Configure<RouteOptions>(options =>
+{
+    options.LowercaseUrls = true;
+});
 
 var app = builder.Build();
 

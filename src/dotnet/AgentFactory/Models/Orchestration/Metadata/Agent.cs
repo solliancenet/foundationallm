@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using FoundationaLLM.Common.Models.Metadata;
+using Newtonsoft.Json;
 
 namespace FoundationaLLM.AgentFactory.Core.Models.Orchestration.Metadata
 {

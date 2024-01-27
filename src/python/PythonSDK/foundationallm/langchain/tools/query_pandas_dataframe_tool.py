@@ -1,11 +1,9 @@
 from typing import Optional
+
 from langchain.agents import AgentExecutor
-from langchain.callbacks.manager import CallbackManagerForToolRun
-from pandas import DataFrame
-from langchain.pydantic_v1 import BaseModel, Field
-
-from langchain.tools.base import BaseTool
-
+from langchain_core.callbacks import CallbackManagerForToolRun
+from langchain_core.pydantic_v1 import BaseModel, Field
+from langchain_core.tools import BaseTool
 
 class BasePandasDataFrameTool(BaseModel):
     """Base tool for interacting with a Pandas DataFrame."""

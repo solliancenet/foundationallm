@@ -36,9 +36,15 @@ public interface ICoreService
     Task DeleteChatSessionAsync(string sessionId);
 
     /// <summary>
-    /// Receive a prompt from a user, vectorize it from the OpenAI service, and get a completion from the OpenAI service.
+    /// Receive a prompt from a user, retrieve the message history from the related session,
+    /// generate a completion response, and log full completion results.
     /// </summary>
     Task<Completion> GetChatCompletionAsync(string? sessionId, string userPrompt);
+
+    /// <summary>
+    /// Provides a completion for a user prompt, without a session.
+    /// </summary>
+    Task<Completion> GetCompletionAsync(DirectCompletionRequest directCompletionRequest);
 
     /// <summary>
     /// Generate a name for a chat message, based on the passed in prompt.
