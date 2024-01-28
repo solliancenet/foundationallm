@@ -42,7 +42,14 @@ export default {
 		const bearerToken = await this.getBearerToken();
 		options.headers['Authorization'] = `Bearer ${bearerToken}`;
 
-		return await $fetch(`${this.apiUrl}${url}`, options);
+		try {
+			return await $fetch(`${this.apiUrl}${url}`, options);
+		} catch(error) {
+			if (error.response.status === 401) {
+				const router = useRouter();
+				router.push({ query: { auth_expired: true } });
+			}
+		}
 	},
 
 	async getSessions() {

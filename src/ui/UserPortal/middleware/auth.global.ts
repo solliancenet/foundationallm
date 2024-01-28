@@ -8,12 +8,12 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
 	await msalInstance.handleRedirectPromise();
 	const accounts = await msalInstance.getAllAccounts();
 
-	if (accounts.length > 0) {
+	if (accounts.length > 0 && !from.query.auth_expired) {
 		const authStore = useAuthStore();
 		authStore.setAccounts(accounts);
 	}
 
-	if (accounts.length > 0 && to.path !== '/') {
+	if (accounts.length > 0 && to.path !== '/' && !from.query.auth_expired) {
 		return navigateTo({ path: '/', query: from.query });
 	}
 

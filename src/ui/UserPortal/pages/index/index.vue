@@ -6,12 +6,27 @@
 			<div v-show="!appStore.isSidebarClosed" class="sidebar-blur" @click="appStore.toggleSidebar" />
 			<ChatThread />
 		</div>
+
+		<!-- Authentication error dialog -->
+		<Dialog
+			class="sidebar-dialog"
+			:visible="$route.query.auth_expired === true"
+			modal
+			header="Authentication Error"
+			:closable="false"
+		>
+			<p>Failed to authenticate. Please try signing in again.</p>
+			<template #footer>
+				<Button label="Go to Sign In" severity="primary" @click="$router.push({ name: 'auth/login' })" />
+			</template>
+		</Dialog>
 	</div>
 </template>
 
 <script lang="ts">
 import { mapStores } from 'pinia';
 import { useAppStore } from '@/stores/appStore';
+
 export default {
 	name: 'Index',
 
