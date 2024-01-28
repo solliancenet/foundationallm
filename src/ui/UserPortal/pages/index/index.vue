@@ -10,7 +10,7 @@
 		<!-- Authentication error dialog -->
 		<Dialog
 			class="sidebar-dialog"
-			:visible="$route.query.auth_expired === true"
+			:visible="$route.query.auth_expired === 'true'"
 			modal
 			header="Authentication Error"
 			:closable="false"
