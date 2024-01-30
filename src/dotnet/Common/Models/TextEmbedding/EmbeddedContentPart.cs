@@ -12,6 +12,11 @@ namespace FoundationaLLM.Common.Models.TextEmbedding
     public class EmbeddedContentPart
     {
         /// <summary>
+        /// The unique identifier of the embedded content part.
+        /// </summary>
+        public required string Id { get; set; }
+
+        /// <summary>
         /// The text content that was embedded.
         /// </summary>
         public required string Content { get; set; }

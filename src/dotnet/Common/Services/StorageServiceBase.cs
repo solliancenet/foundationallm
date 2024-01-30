@@ -27,6 +27,11 @@ namespace FoundationaLLM.Common.Services
         protected readonly ILogger<StorageServiceBase> _logger;
 
         /// <summary>
+        /// The optional instance name of the storage service.
+        /// </summary>
+        public string? InstanceName { get; set; }
+
+        /// <summary>
         ///  Initializes a new instance of the <see cref="StorageServiceBase"/> with the specified options and logger.
         /// </summary>
         /// <param name="storageOptions">The options object containing the <see cref="BlobStorageServiceSettings"/> object with the settings.</param>

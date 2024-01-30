@@ -36,8 +36,7 @@ namespace FoundationaLLM.Vectorization.Services.Text
 
             return indexingProfile.Indexer switch
             {
-                IndexerType.AzureAISearchIndexer => CreateAzureAISearchIndexingService(
-                    indexingProfile.Settings!["IndexName"]),
+                IndexerType.AzureAISearchIndexer => CreateAzureAISearchIndexingService(),
                 _ => throw new VectorizationException($"The text embedding type {indexingProfile.Indexer} is not supported."),
             };
         }
@@ -50,13 +49,12 @@ namespace FoundationaLLM.Vectorization.Services.Text
 
             return indexingProfile.Indexer switch
             {
-                IndexerType.AzureAISearchIndexer => (CreateAzureAISearchIndexingService(
-                    indexingProfile.Settings!["IndexName"]), indexingProfile),
+                IndexerType.AzureAISearchIndexer => (CreateAzureAISearchIndexingService(), indexingProfile),
                 _ => throw new VectorizationException($"The text embedding type {indexingProfile.Indexer} is not supported."),
             };
         }
 
-        private IIndexingService CreateAzureAISearchIndexingService(string indexName)
+        private IIndexingService CreateAzureAISearchIndexingService()
         {
             var indexingService = _serviceProvider.GetKeyedService<IIndexingService>(
                 DependencyInjectionKeys.FoundationaLLM_Vectorization_AzureAISearchIndexingService)

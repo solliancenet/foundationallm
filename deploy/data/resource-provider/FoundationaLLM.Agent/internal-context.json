@@ -1,0 +1,24 @@
+{
+    "name": "internal-context",
+    "type": "knowledge-management",
+    "description": "Session-less agent that issues the user prompt directly to the language model.",    
+    "language_model": {
+		"type": "openai",
+		"provider": "microsoft",
+		"temperature": 0,
+		"use_chat": true,
+        "api_endpoint": "FoundationaLLM:AzureOpenAI:API:Endpoint",
+        "api_key": "FoundationaLLM:AzureOpenAI:API:Key",
+        "api_version": "FoundationaLLM:AzureOpenAI:API:Version",
+        "version": "FoundationaLLM:AzureOpenAI:API:Completions:ModelVersion",
+        "deployment": "FoundationaLLM:AzureOpenAI:API:Completions:DeploymentName"
+	},   
+    "sessions_enabled": false,
+    "conversation_history": {
+        "enabled": false     
+    },
+    "gatekeeper": {
+        "use_system_setting": true
+    },    
+    "orchestrator": "LangChain"
+}

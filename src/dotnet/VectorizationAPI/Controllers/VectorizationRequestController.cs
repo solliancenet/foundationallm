@@ -28,7 +28,7 @@ namespace FoundationaLLM.Vectorization.API.Controllers
         /// <param name="vectorizationRequest"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task ProcessRequest([FromBody] VectorizationRequest vectorizationRequest) =>
-            await _vectorizationService.ProcessRequest(vectorizationRequest);
+        public async Task<IActionResult> ProcessRequest([FromBody] VectorizationRequest vectorizationRequest) =>
+            new OkObjectResult(await _vectorizationService.ProcessRequest(vectorizationRequest));
     }
 }

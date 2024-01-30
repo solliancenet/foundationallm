@@ -31,5 +31,9 @@ namespace FoundationaLLM.Common.Interfaces
         /// from one or more services.
         /// </summary>
         UnifiedUserIdentity? CurrentUserIdentity { get; set; }
+        /// <summary>
+        /// The unique identifier of the current FoundationaLLM deployment instance.
+        /// </summary>
+        string? InstanceId { get; set; }
     }
 }

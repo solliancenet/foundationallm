@@ -1,6 +1,5 @@
 ﻿using FoundationaLLM.Common.Constants;
 using FoundationaLLM.Common.Interfaces;
-using FoundationaLLM.Common.Models.Chat;
 using FoundationaLLM.Vectorization.Exceptions;
 using FoundationaLLM.Vectorization.Interfaces;
 using FoundationaLLM.Vectorization.Models;
@@ -35,7 +34,7 @@ namespace FoundationaLLM.Vectorization.Handlers
             loggerFactory)
     {
         /// <inheritdoc/>
-        protected override async Task ProcessRequest(
+        protected override async Task<bool> ProcessRequest(
             VectorizationRequest request,
             VectorizationState state,
             IConfigurationSection? stepConfiguration,
@@ -43,7 +42,7 @@ namespace FoundationaLLM.Vectorization.Handlers
         {
             var serviceFactory = _serviceProvider.GetService<IVectorizationServiceFactory<IContentSourceService>>()
                 ?? throw new VectorizationException($"Could not retrieve the content source service factory instance.");
-            var contentSource = serviceFactory.GetService(_parameters["content_source_profile_name"]);
+            var contentSource = serviceFactory.GetService(request.ContentIdentifier.ContentSourceProfileName);
 
             var textContent = await contentSource.ExtractTextFromFileAsync(request.ContentIdentifier.MultipartId, cancellationToken);
 
@@ -53,7 +52,8 @@ namespace FoundationaLLM.Vectorization.Handlers
                 Position = 1,
                 Content = textContent
             });
-            state.ContentSourceProfileName = _parameters["content_source_profile_name"];
+
+            return true;
         }
     }
 }

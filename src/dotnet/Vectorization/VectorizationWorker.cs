@@ -20,7 +20,7 @@ namespace FoundationaLLM.Vectorization
         public async Task Run()
         {
             var requestManagerTasks = _requestManagerServices
-                .Select(rms => Task.Run(async () => await rms.Run()))
+                .Select(rms => Task.Run(() => rms.Run()))
                 .ToArray();
 
             await Task.WhenAll(requestManagerTasks);

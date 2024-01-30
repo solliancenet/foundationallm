@@ -2,9 +2,14 @@
 The API endpoint for returning the completion from the LLM for the specified user prompt.
 """
 from typing import Optional
-from fastapi import APIRouter, Depends, Header, Request
+from fastapi import APIRouter, Depends, Header, Request, Body
 from foundationallm.config import Context
-from foundationallm.models.orchestration import CompletionRequest, CompletionResponse
+from foundationallm.models.orchestration import (
+    CompletionRequestBase,
+    CompletionRequest,
+    KnowledgeManagementCompletionRequest,
+    CompletionResponse
+)
 from foundationallm.langchain.orchestration import OrchestrationManager
 from app.dependencies import handle_exception, validate_api_key_header
 
@@ -16,10 +21,18 @@ router = APIRouter(
     responses={404: {'description':'Not found'}}
 )
 
+# temporary to support legacy agents alongside the knowledge-management agent
+async def resolve_completion_request(request_body: dict = Body(...)) -> CompletionRequestBase:  
+    agent_type = request_body.get("agent", {}).get("type", None)  
+    if agent_type == "knowledge-management":  
+        return KnowledgeManagementCompletionRequest(**request_body)  
+    else:  
+        return CompletionRequest(**request_body)
+
 @router.post('/completion')
 async def get_completion(
-    completion_request: CompletionRequest,
     request : Request,
+    completion_request: CompletionRequestBase = Depends(resolve_completion_request),    
     x_user_identity: Optional[str] = Header(None)) -> CompletionResponse:
     """
     Retrieves a completion response from a language model.

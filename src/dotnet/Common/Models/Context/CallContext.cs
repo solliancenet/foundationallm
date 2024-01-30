@@ -16,5 +16,7 @@ namespace FoundationaLLM.Common.Models.Context
         public Agent? AgentHint { get; set; }
         /// <inheritdoc/>
         public UnifiedUserIdentity? CurrentUserIdentity { get; set; }
+        /// <inheritdoc/>
+        public string? InstanceId { get; set; }
     }
 }

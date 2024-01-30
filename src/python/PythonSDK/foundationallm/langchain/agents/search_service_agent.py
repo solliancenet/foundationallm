@@ -17,7 +17,7 @@ from foundationallm.config import Configuration
 from foundationallm.langchain.agents.agent_base import AgentBase
 from foundationallm.langchain.data_sources.search_service.search_service_configuration import SearchServiceConfiguration
 from foundationallm.models.orchestration import CompletionRequest, CompletionResponse
-from foundationallm.langchain.retrievers import SearchServiceRetriever
+from foundationallm.langchain.retrievers import AzureAISearchServiceRetriever
 from foundationallm.langchain.message_history import build_message_history
 
 class SearchServiceAgent(AgentBase):
@@ -49,7 +49,7 @@ class SearchServiceAgent(AgentBase):
 
         self.llm = llm.get_completion_model(completion_request.language_model)
         self.prompt_prefix = completion_request.agent.prompt_prefix        
-        self.retriever = SearchServiceRetriever( 
+        self.retriever = AzureAISearchServiceRetriever( 
             endpoint = config.get_value(ds_config.endpoint),
             index_name = ds_config.index_name,
             top_n = ds_config.top_n,

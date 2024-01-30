@@ -14,6 +14,6 @@ namespace FoundationaLLM.Vectorization.Interfaces
         /// <param name="multipartId">The multipart unique identifier of the file being read.</param>
         /// <param name="cancellationToken">The cancellation token that signals that operations should be cancelled.</param>
         /// <returns>The string content of the file.</returns>
-        Task<String> ExtractTextFromFileAsync(List<string> multipartId, CancellationToken cancellationToken);
+        Task<string> ExtractTextFromFileAsync(List<string> multipartId, CancellationToken cancellationToken);
     }
 }

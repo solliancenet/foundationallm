@@ -34,6 +34,9 @@ namespace FoundationaLLM.Common.Services.TextSplitters
 
                 var chunksCount = (int)Math.Ceiling((1f * tokens!.Count - _settings.OverlapSizeTokens) / (_settings.ChunkSizeTokens - _settings.OverlapSizeTokens));
 
+                if (chunksCount <= 1)
+                    return (new List<string> { text }, $"The number of text chunks is {chunksCount}. The size of the last chunk is {tokens.Count} tokens.");
+
                 var chunks = Enumerable.Range(0, chunksCount - 1)
                     .Select(i => tokens.Skip(i * (_settings.ChunkSizeTokens - _settings.OverlapSizeTokens)).Take(_settings.ChunkSizeTokens).ToArray())
                     .Select(t => _tokenizerService.Decode(t, _settings.TokenizerEncoder))

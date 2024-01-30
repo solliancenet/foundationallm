@@ -103,8 +103,7 @@ class OpenAIModel(LanguageModelBase):
                 openai_api_version = self.config.get_value(embedding_model.api_version),
                 deployment = self.config.get_value(embedding_model.deployment),
                 azure_endpoint = self.config.get_value(embedding_model.api_endpoint),
-                chunk_size = embedding_model.chunk_size,
-                model = self.config.get_value(embedding_model.model)
+                chunk_size = embedding_model.chunk_size
             )
         else:
             return OpenAIEmbeddings(

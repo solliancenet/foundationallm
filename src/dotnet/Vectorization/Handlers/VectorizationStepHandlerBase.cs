@@ -88,16 +88,18 @@ namespace FoundationaLLM.Vectorization.Handlers
                 }
 
                 ValidateRequest(request);
-                await ProcessRequest(request, state, stepConfiguration, cancellationToken);
-
-                state.LogHandlerEnd(this, request.Id, _messageId);
-                _logger.LogInformation("Finished handler [{HandlerId}] for request {RequestId} (message id {MessageId}).", _stepId, request.Id, _messageId);
+                success = await ProcessRequest(request, state, stepConfiguration, cancellationToken).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
                 success = false;
                 state.LogHandlerError(this, request.Id, _messageId, ex);
                 _logger.LogError(ex, "Error in executing [{HandlerId}] step handler for request {VectorizationRequestId} (message id {MessageId}).", _stepId, request.Id, _messageId);
+            }
+            finally
+            {
+                state.LogHandlerEnd(this, request.Id, _messageId);
+                _logger.LogInformation("Finished handler [{HandlerId}] for request {RequestId} (message id {MessageId}).", _stepId, request.Id, _messageId);
             }
 
             return success;
@@ -118,11 +120,14 @@ namespace FoundationaLLM.Vectorization.Handlers
         /// <param name="stepConfiguration">The <see cref="IConfigurationSection"/> providing the configuration required by the step.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that signals stopping the processing.</param>
         /// <returns></returns>
-        protected virtual async Task ProcessRequest(
+        protected virtual async Task<bool> ProcessRequest(
             VectorizationRequest request,
             VectorizationState state,
             IConfigurationSection? stepConfiguration,
-            CancellationToken cancellationToken) =>
+            CancellationToken cancellationToken)
+        {
             await Task.Delay(TimeSpan.FromSeconds(30), cancellationToken);
+            return false;
+        }
     }
 }

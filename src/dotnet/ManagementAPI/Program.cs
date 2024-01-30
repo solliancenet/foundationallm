@@ -5,11 +5,13 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Net.Http;
+using FoundationaLLM.Agent.ResourceProviders;
 using FoundationaLLM.Common.Authentication;
 using FoundationaLLM.Common.Constants;
 using FoundationaLLM.Common.Interfaces;
 using FoundationaLLM.Common.Middleware;
 using FoundationaLLM.Common.Models.Configuration.Branding;
+using FoundationaLLM.Common.Models.Configuration.Instance;
 using FoundationaLLM.Common.Models.Context;
 using FoundationaLLM.Common.OpenAPI;
 using FoundationaLLM.Common.Services;
@@ -19,8 +21,11 @@ using FoundationaLLM.Management.Interfaces;
 using FoundationaLLM.Management.Models.Configuration;
 using FoundationaLLM.Management.Services;
 using FoundationaLLM.Management.Services.APIServices;
+using FoundationaLLM.Prompt.ResourceProviders;
+using FoundationaLLM.Vectorization.ResourceProviders;
 using Microsoft.Identity.Web;
 using Polly;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FoundationaLLM.Management.API
 {
@@ -43,10 +48,14 @@ namespace FoundationaLLM.Management.API
             {
                 options.Connect(builder.Configuration[AppConfigurationKeys.FoundationaLLM_AppConfig_ConnectionString]);
                 options.ConfigureKeyVault(options => { options.SetCredential(new DefaultAzureCredential()); });
+                options.Select(AppConfigurationKeyFilters.FoundationaLLM_Instance);
                 options.Select(AppConfigurationKeyFilters.FoundationaLLM_APIs);
                 options.Select(AppConfigurationKeyFilters.FoundationaLLM_CosmosDB);
                 options.Select(AppConfigurationKeyFilters.FoundationaLLM_Branding);
                 options.Select(AppConfigurationKeyFilters.FoundationaLLM_ManagementAPI_Entra);
+                options.Select(AppConfigurationKeyFilters.FoundationaLLM_Vectorization);
+                options.Select(AppConfigurationKeyFilters.FoundationaLLM_Agent);
+                options.Select(AppConfigurationKeyFilters.FoundationaLLM_Prompt);
             });
             if (builder.Environment.IsDevelopment())
                 builder.Configuration.AddJsonFile("appsettings.development.json", true, true);
@@ -71,6 +80,8 @@ namespace FoundationaLLM.Management.API
             builder.Services.AddOptions<AppConfigurationSettings>()
                 .Configure(o =>
                     o.ConnectionString = builder.Configuration[AppConfigurationKeys.FoundationaLLM_AppConfig_ConnectionString]!);
+            builder.Services.AddOptions<InstanceSettings>()
+                .Bind(builder.Configuration.GetSection(AppConfigurationKeySections.FoundationaLLM_Instance));
 
             builder.Services.AddScoped<IAgentFactoryAPIService, AgentFactoryAPIService>();
             builder.Services.AddScoped<IAgentHubAPIService, AgentHubAPIService>();
@@ -83,7 +94,102 @@ namespace FoundationaLLM.Management.API
             builder.Services.AddScoped<ICallContext, CallContext>();
             builder.Services.AddScoped<IHttpClientFactoryService, HttpClientFactoryService>();
 
-            // Register the authentication services
+            //----------------------------
+            // Resource providers
+            //----------------------------
+
+            #region Vectorization resource provider
+
+            builder.Services.AddOptions<BlobStorageServiceSettings>(
+                DependencyInjectionKeys.FoundationaLLM_Vectorization_ResourceProviderService)
+                .Bind(builder.Configuration.GetSection(AppConfigurationKeySections.FoundationaLLM_Vectorization_ResourceProviderService_Storage));
+
+            builder.Services.AddSingleton<IStorageService, BlobStorageService>( sp =>
+            {
+                var settings = sp.GetRequiredService<IOptionsMonitor<BlobStorageServiceSettings>>()
+                    .Get(DependencyInjectionKeys.FoundationaLLM_Vectorization_ResourceProviderService);
+                var logger = sp.GetRequiredService<ILogger<BlobStorageService>>();
+
+                return new BlobStorageService(
+                    Options.Create<BlobStorageServiceSettings>(settings),
+                    logger)
+                {
+                    InstanceName = DependencyInjectionKeys.FoundationaLLM_Vectorization_ResourceProviderService
+                };
+            });
+
+            // Register the resource provider services (cannot use Keyed singletons due to the Microsoft Identity package being incompatible):
+            builder.Services.AddSingleton<IResourceProviderService, VectorizationResourceProviderService>(sp =>
+                new VectorizationResourceProviderService(
+                    sp.GetRequiredService<IOptions<InstanceSettings>>(),
+                    sp.GetRequiredService<IEnumerable<IStorageService>>()
+                        .Single(s => s.InstanceName == DependencyInjectionKeys.FoundationaLLM_Vectorization_ResourceProviderService),
+                    sp.GetRequiredService<ILogger<VectorizationResourceProviderService>>()));
+
+            #endregion
+
+            #region Agent resource provider
+
+            builder.Services.AddOptions<BlobStorageServiceSettings>(
+                DependencyInjectionKeys.FoundationaLLM_Agent_ResourceProviderService)
+                .Bind(builder.Configuration.GetSection(AppConfigurationKeySections.FoundationaLLM_Agent_ResourceProviderService_Storage));
+
+            builder.Services.AddSingleton<IStorageService, BlobStorageService>(sp =>
+            {
+                var settings = sp.GetRequiredService<IOptionsMonitor<BlobStorageServiceSettings>>()
+                    .Get(DependencyInjectionKeys.FoundationaLLM_Agent_ResourceProviderService);
+                var logger = sp.GetRequiredService<ILogger<BlobStorageService>>();
+
+                return new BlobStorageService(
+                    Options.Create<BlobStorageServiceSettings>(settings),
+                    logger)
+                {
+                    InstanceName = DependencyInjectionKeys.FoundationaLLM_Agent_ResourceProviderService
+                };
+            });
+
+            builder.Services.AddSingleton<IResourceProviderService, AgentResourceProviderService>(sp =>
+                new AgentResourceProviderService(
+                    sp.GetRequiredService<IOptions<InstanceSettings>>(),
+                    sp.GetRequiredService<IEnumerable<IStorageService>>()
+                        .Single(s => s.InstanceName == DependencyInjectionKeys.FoundationaLLM_Agent_ResourceProviderService),
+                    sp.GetRequiredService<ILogger<AgentResourceProviderService>>()));
+
+            #endregion
+
+            #region Prompt resource provider
+
+            builder.Services.AddOptions<BlobStorageServiceSettings>(
+                    DependencyInjectionKeys.FoundationaLLM_Prompt_ResourceProviderService)
+                .Bind(builder.Configuration.GetSection(AppConfigurationKeySections.FoundationaLLM_Prompt_ResourceProviderService_Storage));
+
+            builder.Services.AddSingleton<IStorageService, BlobStorageService>(sp =>
+            {
+                var settings = sp.GetRequiredService<IOptionsMonitor<BlobStorageServiceSettings>>()
+                    .Get(DependencyInjectionKeys.FoundationaLLM_Prompt_ResourceProviderService);
+                var logger = sp.GetRequiredService<ILogger<BlobStorageService>>();
+
+                return new BlobStorageService(
+                    Options.Create<BlobStorageServiceSettings>(settings),
+                    logger)
+                {
+                    InstanceName = DependencyInjectionKeys.FoundationaLLM_Prompt_ResourceProviderService
+                };
+            });
+
+            builder.Services.AddSingleton<IResourceProviderService, PromptResourceProviderService>(sp =>
+                new PromptResourceProviderService(
+                    sp.GetRequiredService<IOptions<InstanceSettings>>(),
+                    sp.GetRequiredService<IEnumerable<IStorageService>>()
+                        .Single(s => s.InstanceName == DependencyInjectionKeys.FoundationaLLM_Prompt_ResourceProviderService),
+                    sp.GetRequiredService<ILogger<PromptResourceProviderService>>()));
+
+            #endregion
+
+            // Activate all resource providers (give them a chance to initialize).
+            builder.Services.ActivateSingleton<IEnumerable<IResourceProviderService>>();
+
+            // Register the authentication services:
             RegisterAuthConfiguration(builder);
 
             builder.Services.AddApplicationInsightsTelemetry(new ApplicationInsightsServiceOptions
@@ -136,11 +242,6 @@ namespace FoundationaLLM.Management.API
                     options.IncludeXmlComments(filePath);
                 })
                 .AddSwaggerGenNewtonsoftSupport();
-
-            builder.Services.Configure<RouteOptions>(options =>
-            {
-                options.LowercaseUrls = true;
-            });
 
             var app = builder.Build();
 

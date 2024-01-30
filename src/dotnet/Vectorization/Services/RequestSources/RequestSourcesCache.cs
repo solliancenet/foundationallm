@@ -1,6 +1,8 @@
-﻿using FoundationaLLM.Vectorization.Interfaces;
+﻿using FoundationaLLM.Common.Constants;
+using FoundationaLLM.Vectorization.Interfaces;
 using FoundationaLLM.Vectorization.Models.Configuration;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -17,7 +19,7 @@ namespace FoundationaLLM.Vectorization.Services.RequestSources
     /// <param name="loggerFactory">The <see cref="ILoggerFactory"/> used to create new loggers for child objects.</param>
     public class RequestSourcesCache(
         IOptions<VectorizationWorkerSettings> vectorizationWorkerOptions,
-        IConfigurationSection queuesConfiguration,
+        [FromKeyedServices(DependencyInjectionKeys.FoundationaLLM_Vectorization_Queues)] IConfigurationSection queuesConfiguration,
         ILoggerFactory loggerFactory) : IRequestSourcesCache
     {
         private readonly Dictionary<string, IRequestSourceService> _requestSources = (new RequestSourcesBuilder())

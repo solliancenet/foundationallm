@@ -1,4 +1,5 @@
 ﻿using Asp.Versioning;
+using FoundationaLLM.Common.Constants;
 using FoundationaLLM.Common.Models.Cache;
 using FoundationaLLM.Common.Models.Configuration.Branding;
 using FoundationaLLM.Management.Interfaces;
@@ -20,7 +21,7 @@ namespace FoundationaLLM.Management.API.Controllers
     [Authorize(Policy = "RequiredScope")]
     [ApiVersion(1.0)]
     [ApiController]
-    [Route("[controller]")]
+    [Route($"instances/{{instanceId}}/providersX/{ResourceProviderNames.FoundationaLLM_Configuration}/configurations")]
     public class ConfigurationsController(
         IConfigurationManagementService configurationManagementService) : ControllerBase
     {

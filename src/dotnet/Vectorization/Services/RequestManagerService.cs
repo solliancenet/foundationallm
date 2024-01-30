@@ -6,6 +6,7 @@ using FoundationaLLM.Vectorization.Models;
 using FoundationaLLM.Vectorization.Models.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using System.Text.Json;
 
 namespace FoundationaLLM.Vectorization.Services
 {
@@ -78,22 +79,21 @@ namespace FoundationaLLM.Vectorization.Services
                 {
                     var taskPoolAvailableCapacity = _taskPool.AvailableCapacity;
 
-                    if (taskPoolAvailableCapacity > 0 && (await _incomingRequestSourceService.HasRequests()))
+                    if (taskPoolAvailableCapacity > 0 && (await _incomingRequestSourceService.HasRequests().ConfigureAwait(false)))
                     {
-                        var requests = await _incomingRequestSourceService.ReceiveRequests(taskPoolAvailableCapacity);
+                        var requests = await _incomingRequestSourceService.ReceiveRequests(taskPoolAvailableCapacity).ConfigureAwait(false);
 
                         // No need to use ConfigureAwait(false) since the code is going to be executed on a
                         // thread pool thread, with no user code higher on the stack (for details, see
                         // https://devblogs.microsoft.com/dotnet/configureawait-faq/).
                         _taskPool.Add(
                             requests.Select(r => Task.Run(
-                                async () => { await ProcessRequest(r.Request, r.MessageId, r.PopReceipt); },
+                                () => { ProcessRequest(r.Request, r.MessageId, r.PopReceipt, _cancellationToken).ConfigureAwait(false); },
                                 _cancellationToken)));
                     }
-                    else
-                        // Either the task pool is at capacity or there are no new requests available.
-                        // Wait a predefined amount of time before attempting to receive requests again.
-                        await Task.Delay(TimeSpan.FromMinutes(1));
+
+                    // Wait a predefined amount of time before attempting to receive requests again.
+                    await Task.Delay(TimeSpan.FromMinutes(1));
                 }
                 catch (Exception ex)
                 {
@@ -104,11 +104,11 @@ namespace FoundationaLLM.Vectorization.Services
             _logger.LogInformation("The request manager service associated with source [{RequestSourceName}] finished processing requests.", _settings.RequestSourceName);
         }
 
-        private async Task ProcessRequest(VectorizationRequest request, string messageId, string popReceipt)
+        private async Task ProcessRequest(VectorizationRequest request, string messageId, string popReceipt, CancellationToken cancellationToken)
         {
             try
             {
-                if (await HandleRequest(request, messageId).ConfigureAwait(false))
+                if (await HandleRequest(request, messageId, cancellationToken).ConfigureAwait(false))
                 {
                     // If the request was handled successfully, remove it from the current source and advance it to the next step.
                     await _incomingRequestSourceService.DeleteRequest(messageId, popReceipt).ConfigureAwait(false);
@@ -121,7 +121,7 @@ namespace FoundationaLLM.Vectorization.Services
             }
         }
 
-        private async Task<bool> HandleRequest(VectorizationRequest request, string messageId)
+        private async Task<bool> HandleRequest(VectorizationRequest request, string messageId, CancellationToken cancellationToken)
         {
             var state = await _vectorizationStateService.HasState(request).ConfigureAwait(false)
                 ? await _vectorizationStateService.ReadState(request).ConfigureAwait(false)
@@ -135,7 +135,7 @@ namespace FoundationaLLM.Vectorization.Services
                 _vectorizationStateService,
                 _serviceProvider,
                 _loggerFactory);
-            var handlerSuccess = await stepHandler.Invoke(request, state, _cancellationToken).ConfigureAwait(false);
+            var handlerSuccess = await stepHandler.Invoke(request, state, cancellationToken).ConfigureAwait(false);
 
             await _vectorizationStateService.SaveState(state).ConfigureAwait(false);
 

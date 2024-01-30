@@ -7,11 +7,27 @@ import { AppConfigurationClient } from '@azure/app-configuration';
 
 const allowedKeys = [
 	'FoundationaLLM:APIs:ManagementAPI:APIUrl',
+	'FoundationaLLM:Instance:Id',
+	
 	'FoundationaLLM:Management:Entra:ClientId',
 	'FoundationaLLM:Management:Entra:Instance',
 	'FoundationaLLM:Management:Entra:TenantId',
 	'FoundationaLLM:Management:Entra:Scopes',
 	'FoundationaLLM:Management:Entra:CallbackPath',
+
+	'FoundationaLLM:Branding:LogoUrl',
+	'FoundationaLLM:Branding:LogoText',
+	'FoundationaLLM:Branding:BackgroundColor',
+	'FoundationaLLM:Branding:PrimaryColor',
+	'FoundationaLLM:Branding:SecondaryColor',
+	'FoundationaLLM:Branding:AccentColor',
+	'FoundationaLLM:Branding:PrimaryTextColor',
+	'FoundationaLLM:Branding:SecondaryTextColor',
+	'FoundationaLLM:Branding:AccentTextColor',
+	'FoundationaLLM:Branding:PrimaryButtonBackgroundColor',
+	'FoundationaLLM:Branding:PrimaryButtonTextColor',
+	'FoundationaLLM:Branding:SecondaryButtonBackgroundColor',
+	'FoundationaLLM:Branding:SecondaryButtonTextColor',
 ];
 
 export default defineEventHandler(async (event) => {

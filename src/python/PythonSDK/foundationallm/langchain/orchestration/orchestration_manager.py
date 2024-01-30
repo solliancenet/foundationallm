@@ -4,13 +4,16 @@ from foundationallm.config import Configuration, Context
 from foundationallm.langchain.language_models import LanguageModelFactory
 from foundationallm.langchain.agents import AgentFactory, AgentBase
 from foundationallm.models.language_models import LanguageModel
-from foundationallm.models.orchestration import CompletionRequest, CompletionResponse
+from foundationallm.models.orchestration import CompletionRequestBase, KnowledgeManagementCompletionRequest, CompletionResponse
+from foundationallm.resources import ResourceProvider
 
 class OrchestrationManager:
     """Client that acts as the entry point for interacting with the FoundationaLLM Python SDK."""
 
-    def __init__(self, completion_request: CompletionRequest,
-                 configuration: Configuration, context: Context):
+    def __init__(self, completion_request: CompletionRequestBase,
+                 configuration: Configuration,
+                 context: Context,
+                 resource_provider: ResourceProvider=None):
         """
         Initializes an instance of the OrchestrationManager.
         
@@ -23,14 +26,26 @@ class OrchestrationManager:
             The user context under which to execution completion requests.
         """
         self.completion_request = completion_request
-        self.config = configuration
-        self.llm = self.__get_llm(language_model=completion_request.language_model)
+        self.config = configuration        
+        if type(completion_request)==KnowledgeManagementCompletionRequest:            
+            self.llm = self.__get_llm(language_model=completion_request.agent.language_model)
+        else:
+            self.llm = self.__get_llm(language_model=completion_request.language_model)
+        if resource_provider is None:
+            resource_provider = ResourceProvider(config=configuration)
+
+        self.resource_provider = resource_provider
         self.agent = self.__create_agent(completion_request=completion_request, context=context)
 
-    def __create_agent(self, completion_request: CompletionRequest, context: Context) -> AgentBase:
+    def __create_agent(self, completion_request: CompletionRequestBase, context: Context) -> AgentBase:
         """Creates an agent for executing completion requests."""
-        agent = AgentFactory(completion_request=completion_request,
-                             llm=self.llm, config=self.config, context=context)
+        agent = AgentFactory(
+            completion_request=completion_request,
+            llm=self.llm,
+            config=self.config,
+            context=context,
+            resource_provider=self.resource_provider
+        )
         return agent.get_agent()
 
     def __get_llm(self, language_model: LanguageModel) -> BaseLanguageModel:

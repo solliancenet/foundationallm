@@ -1,12 +1,13 @@
 <template>
-	<h1>Management Portal</h1>
+	Index
 </template>
 
 <script lang="ts">
 export default {
-	name: 'Index',
+	name: 'ManagementPortal',
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+
 </style>

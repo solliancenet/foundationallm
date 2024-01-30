@@ -1,5 +1,6 @@
 ﻿using FoundationaLLM.Common.Exceptions;
 using FoundationaLLM.Common.Interfaces;
+using FoundationaLLM.Common.Models.Configuration.Instance;
 using FoundationaLLM.Common.Models.ResourceProvider;
 using Microsoft.Extensions.Logging;
 
@@ -21,6 +22,11 @@ namespace FoundationaLLM.Common.Services.ResourceProviders
         /// The logger used for logging.
         /// </summary>
         protected readonly ILogger _logger;
+
+        /// <summary>
+        /// The <see cref="InstanceSettings"/> that provides instance-wide settings.
+        /// </summary>
+        protected readonly InstanceSettings _instanceSettings;
 
         /// <summary>
         /// The name of the storage container name used by the resource provider to store its internal data.
@@ -46,14 +52,17 @@ namespace FoundationaLLM.Common.Services.ResourceProviders
         /// <summary>
         /// Creates a new instance of the resource provider.
         /// </summary>
+        /// <param name="instanceSettings">The <see cref="InstanceSettings"/> that provides instance-wide settings.</param>
         /// <param name="storageService">The <see cref="IStorageService"/> providing storage services to the resource provider.</param>
         /// <param name="logger">The logger used for logging.</param>
         public ResourceProviderServiceBase(
+            InstanceSettings instanceSettings,
             IStorageService storageService,
             ILogger logger)
         {
             _storageService = storageService;
             _logger = logger;
+            _instanceSettings = instanceSettings;
 
             // Kicks off the initialization on a separate thread and does not wait for it to complete.
             // The completion of the initialization process will be signaled by setting the _isInitialized property.
@@ -63,9 +72,18 @@ namespace FoundationaLLM.Common.Services.ResourceProviders
         /// <inheritdoc/>
         public async Task Initialize()
         {
-            await InitializeInternal();
-            _isInitialized = true;
+            try
+            {
+                await InitializeInternal();
+                _isInitialized = true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "The resource provider {ResourceProviderName} failed to initialize.", _name);
+            }
         }
+
+        #region IResourceProviderService
 
         /// <inheritdoc/>
         public async Task<ResourceProviderActionResult> ExecuteAction(string actionPath)
@@ -74,6 +92,33 @@ namespace FoundationaLLM.Common.Services.ResourceProviders
                 throw new ResourceProviderException($"The resource provider {_name} is not initialized.");
             var instances = GetResourceInstancesFromPath(actionPath);
             return await ExecuteActionInternal(instances);
+        }
+
+        /// <inheritdoc/>
+        public IList<T> GetResources<T>(string resourcePath) where T : class
+        {
+            if (!_isInitialized)
+                throw new ResourceProviderException($"The resource provider {_name} is not initialized.");
+            var instances = GetResourceInstancesFromPath(resourcePath);
+            return GetResourcesInternal<T>(instances);
+        }
+
+        /// <inheritdoc/>
+        public async Task<IList<T>> GetResourcesAsync<T>(string resourcePath) where T : class
+        {
+            if (!_isInitialized)
+                throw new ResourceProviderException($"The resource provider {_name} is not initialized.");
+            var instances = GetResourceInstancesFromPath(resourcePath);
+            return await GetResourcesAsyncInternal<T>(instances);
+        }
+
+        /// <inheritdoc/>
+        public async Task<string> GetResourcesAsync(string resourcePath)
+        {
+            if (!_isInitialized)
+                throw new ResourceProviderException($"The resource provider {_name} is not initialized.");
+            var instances = GetResourceInstancesFromPath(resourcePath);
+            return await GetResourcesAsyncInternal(instances);
         }
 
         /// <inheritdoc/>
@@ -100,16 +145,27 @@ namespace FoundationaLLM.Common.Services.ResourceProviders
             if (!_isInitialized)
                 throw new ResourceProviderException($"The resource provider {_name} is not initialized.");
             var instances = GetResourceInstancesFromPath(resourcePath);
-            await UpsertResourceAsync<T>(resourcePath, resource);
+            await UpsertResourceAsync<T>(instances, resource);
         }
 
         /// <inheritdoc/>
-        public void UpsertResource<T>(string resourcePath, T resource) where T : class
+        public async Task<string> UpsertResourceAsync(string resourcePath, string serializedResource)
+        {
+            if (!_isInitialized)
+                throw new ResourceProviderException($"The resource provider {_name} is not initialized.");
+            var instances = GetResourceInstancesFromPath(resourcePath);
+            await UpsertResourceAsync(instances, serializedResource);
+            return GetObjectId(instances);
+        }
+
+        /// <inheritdoc/>
+        public string UpsertResource<T>(string resourcePath, T resource) where T : class
         {
             if (!_isInitialized)
                 throw new ResourceProviderException($"The resource provider {_name} is not initialized.");
             var instances = GetResourceInstancesFromPath(resourcePath);
             UpsertResource<T>(instances, resource);
+            return GetObjectId(instances);
         }    
 
         /// <inheritdoc/>
@@ -122,6 +178,15 @@ namespace FoundationaLLM.Common.Services.ResourceProviders
         }
 
         /// <inheritdoc/>
+        public async Task DeleteResourceAsync(string resourcePath)
+        {
+            if (!_isInitialized)
+                throw new ResourceProviderException($"The resource provider {_name} is not initialized.");
+            var instances = GetResourceInstancesFromPath(resourcePath);
+            await DeleteResourceAsync(instances);
+        }
+
+        /// <inheritdoc/>
         public void DeleteResource<T>(string resourcePath) where T : class
         {
             if (!_isInitialized)
@@ -129,6 +194,8 @@ namespace FoundationaLLM.Common.Services.ResourceProviders
             var instances = GetResourceInstancesFromPath(resourcePath);
             DeleteResource<T>(instances);
         }
+
+        #endregion
 
         /// <summary>
         /// The internal implementation of Initialize. Must be overridden in derived classes.
@@ -146,6 +213,36 @@ namespace FoundationaLLM.Common.Services.ResourceProviders
         /// <param name="instances">The list of <see cref="ResourceTypeInstance"/> objects parsed from the resource path.</param>
         /// <returns></returns>
         protected virtual async Task<ResourceProviderActionResult> ExecuteActionInternal(List<ResourceTypeInstance> instances)
+        {
+            await Task.CompletedTask;
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// The internal implementation of GetResources. Must be overridden in derived classes.
+        /// </summary>
+        /// <param name="instances">The list of <see cref="ResourceTypeInstance"/> objects parsed from the resource path.</param>
+        /// <returns></returns>
+        protected virtual IList<T> GetResourcesInternal<T>(List<ResourceTypeInstance> instances) where T : class =>
+            throw new NotImplementedException();
+
+        /// <summary>
+        /// The internal implementation of GetResourcesAsync. Must be overridden in derived classes.
+        /// </summary>
+        /// <param name="instances">The list of <see cref="ResourceTypeInstance"/> objects parsed from the resource path.</param>
+        /// <returns></returns>
+        protected virtual async Task<IList<T>> GetResourcesAsyncInternal<T>(List<ResourceTypeInstance> instances) where T : class
+        {
+            await Task.CompletedTask;
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// The internal implementation of GetResourcesAsync. Must be overridden in derived classes.
+        /// </summary>
+        /// <param name="instances">The list of <see cref="ResourceTypeInstance"/> objects parsed from the resource path.</param>
+        /// <returns></returns>
+        protected virtual async Task<string> GetResourcesAsyncInternal(List<ResourceTypeInstance> instances)
         {
             await Task.CompletedTask;
             throw new NotImplementedException();
@@ -192,6 +289,18 @@ namespace FoundationaLLM.Common.Services.ResourceProviders
         }
 
         /// <summary>
+        /// The internal implementation of UpsertResourceAsync. Must be overridden in derived classes.
+        /// </summary>
+        /// <param name="instances">The list of <see cref="ResourceTypeInstance"/> objects parsed from the resource path.</param>
+        /// <param name="serializedResource">The serialized resource being created or updated.</param>
+        /// <returns></returns>
+        protected virtual async Task UpsertResourceAsync(List<ResourceTypeInstance> instances, string serializedResource)
+        {
+            await Task.CompletedTask;
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
         /// The internal implementation of DeleteResource. Must be overridden in derived classes.
         /// </summary>
         /// <param name="instances">The list of <see cref="ResourceTypeInstance"/> objects parsed from the resource path.</param>
@@ -210,15 +319,41 @@ namespace FoundationaLLM.Common.Services.ResourceProviders
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// The internal implementation of DeleteResourceAsync. Must be overridden in derived classes.
+        /// </summary>
+        /// <param name="instances">The list of <see cref="ResourceTypeInstance"/> objects parsed from the resource path.</param>
+        /// <returns></returns>
+        protected virtual async Task DeleteResourceAsync(List<ResourceTypeInstance> instances)
+        {
+            await Task.CompletedTask;
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Builds the resource unique identifier based on the resource path.
+        /// </summary>
+        /// <param name="instances">The list of <see cref="ResourceTypeInstance"/> objects parsed from the resource path.</param>
+        /// <returns>The unique resource identifier.</returns>
+        /// <exception cref="ResourceProviderException"></exception>
+        protected string GetObjectId(List<ResourceTypeInstance> instances)
+        {
+            foreach (var instance in instances)
+                if (string.IsNullOrWhiteSpace(instance.ResourceType)
+                    || string.IsNullOrWhiteSpace(instance.ResourceId)
+                    || !(instance.Action == null))
+                    throw new ResourceProviderException("The provided resource path is not a valid resource identifier.");
+
+            return $"/instances/{_instanceSettings.Id}/providers/{_name}/{string.Join("/",
+                instances.Select(i => $"{i.ResourceType}/{i.ResourceId}").ToArray())}";
+        }
+
         private List<ResourceTypeInstance> GetResourceInstancesFromPath(string resourcePath)
         {
             if (string.IsNullOrWhiteSpace(resourcePath))
                 throw new ResourceProviderException($"The resource path [{resourcePath}] is invalid.");
 
             var tokens = resourcePath.Split('/', StringSplitOptions.RemoveEmptyEntries);
-
-            if (tokens.Length < 2)
-                throw new ResourceProviderException($"The resource path [{resourcePath}] is invalid.");
 
             var result = new List<ResourceTypeInstance>();
             var currentResourceTypes = _resourceTypes;
@@ -232,13 +367,26 @@ namespace FoundationaLLM.Common.Services.ResourceProviders
                 var resourceTypeInstance = new ResourceTypeInstance(tokens[currentIndex]);
                 result.Add(resourceTypeInstance);
 
-                if (currentResourceType.Actions.Contains(tokens[currentIndex + 1]))
-                {
-                    resourceTypeInstance.Action = tokens[currentIndex + 1];
+                if (currentIndex + 1 == tokens.Length)
+                    // No more tokens left, which means we have a resource type instance without actions or subtypes.
+                    // This will be used by resource providers to retrieve all resources of a specific resource type.
                     break;
-                }
 
                 resourceTypeInstance.ResourceId = tokens[currentIndex + 1];
+
+                if (currentIndex + 2 == tokens.Length - 1)
+                {
+                    // Only one token left after the resource identifier.
+                    // This means it can only be an action.
+                    if (currentResourceType.Actions.Contains(tokens[currentIndex + 2]))
+                    {
+                        // The token represents an action.
+                        resourceTypeInstance.Action = tokens[currentIndex + 2];
+                        break;
+                    }
+                    else
+                        throw new ResourceProviderException($"The [{tokens[currentIndex + 2]}] action is invalid.");
+                }
 
                 currentResourceTypes = currentResourceType.SubTypes;
                 currentIndex += 2;

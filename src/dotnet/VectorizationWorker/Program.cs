@@ -3,6 +3,7 @@ using Azure.Identity;
 using FoundationaLLM.Common.Authentication;
 using FoundationaLLM.Common.Constants;
 using FoundationaLLM.Common.Interfaces;
+using FoundationaLLM.Common.Models.Configuration.Instance;
 using FoundationaLLM.Common.OpenAPI;
 using FoundationaLLM.Common.Services;
 using FoundationaLLM.Common.Services.Tokenizers;
@@ -56,6 +57,9 @@ builder.Services.AddCors(policyBuilder =>
 });
 
 // Add configurations to the container
+builder.Services.AddOptions<InstanceSettings>()
+    .Bind(builder.Configuration.GetSection(AppConfigurationKeySections.FoundationaLLM_Instance));
+
 builder.Services.AddOptions<VectorizationWorkerSettings>()
     .Bind(builder.Configuration.GetSection(AppConfigurationKeys.FoundationaLLM_Vectorization_VectorizationWorker));
 
@@ -72,12 +76,15 @@ builder.Services.AddOptions<SemanticKernelTextEmbeddingServiceSettings>()
 builder.Services.AddOptions<AzureAISearchIndexingServiceSettings>()
     .Bind(builder.Configuration.GetSection(AppConfigurationKeySections.FoundationaLLM_Vectorization_AzureAISearchIndexingService));
 
-builder.Services.AddSingleton(
-    typeof(IEnumerable<IConfigurationSection>),
-    new IConfigurationSection[] {
-        builder.Configuration.GetSection(AppConfigurationKeySections.FoundationaLLM_Vectorization_Queues),
-        builder.Configuration.GetSection(AppConfigurationKeySections.FoundationaLLM_Vectorization_Steps)
-    });
+builder.Services.AddKeyedSingleton(
+    typeof(IConfigurationSection),
+    DependencyInjectionKeys.FoundationaLLM_Vectorization_Queues,
+    builder.Configuration.GetSection(AppConfigurationKeySections.FoundationaLLM_Vectorization_Queues));
+
+builder.Services.AddKeyedSingleton(
+    typeof(IConfigurationSection),
+    DependencyInjectionKeys.FoundationaLLM_Vectorization_Steps,
+    builder.Configuration.GetSection(AppConfigurationKeySections.FoundationaLLM_Vectorization_Steps));
 
 // Add services to the container.
 

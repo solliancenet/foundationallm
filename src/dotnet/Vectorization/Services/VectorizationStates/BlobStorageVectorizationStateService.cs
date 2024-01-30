@@ -17,25 +17,19 @@ namespace FoundationaLLM.Vectorization.Services.VectorizationStates
     /// <summary>
     /// Provides vectorization state persistence services using  Azure blob storage.
     /// </summary>
-    public class BlobStorageVectorizationStateService : VectorizationStateServiceBase, IVectorizationStateService
+    /// <remarks>
+    /// Creates a new vectorization state service instance.
+    /// </remarks>
+    /// <param name="storageService">The <see cref="IStorageService"/> that provides storage services.</param>
+    /// <param name="loggerFactory">The logger factory used to create loggers.</param>
+    public class BlobStorageVectorizationStateService(
+        [FromKeyedServices(DependencyInjectionKeys.FoundationaLLM_Vectorization_BlobStorageVectorizationStateService)] IStorageService storageService,
+        ILoggerFactory loggerFactory) : VectorizationStateServiceBase, IVectorizationStateService
     {
-        private readonly IStorageService _storageService;
-        private readonly ILoggerFactory _loggerFactory;
+        private readonly IStorageService _storageService = storageService;
+        private readonly ILoggerFactory _loggerFactory = loggerFactory;
 
         private const string BLOB_STORAGE_CONTAINER_NAME = "vectorization-state";
-
-        /// <summary>
-        /// Creates a new vectorization state service instance.
-        /// </summary>
-        /// <param name="storageService">The <see cref="IStorageService"/> that provides storage services.</param>
-        /// <param name="loggerFactory">The logger factory used to create loggers.</param>
-        public BlobStorageVectorizationStateService(
-            [FromKeyedServices(DependencyInjectionKeys.FoundationaLLM_Vectorization_BlobStorageVectorizationStateService)] IStorageService storageService,
-            ILoggerFactory loggerFactory)
-        {
-            _loggerFactory = loggerFactory;
-            _storageService = storageService;
-        }
 
         /// <inheritdoc/>
         public async Task<bool> HasState(VectorizationRequest request) =>
@@ -83,6 +77,7 @@ namespace FoundationaLLM.Vectorization.Services.VectorizationStates
                         BLOB_STORAGE_CONTAINER_NAME,
                         artifactPath,
                         artifact.Content!,
+                        default,
                         default);
                     artifact.CanonicalId = artifactPath;
                 }
@@ -92,6 +87,7 @@ namespace FoundationaLLM.Vectorization.Services.VectorizationStates
                 BLOB_STORAGE_CONTAINER_NAME,
                 $"{persistenceIdentifier}.json",
                 content,
+                default,
                 default);
         }
     }

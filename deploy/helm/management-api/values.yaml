@@ -5,7 +5,7 @@
 replicaCount: 1
 serviceAccountName: management-api
 image:
-  repository: ghcr.io/solliancenet/foundationallm/managemente-api
+  repository: ghcr.io/solliancenet/foundationallm/management-api
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: latest

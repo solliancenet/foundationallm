@@ -36,7 +36,7 @@ namespace FoundationaLLM.Vectorization.Handlers
             loggerFactory)
     {
         /// <inheritdoc/>
-        protected override async Task ProcessRequest(
+        protected override async Task<bool> ProcessRequest(
             VectorizationRequest request,
             VectorizationState state,
             IConfigurationSection? stepConfiguration,
@@ -50,7 +50,7 @@ namespace FoundationaLLM.Vectorization.Handlers
             if (extractedTextArtifact == null)
             {
                 state.Log(this, request.Id, _messageId, "The extracted text artifact was not found.");
-                return;
+                return false;
             }
 
             var serviceFactory = _serviceProvider.GetService<IVectorizationServiceFactory<ITextSplitterService>>()
@@ -69,6 +69,8 @@ namespace FoundationaLLM.Vectorization.Handlers
                 });
             if (!string.IsNullOrWhiteSpace(splitResult.Message))
                 state.Log(this, request.Id, _messageId, splitResult.Message);
+
+            return true;
         }
     }
 }

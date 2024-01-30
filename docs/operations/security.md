@@ -11,6 +11,7 @@ Maintaining the security of the Azure platform is crucial for protecting sensiti
    - The standard deployment:
      - Uses Azure Virtual Networks for network segmentation.
      - Implements Network Security Groups (NSGs) to control inbound and outbound traffic.
+     - [Network Security Rule Details](./network-security-groups.md)
 
 3. **Data Encryption**
    - Wherever possible the Standard Deployment uses encryption at rest with system-managed keys.

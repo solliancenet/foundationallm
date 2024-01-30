@@ -1,5 +1,5 @@
 """
-Class: SearchServiceRetriever
+Class: AzureAISearchServiceRetriever
 Description: LangChain retriever for Azure AI Search.
 """
 from typing import List, Optional
@@ -16,7 +16,7 @@ from azure.search.documents import SearchClient
 from azure.search.documents.models import VectorizedQuery
 from azure.core.credentials import AzureKeyCredential
 
-class SearchServiceRetriever(BaseRetriever):
+class AzureAISearchServiceRetriever(BaseRetriever):
     """
     LangChain retriever for Azure AI Search.
     Properties:
@@ -25,6 +25,7 @@ class SearchServiceRetriever(BaseRetriever):
         top_n : int -> number of results to return from vector search
         embedding_field_name: str -> name of the field containing the embedding vector
         text_field_name: str -> name of the field containing the raw text
+        filters: str -> Azure AI Search filter expression
         credential: AzureKeyCredential -> Azure AI Search credential
         embedding_model: OpenAIEmbeddings -> OpenAIEmbeddings model
 
@@ -46,6 +47,7 @@ class SearchServiceRetriever(BaseRetriever):
     top_n : int
     embedding_field_name: Optional[str] = "Embedding"
     text_field_name: Optional[str] = "Text"
+    filters: Optional[str] = None
     credential: AzureKeyCredential
     embedding_model: OpenAIEmbeddings
 
@@ -72,6 +74,7 @@ class SearchServiceRetriever(BaseRetriever):
                                         fields=self.embedding_field_name)
         results = search_client.search(
             search_text=query,
+            filter=self.filters,
             vector_queries=[vector_query],
             top=self.top_n,
             select=[self.text_field_name]

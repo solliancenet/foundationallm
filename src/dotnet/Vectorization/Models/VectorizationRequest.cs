@@ -25,6 +25,14 @@ namespace FoundationaLLM.Vectorization.Models
         public required ContentIdentifier ContentIdentifier { get; set; }
 
         /// <summary>
+        /// The <see cref="VectorizationProcessingType"/> indicating how should the request be processed.
+        /// </summary>
+        [JsonPropertyOrder(2)]
+        [JsonPropertyName("processing_type")]
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public required VectorizationProcessingType ProcessingType { get; set; }
+
+        /// <summary>
         /// The list of vectorization steps requested by the vectorization request.
         /// Vectorization steps are identified by unique names like "extract", "partition", "embed", "index", etc.
         /// </summary>

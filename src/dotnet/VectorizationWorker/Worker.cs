@@ -14,19 +14,22 @@ namespace FoundationaLLM.Vectorization.Worker
     /// </remarks>
     /// <param name="stateService">The <see cref="IVectorizationStateService"/> used to manage the vectorization state.</param>
     /// <param name="settings">The <see cref="VectorizationWorkerSettings"/> options holding the vectorization worker settings.</param>
-    /// <param name="configurationSections">The list of configuration sections required by the vectorization worker builder.</param>
+    /// <param name="queuesConfigurationSection">The <see cref="IConfigurationSection"/> containing settings for the queues.</param>
+    /// <param name="stepsConfigurationSection">The <see cref="IConfigurationSection"/> containing settings for the vectorization steps.</param>
     /// <param name="serviceProvider">The <see cref="IServiceProvider"/> implemented by the dependency injection container.</param>
     /// <param name="loggerFactory">The <see cref="ILoggerFactory"/> used to create loggers in child objects.</param>
     public class Worker(
         IVectorizationStateService stateService,
         IOptions<VectorizationWorkerSettings> settings,
-        IEnumerable<IConfigurationSection> configurationSections,
+        [FromKeyedServices(DependencyInjectionKeys.FoundationaLLM_Vectorization_Queues)] IConfigurationSection queuesConfigurationSection,
+        [FromKeyedServices(DependencyInjectionKeys.FoundationaLLM_Vectorization_Steps)] IConfigurationSection stepsConfigurationSection,
         IServiceProvider serviceProvider,
         ILoggerFactory loggerFactory) : BackgroundService
     {
         private readonly IVectorizationStateService _stateService = stateService;
         private readonly VectorizationWorkerSettings _settings = settings.Value;
-        private readonly IEnumerable<IConfigurationSection> _configurationSections = configurationSections;
+        private readonly IConfigurationSection _queuesConfigurationSection = queuesConfigurationSection;
+        private readonly IConfigurationSection _stepsConfigurationSection = stepsConfigurationSection;
         private readonly IServiceProvider _serviceProvider = serviceProvider;
         private readonly ILoggerFactory _loggerFactory = loggerFactory;
 
@@ -36,8 +39,8 @@ namespace FoundationaLLM.Vectorization.Worker
             var vectorizationWorker = new VectorizationWorkerBuilder()
                 .WithStateService(_stateService)
                 .WithSettings(_settings)
-                .WithQueuesConfiguration(_configurationSections.Single(cs => cs.Path == AppConfigurationKeySections.FoundationaLLM_Vectorization_Queues))
-                .WithStepsConfiguration(_configurationSections.Single(cs => cs.Path == AppConfigurationKeySections.FoundationaLLM_Vectorization_Steps))
+                .WithQueuesConfiguration(_queuesConfigurationSection)
+                .WithStepsConfiguration(_stepsConfigurationSection)
                 .WithServiceProvider(_serviceProvider)
                 .WithLoggerFactory(_loggerFactory)
                 .WithCancellationToken(stoppingToken)

@@ -1,8 +1,10 @@
 ﻿using FoundationaLLM.Common.Interfaces;
 using FoundationaLLM.Common.Models.Authentication;
+using FoundationaLLM.Common.Models.Configuration.Instance;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using FoundationaLLM.Common.Models.Metadata;
+using Microsoft.Extensions.Options;
 
 namespace FoundationaLLM.Common.Middleware
 {
@@ -28,8 +30,13 @@ namespace FoundationaLLM.Common.Middleware
         /// <param name="claimsProviderService">Resolves user claims to a <see cref="UnifiedUserIdentity"/> object.</param>
         /// <param name="callContext">Stores context information extracted from the current HTTP request. This information
         /// is primarily used to inject HTTP headers into downstream HTTP calls.</param>
+        /// <param name="instanceSettings">Contains the FoundationaLLM instance configuration settings.</param>
         /// <returns></returns>
-        public async Task InvokeAsync(HttpContext context, IUserClaimsProviderService claimsProviderService, ICallContext callContext)
+        public async Task InvokeAsync(
+            HttpContext context,
+            IUserClaimsProviderService claimsProviderService,
+            ICallContext callContext,
+            IOptions<InstanceSettings> instanceSettings)
         {
             if (context.User is { Identity.IsAuthenticated: true })
             {
@@ -40,16 +47,27 @@ namespace FoundationaLLM.Common.Middleware
             {
                 // Extract from HTTP headers if available:
                 var serializedIdentity = context.Request.Headers[Constants.HttpHeaders.UserIdentity].ToString();
-                if (!string.IsNullOrEmpty(serializedIdentity))
+                if (!string.IsNullOrWhiteSpace(serializedIdentity))
                 {
                     callContext.CurrentUserIdentity = JsonConvert.DeserializeObject<UnifiedUserIdentity>(serializedIdentity)!;
                 }
             }
 
             var agentHint = context.Request.Headers[Constants.HttpHeaders.AgentHint].FirstOrDefault();
-            if (!string.IsNullOrEmpty(agentHint))
+            if (!string.IsNullOrWhiteSpace(agentHint))
             {
                 callContext.AgentHint = JsonConvert.DeserializeObject<Agent>(agentHint);
+            }
+
+            callContext.InstanceId = context.Request.RouteValues["instanceId"] as string;
+            if (!string.IsNullOrWhiteSpace(callContext.InstanceId) && callContext.InstanceId != instanceSettings.Value.Id)
+            {
+                // Throw 403 Forbidden since the instance ID within the route does not match the instance ID in the
+                // configuration settings:
+                context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                await context.Response.WriteAsync("Access denied. Invalid instance ID.");
+
+                return; // Short-circuit the request pipeline.
             }
 
             // Call the next delegate/middleware in the pipeline:

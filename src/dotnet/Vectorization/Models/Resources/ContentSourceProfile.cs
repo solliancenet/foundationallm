@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 namespace FoundationaLLM.Vectorization.Models.Resources
 {
     /// <summary>
-    /// Provides detials about a content source.
+    /// Provides details about a content source.
     /// </summary>
     public class ContentSourceProfile : VectorizationProfileBase
     {

@@ -1,7 +1,8 @@
+from calendar import c
 from langchain_core.language_models import BaseLanguageModel
-
 from foundationallm.config import Configuration, Context
-from foundationallm.models.orchestration import CompletionRequest
+from foundationallm.models.orchestration import CompletionRequestBase
+from foundationallm.resources import ResourceProvider
 from foundationallm.langchain.agents import AgentBase
 from foundationallm.langchain.agents import (
     AnomalyDetectionAgent,
@@ -11,7 +12,8 @@ from foundationallm.langchain.agents import (
     BlobStorageAgent,
     GenericResolverAgent,
     CXOAgent,
-    SearchServiceAgent
+    SearchServiceAgent,
+    KnowledgeManagementAgent
 )
 
 class AgentFactory:
@@ -21,10 +23,12 @@ class AgentFactory:
 
     def __init__(
             self,
-            completion_request: CompletionRequest,
+            completion_request: CompletionRequestBase,
             llm: BaseLanguageModel,
             config: Configuration,
-            context: Context):
+            context: Context,
+            resource_provider: ResourceProvider=None
+        ):
         """
         Initializes an AgentFactory for selecting which agent to use for completion.
 
@@ -41,6 +45,9 @@ class AgentFactory:
         self.llm = llm
         self.config = config
         self.context = context
+        if resource_provider is None:
+            resource_provider = ResourceProvider(config=config)
+        self.resource_provider = resource_provider
 
     def get_agent(self) -> AgentBase:
         """
@@ -78,5 +85,12 @@ class AgentFactory:
             case 'cxo':
                 return CXOAgent(self.completion_request,
                                              llm=self.llm, config=self.config)
+            case 'knowledge-management':
+                return KnowledgeManagementAgent(
+                    self.completion_request,
+                    llm=self.llm,
+                    config=self.config,                                            
+                    resource_provider=self.resource_provider
+                )
             case _:
                 raise ValueError(f'No agent found for the specified agent type: {self.agent.type}.')

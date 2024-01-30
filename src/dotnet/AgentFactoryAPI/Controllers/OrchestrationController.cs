@@ -38,10 +38,7 @@ namespace FoundationaLLM.AgentFactory.API.Controllers
         /// <param name="completionRequest"></param>
         /// <returns></returns>
         [HttpPost("completion")]
-        public async Task<CompletionResponse> GetCompletion([FromBody] CompletionRequest completionRequest)
-        {
-            return await _agentFactoryService.GetCompletion(completionRequest);
-        }
+        public async Task<CompletionResponse> GetCompletion([FromBody] CompletionRequest completionRequest) => await _agentFactoryService.GetCompletion(completionRequest);
 
         /// <summary>
         /// Gets a summary from the Agent Factory
@@ -49,9 +46,6 @@ namespace FoundationaLLM.AgentFactory.API.Controllers
         /// <param name="content"></param>
         /// <returns></returns>
         [HttpPost("summary")]
-        public async Task<SummaryResponse> GetSummary([FromBody] SummaryRequest content)
-        {
-            return await _agentFactoryService.GetSummary(content);
-        }
+        public async Task<SummaryResponse> GetSummary([FromBody] SummaryRequest content) => await _agentFactoryService.GetSummary(content);
     }
 }

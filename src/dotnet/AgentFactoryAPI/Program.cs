@@ -12,6 +12,7 @@ using FoundationaLLM.Common.Extensions;
 using FoundationaLLM.Common.Interfaces;
 using FoundationaLLM.Common.Middleware;
 using FoundationaLLM.Common.Models.Configuration.API;
+using FoundationaLLM.Common.Models.Configuration.Instance;
 using FoundationaLLM.Common.Models.Context;
 using FoundationaLLM.Common.OpenAPI;
 using FoundationaLLM.Common.Services;
@@ -72,6 +73,8 @@ namespace FoundationaLLM.AgentFactory.API
             builder.Services.AddOptions<APIKeyValidationSettings>()
                 .Bind(builder.Configuration.GetSection(AppConfigurationKeySections.FoundationaLLM_APIs_AgentFactoryAPI));
             builder.Services.AddTransient<IAPIKeyValidationService, APIKeyValidationService>();
+            builder.Services.AddOptions<InstanceSettings>()
+                .Bind(builder.Configuration.GetSection(AppConfigurationKeySections.FoundationaLLM_Instance));
 
             builder.Services.AddOptions<SemanticKernelServiceSettings>()
                 .Bind(builder.Configuration.GetSection(AppConfigurationKeySections.FoundationaLLM_APIs_SemanticKernelAPI));

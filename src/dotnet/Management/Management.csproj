@@ -18,7 +18,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Agent\Agent.csproj" />
     <ProjectReference Include="..\Common\Common.csproj" />
+    <ProjectReference Include="..\Vectorization\Vectorization.csproj" />
   </ItemGroup>
 
 </Project>

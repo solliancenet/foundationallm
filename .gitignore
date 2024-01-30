@@ -374,5 +374,7 @@ log
 
 *.csproj.user
 *.pyproj.user
-
 .DS_Store
+**/certbot/*
+**/certbot.ini
+**/Deployment-Manifest.json

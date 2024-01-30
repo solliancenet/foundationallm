@@ -60,6 +60,7 @@ namespace FoundationaLLM.Common.Services
             string containerName,
             string filePath,
             Stream fileContent,
+            string? contentType,
             CancellationToken cancellationToken = default)
         {
             var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
@@ -67,7 +68,16 @@ namespace FoundationaLLM.Common.Services
 
             fileContent.Seek(0, SeekOrigin.Begin);
 
-            BlobUploadOptions options = new();
+            BlobUploadOptions options = new()
+            {
+                HttpHeaders = new BlobHttpHeaders()
+                {
+                    ContentType = string.IsNullOrWhiteSpace(contentType)
+                        ? "application/json"
+                        : contentType
+                }
+            };
+
             await blobClient.UploadAsync(fileContent, options, cancellationToken).ConfigureAwait(false);
         }
 
@@ -76,11 +86,13 @@ namespace FoundationaLLM.Common.Services
             string containerName,
             string filePath,
             string fileContent,
+            string? contentType,
             CancellationToken cancellationToken = default) =>
             await WriteFileAsync(
                 containerName,
                 filePath,
                 new MemoryStream(Encoding.UTF8.GetBytes(fileContent)),
+                contentType,
                 cancellationToken).ConfigureAwait(false);
 
         /// <inheritdoc/>

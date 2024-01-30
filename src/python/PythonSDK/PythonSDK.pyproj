@@ -27,13 +27,15 @@
     <Compile Include="foundationallm\hubs\data_source\data_sources\cxo\cxo_data_source_metadata.py" />
     <Compile Include="foundationallm\hubs\data_source\data_sources\cxo\__init__.py" />
     <Compile Include="foundationallm\langchain\agents\cxo_agent.py" />
+    <Compile Include="foundationallm\langchain\agents\knowledge_management_agent.py" />
     <Compile Include="foundationallm\langchain\agents\search_service_agent.py" />
     <Compile Include="foundationallm\langchain\data_sources\cxo\cxo_configuration.py" />
     <Compile Include="foundationallm\langchain\data_sources\cxo\__init__.py" />
     <Compile Include="foundationallm\langchain\data_sources\search_service\search_service_configuration.py" />
     <Compile Include="foundationallm\langchain\data_sources\search_service\__init__.py" />
+    <Compile Include="foundationallm\langchain\retrievers\retriever_factory.py" />
     <Compile Include="foundationallm\langchain\retrievers\search_service_filter_retriever.py" />
-    <Compile Include="foundationallm\langchain\retrievers\search_service_retriever.py" />
+    <Compile Include="foundationallm\langchain\retrievers\azure_ai_search_service_retriever.py" />
     <Compile Include="foundationallm\langchain\retrievers\__init__.py" />
     <Compile Include="foundationallm\models\agent_hint.py" />
     <Compile Include="foundationallm\langchain\language_models\openai\openai_model.py" />
@@ -127,18 +129,26 @@
     <Compile Include="foundationallm\hubs\prompt\prompt_hub_request.py" />
     <Compile Include="foundationallm\hubs\prompt\prompt_hub_response.py" />
     <Compile Include="foundationallm\models\metadata\agent.py" />
+    <Compile Include="foundationallm\models\metadata\agent_base.py" />
     <Compile Include="foundationallm\models\metadata\data_source.py" />
     <Compile Include="foundationallm\models\language_models\language_model.py" />
+    <Compile Include="foundationallm\models\metadata\gatekeeper.py" />
+    <Compile Include="foundationallm\models\metadata\knowledge_management_agent.py" />
     <Compile Include="foundationallm\models\metadata\metadata_base.py" />
     <Compile Include="foundationallm\models\metadata\__init__.py" />
     <Compile Include="foundationallm\langchain\data_sources\data_source_configuration.py" />
     <Compile Include="foundationallm\models\orchestration\completion_request.py" />
+    <Compile Include="foundationallm\models\orchestration\completion_request_base.py" />
     <Compile Include="foundationallm\models\orchestration\completion_response.py" />
+    <Compile Include="foundationallm\models\metadata\conversation_history.py" />
+    <Compile Include="foundationallm\models\orchestration\knowledge_management_completion_request.py" />
     <Compile Include="foundationallm\models\orchestration\message_history_item.py" />
     <Compile Include="foundationallm\models\orchestration\__init__.py" />
     <Compile Include="foundationallm\models\__init__.py" />
     <Compile Include="foundationallm\config\configuration.py" />
     <Compile Include="foundationallm\config\__init__.py" />
+    <Compile Include="foundationallm\resources\resource_provider.py" />
+    <Compile Include="foundationallm\resources\__init__.py" />
     <Compile Include="foundationallm\storage\blob_storage_manager.py" />
     <Compile Include="foundationallm\storage\storage_manager_base.py" />
     <Compile Include="foundationallm\storage\__init__.py" />
@@ -182,6 +192,7 @@
     <Folder Include="foundationallm\models\language_models\" />
     <Folder Include="foundationallm\models\orchestration\" />
     <Folder Include="foundationallm\hubs\" />
+    <Folder Include="foundationallm\resources\" />
     <Folder Include="foundationallm\storage\" />
   </ItemGroup>
   <ItemGroup>

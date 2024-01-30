@@ -8,6 +8,13 @@ namespace FoundationaLLM.Common.Models.TextEmbedding;
 public class ContentIdentifier
 {
     /// <summary>
+    /// The name of the vectorization content source profile that provides settings to connect to the content source.
+    /// </summary>
+    [JsonPropertyOrder(0)]
+    [JsonPropertyName("content_source_profile_name")]
+    public required string ContentSourceProfileName { get; set; }
+
+    /// <summary>
     /// The multipart unique identifier of the the content (i.e. document) being vectorized.
     /// </summary>
     [JsonPropertyOrder(1)]

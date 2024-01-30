@@ -33,13 +33,6 @@ namespace FoundationaLLM.Vectorization.Models
         public List<VectorizationArtifact> Artifacts { get; set; } = [];
 
         /// <summary>
-        /// The name of the content source profile.
-        /// </summary>
-        [JsonPropertyOrder(3)]
-        [JsonPropertyName("content_source_profile_name")]
-        public string? ContentSourceProfileName { get; set; }
-
-        /// <summary>
         /// The list of log entries associated with actions executed by the vectorization pipeline.
         /// </summary>
         [JsonPropertyOrder(20)]

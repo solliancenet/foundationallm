@@ -42,4 +42,9 @@ public static class HttpClients
     /// Named client with matching configuration for the DataSource Hub API.
     /// </summary>
     public const string DataSourceHubAPI = "DataSourceHubAPI";
+
+    /// <summary>
+    /// Named client with matching configuration for the Vectorization API.
+    /// </summary>
+    public const string VectorizationAPI = "VectorizationAPI";
 }

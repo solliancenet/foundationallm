@@ -67,8 +67,9 @@ def test_fllm_completion_request():
         data_sources=[DataSource(
             name="about-foundationallm",
             type="blob-storage",
-            description="Information about FoundationaLLM.",
+            description="Information about FoundationaLLM.",            
             configuration=BlobStorageConfiguration(
+                configuration_type="blob_storage",
                 connection_string_secret="FoundationaLLM:DataSources:AboutFoundationaLLM:BlobStorage:ConnectionString",
                 container="foundationallm-source",
                 files = ["about.txt"]

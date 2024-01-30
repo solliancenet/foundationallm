@@ -42,14 +42,14 @@ namespace FoundationaLLM.Vectorization.Services.RequestSources
         /// <inheritdoc/>
         public async Task<bool> HasRequests()
         {
-            var message = await _queueClient.PeekMessageAsync();
+            var message = await _queueClient.PeekMessageAsync().ConfigureAwait(false);
             return message.Value != null;
         }
 
         /// <inheritdoc/>
         public async Task<IEnumerable<(VectorizationRequest Request, string MessageId, string PopReceipt)>> ReceiveRequests(int count)
         {
-            var receivedMessages = await _queueClient.ReceiveMessagesAsync(count, TimeSpan.FromSeconds(_settings.VisibilityTimeoutSeconds));
+            var receivedMessages = await _queueClient.ReceiveMessagesAsync(count, TimeSpan.FromSeconds(_settings.VisibilityTimeoutSeconds)).ConfigureAwait(false);
 
             var result = new List<(VectorizationRequest, string, string)>();
 
@@ -77,13 +77,13 @@ namespace FoundationaLLM.Vectorization.Services.RequestSources
 
         /// <inheritdoc/>
         public async Task DeleteRequest(string messageId, string popReceipt) =>
-            await _queueClient.DeleteMessageAsync(messageId, popReceipt);
+            await _queueClient.DeleteMessageAsync(messageId, popReceipt).ConfigureAwait(false);
 
         /// <inheritdoc/>
         public async Task SubmitRequest(VectorizationRequest request)
         {
             var serializedMessage = JsonSerializer.Serialize(request);
-            await _queueClient.SendMessageAsync(serializedMessage);
+            await _queueClient.SendMessageAsync(serializedMessage).ConfigureAwait(false);
         }
     }
 }

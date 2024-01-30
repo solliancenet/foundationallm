@@ -1,8 +1,6 @@
 from typing import Any
 import pytest
 from foundationallm.config import Configuration
-from foundationallm.models import ListOption
-from foundationallm.models.orchestration import MessageHistoryItem
 from foundationallm.models.orchestration import CompletionRequest
 from foundationallm.models.metadata import Agent, DataSource
 from foundationallm.langchain.data_sources.search_service import SearchServiceConfiguration
@@ -29,7 +27,8 @@ def test_sotu_completion_request():
              type="search-service",
              description="Transcript from the February 2023 State of the Union Address",
              configuration=SearchServiceConfiguration(
-                 endpoint="https://fllmaca13-cog-search.search.windows.net",
+                 configuration_type="search_service",
+                 endpoint="FoundationaLLM:CognitiveSearch:EndPoint",
                  key_secret="FoundationaLLM:CognitiveSearch:Key",
                  index_name="sotu-index",
                  embedding_field_name="Embedding",

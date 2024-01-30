@@ -66,9 +66,11 @@ export const useAppConfigStore = defineStore('appConfig', {
 				authCallbackPath,
 			] = await Promise.all([
 				api.getConfigValue('FoundationaLLM:APIs:CoreAPI:APIUrl'),
+				
 				api.getConfigValue('FoundationaLLM:Branding:KioskMode'),
 				api.getConfigValue('.appconfig.featureflag/FoundationaLLM-AllowAgentHint'),
 				api.getConfigValue('FoundationaLLM:Branding:AllowAgentSelection'),
+				
 				api.getConfigValue('FoundationaLLM:Branding:PageTitle'),
 				api.getConfigValue('FoundationaLLM:Branding:LogoUrl'),
 				api.getConfigValue('FoundationaLLM:Branding:LogoText'),
@@ -83,6 +85,7 @@ export const useAppConfigStore = defineStore('appConfig', {
 				api.getConfigValue('FoundationaLLM:Branding:PrimaryButtonTextColor'),
 				api.getConfigValue('FoundationaLLM:Branding:SecondaryButtonBackgroundColor'),
 				api.getConfigValue('FoundationaLLM:Branding:SecondaryButtonTextColor'),
+				
 				api.getConfigValue('FoundationaLLM:Chat:Entra:ClientId'),
 				api.getConfigValue('FoundationaLLM:Chat:Entra:Instance'),
 				api.getConfigValue('FoundationaLLM:Chat:Entra:TenantId'),
@@ -95,12 +98,6 @@ export const useAppConfigStore = defineStore('appConfig', {
 			this.isKioskMode = JSON.parse(isKioskMode.toLowerCase());
 			this.allowAgentHint = JSON.parse(allowAgentHint.toLowerCase())?.enabled;
 			this.agents = agents.split(', ');
-
-			this.auth.clientId = authClientId;
-			this.auth.instance = authInstance;
-			this.auth.tenantId = authTenantId;
-			this.auth.scopes = authScopes;
-			this.auth.callbackPath = authCallbackPath;
 
 			this.pageTitle = pageTitle;
 			this.logoUrl = logoUrl;
@@ -116,6 +113,12 @@ export const useAppConfigStore = defineStore('appConfig', {
 			this.primaryButtonText = primaryButtonText;
 			this.secondaryButtonBg = secondaryButtonBg;
 			this.secondaryButtonText = secondaryButtonText;
+
+			this.auth.clientId = authClientId;
+			this.auth.instance = authInstance;
+			this.auth.tenantId = authTenantId;
+			this.auth.scopes = authScopes;
+			this.auth.callbackPath = authCallbackPath;
 		},
 	},
 });

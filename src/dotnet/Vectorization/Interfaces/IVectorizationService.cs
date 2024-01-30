@@ -17,6 +17,6 @@ namespace FoundationaLLM.Vectorization.Interfaces
         /// </summary>
         /// <param name="vectorizationRequest">The <see cref="VectorizationRequest"/> object containing the details of the vectorization request.</param>
         /// <returns></returns>
-        Task ProcessRequest(VectorizationRequest vectorizationRequest);
+        Task<VectorizationProcessingResult> ProcessRequest(VectorizationRequest vectorizationRequest);
     }
 }

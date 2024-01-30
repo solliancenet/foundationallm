@@ -14,6 +14,16 @@ namespace FoundationaLLM.Vectorization.Models.Resources
         /// <summary>
         /// Azure data lake storage account.
         /// </summary>
-        AzureDataLake
+        AzureDataLake,
+
+        /// <summary>
+        /// SharePoint Online document library.
+        /// </summary>
+        SharePointOnline,
+
+        /// <summary>
+        /// Azure SQL Database.
+        /// </summary>
+        AzureSQLDatabase
     }
 }

@@ -2,7 +2,7 @@
 	<div class="chat-sidebar">
 		<!-- Sidebar section header -->
 		<div class="chat-sidebar__section-header--mobile">
-			<img v-if="appConfigStore.logoUrl !== ''" :src="appConfigStore.logoUrl" />
+			<img v-if="appConfigStore.logoUrl !== ''" :src="$filters.enforceLeadingSlash(appConfigStore.logoUrl)" />
 			<span v-else>{{ appConfigStore.logoText }}</span>
 			<Button
 				:icon="appStore.isSidebarClosed ? 'pi pi-arrow-right' : 'pi pi-arrow-left'"

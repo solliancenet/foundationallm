@@ -17,11 +17,6 @@ namespace FoundationaLLM.Common.Models.TextEmbedding
         public required ContentIdentifier ContentId { get; set; }
 
         /// <summary>
-        /// The name of the content source profile used to retrieve content.
-        /// </summary>
-        public required string ContentSourceProfileName { get; set; }
-
-        /// <summary>
         /// The list of conent 
         /// </summary>
         public required List<EmbeddedContentPart> ContentParts { get; set; } = [];

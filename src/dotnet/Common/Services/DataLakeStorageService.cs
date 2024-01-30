@@ -73,6 +73,7 @@ namespace FoundationaLLM.Common.Services
             string containerName,
             string filePath,
             Stream fileContent,
+            string? contentType,
             CancellationToken cancellationToken) =>
             throw new NotImplementedException();
 
@@ -81,6 +82,7 @@ namespace FoundationaLLM.Common.Services
             string containerName,
             string filePath,
             string fileContent,
+            string? contentType,
             CancellationToken cancellationToken) =>
             throw new NotImplementedException();
 
