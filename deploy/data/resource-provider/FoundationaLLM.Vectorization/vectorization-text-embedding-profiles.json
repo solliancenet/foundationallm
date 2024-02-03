@@ -1,5 +1,5 @@
 {
-	"TextEmbeddingProfiles": [
+	"Profiles": [
 		{
 			"Name": "AzureOpenAI_Embedding",
 			"TextEmbedding": "SemanticKernelTextEmbedding",

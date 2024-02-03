@@ -1,11 +1,6 @@
-﻿using FoundationaLLM.Common.Models.Vectorization;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using FoundationaLLM.Vectorization.Models.Resources;
 
-namespace FoundationaLLM.Common.Interfaces
+namespace FoundationaLLM.Vectorization.Interfaces
 {
     /// <summary>
     /// Creates typed service instances.

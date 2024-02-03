@@ -8,20 +8,6 @@ namespace FoundationaLLM.Management.Interfaces
     public interface IConfigurationManagementService
     {
         /// <summary>
-        /// Retrieves a list of public agent hints from app configuration.
-        /// </summary>
-        /// <returns></returns>
-        Task<List<string>?> GetAgentHintsAsync();
-
-        /// <summary>
-        /// Creates or updates app configuration setting that lists the public agent hints.
-        /// </summary>
-        /// <param name="agentHints">Set the value to null if you wish to clear the list of
-        /// agent hints.</param>
-        /// <returns></returns>
-        Task UpdateAgentHintsAsync(IEnumerable<string>? agentHints);
-
-        /// <summary>
         /// Retrieves the allow agent selection feature flag value from app configuration.
         /// </summary>
         /// <returns></returns>

@@ -1,10 +1,7 @@
 const filters = {
-	enforceLeadingSlash(path: string) {
-		if (!path.startsWith('/')) {
-			return '/' + path;
-		} else {
-			return path;
-		}
+	publicDirectory(path: string) {
+		const config = useRuntimeConfig();
+		return config.app.baseURL + path;
 	}
 };
 

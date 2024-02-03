@@ -10,12 +10,21 @@ namespace FoundationaLLM.Vectorization.Models
     public class VectorizationRequest
     {
         /// <summary>
-        /// The unique identifier of the vectorization request. Subsequent vectorization requests
-        /// referring to the same content will have different unique identifiers.
+        /// The unique identifier of the vectorization request.
+        /// The responsibility to create this identifier belongs to the initiator of the vectorization request.
+        /// </summary>
+        [JsonPropertyOrder(-1)]
+        [JsonPropertyName("id")]
+        public string? Id { get; set; }
+
+        /// <summary>
+        /// The unique identifier of the vectorization request.
+        /// The responsibility to create this identifier belongs to the FoundationaLLM.Vectorization resource manager.
+        /// Subsequent vectorization requests referring to the same content will have different unique identifiers.
         /// </summary>
         [JsonPropertyOrder(0)]
-        [JsonPropertyName("id")]
-        public required string Id { get; set; }
+        [JsonPropertyName("object_id")]
+        public string? ObjectId { get; set; }
 
         /// <summary>
         /// The <see cref="ContentIdentifier"/> object identifying the content being vectorized.
@@ -45,14 +54,14 @@ namespace FoundationaLLM.Vectorization.Models
         /// </summary>
         [JsonPropertyOrder(11)]
         [JsonPropertyName("completed_steps")]
-        public required List<string> CompletedSteps { get; set; }
+        public List<string> CompletedSteps { get; set; } = [];
 
         /// <summary>
         /// The ordered list of the names of the vectorization steps that still need to be executed.
         /// </summary>
         [JsonPropertyOrder(12)]
         [JsonPropertyName("remaining_steps")]
-        public required List<string> RemainingSteps { get; set; }
+        public List<string> RemainingSteps { get; set; } = [];
 
         /// <summary>
         /// Indicates whether the vectorization process is complete or not.

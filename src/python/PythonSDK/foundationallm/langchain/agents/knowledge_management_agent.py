@@ -54,7 +54,7 @@ class KnowledgeManagementAgent(AgentBase):
                             config = config,
                             resource_provider = resource_provider)
             self.retriever = retriever_factory.get_retriever()
-            self.agent_prompt = resource_provider.get_resource(completion_request.agent.prompt)
+            self.agent_prompt = resource_provider.get_resource(completion_request.agent.prompt)["prefix"]
 
         #default conversation history
         self.message_history_enabled = False

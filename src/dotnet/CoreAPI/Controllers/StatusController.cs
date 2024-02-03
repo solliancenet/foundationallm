@@ -20,7 +20,7 @@ namespace FoundationaLLM.Core.API.Controllers
         [AllowAnonymous]
         [HttpGet(Name = "GetServiceStatus")]
         public IActionResult GetServiceStatus() =>
-            Ok();
+            Ok("CoreAPI - ready");
 
         /// <summary>
         /// Returns OK if the requester is authenticated and allowed to execute

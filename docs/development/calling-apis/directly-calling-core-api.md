@@ -1,6 +1,6 @@
-# Directly calling the APIs
+# Directly calling the Core API
 
-Typically, the only interaction with the Foundationa**LLM** (FLLM) APIs is indirectly through the User Portal and Management Portal. However, you can also call the APIs directly to perform certain tasks, such as using your [configured FLLM agents](../setup-guides/agents/index.md) to perform completions (via the Core API), or updating your branding configurations (via the Management API).
+Typically, the only interaction with the Foundationa**LLM** (FLLM) APIs is indirectly through the User Portal and Management Portal. However, you can also call the APIs directly to perform certain tasks, such as using your [configured FLLM agents](../../setup-guides/agents/index.md) to perform completions (via the Core API), or updating your branding configurations (via the Management API).
 
 ## API architecture
 
@@ -58,12 +58,12 @@ graph TD;
 The ability to test the API endpoints of FoundationaLLM is a critical part of the development process. Postman is a tool that allows you to do just that. This document will walk you through the process of setting up Postman to work with FoundationaLLM.
 
 > [!TIP]
-> To find the Core API URL for your deployment, you can retrieve it from your App Configuration resource in the portal by viewing the `FoundationaLLM:APIs:CoreAPI:APIUrl` configuration value. Alternatively, follow the instructions in the [Quickstart guide](../setup-guides/quickstart.md#find-your-core-api-url) to find the Core API URL.
+> To find the Core API URL for your deployment, you can retrieve it from your App Configuration resource in the portal by viewing the `FoundationaLLM:APIs:CoreAPI:APIUrl` configuration value. Alternatively, follow the instructions in the [Quickstart guide](../../setup-guides/quickstart.md#find-your-core-api-url) to find the Core API URL.
 
-To see the API endpoints available in FoundationaLLM, you can get your Core API endpoint from your App Configuration resource in the portal and add `/swagger/` to the end of it. For example, if your Core API endpoint is `https://foundationallm-core-api.azurewebsites.net`, then you would navigate to `https://foundationallm-core-api.azurewebsites.net/swagger/` to see the API endpoints.
+To see the API endpoints available in FoundationaLLM, you can get your Core API endpoint from your App Configuration resource in the portal and add `/swagger/` to the end of it. For example, if your Core API endpoint is `https://fllmaca002coreca.graybush-c554b849.eastus.azurecontainerapps.io`, then you would navigate to `https://fllmaca002coreca.graybush-c554b849.eastus.azurecontainerapps.io/swagger/` to see the API endpoints.
 
 > [!NOTE]
-> The example link above is for a [starter deployment](../deployment/deployment-starter.md) of FoundationaLLM, which deploys the APIs to Azure Container Apps (ACA). If you are using the standard deployment that deploys the APIs to Azure Kubernetes Service (AKS), then you cannot currently access the Swagger UI for the APIs. However, you will be able to obtain the OpenAPI swagger.json file from the Core API endpoint by navigating to `https://{{AKS URL}}/core/swagger/v1/swagger.json`.
+> The example link above is for a [starter deployment](../../deployment/deployment-starter.md) of FoundationaLLM, which deploys the APIs to Azure Container Apps (ACA). If you are using the standard deployment that deploys the APIs to Azure Kubernetes Service (AKS), then you cannot currently access the Swagger UI for the APIs. However, you will be able to obtain the OpenAPI swagger.json file from the Core API endpoint by navigating to `https://{{AKS URL}}/core/swagger/v1/swagger.json`.
 
 ### Install Postman
 
@@ -124,7 +124,7 @@ There are two ways to obtain the authentication token that you will use to authe
 Though this method takes a few more steps, it is the recommended method because it allows you to use the same token for all of the API calls in the collection.
 
 > [!IMPORTANT]
-> If you previously configured the Microsoft Entra ID app registration for the Chat UI application, you will need to update the **Redirect URI** to `https://oauth.pstmn.io/v1/callback` in order to use the Postman mobile app to get the token. You can do this by following the steps in the [Add a redirect URI to the client application](../deployment/authentication/core-authentication-setup-entra.md#add-a-redirect-uri-to-the-client-application) section of the authentication setup guide.
+> If you previously configured the Microsoft Entra ID app registration for the Chat UI application, you will need to update the **Redirect URI** to `https://oauth.pstmn.io/v1/callback` in order to use the Postman mobile app to get the token. You can do this by following the steps in the [Add a redirect URI to the client application](../../deployment/authentication/core-authentication-setup-entra.md#add-a-redirect-uri-to-the-client-application) section of the authentication setup guide.
 
 First, let's set up the request to get the token at the **collection** level. Make sure you choose `OAuth 2.0` as the type of authorization and **not** Bearer Token.
 
@@ -145,8 +145,8 @@ Below is a list of each change that you need to make to the **Authorization** ta
 4. **Auth Url:** This is the url that you will use to get the token.  In our case, it's the url of Microsoft microsoftonline login authority `https://login.microsoftonline.com/<tenantID>/oauth2/v2.0/authorize`. Replace the **tenantID** with your own Entra ID Tenant ID from your portal or from the App Configuration resource.
 5. **Access Token Url:** This is the url that you will use to get the access token.  In our case, it's the url of Microsoft microsoftonline login authority `https://login.microsoftonline.com/<tenantID>/oauth2/token`. Replace the **tenantID** with your own Entra ID Tenant ID from your portal or from the App Configuration resource.
 6. **Client ID:** This is the client ID of the application that you will use to get the token. In our case, it's the client ID of the Chat UI application. You can get the client ID from the **Overview** tab of the Chat UI application in the portal.
-7. **Code Challengle Method:** This is the method that you will use to get the token. In our case, we will use **SHA-256**.
-8. **Scope:** This is the scope of the token that you will use to get the token. In our case, we will use **api://FoundationaLLM-Auth/Data.Read openid profile offline_access**.
+7. **Code Challenge Method:** This is the method that you will use to get the token. In our case, we will use **SHA-256**.
+8. **Scope:** This is the scope of the token that you will use to get the token. You can find this value within the Api Permissions section of your Chat UI Entra ID app. In our case, we will use **api://FoundationaLLM-Auth/Data.Read**.
 9. **Client Authentication:** This is the type of authentication that you will use to get the token.  In our case, we will use **Send client credentials in body**.
 
 These are the only changes that you need to make to the **Authorization** tab.  

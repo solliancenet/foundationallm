@@ -21,6 +21,8 @@ namespace FoundationaLLM.Management.API.Controllers
     [Authorize(Policy = "RequiredScope")]
     [ApiVersion(1.0)]
     [ApiController]
+    [Consumes("application/json")]
+    [Produces("application/json")]
     [Route($"instances/{{instanceId}}/providersX/{ResourceProviderNames.FoundationaLLM_Configuration}/configurations")]
     public class ConfigurationsController(
         IConfigurationManagementService configurationManagementService) : ControllerBase
@@ -48,12 +50,10 @@ namespace FoundationaLLM.Management.API.Controllers
         [HttpGet("agentHints", Name = "GetAgentHints")]
         public async Task<AgentHints> GetAgentHints()
         {
-            var agentHints = await configurationManagementService.GetAgentHintsAsync();
             var agentHintsEnabled = await configurationManagementService.GetAllowAgentSelectionAsync();
             return new AgentHints
             {
-                Enabled = agentHintsEnabled,
-                AllowedAgentSelection = agentHints
+                Enabled = agentHintsEnabled
             };
         }
 
@@ -63,10 +63,7 @@ namespace FoundationaLLM.Management.API.Controllers
         /// <param name="agentHints"></param>
         /// <returns></returns>
         [HttpPut("agentHints", Name = "UpdateAgentHints")]
-        public async Task UpdateAgentHints([FromBody] AgentHints agentHints)
-        {
-            await configurationManagementService.UpdateAgentHintsAsync(agentHints.AllowedAgentSelection);
+        public async Task UpdateAgentHints([FromBody] AgentHints agentHints) =>
             await configurationManagementService.SetAllowAgentSelectionAsync(agentHints.Enabled);
-        }
     }
 }

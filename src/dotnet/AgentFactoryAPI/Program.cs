@@ -1,5 +1,6 @@
 using Asp.Versioning;
 using Azure.Identity;
+using FoundationaLLM;
 using FoundationaLLM.AgentFactory.Core.Interfaces;
 using FoundationaLLM.AgentFactory.Core.Models.ConfigurationOptions;
 using FoundationaLLM.AgentFactory.Core.Services;
@@ -50,6 +51,7 @@ namespace FoundationaLLM.AgentFactory.API
                 });
                 options.Select(AppConfigurationKeyFilters.FoundationaLLM_APIs);
                 options.Select(AppConfigurationKeyFilters.FoundationaLLM_AgentFactory);
+                options.Select(AppConfigurationKeyFilters.FoundationaLLM_Agent);
             });
             if (builder.Environment.IsDevelopment())
                 builder.Configuration.AddJsonFile("appsettings.development.json", true, true);
@@ -106,6 +108,8 @@ namespace FoundationaLLM.AgentFactory.API
             builder.Services.AddHostedService<Warmup>();
 
             builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
+
+            builder.Services.AddAgentResourceProvider(builder.Configuration);
 
             // Register the downstream services and HTTP clients.
             RegisterDownstreamServices(builder);

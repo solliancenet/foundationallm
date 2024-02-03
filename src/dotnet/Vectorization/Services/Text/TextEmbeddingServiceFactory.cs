@@ -1,16 +1,12 @@
 ﻿using FoundationaLLM.Common.Constants;
 using FoundationaLLM.Common.Interfaces;
-using FoundationaLLM.Common.Models.Configuration.Text;
-using FoundationaLLM.Common.Models.Vectorization;
-using FoundationaLLM.Common.Services.TextSplitters;
-using FoundationaLLM.SemanticKernel.Core.Services;
 using FoundationaLLM.Vectorization.Exceptions;
+using FoundationaLLM.Vectorization.Interfaces;
 using FoundationaLLM.Vectorization.Models.Resources;
 using FoundationaLLM.Vectorization.ResourceProviders;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace FoundationaLLM.Vectorization.Services.Text
 {

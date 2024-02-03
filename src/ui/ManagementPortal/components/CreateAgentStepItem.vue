@@ -3,7 +3,7 @@
 		<div class="step-container">
 			<!-- Editing view -->
 			<div
-				v-if="editing"
+				v-if="isOpen"
 				class="step-container__edit"
 			>
 				<div class="step-container__edit__inner">
@@ -14,18 +14,18 @@
 						<Button
 							class="primary-button mt-2"
 							label="Done"
-							@click="editing = false"
+							@click="handleClose"
 						/>
 					</div>
 				</div>
 
-				<div class="step-container__edit__arrow" @click="editing = false">
+				<div class="step-container__edit__arrow" @click="handleClose">
 					<span class="pi pi-arrow-down" style="font-size: 1rem;"></span>
 				</div>
 			</div>
 
 			<!-- Default view -->
-			<div class="step-container__view" @click="editing = true">
+			<div class="step-container__view" @click="handleOpen">
 				<div class="step-container__view__inner">
 					<slot />
 				</div>
@@ -46,20 +46,41 @@ export default {
 
 	emits: ['update:modelValue'],
 
-	watch: {
-		editing() {
-			this.$emit('update:modelValue', this.editing);
-		},
-
-		modelValue() {
-			this.editing = this.modelValue;
-		}
-	},
-
 	data() {
 		return {
 			editing: false as boolean,
+			id: Math.random(),
 		};
+	},
+
+	computed: {
+		isOpen() {
+			return this.editing && (this.$appStore.createAgentOpenItemId === this.id);
+		}
+	},
+
+	watch: {
+		isOpen() {
+			this.$emit('update:modelValue', this.isOpen);
+		},
+
+		modelValue() {
+			this.modelValue ? this.handleOpen() : this.handleClose();
+		}
+	},
+
+	methods: {
+		handleOpen() {
+			this.editing = true;
+			this.$appStore.createAgentOpenItemId = this.id;
+		},
+
+		handleClose() {
+			this.editing = false;
+			if (this.$appStore.createAgentOpenItemId === this.id) {
+				this.$appStore.createAgentOpenItemId = null;
+			}
+		},
 	},
 };
 </script>

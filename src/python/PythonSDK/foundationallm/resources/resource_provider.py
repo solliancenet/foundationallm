@@ -41,28 +41,28 @@ class ResourceProvider:
         match provider_type:
             case "FoundationaLLM.Prompt":
                 # return the content of the referenced prompt file
-                full_path = f"{provider_type}/{resource}.txt"
+                full_path = f"{provider_type}/{resource}.json"
                 file_content = self.blob_storage_manager.read_file_content(full_path)
                 if file_content is not None:
-                    return file_content.decode("utf-8")
+                    return json.loads(file_content.decode("utf-8"))
                 
-            case "FoundationaLLM.Vectorization":                
+            case "FoundationaLLM.Vectorization":
+                full_path = None
                 if resource_type == "indexingprofiles":
                     full_path = f"{provider_type}/vectorization-indexing-profiles.json"
-                    file_content = self.blob_storage_manager.read_file_content(full_path).decode("utf-8")
-                    profiles = json.loads(file_content)["IndexingProfiles"]
-                    filtered = next(filter(lambda profile: profile["Name"] == resource, profiles), None)
-                    if filtered is not None:
-                        filtered = self.__translate_keys(filtered)
-                        return filtered
+
                 elif resource_type == "textembeddingprofiles":
                     full_path = f"{provider_type}/vectorization-text-embedding-profiles.json"
-                    file_content = self.blob_storage_manager.read_file_content(full_path).decode("utf-8")
-                    profiles = json.loads(file_content)["TextEmbeddingProfiles"]
-                    filtered = next(filter(lambda profile: profile["Name"] == resource, profiles), None)
-                    if filtered is not None:
-                        filtered = self.__translate_keys(filtered)
-                        return filtered
+
+                if full_path is not None:
+                    file_content = self.blob_storage_manager.read_file_content(full_path)
+                    if file_content is not None:
+                        decoded_content = file_content.decode("utf-8")
+                        profiles = json.loads(decoded_content)["Profiles"]
+                        filtered = next(filter(lambda profile: profile["Name"] == resource, profiles), None)
+                        if filtered is not None:
+                            filtered = self.__translate_keys(filtered)
+                            return filtered
         return None
 
     def __pascal_to_snake(self, name):  

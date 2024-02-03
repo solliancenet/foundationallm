@@ -94,7 +94,7 @@ If you wish to [configure authentication in Postman](../../development/directly-
 
     ![Both the Access tokens and ID tokens checkboxes are checked and the Save button is highlighted.](media/entra-app-client-authentication-implicit-grant.png)
 
-#### Client secret for the client application
+<!-- #### Client secret for the client application
 
 1. Under **Manage**, select **Certificates & secrets**.
 2. Under **Client secrets**, select **+ New client secret**.
@@ -103,7 +103,7 @@ If you wish to [configure authentication in Postman](../../development/directly-
 5. Select **Add**.
 6. **Record the secret value** to add to your App Configuration settings later. Do this by selecting the **Copy to clipboard** icon next to the secret value.
 
-    ![The steps to create a client secret are highlighted.](media/entra-client-app-secret.png)
+    ![The steps to create a client secret are highlighted.](media/entra-client-app-secret.png) -->
 
 #### Update the client application manifest
 
@@ -147,7 +147,7 @@ If you wish to [configure authentication in Postman](../../development/directly-
 
     ![Both the Access tokens and ID tokens checkboxes are checked and the Save button is highlighted.](media/entra-app-client-authentication-implicit-grant.png)
 
-#### Client secret for the API application
+<!-- #### Client secret for the API application
 
 1. Under **Manage**, select **Certificates & secrets**.
 2. Under **Client secrets**, select **+ New client secret**.
@@ -156,7 +156,7 @@ If you wish to [configure authentication in Postman](../../development/directly-
 5. Select **Add**.
 6. **Record the secret value** to add to your App Configuration settings later. Do this by selecting the **Copy to clipboard** icon next to the secret value.
 
-    ![The steps to create a client secret are highlighted.](media/entra-api-app-secret.png)
+    ![The steps to create a client secret are highlighted.](media/entra-api-app-secret.png) -->
 
 #### Expose an API for the API application
 
@@ -242,7 +242,7 @@ The client application's configured permissions should now look like the followi
 
 9. Select **Apply** to save the changes.
 
-### Update Key Vault secrets
+<!-- ### Update Key Vault secrets
 
 Key Vault stores the secrets for the client and API applications. You need to update the secrets with the values that you recorded earlier.
 
@@ -252,7 +252,7 @@ Key Vault stores the secrets for the client and API applications. You need to up
 4. Open the `foundationallm-chat-entra-clientsecret` secret, then select **+ New Version**.
 5. Within the **Secret value** field, enter the **Client secret** of the client application that you [created earlier](#client-secret-for-the-client-application), then select **Create**.
 6. Open the `foundationallm-coreapi-entra-clientsecret` secret, then select **+ New Version**.
-7. Within the **Secret value** field, enter the **Client secret** of the API application that you [created earlier](#client-secret-for-the-api-application), then select **Create**.
+7. Within the **Secret value** field, enter the **Client secret** of the API application that you [created earlier](#client-secret-for-the-api-application), then select **Create**. -->
 
 ## Next steps
 

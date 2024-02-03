@@ -6,6 +6,7 @@ using FoundationaLLM.Common.Constants;
 using FoundationaLLM.Common.Exceptions;
 using FoundationaLLM.Common.Interfaces;
 using FoundationaLLM.Common.Models.Configuration.Instance;
+using FoundationaLLM.Common.Services;
 using FoundationaLLM.Common.Services.ResourceProviders;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -20,21 +21,19 @@ namespace FoundationaLLM.Agent.ResourceProviders
     public class AgentResourceProviderService(
         IOptions<InstanceSettings> instanceOptions,
         [FromKeyedServices(DependencyInjectionKeys.FoundationaLLM_Agent_ResourceProviderService)] IStorageService storageService,
-        ILogger<AgentResourceProviderService> logger)
+        ILoggerFactory loggerFactory)
         : ResourceProviderServiceBase(
             instanceOptions.Value,
             storageService,
-            logger)
+            loggerFactory.CreateLogger<AgentResourceProviderService>())
     {
-        private readonly JsonSerializerSettings _serializerSettings = new()
-        {
-            TypeNameHandling = TypeNameHandling.Auto,
-            Formatting = Formatting.Indented
-        };
         private ConcurrentDictionary<string, AgentReference> _agentReferences = [];
 
         private const string AGENT_REFERENCES_FILE_NAME = "_agent-references.json";
         private const string AGENT_REFERENCES_FILE_PATH = $"/{ResourceProviderNames.FoundationaLLM_Agent}/_agent-references.json";
+
+        private readonly ICacheService _cacheService = new MemoryCacheService(
+            loggerFactory.CreateLogger<MemoryCacheService>());
 
         /// <inheritdoc/>
         protected override string _name => ResourceProviderNames.FoundationaLLM_Agent;
@@ -118,10 +117,17 @@ namespace FoundationaLLM.Agent.ResourceProviders
             }
             else
             {
-                if (!_agentReferences.TryGetValue(instance.ResourceId, out var agentReference))
-                    throw new ResourceProviderException($"Could not locate the {instance.ResourceId} agent resource.");
-
+                var agentReference = new AgentReference
+                {
+                    Name = instance.ResourceId,
+                    Type = AgentTypes.KnowledgeManagement,
+                    Filename = $"/{_name}/{instance.ResourceId}.json"
+                };
                 var agent = await LoadAgent(agentReference);
+
+                if (!_agentReferences.ContainsKey(agentReference.Name))
+                    _agentReferences[agentReference.Name] = agentReference;
+                
                 return JsonConvert.SerializeObject(agent, agentReference.AgentType, _serializerSettings);
             }
         }

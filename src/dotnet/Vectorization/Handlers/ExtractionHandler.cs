@@ -44,7 +44,7 @@ namespace FoundationaLLM.Vectorization.Handlers
                 ?? throw new VectorizationException($"Could not retrieve the content source service factory instance.");
             var contentSource = serviceFactory.GetService(request.ContentIdentifier.ContentSourceProfileName);
 
-            var textContent = await contentSource.ExtractTextFromFileAsync(request.ContentIdentifier.MultipartId, cancellationToken);
+            var textContent = await contentSource.ExtractTextFromFileAsync(request.ContentIdentifier, cancellationToken);
 
             state.AddOrReplaceArtifact(new VectorizationArtifact
             {

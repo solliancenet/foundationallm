@@ -16,9 +16,9 @@ class ResourceProviderTests:
         assert sut is not None
         
     def test_get_resource_returns_prompt_resource(self, sut):
-        resource_id ="/instances/11111111-1111-1111-1111-111111111111/providers/FoundationaLLM.Prompt/prompts/sotu-default"
+        resource_id ="/instances/11111111-1111-1111-1111-111111111111/providers/FoundationaLLM.Prompt/prompts/sotu"
         result = sut.get_resource(resource_id)
-        assert "You are a political science professional named Baldwin" in result
+        assert result["name"] == "sotu"
         
     def test_get_resource_returns_indexing_profile_resource(self, sut):
         resource_id ="/instances/11111111-1111-1111-1111-111111111111/providers/FoundationaLLM.Vectorization/indexingprofiles/sotu-index"

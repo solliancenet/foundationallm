@@ -77,7 +77,7 @@ namespace FoundationaLLM.Vectorization.DataFormats.Office
                     sb.AppendLine(this._worksheetNumberTemplate.Replace("{number}", $"{worksheetNumber}", StringComparison.OrdinalIgnoreCase));
                 }
 
-                foreach (IXLRangeRow? row in worksheet.RangeUsed().RowsUsed())
+                foreach (IXLRangeRow? row in worksheet.RangeUsed()!.RowsUsed())
                 {
                     if (row == null) { continue; }
 

@@ -1,11 +1,5 @@
 using Asp.Versioning;
 using Azure.Identity;
-using Microsoft.ApplicationInsights.AspNetCore.Extensions;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.Options;
-using Swashbuckle.AspNetCore.SwaggerGen;
-using System.Net.Http;
-using FoundationaLLM.Agent.ResourceProviders;
 using FoundationaLLM.Common.Authentication;
 using FoundationaLLM.Common.Constants;
 using FoundationaLLM.Common.Interfaces;
@@ -21,11 +15,14 @@ using FoundationaLLM.Management.Interfaces;
 using FoundationaLLM.Management.Models.Configuration;
 using FoundationaLLM.Management.Services;
 using FoundationaLLM.Management.Services.APIServices;
-using FoundationaLLM.Prompt.ResourceProviders;
-using FoundationaLLM.Vectorization.ResourceProviders;
+using Microsoft.ApplicationInsights.AspNetCore.Extensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Options;
 using Microsoft.Identity.Web;
 using Polly;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace FoundationaLLM.Management.API
 {
@@ -57,6 +54,7 @@ namespace FoundationaLLM.Management.API
                 options.Select(AppConfigurationKeyFilters.FoundationaLLM_Agent);
                 options.Select(AppConfigurationKeyFilters.FoundationaLLM_Prompt);
             });
+
             if (builder.Environment.IsDevelopment())
                 builder.Configuration.AddJsonFile("appsettings.development.json", true, true);
 
@@ -80,8 +78,8 @@ namespace FoundationaLLM.Management.API
             builder.Services.AddOptions<AppConfigurationSettings>()
                 .Configure(o =>
                     o.ConnectionString = builder.Configuration[AppConfigurationKeys.FoundationaLLM_AppConfig_ConnectionString]!);
-            builder.Services.AddOptions<InstanceSettings>()
-                .Bind(builder.Configuration.GetSection(AppConfigurationKeySections.FoundationaLLM_Instance));
+
+            builder.Services.AddInstanceProperties(builder.Configuration);
 
             builder.Services.AddScoped<IAgentFactoryAPIService, AgentFactoryAPIService>();
             builder.Services.AddScoped<IAgentHubAPIService, AgentHubAPIService>();
@@ -98,93 +96,9 @@ namespace FoundationaLLM.Management.API
             // Resource providers
             //----------------------------
 
-            #region Vectorization resource provider
-
-            builder.Services.AddOptions<BlobStorageServiceSettings>(
-                DependencyInjectionKeys.FoundationaLLM_Vectorization_ResourceProviderService)
-                .Bind(builder.Configuration.GetSection(AppConfigurationKeySections.FoundationaLLM_Vectorization_ResourceProviderService_Storage));
-
-            builder.Services.AddSingleton<IStorageService, BlobStorageService>( sp =>
-            {
-                var settings = sp.GetRequiredService<IOptionsMonitor<BlobStorageServiceSettings>>()
-                    .Get(DependencyInjectionKeys.FoundationaLLM_Vectorization_ResourceProviderService);
-                var logger = sp.GetRequiredService<ILogger<BlobStorageService>>();
-
-                return new BlobStorageService(
-                    Options.Create<BlobStorageServiceSettings>(settings),
-                    logger)
-                {
-                    InstanceName = DependencyInjectionKeys.FoundationaLLM_Vectorization_ResourceProviderService
-                };
-            });
-
-            // Register the resource provider services (cannot use Keyed singletons due to the Microsoft Identity package being incompatible):
-            builder.Services.AddSingleton<IResourceProviderService, VectorizationResourceProviderService>(sp =>
-                new VectorizationResourceProviderService(
-                    sp.GetRequiredService<IOptions<InstanceSettings>>(),
-                    sp.GetRequiredService<IEnumerable<IStorageService>>()
-                        .Single(s => s.InstanceName == DependencyInjectionKeys.FoundationaLLM_Vectorization_ResourceProviderService),
-                    sp.GetRequiredService<ILogger<VectorizationResourceProviderService>>()));
-
-            #endregion
-
-            #region Agent resource provider
-
-            builder.Services.AddOptions<BlobStorageServiceSettings>(
-                DependencyInjectionKeys.FoundationaLLM_Agent_ResourceProviderService)
-                .Bind(builder.Configuration.GetSection(AppConfigurationKeySections.FoundationaLLM_Agent_ResourceProviderService_Storage));
-
-            builder.Services.AddSingleton<IStorageService, BlobStorageService>(sp =>
-            {
-                var settings = sp.GetRequiredService<IOptionsMonitor<BlobStorageServiceSettings>>()
-                    .Get(DependencyInjectionKeys.FoundationaLLM_Agent_ResourceProviderService);
-                var logger = sp.GetRequiredService<ILogger<BlobStorageService>>();
-
-                return new BlobStorageService(
-                    Options.Create<BlobStorageServiceSettings>(settings),
-                    logger)
-                {
-                    InstanceName = DependencyInjectionKeys.FoundationaLLM_Agent_ResourceProviderService
-                };
-            });
-
-            builder.Services.AddSingleton<IResourceProviderService, AgentResourceProviderService>(sp =>
-                new AgentResourceProviderService(
-                    sp.GetRequiredService<IOptions<InstanceSettings>>(),
-                    sp.GetRequiredService<IEnumerable<IStorageService>>()
-                        .Single(s => s.InstanceName == DependencyInjectionKeys.FoundationaLLM_Agent_ResourceProviderService),
-                    sp.GetRequiredService<ILogger<AgentResourceProviderService>>()));
-
-            #endregion
-
-            #region Prompt resource provider
-
-            builder.Services.AddOptions<BlobStorageServiceSettings>(
-                    DependencyInjectionKeys.FoundationaLLM_Prompt_ResourceProviderService)
-                .Bind(builder.Configuration.GetSection(AppConfigurationKeySections.FoundationaLLM_Prompt_ResourceProviderService_Storage));
-
-            builder.Services.AddSingleton<IStorageService, BlobStorageService>(sp =>
-            {
-                var settings = sp.GetRequiredService<IOptionsMonitor<BlobStorageServiceSettings>>()
-                    .Get(DependencyInjectionKeys.FoundationaLLM_Prompt_ResourceProviderService);
-                var logger = sp.GetRequiredService<ILogger<BlobStorageService>>();
-
-                return new BlobStorageService(
-                    Options.Create<BlobStorageServiceSettings>(settings),
-                    logger)
-                {
-                    InstanceName = DependencyInjectionKeys.FoundationaLLM_Prompt_ResourceProviderService
-                };
-            });
-
-            builder.Services.AddSingleton<IResourceProviderService, PromptResourceProviderService>(sp =>
-                new PromptResourceProviderService(
-                    sp.GetRequiredService<IOptions<InstanceSettings>>(),
-                    sp.GetRequiredService<IEnumerable<IStorageService>>()
-                        .Single(s => s.InstanceName == DependencyInjectionKeys.FoundationaLLM_Prompt_ResourceProviderService),
-                    sp.GetRequiredService<ILogger<PromptResourceProviderService>>()));
-
-            #endregion
+            builder.Services.AddVectorizationResourceProvider(builder.Configuration);
+            builder.Services.AddAgentResourceProvider(builder.Configuration);
+            builder.Services.AddPromptResourceProvider(builder.Configuration);
 
             // Activate all resource providers (give them a chance to initialize).
             builder.Services.ActivateSingleton<IEnumerable<IResourceProviderService>>();
@@ -240,6 +154,45 @@ namespace FoundationaLLM.Management.API
 
                     // Integrate xml comments
                     options.IncludeXmlComments(filePath);
+
+                    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+                    {
+                        {
+                            new OpenApiSecurityScheme
+                            {
+                                Reference = new OpenApiReference
+                                {
+                                    Id = "azure_auth",
+                                    Type = ReferenceType.SecurityScheme
+                                }
+                            },
+                            new[] {"user_impersonation"}
+                        }
+                    });                    
+
+                    options.AddSecurityDefinition("azure_auth", new OpenApiSecurityScheme
+                    {
+                        In = ParameterLocation.Header,
+                        Description = "Azure Active Directory Oauth2 Flow",
+                        Name = "azure_auth",
+                        Type = SecuritySchemeType.OAuth2,
+                        Flows = new OpenApiOAuthFlows
+                        {
+                            Implicit = new OpenApiOAuthFlow
+                            {
+                                AuthorizationUrl = new Uri("https://login.microsoftonline.com/common/oauth2/authorize"),
+                                Scopes = new Dictionary<string, string>
+                                {
+                                    {
+                                        "user_impersonation",
+                                        "impersonate your user account"
+                                    }
+                                }
+                            }
+                        },
+                        BearerFormat = "JWT",
+                        Scheme = "bearer"
+                    });
                 })
                 .AddSwaggerGenNewtonsoftSupport();
 
@@ -260,7 +213,7 @@ namespace FoundationaLLM.Management.API
                     => await Results.Problem().ExecuteAsync(context)));
 
             // Configure the HTTP request pipeline.
-            app.UseSwagger();
+            app.UseSwagger(p => p.SerializeAsV2 = true);
             app.UseSwaggerUI(
                 options =>
                 {
@@ -273,6 +226,8 @@ namespace FoundationaLLM.Management.API
                         var name = description.GroupName.ToUpperInvariant();
                         options.SwaggerEndpoint(url, name);
                     }
+
+                    options.OAuthAdditionalQueryStringParams(new Dictionary<string, string>() { { "resource", builder.Configuration[AppConfigurationKeys.FoundationaLLM_Management_Entra_ClientId] } });
                 });
 
             app.UseHttpsRedirection();

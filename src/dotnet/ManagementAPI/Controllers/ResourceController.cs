@@ -16,6 +16,8 @@ namespace FoundationaLLM.Management.API.Controllers
     [Authorize(Policy = "RequiredScope")]
     [ApiVersion(1.0)]
     [ApiController]
+    [Consumes("application/json")]
+    [Produces("application/json")]
     [Route($"instances/{{instanceId}}/providers/{{resourceProvider}}")]
     public class ResourceController(
         IEnumerable<IResourceProviderService> resourceProviderServices,

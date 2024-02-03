@@ -15,9 +15,5 @@ namespace FoundationaLLM.Management.Models.Configuration.Agents
         /// Indicates whether agent hints are enabled.
         /// </summary>
         public bool Enabled { get; set; }
-        /// <summary>
-        /// Lists the allowed global agent selection values.
-        /// </summary>
-        public IEnumerable<string>? AllowedAgentSelection { get; set; }
     }
 }

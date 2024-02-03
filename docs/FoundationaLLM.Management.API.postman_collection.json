@@ -1,0 +1,832 @@
+{
+	"info": {
+		"_postman_id": "45956da1-9107-4964-9203-2b0ee8d4eeaa",
+		"name": "FoundationaLLM.Management.API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "269456"
+	},
+	"item": [
+		{
+			"name": "Get Agents",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/instances/{{instanceId}}/providers/FoundationaLLM.Agent/agents/sotu-2023",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"instances",
+						"{{instanceId}}",
+						"providers",
+						"FoundationaLLM.Agent",
+						"agents",
+						"sotu-2023"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Success",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/instances/{{instanceId}}/providers/FoundationaLLM.Agent/agents",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"instances",
+								"{{instanceId}}",
+								"providers",
+								"FoundationaLLM.Agent",
+								"agents"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"name": "Content-Type",
+							"description": "",
+							"type": "text"
+						}
+					],
+					"cookie": [],
+					"body": "[\n    {\n        \"name\": \"sotu\",\n        \"type\": \"knowledge-management\",\n        \"description\": \"Knowledge Management Agent that queries the State of the Union speech transcript\",\n        \"language_model\": {\n            \"type\": \"openai\",\n            \"provider\": \"microsoft\",\n            \"temperature\": 0,\n            \"use_chat\": true,\n            \"api_endpoint\": \"FoundationaLLM:AzureOpenAI:API:Endpoint\",\n            \"api_key\": \"FoundationaLLM:AzureOpenAI:API:Key\",\n            \"api_version\": \"FoundationaLLM:AzureOpenAI:API:Version\",\n            \"version\": \"FoundationaLLM:AzureOpenAI:API:Completions:ModelVersion\",\n            \"deployment\": \"FoundationaLLM:AzureOpenAI:API:Completions:DeploymentName\"\n        },\n        \"indexing_profile\": \"/instances/11111111-1111-1111-1111-111111111111/providers/FoundationaLLM.Vectorization/indexingprofiles/sotu-index\",\n        \"embedding_profile\": \"/instances/11111111-1111-1111-1111-111111111111/providers/FoundationaLLM.Vectorization/textembeddingprofiles/AzureOpenAI_Embedding\",\n        \"prompt\": \"/instances/11111111-1111-1111-1111-111111111111/providers/FoundationaLLM.Prompt/prompts/sotu-default\",\n        \"sessions_enabled\": true,\n        \"conversation_history\": {\n            \"enabled\": true,\n            \"max_history\": 5\n        },\n        \"gatekeeper\": {\n            \"use_system_setting\": false,\n            \"options\": [\n                \"ContentSafety\",\n                \"Presidio\"\n            ]\n        },\n        \"orchestrator\": \"LangChain\"\n    }\n]"
+				}
+			]
+		},
+		{
+			"name": "Create Agent",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"sotu-2023\",\r\n    \"type\": \"knowledge-management\",\r\n    \"description\": \"Knowledge Management Agent that queries the State of the Union speech transcript\",\r\n    \"language_model\": {\r\n        \"type\": \"openai\",\r\n        \"provider\": \"microsoft\",\r\n        \"temperature\": 0,\r\n        \"use_chat\": true,\r\n        \"api_endpoint\": \"FoundationaLLM:AzureOpenAI:API:Endpoint\",\r\n        \"api_key\": \"FoundationaLLM:AzureOpenAI:API:Key\",\r\n        \"api_version\": \"FoundationaLLM:AzureOpenAI:API:Version\",\r\n        \"version\": \"FoundationaLLM:AzureOpenAI:API:Completions:ModelVersion\",\r\n        \"deployment\": \"FoundationaLLM:AzureOpenAI:API:Completions:DeploymentName\"\r\n    },\r\n    \"indexing_profile\": \"/instances/1bc45134-6985-48b9-9466-c5f70ddaaa65/providers/FoundationaLLM.Vectorization/indexingprofiles/sotu-index\",\r\n    \"embedding_profile\": \"/instances/1bc45134-6985-48b9-9466-c5f70ddaaa65/providers/FoundationaLLM.Vectorization/textembeddingprofiles/AzureOpenAI_Embedding\",\r\n    \"prompt\": \"/instances/1bc45134-6985-48b9-9466-c5f70ddaaa65/providers/FoundationaLLM.Prompt/prompts/sotu\",\r\n    \"sessions_enabled\": true,\r\n    \"conversation_history\": {\r\n        \"enabled\": true,\r\n        \"max_history\": 5\r\n    },\r\n    \"gatekeeper\": {\r\n        \"use_system_setting\": false,\r\n        \"options\": [\r\n            \"ContentSafety\",\r\n            \"Presidio\"\r\n        ]\r\n    },\r\n    \"orchestrator\": \"LangChain\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/instances/{{instanceId}}/providers/FoundationaLLM.Agent/agents/sotu-2023",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"instances",
+						"{{instanceId}}",
+						"providers",
+						"FoundationaLLM.Agent",
+						"agents",
+						"sotu-2023"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Success",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/instances/{{instanceId}}/providers/FoundationaLLM.Agent/agents",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"instances",
+								"{{instanceId}}",
+								"providers",
+								"FoundationaLLM.Agent",
+								"agents"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"name": "Content-Type",
+							"description": "",
+							"type": "text"
+						}
+					],
+					"cookie": [],
+					"body": "[\n    {\n        \"name\": \"sotu\",\n        \"type\": \"knowledge-management\",\n        \"description\": \"Knowledge Management Agent that queries the State of the Union speech transcript\",\n        \"language_model\": {\n            \"type\": \"openai\",\n            \"provider\": \"microsoft\",\n            \"temperature\": 0,\n            \"use_chat\": true,\n            \"api_endpoint\": \"FoundationaLLM:AzureOpenAI:API:Endpoint\",\n            \"api_key\": \"FoundationaLLM:AzureOpenAI:API:Key\",\n            \"api_version\": \"FoundationaLLM:AzureOpenAI:API:Version\",\n            \"version\": \"FoundationaLLM:AzureOpenAI:API:Completions:ModelVersion\",\n            \"deployment\": \"FoundationaLLM:AzureOpenAI:API:Completions:DeploymentName\"\n        },\n        \"indexing_profile\": \"/instances/11111111-1111-1111-1111-111111111111/providers/FoundationaLLM.Vectorization/indexingprofiles/sotu-index\",\n        \"embedding_profile\": \"/instances/11111111-1111-1111-1111-111111111111/providers/FoundationaLLM.Vectorization/textembeddingprofiles/AzureOpenAI_Embedding\",\n        \"prompt\": \"/instances/11111111-1111-1111-1111-111111111111/providers/FoundationaLLM.Prompt/prompts/sotu-default\",\n        \"sessions_enabled\": true,\n        \"conversation_history\": {\n            \"enabled\": true,\n            \"max_history\": 5\n        },\n        \"gatekeeper\": {\n            \"use_system_setting\": false,\n            \"options\": [\n                \"ContentSafety\",\n                \"Presidio\"\n            ]\n        },\n        \"orchestrator\": \"LangChain\"\n    }\n]"
+				}
+			]
+		},
+		{
+			"name": "Create vectorization content source profile - SDZWAJournals",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Name\": \"SDZWAJournals\",\r\n    \"Type\": \"AzureDataLake\",\r\n    \"Settings\": {\r\n    },\r\n    \"ConfigurationReferences\": {\r\n        \"AuthenticationType\": \"FoundationaLLM:Vectorization:ContentSources:SDZWAJournals:AuthenticationType\",\r\n        \"ConnectionString\": \"FoundationaLLM:Vectorization:ContentSources:SDZWAJournals:ConnectionString\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/instances/{{instanceId}}/providers/FoundationaLLM.Vectorization/contentsourceprofiles/SDZWAJournals",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"instances",
+						"{{instanceId}}",
+						"providers",
+						"FoundationaLLM.Vectorization",
+						"contentsourceprofiles",
+						"SDZWAJournals"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Success",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Name\": \"SDZWAJournals\",\r\n    \"Type\": \"AzureDataLake\",\r\n    \"Settings\": {\r\n    },\r\n    \"ConfigurationReferences\": {\r\n        \"AuthenticationType\": \"FoundationaLLM:Vectorization:ContentSources:SDZWAJournals:AuthenticationType\",\r\n        \"ConnectionString\": \"FoundationaLLM:Vectorization:ContentSources:SDZWAJournals:ConnectionString\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/instances/{{instanceId}}/providers/FoundationaLLM.Vectorization/contentsourceprofiles/SDZWAJournals",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"instances",
+								"{{instanceId}}",
+								"providers",
+								"FoundationaLLM.Vectorization",
+								"contentsourceprofiles",
+								"SDZWAJournals"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Length",
+							"value": "137"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Date",
+							"value": "Tue, 30 Jan 2024 13:14:16 GMT"
+						},
+						{
+							"key": "Server",
+							"value": "Kestrel"
+						},
+						{
+							"key": "api-supported-versions",
+							"value": "1.0"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"objectId\": \"/instances/1bc45134-6985-48b9-9466-c5f70ddaaa65/providers/FoundationaLLM.Vectorization/contentsourceprofiles/SDZWAJournals\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Get vectorization content source profile(s)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/instances/{{instanceId}}/providers/FoundationaLLM.Vectorization/textembeddingprofiles/AzureOpenAI_Embedding",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"instances",
+						"{{instanceId}}",
+						"providers",
+						"FoundationaLLM.Vectorization",
+						"textembeddingprofiles",
+						"AzureOpenAI_Embedding"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Success",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/instances/{{instanceId}}/providers/FoundationaLLM.Agent/agents",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"instances",
+								"{{instanceId}}",
+								"providers",
+								"FoundationaLLM.Agent",
+								"agents"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"name": "Content-Type",
+							"description": "",
+							"type": "text"
+						}
+					],
+					"cookie": [],
+					"body": "[\n    {\n        \"name\": \"sotu\",\n        \"type\": \"knowledge-management\",\n        \"description\": \"Knowledge Management Agent that queries the State of the Union speech transcript\",\n        \"language_model\": {\n            \"type\": \"openai\",\n            \"provider\": \"microsoft\",\n            \"temperature\": 0,\n            \"use_chat\": true,\n            \"api_endpoint\": \"FoundationaLLM:AzureOpenAI:API:Endpoint\",\n            \"api_key\": \"FoundationaLLM:AzureOpenAI:API:Key\",\n            \"api_version\": \"FoundationaLLM:AzureOpenAI:API:Version\",\n            \"version\": \"FoundationaLLM:AzureOpenAI:API:Completions:ModelVersion\",\n            \"deployment\": \"FoundationaLLM:AzureOpenAI:API:Completions:DeploymentName\"\n        },\n        \"indexing_profile\": \"/instances/11111111-1111-1111-1111-111111111111/providers/FoundationaLLM.Vectorization/indexingprofiles/sotu-index\",\n        \"embedding_profile\": \"/instances/11111111-1111-1111-1111-111111111111/providers/FoundationaLLM.Vectorization/textembeddingprofiles/AzureOpenAI_Embedding\",\n        \"prompt\": \"/instances/11111111-1111-1111-1111-111111111111/providers/FoundationaLLM.Prompt/prompts/sotu-default\",\n        \"sessions_enabled\": true,\n        \"conversation_history\": {\n            \"enabled\": true,\n            \"max_history\": 5\n        },\n        \"gatekeeper\": {\n            \"use_system_setting\": false,\n            \"options\": [\n                \"ContentSafety\",\n                \"Presidio\"\n            ]\n        },\n        \"orchestrator\": \"LangChain\"\n    }\n]"
+				}
+			]
+		},
+		{
+			"name": "Create vectorization content source profile - GSGSharePointOnline",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Name\": \"GSGSharePointOnline\",\r\n    \"Type\": \"SharePointOnline\",\r\n    \"Settings\": {\r\n    },\r\n    \"ConfigurationReferences\": {\r\n        \"CertificateName\": \"FoundationaLLM:Vectorization:ContentSources:GSGSharePointOnline:CertificateName\",\r\n        \"ClientId\": \"FoundationaLLM:Vectorization:ContentSources:GSGSharePointOnline:ClientId\",\r\n        \"KeyVaultURL\": \"FoundationaLLM:Vectorization:ContentSources:GSGSharePointOnline:KeyVaultURL\",\r\n        \"TenantId\": \"FoundationaLLM:Vectorization:ContentSources:GSGSharePointOnline:TenantId\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/instances/{{instanceId}}/providers/FoundationaLLM.Vectorization/contentsourceprofiles/GSGSharePointOnline",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"instances",
+						"{{instanceId}}",
+						"providers",
+						"FoundationaLLM.Vectorization",
+						"contentsourceprofiles",
+						"GSGSharePointOnline"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Success",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/instances/{{instanceId}}/providers/FoundationaLLM.Agent/agents",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"instances",
+								"{{instanceId}}",
+								"providers",
+								"FoundationaLLM.Agent",
+								"agents"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"name": "Content-Type",
+							"description": "",
+							"type": "text"
+						}
+					],
+					"cookie": [],
+					"body": "[\n    {\n        \"name\": \"sotu\",\n        \"type\": \"knowledge-management\",\n        \"description\": \"Knowledge Management Agent that queries the State of the Union speech transcript\",\n        \"language_model\": {\n            \"type\": \"openai\",\n            \"provider\": \"microsoft\",\n            \"temperature\": 0,\n            \"use_chat\": true,\n            \"api_endpoint\": \"FoundationaLLM:AzureOpenAI:API:Endpoint\",\n            \"api_key\": \"FoundationaLLM:AzureOpenAI:API:Key\",\n            \"api_version\": \"FoundationaLLM:AzureOpenAI:API:Version\",\n            \"version\": \"FoundationaLLM:AzureOpenAI:API:Completions:ModelVersion\",\n            \"deployment\": \"FoundationaLLM:AzureOpenAI:API:Completions:DeploymentName\"\n        },\n        \"indexing_profile\": \"/instances/11111111-1111-1111-1111-111111111111/providers/FoundationaLLM.Vectorization/indexingprofiles/sotu-index\",\n        \"embedding_profile\": \"/instances/11111111-1111-1111-1111-111111111111/providers/FoundationaLLM.Vectorization/textembeddingprofiles/AzureOpenAI_Embedding\",\n        \"prompt\": \"/instances/11111111-1111-1111-1111-111111111111/providers/FoundationaLLM.Prompt/prompts/sotu-default\",\n        \"sessions_enabled\": true,\n        \"conversation_history\": {\n            \"enabled\": true,\n            \"max_history\": 5\n        },\n        \"gatekeeper\": {\n            \"use_system_setting\": false,\n            \"options\": [\n                \"ContentSafety\",\n                \"Presidio\"\n            ]\n        },\n        \"orchestrator\": \"LangChain\"\n    }\n]"
+				}
+			]
+		},
+		{
+			"name": "Create vectorization content source profile - MSDFAzureSQLDB",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Name\": \"MSDFAzureSQLDB\",\r\n    \"Type\": \"AzureSQLDatabase\",\r\n    \"Settings\": {\r\n    },\r\n    \"ConfigurationReferences\": {\r\n        \"ConnectionString\": \"FoundationaLLM:Vectorization:ContentSources:MSDFAzureSQLDB:ConnectionString\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/instances/{{instanceId}}/providers/FoundationaLLM.Vectorization/contentsourceprofiles/MSDFAzureSQLDB",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"instances",
+						"{{instanceId}}",
+						"providers",
+						"FoundationaLLM.Vectorization",
+						"contentsourceprofiles",
+						"MSDFAzureSQLDB"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Success",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/instances/{{instanceId}}/providers/FoundationaLLM.Agent/agents",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"instances",
+								"{{instanceId}}",
+								"providers",
+								"FoundationaLLM.Agent",
+								"agents"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"name": "Content-Type",
+							"description": "",
+							"type": "text"
+						}
+					],
+					"cookie": [],
+					"body": "[\n    {\n        \"name\": \"sotu\",\n        \"type\": \"knowledge-management\",\n        \"description\": \"Knowledge Management Agent that queries the State of the Union speech transcript\",\n        \"language_model\": {\n            \"type\": \"openai\",\n            \"provider\": \"microsoft\",\n            \"temperature\": 0,\n            \"use_chat\": true,\n            \"api_endpoint\": \"FoundationaLLM:AzureOpenAI:API:Endpoint\",\n            \"api_key\": \"FoundationaLLM:AzureOpenAI:API:Key\",\n            \"api_version\": \"FoundationaLLM:AzureOpenAI:API:Version\",\n            \"version\": \"FoundationaLLM:AzureOpenAI:API:Completions:ModelVersion\",\n            \"deployment\": \"FoundationaLLM:AzureOpenAI:API:Completions:DeploymentName\"\n        },\n        \"indexing_profile\": \"/instances/11111111-1111-1111-1111-111111111111/providers/FoundationaLLM.Vectorization/indexingprofiles/sotu-index\",\n        \"embedding_profile\": \"/instances/11111111-1111-1111-1111-111111111111/providers/FoundationaLLM.Vectorization/textembeddingprofiles/AzureOpenAI_Embedding\",\n        \"prompt\": \"/instances/11111111-1111-1111-1111-111111111111/providers/FoundationaLLM.Prompt/prompts/sotu-default\",\n        \"sessions_enabled\": true,\n        \"conversation_history\": {\n            \"enabled\": true,\n            \"max_history\": 5\n        },\n        \"gatekeeper\": {\n            \"use_system_setting\": false,\n            \"options\": [\n                \"ContentSafety\",\n                \"Presidio\"\n            ]\n        },\n        \"orchestrator\": \"LangChain\"\n    }\n]"
+				}
+			]
+		},
+		{
+			"name": "Create vectorization indexing profile - sotu-index",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Indexer\": \"AzureAISearchIndexer\",\r\n    \"Name\": \"sotu-index\",\r\n    \"ObjectId\": null,\r\n    \"Settings\": {\r\n        \"IndexName\": \"sotu-index\",\r\n        \"TopN\": \"3\",\r\n        \"Filters\": \"\",\r\n        \"EmbeddingFieldName\": \"Embedding\",\r\n        \"TextFieldName\": \"Text\"\r\n    },\r\n    \"ConfigurationReferences\": {\r\n        \"APIKey\": \"FoundationaLLM:Vectorization:AzureAISearchIndexingService:APIKey\",\r\n        \"QueryAPIKey\": \"FoundationaLLM:Vectorization:AzureAISearchIndexingService:QueryAPIKey\",\r\n        \"AuthenticationType\": \"FoundationaLLM:Vectorization:AzureAISearchIndexingService:AuthenticationType\",\r\n        \"Endpoint\": \"FoundationaLLM:Vectorization:AzureAISearchIndexingService:Endpoint\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/instances/{{instanceId}}/providers/FoundationaLLM.Vectorization/indexingprofiles/sotu-index",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"instances",
+						"{{instanceId}}",
+						"providers",
+						"FoundationaLLM.Vectorization",
+						"indexingprofiles",
+						"sotu-index"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Success",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/instances/{{instanceId}}/providers/FoundationaLLM.Agent/agents",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"instances",
+								"{{instanceId}}",
+								"providers",
+								"FoundationaLLM.Agent",
+								"agents"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"name": "Content-Type",
+							"description": "",
+							"type": "text"
+						}
+					],
+					"cookie": [],
+					"body": "[\n    {\n        \"name\": \"sotu\",\n        \"type\": \"knowledge-management\",\n        \"description\": \"Knowledge Management Agent that queries the State of the Union speech transcript\",\n        \"language_model\": {\n            \"type\": \"openai\",\n            \"provider\": \"microsoft\",\n            \"temperature\": 0,\n            \"use_chat\": true,\n            \"api_endpoint\": \"FoundationaLLM:AzureOpenAI:API:Endpoint\",\n            \"api_key\": \"FoundationaLLM:AzureOpenAI:API:Key\",\n            \"api_version\": \"FoundationaLLM:AzureOpenAI:API:Version\",\n            \"version\": \"FoundationaLLM:AzureOpenAI:API:Completions:ModelVersion\",\n            \"deployment\": \"FoundationaLLM:AzureOpenAI:API:Completions:DeploymentName\"\n        },\n        \"indexing_profile\": \"/instances/11111111-1111-1111-1111-111111111111/providers/FoundationaLLM.Vectorization/indexingprofiles/sotu-index\",\n        \"embedding_profile\": \"/instances/11111111-1111-1111-1111-111111111111/providers/FoundationaLLM.Vectorization/textembeddingprofiles/AzureOpenAI_Embedding\",\n        \"prompt\": \"/instances/11111111-1111-1111-1111-111111111111/providers/FoundationaLLM.Prompt/prompts/sotu-default\",\n        \"sessions_enabled\": true,\n        \"conversation_history\": {\n            \"enabled\": true,\n            \"max_history\": 5\n        },\n        \"gatekeeper\": {\n            \"use_system_setting\": false,\n            \"options\": [\n                \"ContentSafety\",\n                \"Presidio\"\n            ]\n        },\n        \"orchestrator\": \"LangChain\"\n    }\n]"
+				}
+			]
+		},
+		{
+			"name": "Create vectorization text embedding profile - AzureOpenAI_Embedding",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"TextEmbedding\":\"SemanticKernelTextEmbedding\",\"Name\":\"AzureOpenAI_Embedding\",\"ObjectId\":null,\"Settings\":{},\"ConfigurationReferences\":{\"APIKey\":\"FoundationaLLM:Vectorization:SemanticKernelTextEmbeddingService:APIKey\",\"APIVersion\":\"FoundationaLLM:Vectorization:SemanticKernelTextEmbeddingService:APIVersion\",\"AuthenticationType\":\"FoundationaLLM:Vectorization:SemanticKernelTextEmbeddingService:AuthenticationType\",\"DeploymentName\":\"FoundationaLLM:Vectorization:SemanticKernelTextEmbeddingService:DeploymentName\",\"Endpoint\":\"FoundationaLLM:Vectorization:SemanticKernelTextEmbeddingService:Endpoint\"}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/instances/{{instanceId}}/providers/FoundationaLLM.Vectorization/textembeddingprofiles/AzureOpenAI_Embedding",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"instances",
+						"{{instanceId}}",
+						"providers",
+						"FoundationaLLM.Vectorization",
+						"textembeddingprofiles",
+						"AzureOpenAI_Embedding"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Success",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/instances/{{instanceId}}/providers/FoundationaLLM.Agent/agents",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"instances",
+								"{{instanceId}}",
+								"providers",
+								"FoundationaLLM.Agent",
+								"agents"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"name": "Content-Type",
+							"description": "",
+							"type": "text"
+						}
+					],
+					"cookie": [],
+					"body": "[\n    {\n        \"name\": \"sotu\",\n        \"type\": \"knowledge-management\",\n        \"description\": \"Knowledge Management Agent that queries the State of the Union speech transcript\",\n        \"language_model\": {\n            \"type\": \"openai\",\n            \"provider\": \"microsoft\",\n            \"temperature\": 0,\n            \"use_chat\": true,\n            \"api_endpoint\": \"FoundationaLLM:AzureOpenAI:API:Endpoint\",\n            \"api_key\": \"FoundationaLLM:AzureOpenAI:API:Key\",\n            \"api_version\": \"FoundationaLLM:AzureOpenAI:API:Version\",\n            \"version\": \"FoundationaLLM:AzureOpenAI:API:Completions:ModelVersion\",\n            \"deployment\": \"FoundationaLLM:AzureOpenAI:API:Completions:DeploymentName\"\n        },\n        \"indexing_profile\": \"/instances/11111111-1111-1111-1111-111111111111/providers/FoundationaLLM.Vectorization/indexingprofiles/sotu-index\",\n        \"embedding_profile\": \"/instances/11111111-1111-1111-1111-111111111111/providers/FoundationaLLM.Vectorization/textembeddingprofiles/AzureOpenAI_Embedding\",\n        \"prompt\": \"/instances/11111111-1111-1111-1111-111111111111/providers/FoundationaLLM.Prompt/prompts/sotu-default\",\n        \"sessions_enabled\": true,\n        \"conversation_history\": {\n            \"enabled\": true,\n            \"max_history\": 5\n        },\n        \"gatekeeper\": {\n            \"use_system_setting\": false,\n            \"options\": [\n                \"ContentSafety\",\n                \"Presidio\"\n            ]\n        },\n        \"orchestrator\": \"LangChain\"\n    }\n]"
+				}
+			]
+		},
+		{
+			"name": "Get Indexing Profiles",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/instances/{{instanceId}}/providers/FoundationaLLM.Vectorization/indexingprofiles",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"instances",
+						"{{instanceId}}",
+						"providers",
+						"FoundationaLLM.Vectorization",
+						"indexingprofiles"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Success",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://a45eeda8-87b4-456a-8e17-5cd1f5099458.mock.pstmn.io/instances/{{instanceId}}/providers/FoundationaLLM.Vectorization/indexingprofiles",
+							"protocol": "https",
+							"host": [
+								"a45eeda8-87b4-456a-8e17-5cd1f5099458",
+								"mock",
+								"pstmn",
+								"io"
+							],
+							"path": [
+								"instances",
+								"{{instanceId}}",
+								"providers",
+								"FoundationaLLM.Vectorization",
+								"indexingprofiles"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"name": "Content-Type",
+							"description": "",
+							"type": "text"
+						}
+					],
+					"cookie": [],
+					"body": "[\n    {\n        \"Name\": \"AzureAISearch_Test_001\",\n        \"Description\": \"Azure AI Search index for vectorization testing.\",\n        \"Indexer\": \"AzureAISearchIndexer\",\n        \"Settings\": {\n            \"IndexName\": \"fllm-test-001\"\n        },\n        \"ConfigurationReferences\": {\n            \"APIKey\": \"FoundationaLLM:Vectorization:AzureAISearchIndexingService:APIKey\",\n            \"AuthenticationType\": \"FoundationaLLM:Vectorization:AzureAISearchIndexingService:AuthenticationType\",\n            \"Endpoint\": \"FoundationaLLM:Vectorization:AzureAISearchIndexingService:Endpoint\"\n        }\n    },\n    {\n        \"Name\": \"sotu-index\",\n        \"Description\": \"Azure AI Search index for the State of the Union agent.\",\n        \"Indexer\": \"AzureAISearchIndexer\",\n        \"Settings\": {\n            \"IndexName\": \"sotu\",\n            \"TopN\": \"3\",\n            \"Filters\": \"[]\",\n            \"EmbeddingFieldName\": \"Embedding\",\n            \"TextFieldName\": \"Text\"\n        },\n        \"ConfigurationReferences\": {\n            \"APIKey\": \"FoundationaLLM:Vectorization:AzureAISearchIndexingService:APIKey\",\n            \"AuthenticationType\": \"FoundationaLLM:Vectorization:AzureAISearchIndexingService:AuthenticationType\",\n            \"Endpoint\": \"FoundationaLLM:Vectorization:AzureAISearchIndexingService:Endpoint\"\n        }\n    }\n]"
+				}
+			]
+		},
+		{
+			"name": "Get prompts",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/instances/{{instanceId}}/providers/FoundationaLLM.Prompt/prompts",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"instances",
+						"{{instanceId}}",
+						"providers",
+						"FoundationaLLM.Prompt",
+						"prompts"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Success",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://a45eeda8-87b4-456a-8e17-5cd1f5099458.mock.pstmn.io/instances/{{instanceId}}/providers/FoundationaLLM.Vectorization/indexingprofiles",
+							"protocol": "https",
+							"host": [
+								"a45eeda8-87b4-456a-8e17-5cd1f5099458",
+								"mock",
+								"pstmn",
+								"io"
+							],
+							"path": [
+								"instances",
+								"{{instanceId}}",
+								"providers",
+								"FoundationaLLM.Vectorization",
+								"indexingprofiles"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"name": "Content-Type",
+							"description": "",
+							"type": "text"
+						}
+					],
+					"cookie": [],
+					"body": "[\n    {\n        \"Name\": \"AzureAISearch_Test_001\",\n        \"Description\": \"Azure AI Search index for vectorization testing.\",\n        \"Indexer\": \"AzureAISearchIndexer\",\n        \"Settings\": {\n            \"IndexName\": \"fllm-test-001\"\n        },\n        \"ConfigurationReferences\": {\n            \"APIKey\": \"FoundationaLLM:Vectorization:AzureAISearchIndexingService:APIKey\",\n            \"AuthenticationType\": \"FoundationaLLM:Vectorization:AzureAISearchIndexingService:AuthenticationType\",\n            \"Endpoint\": \"FoundationaLLM:Vectorization:AzureAISearchIndexingService:Endpoint\"\n        }\n    },\n    {\n        \"Name\": \"sotu-index\",\n        \"Description\": \"Azure AI Search index for the State of the Union agent.\",\n        \"Indexer\": \"AzureAISearchIndexer\",\n        \"Settings\": {\n            \"IndexName\": \"sotu\",\n            \"TopN\": \"3\",\n            \"Filters\": \"[]\",\n            \"EmbeddingFieldName\": \"Embedding\",\n            \"TextFieldName\": \"Text\"\n        },\n        \"ConfigurationReferences\": {\n            \"APIKey\": \"FoundationaLLM:Vectorization:AzureAISearchIndexingService:APIKey\",\n            \"AuthenticationType\": \"FoundationaLLM:Vectorization:AzureAISearchIndexingService:AuthenticationType\",\n            \"Endpoint\": \"FoundationaLLM:Vectorization:AzureAISearchIndexingService:Endpoint\"\n        }\n    }\n]"
+				}
+			]
+		},
+		{
+			"name": "Create Prompt",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": [
+				{
+					"name": "Success",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"sotu\",\r\n    \"type\": \"prompt\",\r\n    \"description\": \"Prompt for the Knowledge Management Agent that queries the State of the Union speech transcript\",\r\n    \"prefix\": \"You are a political science professional named Baldwin. You are responsible for answering questions regarding the February 2023 State of the Union Address.\\nAnswer only questions about the February 2023 State of the Union address. Do not make anything up. Check your answers before replying.\\nProvide concise answers that are polite and professional.\",\r\n    \"suffix\": \"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/instances/{{instanceId}}/providers/FoundationaLLM.Prompt/prompts/sotu",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"instances",
+								"{{instanceId}}",
+								"providers",
+								"FoundationaLLM.Prompt",
+								"prompts",
+								"sotu"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Thu, 01 Feb 2024 03:45:51 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "107"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Server",
+							"value": "Kestrel"
+						},
+						{
+							"key": "Request-Context",
+							"value": "appId=cid-v1:07334feb-55c0-42f2-96ff-bd426de8684c"
+						},
+						{
+							"key": "api-supported-versions",
+							"value": "1.0"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"objectId\": \"/instances/1e22cd2a-7b81-4160-b79f-f6443e3a6ac2/providers/FoundationaLLM.Prompt/prompts/sotu\"\n}"
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "oauth2",
+		"oauth2": [
+			{
+				"key": "tokenName",
+				"value": "FLLM Management Token",
+				"type": "string"
+			},
+			{
+				"key": "authUrl",
+				"value": "https://login.microsoftonline.com/d280491c-b27a-41bf-9623-21b60cf430b3/oauth2/v2.0/authorize",
+				"type": "string"
+			},
+			{
+				"key": "clientSecret",
+				"value": "",
+				"type": "string"
+			},
+			{
+				"key": "client_authentication",
+				"value": "body",
+				"type": "string"
+			},
+			{
+				"key": "scope",
+				"value": "api://FoundationaLLM-Management-Auth/Data.Manage",
+				"type": "string"
+			},
+			{
+				"key": "clientId",
+				"value": "aa5cba99-e753-4d91-b2f8-85a6b650d022",
+				"type": "string"
+			},
+			{
+				"key": "accessTokenUrl",
+				"value": "https://login.microsoftonline.com/d280491c-b27a-41bf-9623-21b60cf430b3/oauth2/token",
+				"type": "string"
+			},
+			{
+				"key": "useBrowser",
+				"value": true,
+				"type": "boolean"
+			},
+			{
+				"key": "redirect_uri",
+				"value": "https://oauth.pstmn.io/v1/callback",
+				"type": "string"
+			},
+			{
+				"key": "grant_type",
+				"value": "authorization_code_with_pkce",
+				"type": "string"
+			},
+			{
+				"key": "addTokenTo",
+				"value": "header",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://a45eeda8-87b4-456a-8e17-5cd1f5099458.mock.pstmn.io"
+		},
+		{
+			"key": "instanceId",
+			"value": "11111111-1111-1111-1111-111111111111",
+			"type": "string"
+		}
+	]
+}

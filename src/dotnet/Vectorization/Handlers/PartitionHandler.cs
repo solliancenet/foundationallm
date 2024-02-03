@@ -49,7 +49,7 @@ namespace FoundationaLLM.Vectorization.Handlers
 
             if (extractedTextArtifact == null)
             {
-                state.Log(this, request.Id, _messageId, "The extracted text artifact was not found.");
+                state.Log(this, request.Id!, _messageId, "The extracted text artifact was not found.");
                 return false;
             }
 
@@ -68,7 +68,7 @@ namespace FoundationaLLM.Vectorization.Handlers
                     Content = textChunk
                 });
             if (!string.IsNullOrWhiteSpace(splitResult.Message))
-                state.Log(this, request.Id, _messageId, splitResult.Message);
+                state.Log(this, request.Id!, _messageId, splitResult.Message);
 
             return true;
         }

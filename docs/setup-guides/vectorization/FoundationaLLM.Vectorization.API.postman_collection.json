@@ -1,0 +1,187 @@
+{
+	"info": {
+		"_postman_id": "a458aed7-98ac-4cc6-9917-f24e8b3bde38",
+		"name": "FoundationaLLM Vectorization",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "13072267"
+	},
+	"item": [
+		{
+			"name": "Synchronous vectorization",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": \"{{$guid}}\",\r\n    \"content_identifier\": {\r\n        \"content_source_profile_name\": \"SDZWAJournals\",\r\n        \"multipart_id\": [\r\n            \"https://fllmaks14sa.blob.core.windows.net\",\r\n            \"vectorization-input\",\r\n            \"SDZWA-Journal-January-2024.pdf\"\r\n        ],\r\n        \"canonical_id\": \"sdzwa/journals/SDZWA-Journal-January-2024\"\r\n    },\r\n    \"processing_type\": \"Synchronous\",\r\n    \"steps\":[\r\n        {\r\n            \"id\": \"extract\",\r\n            \"parameters\": {\r\n            }\r\n        },\r\n        {\r\n            \"id\": \"partition\",\r\n            \"parameters\": {\r\n                \"text_partition_profile_name\": \"DefaultTokenTextPartition\"\r\n            }\r\n        },\r\n        {\r\n            \"id\": \"embed\",\r\n            \"parameters\": {\r\n                \"text_embedding_profile_name\": \"AzureOpenAI_Embedding\"\r\n            }\r\n        },\r\n        {\r\n            \"id\": \"index\",\r\n            \"parameters\": {\r\n                \"indexing_profile_name\": \"AzureAISearch_Test_001\"\r\n            }\r\n        }\r\n    ],\r\n    \"completed_steps\": [\r\n    ],\r\n    \"remaining_steps\": [\r\n        \"extract\",\r\n        \"partition\",\r\n        \"embed\",\r\n        \"index\"\r\n    ]\r\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/vectorizationrequest",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"vectorizationrequest"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Asynchronous vectorization - Full",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": \"{{$guid}}\",\r\n    \"content_identifier\": {\r\n        \"content_source_profile_name\": \"SDZWAJournals\",\r\n        \"multipart_id\": [\r\n            \"https://fllmaks14sa.blob.core.windows.net\",\r\n            \"vectorization-input\",\r\n            \"SDZWA-Journal-January-2024.pdf\"\r\n        ],\r\n        \"canonical_id\": \"sdzwa/journals/SDZWA-Journal-January-2024\"\r\n    },\r\n    \"steps\":[\r\n        {\r\n            \"id\": \"extract\",\r\n            \"parameters\": {\r\n            }\r\n        },\r\n        {\r\n            \"id\": \"partition\",\r\n            \"parameters\": {\r\n                \"text_partition_profile_name\": \"DefaultTokenTextPartition\"\r\n            }\r\n        },\r\n        {\r\n            \"id\": \"embed\",\r\n            \"parameters\": {\r\n                \"text_embedding_profile_name\": \"AzureOpenAI_Embedding\"\r\n            }\r\n        },\r\n        {\r\n            \"id\": \"index\",\r\n            \"parameters\": {\r\n                \"indexing_profile_name\": \"AzureAISearch_Test_001\"\r\n            }\r\n        }\r\n    ],\r\n    \"completed_steps\": [\r\n    ],\r\n    \"remaining_steps\": [\r\n        \"extract\",\r\n        \"partition\",\r\n        \"embed\",\r\n        \"index\"\r\n    ]\r\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/vectorizationrequest",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"vectorizationrequest"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Asynchronous vectorization - Partition",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": \"d4669c9c-e330-450a-a41c-a4d6649abdef\",\r\n    \"content_identifier\": {\r\n        \"content_source_profile_name\": \"SDZWAJournals\",\r\n        \"multipart_id\": [\r\n            \"https://fllmaks14sa.blob.core.windows.net\",\r\n            \"vectorization-input\",\r\n            \"SDZWA-Journal-January-2024.pdf\"\r\n        ],\r\n        \"canonical_id\": \"sdzwa/journals/SDZWA-Journal-January-2024\"\r\n    },\r\n    \"steps\":[\r\n        {\r\n            \"id\": \"partition\",\r\n            \"parameters\": {\r\n                \"text_partition_profile_name\": \"DefaultTokenTextPartition\"\r\n            }\r\n        },\r\n        {\r\n            \"id\": \"embed\",\r\n            \"parameters\": {\r\n                \"text_embedding_profile_name\": \"AzureOpenAI_Embedding\"\r\n            }\r\n        },\r\n        {\r\n            \"id\": \"index\",\r\n            \"parameters\": {\r\n                \"indexing_profile_name\": \"AzureAISearch_Test_001\"\r\n            }\r\n        }\r\n    ],\r\n    \"completed_steps\": [\r\n    ],\r\n    \"remaining_steps\": [\r\n        \"partition\",\r\n        \"embed\",\r\n        \"index\"\r\n    ]\r\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/vectorizationrequest",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"vectorizationrequest"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Asynchronous vectorization - Embed",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": \"d4669c9c-e330-450a-a41c-a4d6649abdef\",\r\n    \"content_identifier\": {\r\n        \"content_source_profile_name\": \"SDZWAJournals\",\r\n        \"multipart_id\": [\r\n            \"https://fllmaks14sa.blob.core.windows.net\",\r\n            \"vectorization-input\",\r\n            \"SDZWA-Journal-January-2024.pdf\"\r\n        ],\r\n        \"canonical_id\": \"sdzwa/journals/SDZWA-Journal-January-2024\"\r\n    },\r\n    \"steps\":[\r\n        {\r\n            \"id\": \"embed\",\r\n            \"parameters\": {\r\n                \"text_embedding_profile_name\": \"AzureOpenAI_Embedding\"\r\n            }\r\n        },\r\n        {\r\n            \"id\": \"index\",\r\n            \"parameters\": {\r\n                \"indexing_profile_name\": \"AzureAISearch_Test_001\"\r\n            }\r\n        }\r\n    ],\r\n    \"completed_steps\": [\r\n    ],\r\n    \"remaining_steps\": [\r\n        \"embed\",\r\n        \"index\"\r\n    ]\r\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/vectorizationrequest",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"vectorizationrequest"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Asynchronous vectorization - Index",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": \"d4669c9c-e330-450a-a41c-a4d6649abdef\",\r\n    \"content_identifier\": {\r\n        \"content_source_profile_name\": \"SDZWAJournals\",\r\n        \"multipart_id\": [\r\n            \"https://fllmaks14sa.blob.core.windows.net\",\r\n            \"vectorization-input\",\r\n            \"SDZWA-Journal-January-2024.pdf\"\r\n        ],\r\n        \"canonical_id\": \"sdzwa/journals/SDZWA-Journal-January-2024\"\r\n    },\r\n    \"steps\":[\r\n        {\r\n            \"id\": \"index\",\r\n            \"parameters\": {\r\n                \"indexing_profile_name\": \"AzureAISearch_Test_001\"\r\n            }\r\n        }\r\n    ],\r\n    \"completed_steps\": [\r\n    ],\r\n    \"remaining_steps\": [\r\n        \"index\"\r\n    ]\r\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/vectorizationrequest",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"vectorizationrequest"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "apikey",
+		"apikey": [
+			{
+				"key": "value",
+				"value": "",
+				"type": "string"
+			},
+			{
+				"key": "key",
+				"value": "X-API-KEY",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://localhost:7047",
+			"type": "string"
+		}
+	]
+}

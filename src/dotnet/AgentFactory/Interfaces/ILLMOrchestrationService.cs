@@ -27,5 +27,7 @@ namespace FoundationaLLM.AgentFactory.Interfaces
         /// <param name="orchestrationRequest">TThe orchestration request that includes the text to summarize.</param>
         /// <returns>Returns a string containing the summary.</returns>
         Task<string> GetSummary(LLMOrchestrationRequest orchestrationRequest);
+
+        Task<LLMOrchestrationCompletionResponse> GetCompletion(string agentName, string serializedRequest);
     }
 }

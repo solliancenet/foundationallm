@@ -1,7 +1,7 @@
 ﻿using FoundationaLLM.Common.Constants;
 using FoundationaLLM.Common.Interfaces;
-using FoundationaLLM.Common.Models.Vectorization;
 using FoundationaLLM.Vectorization.Exceptions;
+using FoundationaLLM.Vectorization.Interfaces;
 using FoundationaLLM.Vectorization.Models.Resources;
 using FoundationaLLM.Vectorization.ResourceProviders;
 using Microsoft.Extensions.Configuration;

@@ -1,5 +1,5 @@
 {
-	"IndexingProfiles": [
+	"Profiles": [
 		{
 			"Name": "AzureAISearch_Default_001",
 			"Description": "Azure AI Search index for vectorization.",

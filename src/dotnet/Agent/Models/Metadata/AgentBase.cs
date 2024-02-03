@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+﻿using FoundationaLLM.Common.Constants;
+using FoundationaLLM.Common.Exceptions;
 using FoundationaLLM.Common.Models.Metadata;
 using FoundationaLLM.Common.Models.ResourceProvider;
 using Newtonsoft.Json;
@@ -45,6 +41,17 @@ namespace FoundationaLLM.Agent.Models.Metadata
         /// </summary>
         [JsonProperty("prompt")]
         public string? Prompt { get; set; }
+
+        /// <summary>
+        /// The object type of the agent.
+        /// </summary>
+        [JsonIgnore]
+        public Type AgentType =>
+            Type switch
+            {
+                AgentTypes.KnowledgeManagement => typeof(KnowledgeManagementAgent),
+                _ => throw new ResourceProviderException($"The agent type {Type} is not supported.")
+            };
     }
 
     /// <summary>

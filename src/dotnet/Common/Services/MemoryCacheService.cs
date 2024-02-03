@@ -17,7 +17,7 @@ namespace FoundationaLLM.Common.Services
     public class MemoryCacheService(
         ILogger<MemoryCacheService> logger) : ICacheService
     {
-        private readonly ILogger<MemoryCacheService> _logger = logger;
+        private readonly ILogger _logger = logger;
         private readonly ConcurrentDictionary<CacheKey, CacheItem> _cache = new();
 
         /// <inheritdoc/>

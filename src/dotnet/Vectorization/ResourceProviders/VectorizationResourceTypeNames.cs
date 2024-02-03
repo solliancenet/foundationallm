@@ -12,6 +12,11 @@ namespace FoundationaLLM.Vectorization.ResourceProviders
     public static class VectorizationResourceTypeNames
     {
         /// <summary>
+        /// Vectorization requests.
+        /// </summary>
+        public const string VectorizationRequests = "vectorizationrequests";
+
+        /// <summary>
         /// Vectorization content sources.
         /// </summary>
         public const string ContentSourceProfiles = "contentsourceprofiles";
@@ -19,7 +24,7 @@ namespace FoundationaLLM.Vectorization.ResourceProviders
         /// <summary>
         /// Text partitioning profiles.
         /// </summary>
-        public const string TextPartitioningProfiles = "textpartitionprofiles";
+        public const string TextPartitioningProfiles = "textpartitioningprofiles";
 
         /// <summary>
         /// Text embedding profiles.

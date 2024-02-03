@@ -12,6 +12,7 @@ using PnP.Core.Services;
 using System.Security.Cryptography.X509Certificates;
 using System;
 using PnP.Core.Model.SharePoint;
+using FoundationaLLM.Common.Models.TextEmbedding;
 
 namespace FoundationaLLM.Vectorization.Services.ContentSources
 {
@@ -36,16 +37,22 @@ namespace FoundationaLLM.Vectorization.Services.ContentSources
         }
 
         /// <inheritdoc/>
-        public async Task<string> ExtractTextFromFileAsync(List<string> multipartId, CancellationToken cancellationToken)
+        /// <remarks>
+        /// contentId[0] = the URL of the SharePoint online tenant.
+        /// contentId[1] = the relative path of the site/subsite.
+        /// contentId[2] = the folder path, starting with the document library.
+        /// contentId[3] = the name of the file.
+        /// </remarks>
+        public async Task<string> ExtractTextFromFileAsync(ContentIdentifier contentId, CancellationToken cancellationToken)
         {
-            ValidateMultipartId(multipartId, 4);
-            await EnsureServiceProvider(multipartId);
+            contentId.ValidateMultipartId(4);
+            await EnsureServiceProvider($"{contentId[0]}/{contentId[1]}");
 
             var binaryContent = await GetDocumentBinaryContent(
-                $"{multipartId[2]}/{multipartId[3]}",
+                $"{contentId[2]}/{contentId[3]}",
                 cancellationToken);
 
-            return await ExtractTextFromFileAsync(multipartId[3], binaryContent);
+            return await ExtractTextFromFileAsync(contentId.FileName, binaryContent);
         }
 
         /// <summary>
@@ -112,14 +119,14 @@ namespace FoundationaLLM.Vectorization.Services.ContentSources
                 throw new VectorizationException("Missing CertificateName in the SharePointOnlineContentSourceService configuration settings.");
         }
 
-        private async Task EnsureServiceProvider(List<string> multipartId)
+        private async Task EnsureServiceProvider(string siteUrl)
         {
             if (_serviceProvider == null)
             {
                 var certificate = await GetCertificate();
                 var services = new ServiceCollection();
                 services.AddLogging();
-                services.AddPnPCore(async options =>
+                services.AddPnPCore(options =>
                 {
                     var authProvider = new X509CertificateAuthenticationProvider(
                         _settings.ClientId,
@@ -129,7 +136,7 @@ namespace FoundationaLLM.Vectorization.Services.ContentSources
                     options.Sites.Add("Default",
                         new PnPCoreSiteOptions
                         {
-                            SiteUrl = $"{multipartId[0]}/{multipartId[1]}",
+                            SiteUrl = siteUrl,
                             AuthenticationProvider = authProvider
                         });
                 });

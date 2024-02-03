@@ -15,8 +15,10 @@ using FoundationaLLM.Core.Models.Configuration;
 using FoundationaLLM.Core.Services;
 using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.Identity.Web;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace FoundationaLLM.Core.API
@@ -47,6 +49,7 @@ namespace FoundationaLLM.Core.API
                 options.Select(AppConfigurationKeyFilters.FoundationaLLM_CosmosDB);
                 options.Select(AppConfigurationKeyFilters.FoundationaLLM_Branding);
                 options.Select(AppConfigurationKeyFilters.FoundationaLLM_CoreAPI_Entra);
+                options.Select(AppConfigurationKeyFilters.FoundationaLLM_Agent);
             });
             if (builder.Environment.IsDevelopment())
                 builder.Configuration.AddJsonFile("appsettings.development.json", true, true);
@@ -69,6 +72,10 @@ namespace FoundationaLLM.Core.API
                 .Bind(builder.Configuration.GetSection(AppConfigurationKeySections.FoundationaLLM_Branding));
             builder.Services.AddOptions<CoreServiceSettings>()
                 .Bind(builder.Configuration.GetSection(AppConfigurationKeySections.FoundationaLLM_APIs_CoreAPI));
+
+            builder.Services.AddAgentResourceProvider(builder.Configuration);
+            // Activate all resource providers (give them a chance to initialize).
+            builder.Services.ActivateSingleton<IEnumerable<IResourceProviderService>>();
 
             // Register the downstream services and HTTP clients.
             RegisterDownstreamServices(builder);
@@ -126,6 +133,45 @@ namespace FoundationaLLM.Core.API
 
                     // Integrate xml comments
                     options.IncludeXmlComments(filePath);
+
+                    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+                    {
+                        {
+                            new OpenApiSecurityScheme
+                            {
+                                Reference = new OpenApiReference
+                                {
+                                    Id = "azure_auth",
+                                    Type = ReferenceType.SecurityScheme
+                                }
+                            },
+                            new[] {"user_impersonation"}
+                        }
+                    });
+
+                    options.AddSecurityDefinition("azure_auth", new OpenApiSecurityScheme
+                    {
+                        In = ParameterLocation.Header,
+                        Description = "Azure Active Directory Oauth2 Flow",
+                        Name = "azure_auth",
+                        Type = SecuritySchemeType.OAuth2,
+                        Flows = new OpenApiOAuthFlows
+                        {
+                            Implicit = new OpenApiOAuthFlow
+                            {
+                                AuthorizationUrl = new Uri("https://login.microsoftonline.com/common/oauth2/authorize"),
+                                Scopes = new Dictionary<string, string>
+                                {
+                                    {
+                                        "user_impersonation",
+                                        "impersonate your user account"
+                                    }
+                                }
+                            }
+                        },
+                        BearerFormat = "JWT",
+                        Scheme = "bearer"
+                    });
                 })
                 .AddSwaggerGenNewtonsoftSupport();
 
@@ -164,6 +210,8 @@ namespace FoundationaLLM.Core.API
                         var name = description.GroupName.ToUpperInvariant();
                         options.SwaggerEndpoint(url, name);
                     }
+
+                    options.OAuthAdditionalQueryStringParams(new Dictionary<string, string>() { { "resource", builder.Configuration[AppConfigurationKeys.FoundationaLLM_CoreAPI_Entra_ClientId] } });
                 });
 
             app.UseHttpsRedirection();

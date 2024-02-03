@@ -97,26 +97,51 @@ To update an individual API or portal, you can use the following commands:
     az account set --subscription <target_subscription_id>
     ```
 
-3. Navigate to the root folder of the repository, and checkout the branch you want to deploy:
-   
-    ```pwsh
-    cd <path_to_repository> 
-    git checkout <branch_name>
-    git pull
-    ```
+3. Navigate to the FoundationaLLM GitHub Container Registry and obtain the SHA or image tag of the container you would like to update.
 
-4. Update the `docker-compose.yml` file located in `deploy\docker` so that it lists only the images you are planning to update.
-5. Build and push the Docker images to the Azure Container Registry (ACR) using the following command (`BuildPush.ps1` is located in the  `scripts` folder):
-   
-    ```pwsh
-    .\BuildPush.ps1 -resourceGroup <resource_group_name> -acrName <acr_name>
-    ```
-   where `<resource_group_name>` is the name of the resource group where the Azure Container Registry is located, and `<acr_name>` is the name of the Azure Container Registry.
+    ![Latest release of the image on the GitHub Container Registry.](./media/latest-image-release.png "Verifying Latest Image Release")
 
-6. For each ACA you want to update, run the following script:
+4. Use the following Azure CLI command to update the desired container. `--image` is a fully-qualified name (e.g., `ghcr.io/solliancenet/foundationallm/agent-factory-api:latest`).
 
     ```pwsh
     az containerapp update --name <aca_name> --resource-group <resource_group_name> --image <image_name>
     ```
-    where `<aca_name>` is the name of the ACA, `<resource_group_name>` is the name of the resource group where the ACA is located, and `<image_name>` is the name of the image you want to update (the structure of the image name is `<acr_name>.azurecr.io/<image_name>:latest`, where `<acr_name>` is the name of the Azure Container Registry, and `<image_name>` is the name of the Docker image).
 
+    The following table indicates the mapping between each component of FLLM and the relevant Azure Container Apps instance (`--name`).
+
+    | API | Container Name |
+    | --- | -------------- |
+    | Core API | `[PREFIX]coreca` |
+    | Agent Factory API | `[PREFIX]agentfactoryca` |
+    | Agent Hub API | `[PREFIX]agenthubca` |
+    | Chat UI | `[PREFIX]chatuica` |
+    | Core Job API | `[PREFIX]corejobca` |
+    | Data Source Hub API | `[PREFIX]datasourcehubca` |
+    | Gatekeeper API | `[PREFIX]gatekeeperca` |
+    | Gatekeeper Integration API | `[PREFIX]gatekeeperintca` |
+    | LangChain | `[PREFIX]langchainca` |
+    | Management API | `[PREFIX]managementca` |
+    | Management UI | `[PREFIX]managementuica` |
+    | Prompt Hub API | `[PREFIX]prompthubca` |
+    | Semantic Kernel API | `[PREFIX]semantickernelca` |
+    | Vectorization API | `[PREFIX]vectorizationca` |
+    | Vectorization Worker | `[PREFIX]vectorizationjobca` |
+
+5. Alternatively, the `Update-Images-ACA-Starter.ps1` PowerShell script in the `deploy/scripts/` directory will update all containers in the deployment. Because it uses the Azure CLI, you must complete Steps 1-3.
+
+   | Name | Flag | Optional | Default Value |
+   | ---- | ---- | -------- | ------------- |
+   | Deployment Resource Group | `-resourceGroup` | False | N/A |
+   | Deployment Prefix | `-resourcePrefix` | False | N/A |
+   | Deployment Subscription | `-subscription` | False | N/A |
+   | Image Repository | `-containerPrefix` | True | `solliancenet/foundationallm` |
+   | Image Tag | `-containerTag` | True | `latest` |
+   | Registry | `-registry` | True | `ghcr.io` |
+
+   ```powershell
+   ./Update-Images-ACA-Starter.ps1 `
+      -resourceGroup "[DEPLOYMENT RESOURCE GROUP]" `
+      -resourcePrefix "[DEPLOYMENT PREFIX]" `
+      -subscription "[DEPLOYMENT SUBSCRIPTION]" `
+      -containerTag "[IMAGE TAG]"
+   ```

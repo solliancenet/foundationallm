@@ -30,10 +30,19 @@
 
 The `UserPortal` project is a Vue.js (Nuxt) project. To configure it to run locally, follow these steps:
 
-1. Open the `/src/UserPortal` folder in Visual Studio Code.
+1. Open the `/src/ui/UserPortal` folder in Visual Studio Code.
 2. Copy the `.env.example` file in the root directory to a new file named `.env` and update the values:
    1. The `APP_CONFIG_ENDPOINT` value should be the Connection String for the Azure App Configuration service. This should be the same value as the `FoundationaLLM:AppConfig:ConnectionString` environment variable.
    2. The `LOCAL_API_URL` should be the URL of the local Core API service (https://localhost:63279). **Important:** Only set this value if you wish to debug the entire solution locally and bypass the App Config service value for the CORE API URL. If you do not wish to debug the entire solution locally, leave this value empty or comment it out.
+
+### Management Portal
+
+The `ManagementPortal` project is a Vue.js (Nuxt) project. To configure it to run locally, follow these steps:
+
+1. Open the `/src/ui/ManagementPortal` folder in Visual Studio Code.
+2. Copy the `.env.example` file in the root directory to a new file named `.env` and update the values:
+   1. The `APP_CONFIG_ENDPOINT` value should be the Connection String for the Azure App Configuration service. This should be the same value as the `FoundationaLLM:AppConfig:ConnectionString` environment variable.
+   2. The `LOCAL_API_URL` should be the URL of the local Management API service (https://localhost:63267). **Important:** Only set this value if you wish to debug the entire solution locally and bypass the App Config service value for the MANAGEMENT API URL. If you do not wish to debug the entire solution locally, leave this value empty or comment it out.
 
 ## .NET projects
 
@@ -319,41 +328,6 @@ Create a local environment variable named `foundationallm-app-configuration-uri`
 | ---- | ----- | ----------- |
 | foundationallm-app-configuration-uri | REDACTED | Azure App Configuration URI |
 
-### Agent Hub API
-
-#### Agent Hub API Environment Variables
-
-| Name | Value | Description |
-| ---- | ----- | ----------- |
-
-### Data Source Hub API
-
-#### Data Source Hub API Environment Variables
-
-| Name | Value | Description |
-| ---- | ----- | ----------- |
-
-### Gatekeeper Integration API
-
-#### Gatekeeper Integration API Environment Variables
-
-| Name | Value | Description |
-| ---- | ----- | ----------- |
-
-### Prompt Hub API
-
-#### Prompt Hub API Environment Variables
-
-| Name | Value | Description |
-| ---- | ----- | ----------- |
-
-### LangChain API
-
-#### LangChain API Environment Variables
-
-| Name | Value | Description |
-| ---- | ----- | ----------- |
-
 ## Running the solution locally
 
 ### Configure and run the backend components
@@ -399,21 +373,26 @@ The backend components consist of the .NET projects and the Python projects. The
       - AgentFactoryAPI
       - AgentHubAPI
       - CoreAPI
-      - CoreWorker
       - DataSourceHubAPI
       - GatekeeperAPI
       - GatekeeperIntegrationAPI
       - LangChainAPI
       - PromptHubAPI
       - SemanticKernelAPI
+      - ManagementAPI
+      - VectorizationAPI
   
       ![The Multiple startup projects option is selected and the Action for the listed projects is set to Start.](media/multiple-startup-projects.png)
 
-11. Press `F5` to start debugging the solution. This will start all of the .NET projects and the Python projects. The Vue.js (Nuxt) web app will not be started by default. To start it, follow the steps below.
+1. Press `F5` to start debugging the solution. This will start all of the .NET projects and the Python projects. The Vue.js (Nuxt) web app will not be started by default. To start it, follow the steps below.
 
 ### Configure and run the frontend components
 
-The frontend components consist of the Vue.js (Nuxt) web app.
+The frontend components consist of the Vue.js (Nuxt) web apps.
+
+#### Run the User Portal
+
+The `UserPortal` project is a Vue.js (Nuxt) project. To configure it to run locally, follow these steps
 
 1. Open the `/src/ui/UserPortal` folder in Visual Studio Code.
 
@@ -427,3 +406,21 @@ The frontend components consist of the Vue.js (Nuxt) web app.
     ```
 
 4. The web app should now be running at http://localhost:3000.
+
+#### Run the Management Portal
+
+The `ManagementPortal` project is a Vue.js (Nuxt) project. To configure it to run locally, follow these steps
+
+1. Open the `/src/ui/Management` folder in Visual Studio Code.
+
+2. Open the `.env` file and update the `LOCAL_API_URL` value to the URL of the local Core API service (https://localhost:63267). **Important:** Only set this value if you wish to debug the entire solution locally and bypass the App Config service value for the MANAGEMENT API URL. If you do not wish to debug the entire solution locally, leave this value empty or comment it out.
+
+3. Open a terminal in Visual Studio Code and run the following commands:
+
+    ```bash
+    npm install
+    npm run dev
+    ```
+
+4. The web app should now be running at http://localhost:3001.
+

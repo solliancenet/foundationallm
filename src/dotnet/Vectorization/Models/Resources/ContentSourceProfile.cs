@@ -1,5 +1,4 @@
-﻿using FoundationaLLM.Common.Models.Vectorization;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace FoundationaLLM.Vectorization.Models.Resources
 {

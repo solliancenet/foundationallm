@@ -3,6 +3,7 @@ using FoundationaLLM.Common.Interfaces;
 using FoundationaLLM.Common.Models.Configuration.Instance;
 using FoundationaLLM.Common.Models.ResourceProvider;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace FoundationaLLM.Common.Services.ResourceProviders
 {
@@ -43,6 +44,15 @@ namespace FoundationaLLM.Common.Services.ResourceProviders
         /// </summary>
         protected virtual string _name => throw new NotImplementedException();
 
+        /// <summary>
+        /// Default JSON serialization settings.
+        /// </summary>
+        protected virtual JsonSerializerSettings _serializerSettings => new()
+        {
+            TypeNameHandling = TypeNameHandling.Auto,
+            Formatting = Formatting.Indented
+        };
+
         /// <inheritdoc/>
         public string Name => _name;
 
@@ -70,7 +80,7 @@ namespace FoundationaLLM.Common.Services.ResourceProviders
         }
 
         /// <inheritdoc/>
-        public async Task Initialize()
+        private async Task Initialize()
         {
             try
             {
@@ -140,12 +150,13 @@ namespace FoundationaLLM.Common.Services.ResourceProviders
         }
 
         /// <inheritdoc/>
-        public async Task UpsertResourceAsync<T>(string resourcePath, T resource) where T : class
+        public async Task<string> UpsertResourceAsync<T>(string resourcePath, T resource) where T : class
         {
             if (!_isInitialized)
                 throw new ResourceProviderException($"The resource provider {_name} is not initialized.");
             var instances = GetResourceInstancesFromPath(resourcePath);
             await UpsertResourceAsync<T>(instances, resource);
+            return GetObjectId(instances);
         }
 
         /// <inheritdoc/>

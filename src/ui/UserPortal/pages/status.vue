@@ -2,12 +2,18 @@
 	<div>Status: {{ status }}</div>
 </template>
 
-<script>
-export default defineNuxtComponent({
-	asyncData() {
+<script setup lang="ts">
+definePageMeta({
+	name: 'status',
+});
+</script>
+
+<script lang="ts">
+export default {
+	data() {
 		return {
 			status: 'OK',
 		};
 	},
-});
+};
 </script>

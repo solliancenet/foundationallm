@@ -49,7 +49,7 @@ namespace FoundationaLLM.Vectorization.Handlers
             if (textEmbeddingArtifacts == null
                 || textEmbeddingArtifacts.Count == 0)
             {
-                state.Log(this, request.Id, _messageId, "The text embedding artifacts were not found.");
+                state.Log(this, request.Id!, _messageId, "The text embedding artifacts were not found.");
                 return false;
             }
 
@@ -59,7 +59,7 @@ namespace FoundationaLLM.Vectorization.Handlers
             if (textPartitioningArtifacts == null
                 || textPartitioningArtifacts.Count == 0)
             {
-                state.Log(this, request.Id, _messageId, "The text partition artifacts were not found.");
+                state.Log(this, request.Id!, _messageId, "The text partition artifacts were not found.");
                 return false;
             }
 
@@ -87,9 +87,11 @@ namespace FoundationaLLM.Vectorization.Handlers
                 ?? throw new VectorizationException($"Could not retrieve the indexing service factory instance.");
             var (Service, VectorizationProfile) = serviceFactory.GetServiceWithProfile(_parameters["indexing_profile_name"]);
 
-            await Service.IndexEmbeddingsAsync(
+            var indexingResult = await Service.IndexEmbeddingsAsync(
                 embeddedContent,
                 VectorizationProfile.Settings!["IndexName"]);
+
+            state.AddOrReplaceIndexReferences(indexingResult);
 
             return true;
         }

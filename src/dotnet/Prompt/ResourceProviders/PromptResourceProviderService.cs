@@ -26,11 +26,6 @@ namespace FoundationaLLM.Prompt.ResourceProviders
             storageService,
             logger)
     {
-        private readonly JsonSerializerSettings _serializerSettings = new()
-        {
-            TypeNameHandling = TypeNameHandling.Auto,
-            Formatting = Formatting.Indented
-        };
         private ConcurrentDictionary<string, PromptReference> _promptReferences = [];
 
         private const string PROMPT_REFERENCES_FILE_NAME = "_prompt-references.json";

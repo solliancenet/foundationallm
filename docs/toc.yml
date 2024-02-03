@@ -26,10 +26,17 @@ items:
     href: development/index.md
   - name: Configure local development environment
     href: development/development-local.md
-  - name: Directly calling the APIs
-    href: development/directly-calling-apis.md
   - name: FoundationaLLM DevOps rules and guidelines
     href: development/development-approach.md
+  - name: Directly calling APIs
+    href: development/calling-apis/index.md
+    items:
+    - name: Directly calling APIs
+      href: development/calling-apis/index.md
+    - name: Calling the Core API
+      href: development/calling-apis/directly-calling-core-api.md
+    - name: Calling the Management API
+      href: development/calling-apis/directly-calling-management-api.md
   - name: Contributing
     href: development/contributing/index.md
     items:
@@ -53,17 +60,36 @@ items:
     items:
     - name: Agents
       href: setup-guides/agents/index.md
-    - name: SQL database agent setup procedures
-      href: setup-guides/agents/sql-database-agents.md
+    - name: Knowledge management agents
+      href: setup-guides/agents/knowledge-management-agent.md
+    - name: Prompt resources
+      href: setup-guides/agents/prompt-resource.md
+  - name: Exposed APIs
+    href: setup-guides/exposed-apis/index.md
+    items:
+    - name: Exposed APIs
+      href: setup-guides/exposed-apis/index.md
+    - name: Core API
+      href: setup-guides/exposed-apis/core-api.md
+    - name: Management API
+      href: setup-guides/exposed-apis/management-api.md  
+    - name: Resource management
+      href: setup-guides/exposed-apis/resource-management/resource-management.md
+    - name: Management UI
+      href: setup-guides/exposed-apis/management-ui/management-ui.md
   - name: Vectorization
     href: setup-guides/vectorization/index.md
     items:
-    - name: Vectorization
-      href: setup-guides/vectorization/index.md
-    - name: Vectorization API
-      href: setup-guides/vectorization/vectorization-api.md
-    - name: Vectorization Worker
-      href: setup-guides/vectorization/vectorization-worker.md
+    - name: Vectorization concepts
+      href: setup-guides/vectorization/vectorization-concepts.md
+    - name: Configuring vectorization
+      href: setup-guides/vectorization/vectorization-configuration.md
+    - name: Managing vectorization profiles
+      href: setup-guides/vectorization/vectorization-profiles.md
+    - name: Triggering vectorization
+      href: setup-guides/vectorization/vectorization-triggering.md
+    - name: Monitoring and troubleshooting
+      href: setup-guides/vectorization/vectorization-monitoring-troubleshooting.md
 - name: Operations
   href: operations/index.md
   items:

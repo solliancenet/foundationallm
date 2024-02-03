@@ -22,34 +22,6 @@ To enable Microsoft Entra ID authentication for the Management API and portal, y
     > If you performed an Azure Container Apps (ACA) or Azure Kubernetes Service (AKS) deployment, you will see an extra Resource Group that starts with `ME_` or `MC_` in addition to the Resource Group defined during the deployment. You will need to navigate to the Resource Group that **does not start with** `ME_` or `MC_` to access the App Configuration resource.
 3. Select the **App Configuration** resource and select **Configuration explorer** to view the values. If you cannot access the configurations, add your user account as an **App Configuration Data Owner** through Access Control (IAM). You need this role in order to update the configurations as a required part of the authentication setup. To add your user account to the appropriate role, follow the instructions in the [Configure access control for services](../../deployment/configure-access-control-for-services.md#azure-app-configuration-service) document.
 
-#### Obtain the URL for the Management Portal application
-
-You need this URL to assign the redirect URI for the client application.
-
-If you performed an **Azure Container Apps (ACA)** deployment, follow these steps to obtain the URL for the chat UI application:
-
-<!-- 1. Within the Resource Group that was created as part of the deployment, select the **Container App** resource whose name ends with `chatuica`.
-
-    ![The Chat UI container app is selected in the deployed resource group.](media/resource-group-aca.png)
-
-2. Within the Overview pane, copy the **Application Url** value. This is the URL for the chat application.
-
-    ![The container app's Application Url is highlighted.](media/aca-application-url.png) -->
-
-***TODO***
-
-If you performed an **Azure Kubernetes Service (AKS)** deployment, follow these steps to obtain the URL for the chat UI application:
-
-<!-- 1. Within the Resource Group that was created as part of the deployment, select the **Kubernetes Service** resource.
-
-    ![The Kubernetes service is selected in the deployed resource group.](media/resource-group-aks.png)
-
-2. Select **Properties** in the left-hand menu and copy the **HTTP application routing domain** value. This is the URL for the chat application.
-
-    ![The HTTP application routing domain property is highlighted.](media/aks-http-app-routing-domain.png) -->
-
-***TODO***
-
 ### Create the client application
 
 #### Register the client application in the Microsoft Entra ID admin center
@@ -74,7 +46,7 @@ If you performed an **Azure Kubernetes Service (AKS)** deployment, follow these 
 
 1. Under **Manage**, select **Authentication**.
 2. Under **Platform configurations**, select **Add a platform**. In the pane that opens, select **Single-page application**. This is for the Vue.js management application.
-3. Add a **Redirect URI** under Single-page application for your deployed Vue.js management application. Enter `<YOUR_MANAGEMENT_APP_URL>/signin-oidc`, replacing `<YOUR_MANAGEMENT_APP_URL>` with the management UI application URL obtained in the [Pre-requisites](#pre-requisites) section above. For example, it should look something like `https://d85a09ce067141d5807a.eastus.aksapp.io/signin-oidc` for an AKS deployment, or `https://fllmaca002managementuica.graybush-c554b849.eastus.azurecontainerapps.io/signin-oidc` for an ACA deployment.
+3. Add a **Redirect URI** under Single-page application for your deployed Vue.js management application. Enter `<YOUR_MANAGEMENT_APP_URL>/signin-oidc`, replacing `<YOUR_MANAGEMENT_APP_URL>` with the management UI application URL. For example, it should look something like `https://d85a09ce067141d5807a.eastus.aksapp.io/signin-oidc` for an AKS deployment, or `https://fllmaca002managementuica.graybush-c554b849.eastus.azurecontainerapps.io/signin-oidc` for an ACA deployment.
 4. Add a **Redirect URI** under Single-page application for local development of the management portal Vue.js application: `http://localhost:3001/signin-oidc`.
 
     ![The Authentication left-hand menu item and redirect URIs are highlighted.](media/entra-app-management-client-authentication-uris.png)
@@ -98,7 +70,7 @@ If you wish to [configure authentication in Postman](../../development/directly-
 
     ![Both the Access tokens and ID tokens checkboxes are checked and the Save button is highlighted.](media/entra-app-client-authentication-implicit-grant.png)
 
-#### Client secret for the client application
+<!-- #### Client secret for the client application
 
 1. Under **Manage**, select **Certificates & secrets**.
 2. Under **Client secrets**, select **+ New client secret**.
@@ -107,7 +79,7 @@ If you wish to [configure authentication in Postman](../../development/directly-
 5. Select **Add**.
 6. **Record the secret value** to add to your App Configuration settings later. Do this by selecting the **Copy to clipboard** icon next to the secret value.
 
-    ![The steps to create a client secret are highlighted.](media/entra-management-client-app-secret.png)
+    ![The steps to create a client secret are highlighted.](media/entra-management-client-app-secret.png) -->
 
 #### Update the client application manifest
 
@@ -151,7 +123,7 @@ If you wish to [configure authentication in Postman](../../development/directly-
 
     ![Both the Access tokens and ID tokens checkboxes are checked and the Save button is highlighted.](media/entra-app-client-authentication-implicit-grant.png)
 
-#### Client secret for the API application
+<!-- #### Client secret for the API application
 
 1. Under **Manage**, select **Certificates & secrets**.
 2. Under **Client secrets**, select **+ New client secret**.
@@ -160,7 +132,7 @@ If you wish to [configure authentication in Postman](../../development/directly-
 5. Select **Add**.
 6. **Record the secret value** to add to your App Configuration settings later. Do this by selecting the **Copy to clipboard** icon next to the secret value.
 
-    ![The steps to create a client secret are highlighted.](media/entra-management-api-app-secret.png)
+    ![The steps to create a client secret are highlighted.](media/entra-management-api-app-secret.png) -->
 
 #### Expose an API for the API application
 
@@ -245,7 +217,7 @@ The client application's configured permissions should now look like the followi
 
 9. Select **Apply** to save the changes.
 
-### Update Key Vault secrets
+<!-- ### Update Key Vault secrets
 
 Key Vault stores the secrets for the client and API applications. You need to update the secrets with the values that you recorded earlier.
 
@@ -255,22 +227,20 @@ Key Vault stores the secrets for the client and API applications. You need to up
 4. Open the `foundationallm-management-entra-clientsecret` secret, then select **+ New Version**.
 5. Within the **Secret value** field, enter the **Client secret** of the client application that you [created earlier](#client-secret-for-the-client-application), then select **Create**.
 6. Open the `foundationallm-managementapi-entra-clientsecret` secret, then select **+ New Version**.
-7. Within the **Secret value** field, enter the **Client secret** of the API application that you [created earlier](#client-secret-for-the-api-application), then select **Create**.
+7. Within the **Secret value** field, enter the **Client secret** of the API application that you [created earlier](#client-secret-for-the-api-application), then select **Create**. -->
 
 ## Next steps
 
 Now that Entra authentication is fully configured, restart the Management API and management portal applications to apply the changes. Navigate to your management portal application or refresh the page if it is already open. It should automatically prompt you to sign in with your Microsoft Entra ID account.
 
-### Restart Management API and Management Portal UI applications in an ACA Deployment
+<!-- ### Restart Management API and Management Portal UI applications in an ACA Deployment
 
 To restart the Management API and management portal applications in an Azure Container Apps (ACA) deployment, you will need to navigate to the Management API and management portal applications and restart their container revisions, as indicated in the following Azure Portal screenshot:
 
-   <!-- ![Restarting the Core API Azure Container App.](media/restart-coreapi-aca.png "Restarting the Container App in Azure Portal.")
+   ![Restarting the Core API Azure Container App.](media/restart-coreapi-aca.png "Restarting the Container App in Azure Portal.")
 
    1. From the `Revisions` blade in the left navigation panel of the Core API or Chat UI container app detail page in Azure Portal, select the name of the running revision.
-   2. A dialog panel titled `Revision details` should appear on the right side of the browser with a `Restart` button at the top.  Select the `Restart` button to restart the running container. -->
-
-***TODO***
+   2. A dialog panel titled `Revision details` should appear on the right side of the browser with a `Restart` button at the top.  Select the `Restart` button to restart the running container.
 
 Restarting in this manner will need to be performed for both the Management API container app and the management portal container app.
 
@@ -278,11 +248,9 @@ Restarting in this manner will need to be performed for both the Management API 
 
 To restart the Management API and management portal applications in an Azure Kubernetes Service (AKS) deployment, you will need to navigate to the AKS detail page in Azure Portal and perform the following:
 
-   <!-- 1. Select the `Workloads` blade from the left navigation panel.
+   1. Select the `Workloads` blade from the left navigation panel.
    2. Select the `Pods` tab from the `Workloads` detail page.
    3. Select the Core API and Chat UI pods from the list (it helps if you select `default` in the `Filter by namespace` dropdown first).
    4. Select the `Delete` button to terminate the currently running pods.  New pods will be instantiated to take their place.
 
    ![Restarting containers in AKS.](media/restart-containers-aks.png "Restarting the Core API and Chat UI services in an AKS deployment.") -->
-
-***TODO***

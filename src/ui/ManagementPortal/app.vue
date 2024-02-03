@@ -1,22 +1,19 @@
 <template>
-	<main>
+	<main :style="style">
 		<Head>
 			<Title>{{ pageTitle }}</Title>
 			<Meta name="description" :content="pageTitle" />
 		</Head>
 
-		<div class="wrapper" :style="style">
-			<Sidebar />
-			<div class="page">
-				<NuxtPage />
-			</div>
-		</div>
+		<NuxtLayout>
+			<NuxtPage  />
+		</NuxtLayout>
+
+		<Toast position="top-center" />
 	</main>
 </template>
 
 <script lang="ts">
-import { mapStores } from 'pinia';
-
 export default {
 	data() {
 		return {
@@ -91,15 +88,23 @@ main {
 }
 
 .ml-1 {
-	margin-left: 4px;
+	margin-left: 4px !important;
 }
 
 .mr-1 {
-	margin-right: 4px;
+	margin-right: 4px !important;
 }
 
 .mt-2 {
-	margin-top: 8px;
+	margin-top: 8px !important;
+}
+
+.mb-1 {
+	margin-bottom: 4px !important;
+}
+
+.mb-2 {
+	margin-bottom: 8px !important;
 }
 
 .w-100 {

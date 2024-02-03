@@ -42,7 +42,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AgentFactory\AgentFactory.csproj" />
+    <ProjectReference Include="..\Agent\Agent.csproj" />
     <ProjectReference Include="..\Common\Common.csproj" />
+    <ProjectReference Include="..\Prompt\Prompt.csproj" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1development_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>

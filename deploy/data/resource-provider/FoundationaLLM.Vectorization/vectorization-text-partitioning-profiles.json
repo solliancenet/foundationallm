@@ -1,5 +1,5 @@
 {
-	"TextPartitioningProfiles": [
+	"Profiles": [
 		{
 			"Name": "DefaultTokenTextPartition",
 			"TextSplitter": "TokenTextSplitter",

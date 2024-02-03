@@ -18,12 +18,6 @@ namespace FoundationaLLM.Common.Interfaces
         bool IsInitialized { get; }
 
         /// <summary>
-        /// Initializes the resource provider.
-        /// </summary>
-        /// <returns></returns>
-        Task Initialize();
-
-        /// <summary>
         /// Gets the resources based on the logical path of the resource type.
         /// </summary>
         /// <typeparam name="T">The type of the resource.</typeparam>
@@ -75,8 +69,8 @@ namespace FoundationaLLM.Common.Interfaces
         /// <typeparam name="T">The type of the resource.</typeparam>
         /// <param name="resourcePath">The logical path of the resource.</param>
         /// <param name="resource">The instance of the resource being created or updated.</param>
-        /// <returns></returns>
-        Task UpsertResourceAsync<T>(string resourcePath, T resource) where T : class;
+        /// <returns>The object id of the resource.</returns>
+        Task<string> UpsertResourceAsync<T>(string resourcePath, T resource) where T : class;
 
         /// <summary>
         /// Creates or updates a resource based on its logical path.
@@ -84,6 +78,7 @@ namespace FoundationaLLM.Common.Interfaces
         /// <typeparam name="T">The type of the resource.</typeparam>
         /// <param name="resourcePath">The logical path of the resource.</param>
         /// <param name="resource">The instance of the resource being created or updated.</param>
+        /// <returns>The object id of the resource.</returns>
         string UpsertResource<T>(string resourcePath, T resource) where T : class;
 
         /// <summary>
@@ -91,7 +86,7 @@ namespace FoundationaLLM.Common.Interfaces
         /// </summary>
         /// <param name="resourcePath">The logical path of the resource.</param>
         /// <param name="serializedResource">The serialized instance of the resource being created or updated.</param>
-        /// <returns></returns>
+        /// <returns>The object id of the resource.</returns>
         Task<string> UpsertResourceAsync(string resourcePath, string serializedResource);
 
         /// <summary>

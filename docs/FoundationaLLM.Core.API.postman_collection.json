@@ -4,7 +4,7 @@
 		"name": "FoundationaLLM.Core.API",
 		"description": "FoundationaLLM.Core.API\n\nContact Support:\n Name: Solliance, Inc.\n Email: contact@solliance.net",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "269456"
+		"_exporter_id": "13072267"
 	},
 	"item": [
 		{
@@ -85,6 +85,11 @@
 										"key": "X-AGENT-HINT",
 										"value": "{{agentHint}}",
 										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{bearerToken}}",
+										"type": "text"
 									}
 								],
 								"body": {
@@ -98,19 +103,19 @@
 									}
 								},
 								"url": {
-									"raw": "{{baseUrl}}/orchestration/completion?api-version=1.0",
+									"raw": "{{baseUrl}}/core/orchestration/completion?api-version=1.0",
 									"host": [
 										"{{baseUrl}}"
 									],
 									"path": [
+										"core",
 										"orchestration",
 										"completion"
 									],
 									"query": [
 										{
 											"key": "api-version",
-											"value": "1.0",
-											"description": "The requested API version"
+											"value": "1.0"
 										}
 									]
 								}
@@ -1374,11 +1379,16 @@
 	"variable": [
 		{
 			"key": "baseUrl",
-			"value": "https://localhost:63279"
+			"value": ""
 		},
 		{
 			"key": "agentHint",
-			"value": "{\"name\": \"default\", \"private\": false}",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "bearerToken",
+			"value": "",
 			"type": "string"
 		}
 	]

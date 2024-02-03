@@ -15,7 +15,7 @@ namespace FoundationaLLM.Vectorization.API.Controllers
         /// Returns the status of the Vectorization API service.
         /// </summary>
         [HttpGet(Name = "GetServiceStatus")]
-        public IActionResult Get() => Ok();
+        public IActionResult Get() => Ok("VectorizationAPI - ready");
 
         private static readonly string[] MethodNames = ["GET", "POST", "OPTIONS", "DELETE"];
 

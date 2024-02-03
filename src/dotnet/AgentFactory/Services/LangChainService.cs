@@ -10,6 +10,7 @@ using FoundationaLLM.Common.Constants;
 using FoundationaLLM.Common.Interfaces;
 using FoundationaLLM.Common.Models.Metadata;
 using Agent = FoundationaLLM.AgentFactory.Core.Models.Orchestration.Metadata.Agent;
+using Azure.Core;
 
 namespace FoundationaLLM.AgentFactory.Services
 {
@@ -89,6 +90,46 @@ namespace FoundationaLLM.AgentFactory.Services
             };
         }
 
+        public async Task<LLMOrchestrationCompletionResponse> GetCompletion(string agentName, string serializedRequest)
+        {
+            var client = _httpClientFactoryService.CreateClient(Common.Constants.HttpClients.LangChainAPI);
+
+            var body = serializedRequest;
+            var responseMessage = await client.PostAsync("orchestration/completion",
+                new StringContent(
+                    body,
+                    Encoding.UTF8, "application/json"));
+            var responseContent = await responseMessage.Content.ReadAsStringAsync();
+
+            if (responseMessage.IsSuccessStatusCode)
+            {
+                var completionResponse = JsonConvert.DeserializeObject<LLMOrchestrationCompletionResponse>(responseContent);
+
+                return new LLMOrchestrationCompletionResponse
+                {
+                    Completion = completionResponse!.Completion,
+                    UserPrompt = completionResponse.UserPrompt,
+                    FullPrompt = completionResponse.FullPrompt,
+                    PromptTemplate = string.Empty,
+                    AgentName = agentName,
+                    PromptTokens = completionResponse.PromptTokens,
+                    CompletionTokens = completionResponse.CompletionTokens
+                };
+            }
+
+            _logger.LogWarning($"The LangChain orchestration service returned status code {responseMessage.StatusCode}: {responseContent}");
+
+            return new LLMOrchestrationCompletionResponse
+            {
+                Completion = "A problem on my side prevented me from responding.",
+                UserPrompt = string.Empty,
+                PromptTemplate = string.Empty,
+                AgentName = agentName,
+                PromptTokens = 0,
+                CompletionTokens = 0
+            };
+        }
+
 
 
         /// <summary>
@@ -104,7 +145,7 @@ namespace FoundationaLLM.AgentFactory.Services
             {
                 SessionId = orchestrationRequest.SessionId,
                 UserPrompt = orchestrationRequest.UserPrompt,
-                Agent = new Agent
+                Agent = new FoundationaLLM.AgentFactory.Core.Models.Orchestration.Metadata.Agent
                 {
                     Name = "summarizer",
                     Type = "summary",

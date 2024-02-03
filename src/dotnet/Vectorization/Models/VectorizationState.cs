@@ -33,6 +33,20 @@ namespace FoundationaLLM.Vectorization.Models
         public List<VectorizationArtifact> Artifacts { get; set; } = [];
 
         /// <summary>
+        /// The vector index references associated with the vectorization state.
+        /// </summary>
+        [JsonPropertyOrder(3)]
+        [JsonPropertyName("index_references")]
+        public List<VectorizationIndexReference> IndexReferences { get; set; } = [];
+
+        /// <summary>
+        /// The list of vectorization requests associated with the content identified by <see cref="ContentIdentifier"/>.
+        /// </summary>
+        [JsonPropertyOrder(19)]
+        [JsonPropertyName("requests")]
+        public List<VectorizationRequest> Requests { get; set; } = [];
+
+        /// <summary>
         /// The list of log entries associated with actions executed by the vectorization pipeline.
         /// </summary>
         [JsonPropertyOrder(20)]
@@ -90,7 +104,7 @@ namespace FoundationaLLM.Vectorization.Models
         public static VectorizationState FromRequest(VectorizationRequest request) =>
             new()
             {
-                CurrentRequestId = request.Id,
+                CurrentRequestId = request.Id!,
                 ContentIdentifier = request.ContentIdentifier
             };
 
@@ -106,6 +120,31 @@ namespace FoundationaLLM.Vectorization.Models
 
             artifact.IsDirty = true;
             Artifacts.Add(artifact);
+        }
+
+        /// <summary>
+        /// Adds or replaces the list of vector index references associated with the vectorization state.
+        /// </summary>
+        /// <param name="indexEntryIds">The ordered list of vector index entry identifiers.</param>
+        public void AddOrReplaceIndexReferences(IList<string> indexEntryIds) =>
+            IndexReferences = Enumerable.Range(0, indexEntryIds.Count)
+                .Select(i => new VectorizationIndexReference
+                {
+                    IndexEntryId = indexEntryIds[i],
+                    Position = i
+                })
+                .ToList();
+
+        /// <summary>
+        /// Adds a vectorization request to the list of requests if it is not already there.
+        /// </summary>
+        /// <param name="request">The <see cref="VectorizationRequest"/> being added.</param>
+        public void AddRequestIfMissing(VectorizationRequest request)
+        {
+            if (Requests.Any(r => r.ObjectId == request.ObjectId))
+                return;
+
+            Requests.Add(request);
         }
     }
 }

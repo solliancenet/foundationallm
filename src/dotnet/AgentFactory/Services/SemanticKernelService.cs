@@ -156,5 +156,7 @@ namespace FoundationaLLM.AgentFactory.Services
 
             return responseMessage.Content.ToString() == "ready";
         }
+
+        public Task<LLMOrchestrationCompletionResponse> GetCompletion(string agentName, string serializedRequest) => throw new NotImplementedException();
     }
 }

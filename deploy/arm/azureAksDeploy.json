@@ -306,11 +306,6 @@
           "contentType": null
         },
         {
-          "key": "FoundationaLLM:Branding:AllowAgentSelection",
-          "value": "default, anomaly, hai, movies, sdzwa, weather, weather-sec",
-          "contentType": null
-        },
-        {
           "key": "FoundationaLLM:Branding:BackgroundColor",
           "value": "#fff",
           "contentType": null

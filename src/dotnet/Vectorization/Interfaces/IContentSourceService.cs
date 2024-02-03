@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FoundationaLLM.Common.Models.TextEmbedding;
+using System;
 using System.Threading.Tasks;
 
 namespace FoundationaLLM.Vectorization.Interfaces
@@ -11,9 +12,9 @@ namespace FoundationaLLM.Vectorization.Interfaces
         /// <summary>
         /// Reads the binary content of a specified file from the storage.
         /// </summary>
-        /// <param name="multipartId">The multipart unique identifier of the file being read.</param>
+        /// <param name="contentId">The <see cref="ContentIdentifier"/> providing the unique identifier of the file being read.</param>
         /// <param name="cancellationToken">The cancellation token that signals that operations should be cancelled.</param>
         /// <returns>The string content of the file.</returns>
-        Task<string> ExtractTextFromFileAsync(List<string> multipartId, CancellationToken cancellationToken);
+        Task<string> ExtractTextFromFileAsync(ContentIdentifier contentId, CancellationToken cancellationToken);
     }
 }

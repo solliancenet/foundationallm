@@ -16,7 +16,6 @@ export default defineNuxtPlugin(async (nuxtApp: any) => {
 
 	// Use LOCAL_API_URL from the .env file if it's set, otherwise use the Azure App Configuration value.
 	const localApiUrl = config.public.LOCAL_API_URL;
-	console.info('localApiUrl', localApiUrl);
 	const apiUrl = localApiUrl || appConfigStore.apiUrl;
 
 	api.setApiUrl(apiUrl);

@@ -1,4 +1,5 @@
-﻿using FoundationaLLM.Common.Services;
+﻿using FoundationaLLM.Common.Models.TextEmbedding;
+using FoundationaLLM.Common.Services;
 using FoundationaLLM.Common.Settings;
 using FoundationaLLM.Vectorization.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -29,16 +30,21 @@ namespace FoundationaLLM.Vectorization.Services.ContentSources
         }
 
         /// <inheritdoc/>
-        public async Task<string> ExtractTextFromFileAsync(List<string> multipartId, CancellationToken cancellationToken)
-        {
-            ValidateMultipartId(multipartId, 3);
+        /// <remarks>
+        /// contentId[0] = the URL of the storage account.
+        /// contentId[1] = the container name.
+        /// contentId[2] = path of the file relative to the container name.
+        /// </remarks>
+        public async Task<string> ExtractTextFromFileAsync(ContentIdentifier contentId, CancellationToken cancellationToken)
+        {   
+            contentId.ValidateMultipartId(3);
 
             var binaryContent = await _dataLakeStorageService.ReadFileAsync(
-                multipartId[1],
-                multipartId[2],
+                contentId[1],
+                contentId[2],
                 cancellationToken);
 
-            return await ExtractTextFromFileAsync(multipartId[2], binaryContent);
+            return await ExtractTextFromFileAsync(contentId.FileName, binaryContent);
         }
     }
 }

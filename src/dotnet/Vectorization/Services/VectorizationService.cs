@@ -1,14 +1,13 @@
 ﻿using FoundationaLLM.Common.Constants;
-using FoundationaLLM.Common.Models.Chat;
+using FoundationaLLM.Common.Interfaces;
 using FoundationaLLM.Vectorization.Exceptions;
 using FoundationaLLM.Vectorization.Handlers;
 using FoundationaLLM.Vectorization.Interfaces;
 using FoundationaLLM.Vectorization.Models;
+using FoundationaLLM.Vectorization.ResourceProviders;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System.Runtime;
-using System.Threading;
 
 namespace FoundationaLLM.Vectorization.Services
 {
@@ -20,18 +19,21 @@ namespace FoundationaLLM.Vectorization.Services
     /// </remarks>
     /// <param name="requestSourcesCache">The <see cref="IRequestSourcesCache"/> cache of request sources.</param>
     /// <param name="vectorizationStateService">The service providing vectorization state management.</param>
+    /// <param name="vectorizationResourceProvider">The <see cref="IResourceProviderService"/> implementing the vectorization resource provider.</param>
     /// <param name="stepsConfiguration">The <see cref="IConfigurationSection"/> object providing access to the settings.</param>
     /// <param name="serviceProvider">The <see cref="IServiceProvider"/> implemented by the dependency injection container.</param>
     /// <param name="loggerFactory">The logger factory used to create loggers.</param>
     public class VectorizationService(
         IRequestSourcesCache requestSourcesCache,
         IVectorizationStateService vectorizationStateService,
+        [FromKeyedServices(DependencyInjectionKeys.FoundationaLLM_Vectorization_ResourceProviderService)] IResourceProviderService vectorizationResourceProvider,
         [FromKeyedServices(DependencyInjectionKeys.FoundationaLLM_Vectorization_Steps)] IConfigurationSection stepsConfiguration,
         IServiceProvider serviceProvider,
         ILoggerFactory loggerFactory) : IVectorizationService
     {
         private readonly Dictionary<string, IRequestSourceService> _requestSources = requestSourcesCache.RequestSources;
         private readonly IVectorizationStateService _vectorizationStateService = vectorizationStateService;
+        private readonly IResourceProviderService _vectorizationResourceProviderService = vectorizationResourceProvider;
         private readonly IConfigurationSection? _stepsConfiguration = stepsConfiguration;
         private readonly IServiceProvider _serviceProvider = serviceProvider;
         private readonly ILoggerFactory _loggerFactory = loggerFactory;
@@ -42,14 +44,23 @@ namespace FoundationaLLM.Vectorization.Services
         {
             try
             {
+                // Pre-process the vectorization request
+                vectorizationRequest.Id = Guid.NewGuid().ToString();
+                vectorizationRequest.CompletedSteps = [];
+                vectorizationRequest.RemainingSteps = vectorizationRequest.Steps.Select(s => s.Id).ToList();
+
                 ValidateRequest(vectorizationRequest);
+
+                await _vectorizationResourceProviderService.UpsertResourceAsync<VectorizationRequest>(
+                    $"/{VectorizationResourceTypeNames.VectorizationRequests}/{vectorizationRequest.Id}",
+                    vectorizationRequest);
 
                 switch (vectorizationRequest.ProcessingType)
                 {
                     case VectorizationProcessingType.Asynchronous:
                         var firstRequestSource = _requestSources[vectorizationRequest.Steps.First().Id];
                         await firstRequestSource.SubmitRequest(vectorizationRequest);
-                        return new VectorizationProcessingResult(true, null, null);
+                        return new VectorizationProcessingResult(vectorizationRequest.ObjectId!, true, null);
                     case VectorizationProcessingType.Synchronous:
                         return await ProcessRequestInternal(vectorizationRequest);
                     default:
@@ -58,7 +69,7 @@ namespace FoundationaLLM.Vectorization.Services
             }
             catch (Exception ex)
             {
-                return new VectorizationProcessingResult(false, null, ex.Message);
+                return new VectorizationProcessingResult(vectorizationRequest.ObjectId!, false, ex.Message);
             }
         }
 
@@ -124,19 +135,21 @@ namespace FoundationaLLM.Vectorization.Services
                 else
                     _logger.LogInformation("The pipeline for request id {RequestId} was advanced from step [{PreviousStepName}] to finalized state.",
                         request.Id, steps.PreviousStep);
+
+                await _vectorizationStateService.SaveState(state).ConfigureAwait(false);
             }
 
             if (request.Complete)
             {
                 _logger.LogInformation("Finished synchronous processing for request {RequestId}. All steps were processed successfully.", request.Id);
-                return new VectorizationProcessingResult(true, null, null);
+                return new VectorizationProcessingResult(request.ObjectId!, true, null);
             }
             else
             {
                 var errorMessage =
                     $"Execution stopped at step [{request.CurrentStep}] due to an error.";
                 _logger.LogInformation("Finished synchronous processing for request {RequestId}. {ErrorMessage}", request.Id, errorMessage);
-                return new VectorizationProcessingResult(false, null, errorMessage);
+                return new VectorizationProcessingResult(request.ObjectId!, false, errorMessage);
             }
         }
     }

@@ -35,52 +35,6 @@ namespace FoundationaLLM.Management.Services
         }
 
         /// <inheritdoc/>
-        public async Task<List<string>?> GetAgentHintsAsync()
-        {
-            var agentHints = new List<string>();
-            try
-            {
-                var agentHintsSetting = await _configurationClient
-                    .GetConfigurationSettingAsync(AppConfigurationKeys.FoundationaLLM_Branding_AllowAgentSelection);
-                if (agentHintsSetting.HasValue)
-                {
-                    agentHints = agentHintsSetting.Value.Value.Split(',').ToList();
-                    agentHints = agentHints.Select(agentHint => agentHint.Trim()).ToList();
-                }
-                else
-                {
-                    agentHints = null;
-                }
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Error getting agent hints from app configuration.");
-            }
-
-            return agentHints;
-        }
-
-        /// <inheritdoc/>
-        public async Task UpdateAgentHintsAsync(IEnumerable<string>? agentHints)
-        {
-            try
-            {
-                var agentHintsSettingValue = "";
-                if (agentHints != null)
-                {
-                    agentHintsSettingValue = string.Join(", ", agentHints);
-                }
-                var agentHintsSetting = new ConfigurationSetting(AppConfigurationKeys.FoundationaLLM_Branding_AllowAgentSelection, agentHintsSettingValue);
-                await _configurationClient.SetConfigurationSettingAsync(agentHintsSetting);
-                // TODO: Restart the Core API and Agent API services to apply the agent hint value updates.
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Error updating agent hints in app configuration.");
-            }
-        }
-
-        /// <inheritdoc/>
         public async Task<bool> GetAllowAgentSelectionAsync()
         {
             var allowAgentSelection = false;
@@ -133,9 +87,6 @@ namespace FoundationaLLM.Management.Services
                             break;
                         case AppConfigurationKeys.FoundationaLLM_Branding_AccentTextColor:
                             brandingConfiguration.AccentTextColor = setting.Value;
-                            break;
-                        case AppConfigurationKeys.FoundationaLLM_Branding_AllowAgentSelection:
-                            brandingConfiguration.AllowAgentSelection = setting.Value;
                             break;
                         case AppConfigurationKeys.FoundationaLLM_Branding_BackgroundColor:
                             brandingConfiguration.BackgroundColor = setting.Value;
@@ -204,8 +155,6 @@ namespace FoundationaLLM.Management.Services
                         brandingConfiguration.AccentColor),
                     new(AppConfigurationKeys.FoundationaLLM_Branding_AccentTextColor,
                         brandingConfiguration.AccentTextColor),
-                    new(AppConfigurationKeys.FoundationaLLM_Branding_AllowAgentSelection,
-                        brandingConfiguration.AllowAgentSelection),
                     new(AppConfigurationKeys.FoundationaLLM_Branding_BackgroundColor,
                         brandingConfiguration.BackgroundColor),
                     new(AppConfigurationKeys.FoundationaLLM_Branding_CompanyName,

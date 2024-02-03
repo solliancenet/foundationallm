@@ -1,9 +1,9 @@
 using Asp.Versioning;
 using Azure.Identity;
+using FoundationaLLM;
 using FoundationaLLM.Common.Authentication;
 using FoundationaLLM.Common.Constants;
 using FoundationaLLM.Common.Interfaces;
-using FoundationaLLM.Common.Models.Configuration.Instance;
 using FoundationaLLM.Common.OpenAPI;
 using FoundationaLLM.Common.Services;
 using FoundationaLLM.Common.Services.Tokenizers;
@@ -32,9 +32,11 @@ builder.Configuration.AddAzureAppConfiguration(options =>
     {
         options.SetCredential(new DefaultAzureCredential());
     });
+    options.Select(AppConfigurationKeyFilters.FoundationaLLM_Instance);
     options.Select(AppConfigurationKeyFilters.FoundationaLLM_Vectorization);
     options.Select(AppConfigurationKeyFilters.FoundationaLLM_APIs_VectorizationWorker);
 });
+
 if (builder.Environment.IsDevelopment())
     builder.Configuration.AddJsonFile("appsettings.development.json", true, true);
 
@@ -57,8 +59,7 @@ builder.Services.AddCors(policyBuilder =>
 });
 
 // Add configurations to the container
-builder.Services.AddOptions<InstanceSettings>()
-    .Bind(builder.Configuration.GetSection(AppConfigurationKeySections.FoundationaLLM_Instance));
+builder.Services.AddInstanceProperties(builder.Configuration);
 
 builder.Services.AddOptions<VectorizationWorkerSettings>()
     .Bind(builder.Configuration.GetSection(AppConfigurationKeys.FoundationaLLM_Vectorization_VectorizationWorker));

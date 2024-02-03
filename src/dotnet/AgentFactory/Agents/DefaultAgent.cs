@@ -197,7 +197,7 @@ namespace FoundationaLLM.AgentFactory.Core.Agents
             _completionRequestTemplate = new LLMOrchestrationCompletionRequest()
             {
                 UserPrompt = null, // to be filled in GetCompletion / GetSummary
-                Agent = new Agent
+                Agent = new FoundationaLLM.AgentFactory.Core.Models.Orchestration.Metadata.Agent
                 {
                     Name = _agentMetadata.Name,
                     Type = _agentMetadata.Type,

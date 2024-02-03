@@ -7,7 +7,7 @@ Name | Default | Type | Area | Used by | Description
 `foundationallm-core-api-url` |  | Environment variable | User Portal | `ChatThread.vue`, `index.vue` | The URL of the FoundationaLLM Core API.
 `foundationallm-core-api-keyvault-name` |  | Environment variable | Core API |  | The name of the Azure Key Vault used by the Core API.
 `foundationallm-core-api-entra-instance` | `https://login.microsoftonline.com/` | Environment variable | Core API |  | The Entra instance used by the Core API.
-`foundationallm-core-api-entra-tenant-id` | View the [Entra setup document](./authentication-setup-entra.md) for instructions | Environment variable | Core API |  | The Entra tenant ID used by the Core API.
+`foundationallm-core-api-entra-tenant-id` | View the [Entra setup document](./authentication/core-authentication-setup-entra.md) for instructions | Environment variable | Core API |  | The Entra tenant ID used by the Core API.
 `foundationallm-core-api-entra-client-id` |  | Environment variable | Core API |  | The Entra client ID used by the Core API.
 `foundationallm-core-api-entra-client-secret-name` |  | Key Vault secret| Core API |  | Name of the Entra client secret used by the Core API.
 `foundationallm-core-api-entra-callback-path` | `/signin-oidc` | Environment variable | Core API |  | The Entra callback path used by the Core API.

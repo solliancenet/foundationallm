@@ -2,7 +2,7 @@
 	<div class="sidebar">
 		<!-- Sidebar section header -->
 		<div class="sidebar__header">
-			<img v-if="$appConfigStore.logoUrl" :src="$filters.enforceLeadingSlash($appConfigStore.logoUrl)" />
+			<img v-if="$appConfigStore.logoUrl" :src="$filters.publicDirectory($appConfigStore.logoUrl)" />
 			<span v-else>{{ $appConfigStore.logoText }}</span>
 		</div>
 
@@ -49,12 +49,44 @@
 		</div>
 
 		<div class="sidebar__item">Identity & Access Management (IAM)</div>
+
+		<!-- Logged in user -->
+		<div v-if="$authStore.accounts[0]?.name" class="sidebar__account">
+			<Avatar icon="pi pi-user" class="sidebar__avatar" size="large" />
+			<div>
+				<span class="sidebar__username">{{ $authStore.accounts[0].name }}</span>
+				<Button
+					class="sidebar__sign-out-button secondary-button"
+					icon="pi pi-sign-out"
+					label="Sign Out"
+					severity="secondary"
+					size="small"
+					@click="handleLogout()"
+				/>
+			</div>
+		</div>
 	</div>
 </template>
 
 <script lang="ts">
+import { getMsalInstance } from '@/js/auth';
+
 export default {
 	name: 'Sidebar',
+
+	methods: {
+		async handleLogout() {
+			const msalInstance = await getMsalInstance();
+			const accountFilter = {
+				username: this.$authStore.accounts[0].username,
+			};
+			const logoutRequest = {
+				account: msalInstance.getAccount(accountFilter),
+			};
+			await msalInstance.logoutRedirect(logoutRequest);
+			this.$router.push({ path: '/login' });
+		},
+	},
 };
 </script>
 
@@ -72,6 +104,7 @@ a {
 	background-color: var(--primary-color);
 	z-index: 3;
 	flex-shrink: 0;
+	overflow-y: scroll;
 }
 
 .sidebar__header {
@@ -124,5 +157,35 @@ a {
 	&.router-link-active, &:hover {
 		background-color: rgba(217, 217, 217, 0.05);
 	}
+}
+
+.sidebar__account {
+	flex-grow: 1;
+	color: var(--primary-text);
+	display: grid;
+	grid-template-columns: auto auto;
+	align-items: end;
+	justify-content: flex-start;
+	padding: 12px 24px;
+	text-transform: inherit;
+}
+
+.sidebar__avatar {
+	margin-right: 12px;
+	color: var(--primary-color);
+	height: 61px;
+	width: 61px;
+}
+
+.sidebar__username {
+	color: var(--primary-text);
+	font-size: 0.875rem;
+	text-transform: capitalize;
+	line-height: 0;
+	vertical-align: super;
+}
+
+.sidebar__sign-out-button {
+	width: 100%;
 }
 </style>
