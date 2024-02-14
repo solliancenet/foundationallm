@@ -1,8 +1,7 @@
-export type AgentDataSource = {};
-
 export type AgentIndex = {
 	Name: string;
-	Description: string;
+	ObjectId: string | null;
+	Description?: string;
 	Indexer: string;
 	Settings: {
 		IndexName: string;
@@ -16,6 +15,25 @@ export type AgentIndex = {
 		AuthenticationType: string;
 		Endpoint: string;
 	};
+};
+
+export type AgentDataSource = {
+	Name: string;
+	ObjectId: string | null;
+	Type: string;
+	Settings?: {
+		IndexName: string;
+		TopN?: string;
+		Filters?: string;
+		EmbeddingFieldName?: string;
+		TextFieldName?: string;
+	};
+	ConfigurationReferences?: {
+		APIKey: string;
+		AuthenticationType: string;
+		Endpoint: string;
+	};
+	Formats: Array<string>;
 };
 
 export type AgentGatekeeper = {};

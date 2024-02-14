@@ -1,4 +1,4 @@
-import type { AgentIndex } from './types';
+import type { AgentIndex, AgentDataSource } from './types';
 
 export const mockGetAgentIndexesResponse: AgentIndex[] = [
 	{
@@ -35,19 +35,18 @@ export const mockGetAgentIndexesResponse: AgentIndex[] = [
 	},
 ];
 
-export const mockGetAgentDataSourcesResponse: AgentIndex[] = [
+export const mockGetAgentDataSourcesResponse: AgentDataSource[] = [
 	{
 		Name: 'AzureBlob_DataSource_1',
 		ObjectId: '90871234981',
 		Type: 'AzureDataLake',
-		Container: {
-			Name: 'documents',
-			Formats: [
-				'pdf',
-			],
-		},
-		Description: 'Azure AI Search index for vectorization testing.',
-		Indexer: 'AzureAISearchIndexer',
+		Formats: ['pdf'],
+		// Container: {
+		// 	Name: 'documents',
+		// 	Formats: ['pdf'],
+		// },
+		// Description: 'Azure AI Search index for vectorization testing.',
+		// Indexer: 'AzureAISearchIndexer',
 		Settings: {
 			IndexName: 'fllm-test-001',
 		},
@@ -61,16 +60,13 @@ export const mockGetAgentDataSourcesResponse: AgentIndex[] = [
 		Name: 'AzureBlob_DataSource_2',
 		ObjectId: '8931729038',
 		Type: 'SharePointOnline',
-		Container: {
-			Name: 'census_data',
-			Formats: [
-				'pdf',
-				'txt',
-				'doc',
-			],
-		},
-		Description: 'Azure AI Search index for the State of the Union agent.',
-		Indexer: 'AzureAISearchIndexer',
+		Formats: ['pdf', 'txt', 'doc'],
+		// Container: {
+		// 	Name: 'census_data',
+		// 	Formats: ['pdf', 'txt', 'doc'],
+		// },
+		// Description: 'Azure AI Search index for the State of the Union agent.',
+		// Indexer: 'AzureAISearchIndexer',
 		Settings: {
 			IndexName: 'sotu',
 			TopN: '3',
@@ -88,11 +84,11 @@ export const mockGetAgentDataSourcesResponse: AgentIndex[] = [
 		Name: 'AzureBlob_DataSource_3',
 		ObjectId: '12873989',
 		Type: 'AzureDataLake',
-		Container: {
-			Name: 'data',
-			Formats: [
-				'txt',
-			],
-		},
+		Formats: ['txt'],
+		// Description: 'Azure AI Search Search index for vectorization testing.',
+		// Container: {
+		// 	Name: 'data',
+		// 	Formats: ['txt'],
+		// },
 	}
 ];

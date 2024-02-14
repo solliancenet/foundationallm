@@ -41,10 +41,7 @@
 </template>
 
 <script lang="ts">
-import { mapStores } from 'pinia';
 import type { Message, Session } from '@/js/types';
-import { useAppConfigStore } from '@/stores/appConfigStore';
-import { useAppStore } from '@/stores/appStore';
 
 export default {
 	name: 'ChatThread',
@@ -60,15 +57,12 @@ export default {
 	},
 
 	computed: {
-		...mapStores(useAppConfigStore),
-		...mapStores(useAppStore),
-
 		currentSession() {
-			return this.appStore.currentSession;
+			return this.$appStore.currentSession;
 		},
 
 		messages() {
-			return this.appStore.currentMessages;
+			return this.$appStore.currentMessages;
 		},
 	},
 
@@ -77,14 +71,14 @@ export default {
 			if (newSession.id === oldSession?.id) return;
 			this.isLoading = true;
 			this.userSentMessage = false;
-			await this.appStore.getMessages();
+			await this.$appStore.getMessages();
 			this.isLoading = false;
 		},
 	},
 
 	methods: {
 		async handleRateMessage(message: Message, isLiked: Message['rating']) {
-			await this.appStore.rateMessage(message, isLiked);
+			await this.$appStore.rateMessage(message, isLiked);
 		},
 
 		async handleSend(text: string) {
@@ -92,7 +86,7 @@ export default {
 
 			this.isMessagePending = true;
 			this.userSentMessage = true;
-			await this.appStore.sendMessage(text);
+			await this.$appStore.sendMessage(text);
 			this.isMessagePending = false;
 		},
 	},

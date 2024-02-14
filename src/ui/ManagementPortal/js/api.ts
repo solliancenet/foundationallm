@@ -17,25 +17,22 @@ export default {
 	mockLoadTime: 1000,
 
 	apiVersion: '1.0',
-	apiUrl: null,
-	setApiUrl(apiUrl) {
+	apiUrl: null as string | null,
+	setApiUrl(apiUrl: string) {
 		this.apiUrl = apiUrl;
 	},
 
-	instanceId: null,
-	setInstanceId(instanceId) {
+	instanceId: null as string | null,
+	setInstanceId(instanceId: string) {
 		this.instanceId = instanceId;
 	},
 
+	bearerToken: null,
 	async getBearerToken() {
 		if (this.bearerToken) return this.bearerToken;
 
-		const msalInstance = await getMsalInstance();
-		const accounts = msalInstance.getAllAccounts();
-		const account = accounts[0];
-		const bearerToken = await msalInstance.acquireTokenSilent({ account });
-
-		this.bearerToken = bearerToken.accessToken;
+		const token = await useNuxtApp().$authStore.getToken();
+		this.bearerToken = token.accessToken;
 		return this.bearerToken;
 	},
 
@@ -62,12 +59,15 @@ export default {
 	},
 
 	async getAgentDataSources(): Promise<AgentDataSource[]> {
-		const data = JSON.parse(await this.fetch(`/instances/${this.instanceId}/providers/FoundationaLLM.Vectorization/contentsourceprofiles?api-version=${this.apiVersion}`));
+		const response = await this.fetch(`/instances/${this.instanceId}/providers/FoundationaLLM.Vectorization/contentsourceprofiles?api-version=${this.apiVersion}`) as string;
+		const data = JSON.parse(response) as AgentDataSource[];
 		return data.map(source => ({ ...source, Formats: ['pdf', 'txt'] }));
 	},
 
 	async getAgentIndexes(): Promise<AgentIndex[]> {
-		return JSON.parse(await this.fetch(`/instances/${this.instanceId}/providers/FoundationaLLM.Vectorization/indexingprofiles?api-version=${this.apiVersion}`));
+		const response =  await this.fetch(`/instances/${this.instanceId}/providers/FoundationaLLM.Vectorization/indexingprofiles?api-version=${this.apiVersion}`) as string;
+		const data = JSON.parse(response) as AgentIndex[];
+		return data;
 	},
 
 	async getAgentGatekeepers(): Promise<AgentGatekeeper[]> {

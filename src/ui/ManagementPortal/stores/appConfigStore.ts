@@ -103,7 +103,7 @@ export const useAppConfigStore = defineStore('appConfig', {
 			this.auth.clientId = authClientId;
 			this.auth.instance = authInstance;
 			this.auth.tenantId = authTenantId;
-			this.auth.scopes = authScopes;
+			this.auth.scopes = [authScopes];
 			this.auth.callbackPath = authCallbackPath;
 		},
 	},

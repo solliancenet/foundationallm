@@ -2,22 +2,16 @@
 	<div class="chat-app">
 		<NavBar />
 		<div class="chat-content">
-			<ChatSidebar v-show="!appStore.isSidebarClosed" class="chat-sidebar" />
-			<div v-show="!appStore.isSidebarClosed" class="sidebar-blur" @click="appStore.toggleSidebar" />
+			<ChatSidebar v-show="!$appStore.isSidebarClosed" class="chat-sidebar" />
+			<div v-show="!$appStore.isSidebarClosed" class="sidebar-blur" @click="$appStore.toggleSidebar" />
 			<ChatThread />
 		</div>
 	</div>
 </template>
 
 <script lang="ts">
-import { mapStores } from 'pinia';
-import { useAppStore } from '@/stores/appStore';
 export default {
 	name: 'Index',
-
-	computed: {
-		...mapStores(useAppStore),
-	},
 };
 </script>
 

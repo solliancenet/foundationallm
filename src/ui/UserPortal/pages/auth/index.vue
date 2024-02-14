@@ -1,7 +1,7 @@
 <template>
 	<div class="login-page">
 		<div class="login-container">
-			<img :src="appConfigStore.logoUrl" class="logo" />
+			<img :src="$appConfigStore.logoUrl" class="logo" />
 			<Button icon="pi pi-microsoft" label="Sign in" size="large" @click="signIn"></Button>
 		</div>
 	</div>
@@ -15,21 +15,12 @@ definePageMeta({
 </script>
 
 <script lang="ts">
-import { mapStores } from 'pinia';
-import { useAppConfigStore } from '@/stores/appConfigStore';
-import { useAuthStore } from '@/stores/authStore';
-
 export default {
 	name: 'Login',
 
-	computed: {
-		...mapStores(useAppConfigStore),
-		...mapStores(useAuthStore),
-	},
-
 	methods: {
 		async signIn() {
-			const response = await this.authStore.login();
+			const response = await this.$authStore.login();
 			if (response.account) {
 				this.$router.push({ path: '/', query: this.$nuxt._route.query });
 			}

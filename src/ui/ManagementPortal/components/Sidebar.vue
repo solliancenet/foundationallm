@@ -51,17 +51,17 @@
 		<div class="sidebar__item">Identity & Access Management (IAM)</div>
 
 		<!-- Logged in user -->
-		<div v-if="$authStore.accounts[0]?.name" class="sidebar__account">
+		<div v-if="$authStore.isAuthenticated" class="sidebar__account">
 			<Avatar icon="pi pi-user" class="sidebar__avatar" size="large" />
 			<div>
-				<span class="sidebar__username">{{ $authStore.accounts[0].name }}</span>
+				<span class="sidebar__username">{{ $authStore.currentAccount.name }}</span>
 				<Button
 					class="sidebar__sign-out-button secondary-button"
 					icon="pi pi-sign-out"
 					label="Sign Out"
 					severity="secondary"
 					size="small"
-					@click="handleLogout()"
+					@click="$authStore.logout()"
 				/>
 			</div>
 		</div>
@@ -69,24 +69,8 @@
 </template>
 
 <script lang="ts">
-import { getMsalInstance } from '@/js/auth';
-
 export default {
 	name: 'Sidebar',
-
-	methods: {
-		async handleLogout() {
-			const msalInstance = await getMsalInstance();
-			const accountFilter = {
-				username: this.$authStore.accounts[0].username,
-			};
-			const logoutRequest = {
-				account: msalInstance.getAccount(accountFilter),
-			};
-			await msalInstance.logoutRedirect(logoutRequest);
-			this.$router.push({ path: '/login' });
-		},
-	},
 };
 </script>
 

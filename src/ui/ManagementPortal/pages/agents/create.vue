@@ -400,7 +400,7 @@
 <script lang="ts">
 import type { PropType } from 'vue';
 import api from '@/js/api';
-import type { CreateAgentRequest, AgentIndex } from '@/js/types';
+import type { CreateAgentRequest, AgentIndex, AgentType } from '@/js/types';
 
 const defaultSystemPrompt: string = 'You are an analytic agent named Khalil that helps people find information about FoundationaLLM. Provide concise answers that are polite and professional.';
 
@@ -517,7 +517,7 @@ export default {
 	computed: {
 		groupedDataSources() {
 			const grouped = {};
-			this.dataSources.forEach(dataSource => {
+			this.dataSources.forEach((dataSource) => {
 				if (!grouped[dataSource.Type]) {
 					grouped[dataSource.Type] = [];
 				}
@@ -540,7 +540,7 @@ export default {
 
 			this.loadingStatusText = 'Retrieving data sources...';
 			this.dataSources = await api.getAgentDataSources();
-		} catch(error) {
+		} catch (error) {
 			this.$toast.add({
 				severity: 'error',
 				detail: error?.response?._data || error,
@@ -603,7 +603,7 @@ export default {
 		},
 
 		handleNameInput(event) {
-			let element = event.target;
+			const element = event.target;
 
 			// Remove spaces
 			let sanitizedValue = element.value.replace(/\s/g, '');
@@ -630,7 +630,7 @@ export default {
 		},
 
 		async handleCreateAgent() {
-			const errors = [];
+			const errors: Array<string> = [];
 			if (!this.agentName) {
 				errors.push('Please give the agent a name.');
 			}
