@@ -43,15 +43,20 @@ class KnowledgeManagementAgent(AgentBase):
         resource_provider : ResourceProvider
             Resource provider for retrieving embedding and indexing profiles.        
         """       
-        self.llm = llm.get_completion_model(completion_request.agent.language_model)        
-       
-        retriever_factory = RetrieverFactory(
-                        indexing_profile_object_id = completion_request.agent.indexing_profile_object_id,
-                        text_embedding_profile_object_id= completion_request.agent.text_embedding_profile_object_id,
-                        config = config,
-                        resource_provider = resource_provider)
-        self.retriever = retriever_factory.get_retriever()
+
+        self.llm = llm.get_completion_model(completion_request.agent.language_model)
+        self.retrievers = []
+        for indexing_profile in completion_request.agent.indexing_profile_object_ids:
+            retriever_factory = RetrieverFactory(
+                            indexing_profile_object_id = indexing_profile,
+                            text_embedding_profile_object_id= completion_request.agent.text_embedding_profile_object_id,
+                            config = config,
+                            resource_provider = resource_provider)
+            self.retrievers.append(retriever_factory.get_retriever())
+                        
+        self.retriever = next((r for r in self.retrievers), None)
         self.agent_prompt = resource_provider.get_resource(completion_request.agent.prompt_object_id).prefix
+
         conversation_history: ConversationHistory = completion_request.agent.conversation_history
         self.message_history_enabled = conversation_history.enabled
         self.message_history_count = conversation_history.max_history        
