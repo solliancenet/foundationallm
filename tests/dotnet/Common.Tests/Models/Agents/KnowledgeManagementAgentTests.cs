@@ -18,7 +18,7 @@ namespace FoundationaLLM.Common.Tests.Models.Agents
         public void KnowledgeManagementAgent_IndexingProfile_DefaultIsNull()
         {
             // Assert
-            Assert.Null(_knowledgeManagementAgent.IndexingProfileObjectId);
+            Assert.Null(_knowledgeManagementAgent.IndexingProfileObjectIds);
         }
 
         [Fact]

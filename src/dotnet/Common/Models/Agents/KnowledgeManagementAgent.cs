@@ -16,8 +16,8 @@ namespace FoundationaLLM.Common.Models.Agents
         /// <summary>
         /// The vectorization indexing profile resource path.
         /// </summary>
-        [JsonPropertyName("indexing_profile_object_id")]
-        public string? IndexingProfileObjectId { get; set; }
+        [JsonPropertyName("indexing_profile_object_ids")]
+        public List<string>? IndexingProfileObjectIds { get; set; }
 
         /// <summary>
         /// The vectorization text embedding profile resource path.
