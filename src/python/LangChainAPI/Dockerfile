@@ -1,4 +1,4 @@
-FROM python:3.11-bookworm
+FROM python:3.11-slim
 ARG FOUNDATIONALLM_VERSION
 ENV FOUNDATIONALLM_VERSION=${FOUNDATIONALLM_VERSION:-0.0.0}
 ENV APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL=true
@@ -11,8 +11,12 @@ RUN apt-get update \
         && ACCEPT_EULA=Y apt-get install -y msodbcsql18 mssql-tools
 
 WORKDIR /code
+
+RUN apt-get update && apt-get -y install libpq-dev gcc
 COPY ./LangChainAPI/requirements.txt /code/requirements.txt
-RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
+RUN python3 -m pip install --no-cache-dir --upgrade torch --index-url https://download.pytorch.org/whl/cpu 
+RUN python3 -m pip install --no-cache-dir --upgrade -r /code/requirements.txt
+
 COPY ./PythonSDK/foundationallm /code/foundationallm
 COPY ./LangChainAPI /code
 
