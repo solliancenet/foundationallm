@@ -109,7 +109,7 @@ public partial class CoreService(
             var messages = await _cosmosDbService.GetSessionMessagesAsync(orchestrationRequest.SessionId, _callContext.CurrentUserIdentity?.UPN ??
                 throw new InvalidOperationException("Failed to retrieve the identity of the signed in user when retrieving chat completions."));
             var messageHistoryList = messages
-                .Select(message => new MessageHistoryItem(message.Sender, message.Text))
+                .Select(message => new MessageHistoryItem(message.Sender, string.IsNullOrWhiteSpace(message.Text) ? "" : message.Text))
                 .ToList();
 
             var completionRequest = new CompletionRequest

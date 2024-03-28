@@ -38,10 +38,11 @@ namespace FoundationaLLM.Common.Services.API
 
             var client = _httpClientFactoryService.CreateClient(_downstreamHttpClientName);
 
+            var serializedRequest = JsonSerializer.Serialize(completionRequest, _jsonSerializerOptions);
             var responseMessage = await client.PostAsync("orchestration/completion",
-            new StringContent(
-                    JsonSerializer.Serialize(completionRequest, _jsonSerializerOptions),
-                    Encoding.UTF8, "application/json"));
+                new StringContent(
+                    serializedRequest,
+                        Encoding.UTF8, "application/json"));
 
             if (responseMessage.IsSuccessStatusCode)
             {

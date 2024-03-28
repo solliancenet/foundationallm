@@ -81,6 +81,11 @@ namespace FoundationaLLM.AgentFactory.Core.Services
                 // Add conversation history.
                 if (agent.ConversationHistory?.Enabled == true && request.MessageHistory != null)
                 {
+                    // The message history needs to be in a continuous order of user and assistant messages.
+                    // If the MaxHistory value is odd, add one to the number of messages to take to ensure proper pairing.
+                    if (agent.ConversationHistory.MaxHistory % 2 != 0)
+                        agent.ConversationHistory.MaxHistory++;
+
                     var messageHistoryItems = request.MessageHistory?.TakeLast(agent.ConversationHistory.MaxHistory);
                     foreach (var item in messageHistoryItems!)
                     {
