@@ -65,7 +65,7 @@ namespace FoundationaLLM.Vectorization.ResourceProviders
             ])
     {
         /// <inheritdoc/>
-        protected override Dictionary<string, ResourceTypeDescriptor> GetResourceTypes() =>
+        public override Dictionary<string, ResourceTypeDescriptor> GetResourceTypes() =>
             VectorizationResourceProviderMetadata.AllowedResourceTypes;
 
         private readonly ConcurrentDictionary<string, VectorizationProfileBase> _textPartitioningProfiles = [];

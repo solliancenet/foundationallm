@@ -32,7 +32,7 @@ namespace FoundationaLLM.Authorization.ResourceProviders
             loggerFactory.CreateLogger<AuthorizationResourceProviderService>(),
             [])
     {
-        protected override Dictionary<string, ResourceTypeDescriptor> GetResourceTypes() =>
+        public override Dictionary<string, ResourceTypeDescriptor> GetResourceTypes() =>
             AuthorizationResourceProviderMetadata.AllowedResourceTypes;
 
         /// <inheritdoc/>

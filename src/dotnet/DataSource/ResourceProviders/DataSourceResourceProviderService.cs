@@ -53,7 +53,7 @@ namespace FoundationaLLM.DataSource.ResourceProviders
             ])
     {
         /// <inheritdoc/>
-        protected override Dictionary<string, ResourceTypeDescriptor> GetResourceTypes() =>
+        public override Dictionary<string, ResourceTypeDescriptor> GetResourceTypes() =>
             DataSourceResourceProviderMetadata.AllowedResourceTypes;
 
         private ConcurrentDictionary<string, DataSourceReference> _dataSourceReferences = [];

@@ -11,6 +11,7 @@ using FoundationaLLM.Common.Services;
 using FoundationaLLM.Common.Services.Azure;
 using FoundationaLLM.Common.Settings;
 using FoundationaLLM.Common.Validation;
+using FoundationaLLM.Management.API.Swagger;
 using FoundationaLLM.Management.Models.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
@@ -143,6 +144,8 @@ namespace FoundationaLLM.Management.API
                     // Add a custom operation filter which sets default values
                     options.OperationFilter<SwaggerDefaultValues>();
 
+                    options.DocumentFilter<FllmIOperationsDocumentFilter>();
+
                     var fileName = typeof(Program).Assembly.GetName().Name + ".xml";
                     var filePath = Path.Combine(AppContext.BaseDirectory, fileName);
 
@@ -221,7 +224,7 @@ namespace FoundationaLLM.Management.API
                         options.SwaggerEndpoint(url, name);
                     }
 
-                    options.OAuthAdditionalQueryStringParams(new Dictionary<string, string>() { { "resource", builder.Configuration[AppConfigurationKeys.FoundationaLLM_Management_Entra_ClientId] } });
+                    options.OAuthAdditionalQueryStringParams(new Dictionary<string, string>() { { "resource", builder.Configuration[AppConfigurationKeys.FoundationaLLM_ManagementAPI_Entra_ClientId] } });
                 });
 
             app.UseHttpsRedirection();

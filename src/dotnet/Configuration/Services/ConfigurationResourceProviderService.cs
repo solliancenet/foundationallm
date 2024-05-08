@@ -62,7 +62,7 @@ namespace FoundationaLLM.Configuration.Services
             ])
     {
         /// <inheritdoc/>
-        protected override Dictionary<string, ResourceTypeDescriptor> GetResourceTypes() =>
+        public override Dictionary<string, ResourceTypeDescriptor> GetResourceTypes() =>
             ConfigurationResourceProviderMetadata.AllowedResourceTypes;
 
         private ConcurrentDictionary<string, ExternalOrchestrationServiceReference> _externalOrchestrationServiceReferences = [];
@@ -132,7 +132,7 @@ namespace FoundationaLLM.Configuration.Services
         private async Task<List<AppConfigurationKeyBase>> LoadAppConfigurationKeys(ResourceTypeInstance instance)
         {
             var keyFilter = instance.ResourceId ?? "FoundationaLLM:*";
-            var result = new List<AppConfigurationKeyBase>(); 
+            var result = new List<AppConfigurationKeyBase>();
 
             var settings = await _appConfigurationService.GetConfigurationSettingsAsync(keyFilter);
             foreach (var setting in settings)
@@ -245,7 +245,7 @@ namespace FoundationaLLM.Configuration.Services
                     ?? throw new ResourceProviderException("Invalid key vault reference value.", StatusCodes.Status400BadRequest);
 
                 kvAppConfig.KeyVaultUri = _keyVaultService.KeyVaultUri;
-                
+
                 if (string.IsNullOrWhiteSpace(kvAppConfig.KeyVaultSecretName))
                     throw new ResourceProviderException("The key vault secret name is invalid.", StatusCodes.Status400BadRequest);
 
@@ -261,7 +261,7 @@ namespace FoundationaLLM.Configuration.Services
             }
             else
                 await _appConfigurationService.SetConfigurationSettingAsync(appConfig.Key, appConfig.Value, appConfig.ContentType);
-                
+
             return new ResourceProviderUpsertResult
             {
                 ObjectId = $"/instances/{_instanceSettings.Id}/providers/{_name}/{ConfigurationResourceTypeNames.AppConfigurations}/{appConfig.Key}"

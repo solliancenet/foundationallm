@@ -46,7 +46,7 @@ namespace FoundationaLLM.Prompt.ResourceProviders
             logger)
     {
         /// <inheritdoc/>
-        protected override Dictionary<string, ResourceTypeDescriptor> GetResourceTypes() =>
+        public override Dictionary<string, ResourceTypeDescriptor> GetResourceTypes() =>
             PromptResourceProviderMetadata.AllowedResourceTypes;
 
         private ConcurrentDictionary<string, PromptReference> _promptReferences = [];
