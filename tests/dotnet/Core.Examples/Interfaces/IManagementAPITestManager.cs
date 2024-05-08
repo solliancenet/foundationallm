@@ -1,5 +1,4 @@
 ﻿using FoundationaLLM.Common.Models.ResourceProviders.Agent;
-using FoundationaLLM.Core.Examples.Exceptions;
 
 namespace FoundationaLLM.Core.Examples.Interfaces;
 

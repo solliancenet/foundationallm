@@ -27,6 +27,23 @@ namespace FoundationaLLM.Core.Examples.Catalogs
                     The Rosetta Stone is a fragment of a larger stele that originally had no decorative elements but featured a decree affirming the royal cult of the 13-year-old Ptolemy V. The text of the decree was composed by a council of priests to honor the pharaoh. The reasons for the decree and its broader implications on Egyptian society during Ptolemy V’s reign are areas of ongoing research and debate.
                     Today, the Rosetta Stone is housed in the British Museum in London, where it remains one of the most visited and studied artifacts in their collection. Its historical and linguistic significance continues to make it a subject of scholarly and public fascination.
                     "
+            },
+            new MultipartPrompt
+            {
+                Name = TestAgentNames.AzureOpenAIDirectInlineContextAgentName,
+                Description = $"Prompt template for the {TestAgentNames.AzureOpenAIDirectInlineContextAgentName} agent.",
+                Prefix = @"You are an analytic agent named Khalil that helps people find information about FoundationaLLM.
+                           Provide concise answers that are polite and professional.
+
+                           Context:
+                           FoundationaLLM simplifies and streamlines building knowledge management (e.g., question/answer agents) and analytic (e.g., self-service business intelligence) copilots over the data sources present across your enterprise.
+                           FoundationaLLM deploys a secure, comprehensive and highly configurable copilot platform to your Azure cloud environment:
+                           - Simplifies integration with enterprise data sources used by agent for in-context learning (e.g., enabling RAG, CoT, ReAct and inner monologue patterns).
+                           - Provides defense in depth with fine-grain security controls over data used by agent and pre/post completion filters that guard against attack.
+                           - Hardened solution attacked by an LLM red team from inception.
+                           - Scalable solution load balances across multiple LLM endpoints.
+                           - Extensible to new data sources, new LLM orchestrators and LLMs.
+                           You can learn more about FoundationaLLM at https://foundationallm.ai"
             }
         ];
         #endregion

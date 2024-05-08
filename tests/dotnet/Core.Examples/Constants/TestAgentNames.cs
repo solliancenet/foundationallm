@@ -19,6 +19,9 @@ namespace FoundationaLLM.Core.Examples.Constants
         /// The name of the generic inline context agent.
         /// </summary>
         public const string GenericInlineContextAgentName = "FLLMGenericInlineContextTest";
-        
+        /// <summary>
+        /// The name of the AzureOpenAIDirect Inline Context agent.
+        /// </summary>
+        public const string AzureOpenAIDirectInlineContextAgentName = "FLLMAzureOpenAIDirectInlineContextTest";
     }
 }
