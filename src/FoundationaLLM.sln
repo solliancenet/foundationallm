@@ -103,6 +103,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core.Examples", "..\tests\d
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Attachment", "dotnet\Attachments\Attachment.csproj", "{8F66055B-3A50-4F9B-A774-7D17F2D4A523}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AIModel", "AIModel\AIModel.csproj", "{DEBAF1D6-7A6B-4835-A5EC-3A11DA5A0FCF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -260,6 +262,10 @@ Global
 		{8F66055B-3A50-4F9B-A774-7D17F2D4A523}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8F66055B-3A50-4F9B-A774-7D17F2D4A523}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8F66055B-3A50-4F9B-A774-7D17F2D4A523}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DEBAF1D6-7A6B-4835-A5EC-3A11DA5A0FCF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DEBAF1D6-7A6B-4835-A5EC-3A11DA5A0FCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DEBAF1D6-7A6B-4835-A5EC-3A11DA5A0FCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DEBAF1D6-7A6B-4835-A5EC-3A11DA5A0FCF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -309,6 +315,7 @@ Global
 		{2A51F9EB-BFCB-4285-A6FC-80CCA46228FB} = {B6DC1190-2873-44A3-85B3-63D7BDE99231}
 		{6230C568-E97B-4959-8ECE-33D97D1BBD4C} = {28E0E967-A94D-4820-8A61-0B71D3B2780F}
 		{8F66055B-3A50-4F9B-A774-7D17F2D4A523} = {B6DC1190-2873-44A3-85B3-63D7BDE99231}
+		{DEBAF1D6-7A6B-4835-A5EC-3A11DA5A0FCF} = {B6DC1190-2873-44A3-85B3-63D7BDE99231}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FF5DE858-4B85-4EE8-8A6D-46E8E4FBA078}

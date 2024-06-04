@@ -31,9 +31,14 @@ namespace FoundationaLLM.Common.Constants
         /// </summary>
         public const string FoundationaLLM_ResourceProvider_DataSource = "ResourceProvider.FoundationaLLM.DataSource";
 
-                /// <summary>
+        /// <summary>
         /// The namespace name for events concerning the FoundationaLLM.Attachment resource provider.
         /// </summary>
         public const string FoundationaLLM_ResourceProvider_Attachment = "ResourceProvider.FoundationaLLM.Attachment";
+
+        /// <summary>
+        /// The namespace name for events concerning the FoundationaLLM.AIModel resource provider.
+        /// </summary>
+        public const string FoundationaLLM_ResourceProvider_AIModel = "ResourceProvider.FoundationaLLM.AIModel";
     }
 }

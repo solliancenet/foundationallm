@@ -4,13 +4,13 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <AssemblyName>FoundationaLLM.Attachment</AssemblyName>
-    <RootNamespace>FoundationaLLM.Attachment</RootNamespace>
+    <RootNamespace>FoundationaLLM.AIModel</RootNamespace>
+    <AssemblyName>FoundationaLLM.AIModel</AssemblyName>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Common\Common.csproj" />
+    <ProjectReference Include="..\dotnet\Common\Common.csproj" />
   </ItemGroup>
 
 </Project>

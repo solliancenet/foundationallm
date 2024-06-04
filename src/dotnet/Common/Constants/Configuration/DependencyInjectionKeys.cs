@@ -76,10 +76,15 @@
         /// The dependency injection key for the FoundationaLLM.Attachment resource provider.
         /// </summary>
         public const string FoundationaLLM_ResourceProvider_Attachment = "FoundationaLLM:ResourceProvider:Attachment";
+
         /// <summary>
         /// The dependency injection key for the FoundationaLLM.Authorization resource provider.
         /// </summary>
         public const string FoundationaLLM_ResourceProvider_Authorization = "FoundationaLLM:ResourceProvider:Authorization";
+
+        /// The dependency injection key for the FoundationaLLM.AIModel resource provider.
+        /// </summary>
+        public const string FoundationaLLM_ResourceProvider_AIModel = "FoundationaLLM:ResourceProvider:AIModel";
 
         #endregion
     }

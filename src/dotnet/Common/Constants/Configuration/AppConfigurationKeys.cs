@@ -1092,6 +1092,10 @@
         /// The key section for the FoundationaLLM:AzureAIStudio:BlobStorageServiceSettings app configuration settings.
         /// </summary>
         public const string FoundationaLLM_AzureAIStudio_BlobStorageServiceSettings = "FoundationaLLM:AzureAIStudio:BlobStorageServiceSettings";
+        /// <summary>
+        /// The key section for the FoundationaLLM:AIModels app configuration settings.
+        /// </summary>
+        public const string FoundationaLLM_AIModels = "FoundationaLLM:AIModels";
 
         #region Resource providers
 

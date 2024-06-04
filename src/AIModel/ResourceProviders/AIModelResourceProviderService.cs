@@ -1,29 +1,31 @@
-﻿using Azure.Messaging;
-using FluentValidation;
-using FoundationaLLM.Attachment.Models;
+﻿using FoundationaLLM.Common.Constants.Configuration;
 using FoundationaLLM.Common.Constants;
-using FoundationaLLM.Common.Constants.Configuration;
-using FoundationaLLM.Common.Constants.ResourceProviders;
-using FoundationaLLM.Common.Exceptions;
 using FoundationaLLM.Common.Interfaces;
-using FoundationaLLM.Common.Models.Authentication;
 using FoundationaLLM.Common.Models.Configuration.Instance;
-using FoundationaLLM.Common.Models.Events;
-using FoundationaLLM.Common.Models.ResourceProviders;
-using FoundationaLLM.Common.Models.ResourceProviders.Attachment;
 using FoundationaLLM.Common.Services.ResourceProviders;
-using Microsoft.AspNetCore.Http;
+using FoundationaLLM.Common.Validation;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Azure.Messaging;
+using FluentValidation;
+using FoundationaLLM.Common.Constants.ResourceProviders;
+using FoundationaLLM.Common.Exceptions;
+using FoundationaLLM.Common.Models.Authentication;
+using FoundationaLLM.Common.Models.Events;
+using FoundationaLLM.Common.Models.ResourceProviders.AIModel;
+using FoundationaLLM.Common.Models.ResourceProviders;
+using Microsoft.AspNetCore.Http;
 using System.Collections.Concurrent;
-using System.Text;
+using FoundationaLLM.AIModel.Models;
 using System.Text.Json;
+using System.Text;
+using FoundationaLLM.Common.Models.ResourceProviders.Agent;
 
-namespace FoundationaLLM.Attachment.ResourceProviders
+namespace FoundationaLLM.AIModel.ResourceProviders
 {
     /// <summary>
-    /// Implements the FoundationaLLM.Attachment resource provider.
+    /// Implements the FoundationaLLM.AIModel resource provider.
     /// </summary>
     /// <param name="instanceOptions">The options providing the <see cref="InstanceSettings"/> with instance settings.</param>
     /// <param name="authorizationService">The <see cref="IAuthorizationService"/> providing authorization services.</param>
@@ -32,10 +34,10 @@ namespace FoundationaLLM.Attachment.ResourceProviders
     /// <param name="resourceValidatorFactory">The <see cref="IResourceValidatorFactory"/> providing the factory to create resource validators.</param>
     /// <param name="serviceProvider">The <see cref="IServiceProvider"/> of the main dependency injection container.</param>
     /// <param name="loggerFactory">The <see cref="ILoggerFactory"/> used to provide loggers for logging.</param>
-    public class AttachmentResourceProviderService(
+    public class AIModelResourceProviderService(
         IOptions<InstanceSettings> instanceOptions,
         IAuthorizationService authorizationService,
-        [FromKeyedServices(DependencyInjectionKeys.FoundationaLLM_ResourceProvider_Attachment)] IStorageService storageService,
+        [FromKeyedServices(DependencyInjectionKeys.FoundationaLLM_ResourceProvider_AIModel)] IStorageService storageService,
         IEventService eventService,
         IResourceValidatorFactory resourceValidatorFactory,
         IServiceProvider serviceProvider,
@@ -47,48 +49,48 @@ namespace FoundationaLLM.Attachment.ResourceProviders
             eventService,
             resourceValidatorFactory,
             serviceProvider,
-            loggerFactory.CreateLogger<AttachmentResourceProviderService>(),
+            loggerFactory.CreateLogger<AIModelResourceProviderService>(),
             [
-                EventSetEventNamespaces.FoundationaLLM_ResourceProvider_Attachment
+                EventSetEventNamespaces.FoundationaLLM_ResourceProvider_AIModel
             ])
     {
         /// <inheritdoc/>
         protected override Dictionary<string, ResourceTypeDescriptor> GetResourceTypes() =>
-            AttachmentResourceProviderMetadata.AllowedResourceTypes;
+            AIModelResourceProviderMetadata.AllowedResourceTypes;
 
-        private ConcurrentDictionary<string, AttachmentReference> _attachmentReferences = [];
+        private ConcurrentDictionary<string, AIModelReference> _aiModelReferences = [];
 
         /// <inheritdoc/>
-        protected override string _name => ResourceProviderNames.FoundationaLLM_Attachment;
-        private const string ATTACHMENT_REFERENCES_FILE_NAME = "_attachment-references.json";
-        private const string ATTACHMENT_REFERENCES_FILE_PATH =
-            $"/{ResourceProviderNames.FoundationaLLM_Attachment}/{ATTACHMENT_REFERENCES_FILE_NAME}";
+        protected override string _name => ResourceProviderNames.FoundationaLLM_AIModel;
+        private const string AIMODEL_REFERENCES_FILE_NAME = "_aiModel-references.json";
+        private const string AIMODEL_REFERENCES_FILE_PATH =
+            $"/{ResourceProviderNames.FoundationaLLM_AIModel}/{AIMODEL_REFERENCES_FILE_NAME}";
 
 
         /// <inheritdoc/>
         protected override async Task InitializeInternal()
         {
             _logger.LogInformation("Starting to initialize the {ResourceProvider} resource provider...", _name);
-            if (await _storageService.FileExistsAsync(_storageContainerName, ATTACHMENT_REFERENCES_FILE_PATH, default))
+            if (await _storageService.FileExistsAsync(_storageContainerName, AIMODEL_REFERENCES_FILE_PATH, default))
             {
                 var fileContent = await _storageService.ReadFileAsync(
                     _storageContainerName,
-                    ATTACHMENT_REFERENCES_FILE_PATH,
+                    AIMODEL_REFERENCES_FILE_PATH,
                     default);
 
                 var resourceReferenceStore =
-                    JsonSerializer.Deserialize<ResourceReferenceStore<AttachmentReference>>(
+                    JsonSerializer.Deserialize<ResourceReferenceStore<AIModelReference>>(
                         Encoding.UTF8.GetString(fileContent.ToArray()));
 
-                _attachmentReferences = new ConcurrentDictionary<string, AttachmentReference>(
+                _aiModelReferences = new ConcurrentDictionary<string, AIModelReference>(
                         resourceReferenceStore!.ToDictionary());
             }
             else
             {
                 await _storageService.WriteFileAsync(
                     _storageContainerName,
-                    ATTACHMENT_REFERENCES_FILE_PATH,
-                    JsonSerializer.Serialize(new ResourceReferenceStore<AttachmentReference>
+                    AIMODEL_REFERENCES_FILE_PATH,
+                    JsonSerializer.Serialize(new ResourceReferenceStore<AIModelReference>
                     {
                         ResourceReferences = []
                     }),
@@ -105,22 +107,22 @@ namespace FoundationaLLM.Attachment.ResourceProviders
         protected override async Task<object> GetResourcesAsync(ResourcePath resourcePath, UnifiedUserIdentity userIdentity) =>
             resourcePath.ResourceTypeInstances[0].ResourceType switch
             {
-                AttachmentResourceTypeNames.Attachments => await LoadAttachments(resourcePath.ResourceTypeInstances[0], userIdentity),
+                AIModelResourceTypeNames.AIModels => await LoadAIModels(resourcePath.ResourceTypeInstances[0], userIdentity),
                 _ => throw new ResourceProviderException($"The resource type {resourcePath.ResourceTypeInstances[0].ResourceType} is not supported by the {_name} resource provider.",
                     StatusCodes.Status400BadRequest)
             };
 
         #region Helpers for GetResourcesAsyncInternal
 
-        private async Task<List<ResourceProviderGetResult<AttachmentFile>>> LoadAttachments(ResourceTypeInstance instance, UnifiedUserIdentity userIdentity)
+        private async Task<List<ResourceProviderGetResult<AIModelBase>>> LoadAIModels(ResourceTypeInstance instance, UnifiedUserIdentity userIdentity)
         {
-            var attachments = new List<AttachmentFile>();
+            var aiModels = new List<AIModelBase>();
 
             if (instance.ResourceId == null)
             {
-                attachments = (await Task.WhenAll(_attachmentReferences.Values
+                aiModels = (await Task.WhenAll(_aiModelReferences.Values
                                          .Where(ar => !ar.Deleted)
-                                         .Select(ar => LoadAttachment(ar))))
+                                         .Select(ar => LoadAIModel(ar))))
                                              .Where(a => a != null)
                                              .Select(a => a!)
                                              .ToList();
@@ -128,95 +130,70 @@ namespace FoundationaLLM.Attachment.ResourceProviders
             }
             else
             {
-                AttachmentFile? attachment;
-                if (!_attachmentReferences.TryGetValue(instance.ResourceId, out var attachmentReference))
+                AIModelBase? aiModel;
+                if (!_aiModelReferences.TryGetValue(instance.ResourceId, out var aiModelReference))
                 {
-                    attachment = await LoadAttachment(null, instance.ResourceId);
-                    if (attachment != null)
-                        attachments.Add(attachment);
+                    aiModel = await LoadAIModel(null, instance.ResourceId);
+                    if (aiModel != null)
+                        aiModels.Add(aiModel);
                 }
                 else
                 {
-                    if (attachmentReference.Deleted)
+                    if (aiModelReference.Deleted)
                         throw new ResourceProviderException(
-                            $"Could not locate the {instance.ResourceId} attachment resource.",
+                            $"Could not locate the {instance.ResourceId} aiModel resource.",
                             StatusCodes.Status404NotFound);
 
-                    attachment = await LoadAttachment(attachmentReference);
-                    if (attachment != null)
-                        attachments.Add(attachment);
+                    aiModel = await LoadAIModel(aiModelReference);
+                    if (aiModel != null)
+                        aiModels.Add(aiModel);
                 }
             }
-            return attachments.Select(attachment => new ResourceProviderGetResult<AttachmentFile>() { Resource = attachment, Actions = [], Roles = [] }).ToList();
+            return aiModels.Select(aiModel => new ResourceProviderGetResult<AIModelBase>() { Resource = aiModel, Actions = [], Roles = [] }).ToList();
         }
 
-        private async Task<AttachmentFile?> LoadAttachment(AttachmentReference? attachmentReference, string? resourceId = null)
+        /// <inheritdoc/>
+        private async Task<AIModelBase?> LoadAIModel(AIModelReference? aiModelReference, string? resourceId = null)
         {
-            if (attachmentReference != null || !string.IsNullOrWhiteSpace(resourceId))
+            if (aiModelReference != null || !string.IsNullOrWhiteSpace(resourceId))
             {
-                attachmentReference ??= new AttachmentReference
+                aiModelReference ??= new AIModelReference
                 {
                     Name = resourceId!,
-                    Type = nameof(AttachmentFile),
+                    Type = nameof(AIModelBase),
                     Filename = $"/{_name}/{resourceId}",
                     Deleted = false
                 };
 
 
-                return new AttachmentFile
+                return new AIModelBase
                 {
-                    Name = attachmentReference.Name,
-                    Type = attachmentReference.Type,
-                    Path = $"{_storageContainerName}{attachmentReference.Filename}"
+                    Name = aiModelReference.Name,
+                    Type = aiModelReference.Type,
+                    //Endpoints = ???,
+                    //Models = ???
                 };
-
-                // Was here as unreachable code - delete?
-                //if (await _storageService.FileExistsAsync(_storageContainerName, attachmentReference.Filename, default))
-                //{
-                //    var fileContent = await _storageService.ReadFileAsync(_storageContainerName, attachmentReference.Filename, default);
-                //    var attachment = JsonSerializer.Deserialize(
-                //               Encoding.UTF8.GetString(fileContent.ToArray()),
-                //               typeof(AttachmentFile),
-                //               _serializerSettings) as AttachmentFile
-                //           ?? throw new ResourceProviderException($"Failed to load the attachment {attachmentReference.Name}.",
-                //               StatusCodes.Status400BadRequest);
-
-                //    if (!string.IsNullOrWhiteSpace(resourceId))
-                //    {
-                //        attachmentReference.Type = attachment.Type!;
-                //        _attachmentReferences.AddOrUpdate(attachmentReference.Name, attachmentReference, (k, v) => attachmentReference);
-                //    }
-
-                //    return attachment;
-                //}
-
-                //if (string.IsNullOrWhiteSpace(resourceId))
-                //{
-                //    // Remove the reference from the dictionary since the file does not exist.
-                //    _attachmentReferences.TryRemove(attachmentReference.Name, out _);
-                //    return null;
-                //}
             }
-            throw new ResourceProviderException($"Could not locate the {attachmentReference.Name} attachment resource.",
+            throw new ResourceProviderException($"Could not locate the {aiModelReference?.Name} aiModel resource.",
                 StatusCodes.Status404NotFound);
         }
 
         #endregion
 
-
-        protected override async Task<object> UpsertResourceAsync<T>(ResourcePath resourcePath, T resource) 
+        /// <inheritdoc/>
+        protected override async Task<object> UpsertResourceAsync<T>(ResourcePath resourcePath, T resource)
         {
-            var attachment = resource as AttachmentFile;
-            if (attachment == null)
+            var aiModel = resource as AIModelBase;
+            if (aiModel == null)
                 throw new ResourceProviderException($"Invalid resource type");
 
-            if (resourcePath.ResourceTypeInstances[0].ResourceType != AttachmentResourceTypeNames.Attachments)
+            if (resourcePath.ResourceTypeInstances[0].ResourceType != AIModelResourceTypeNames.AIModels)
             {
                 throw new ResourceProviderException(
                         $"The resource type {resourcePath.ResourceTypeInstances[0].ResourceType} is not supported by the {_name} resource provider.",
                         StatusCodes.Status400BadRequest);
             }
-            return await UpdateAttachment(resourcePath, attachment);
+            return await UpdateAIModel(resourcePath, aiModel);
         }
 
 
@@ -226,38 +203,36 @@ namespace FoundationaLLM.Attachment.ResourceProviders
 
         #region Helpers for UpsertResourceAsync
 
-        private async Task<ResourceProviderUpsertResult> UpdateAttachment(ResourcePath resourcePath, AttachmentFile attachment)
+        private async Task<ResourceProviderUpsertResult> UpdateAIModel(ResourcePath resourcePath, AIModelBase aiModel)
         {
 
-            if (_attachmentReferences.TryGetValue(attachment.Name!, out var existingAttachmentReference)
-                && existingAttachmentReference!.Deleted)
-                throw new ResourceProviderException($"The attachment resource {existingAttachmentReference.Name} cannot be added or updated.",
+            if (_aiModelReferences.TryGetValue(aiModel.Name!, out var existingAIModelReference)
+                && existingAIModelReference!.Deleted)
+                throw new ResourceProviderException($"The aiModel resource {existingAIModelReference.Name} cannot be added or updated.",
                         StatusCodes.Status400BadRequest);
 
-            if (resourcePath.ResourceTypeInstances[0].ResourceId != attachment.Name)
+            if (resourcePath.ResourceTypeInstances[0].ResourceId != aiModel.Name)
                 throw new ResourceProviderException("The resource path does not match the object definition (name mismatch).",
                     StatusCodes.Status400BadRequest);
 
-            var extension = GetFileExtension(attachment.DisplayName!);
-            var fullName = $"{attachment.Name}{extension}";
+            var extension = GetFileExtension(aiModel.DisplayName!);
+            var fullName = $"{aiModel.Name}{extension}";
 
-            var attachmentReference = new AttachmentReference
+            var aiModelReference = new AIModelReference
             {
-                OriginalFilename = attachment.DisplayName!,
-                ContentType = attachment.ContentType!,
-                Name = attachment.Name,
-                Type = nameof(AttachmentFile),
+                Name = aiModel.Name,
+                Type = nameof(AIModelBase),
                 Filename = $"/{_name}/{fullName}",
                 Deleted = false
             };
 
-            attachment.ObjectId = resourcePath.GetObjectId(_instanceSettings.Id, _name);
+            aiModel.ObjectId = resourcePath.GetObjectId(_instanceSettings.Id, _name);
 
-            var validator = _resourceValidatorFactory.GetValidator(typeof(AttachmentFile));
-            if (validator is IValidator attachmentValidator)
+            var validator = _resourceValidatorFactory.GetValidator(typeof(AIModelBase));
+            if (validator is IValidator aiModelValidator)
             {
-                var context = new ValidationContext<object>(attachment);
-                var validationResult = await attachmentValidator.ValidateAsync(context);
+                var context = new ValidationContext<object>(aiModel);
+                var validationResult = await aiModelValidator.ValidateAsync(context);
                 if (!validationResult.IsValid)
                 {
                     throw new ResourceProviderException($"Validation failed: {string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage))}",
@@ -267,23 +242,23 @@ namespace FoundationaLLM.Attachment.ResourceProviders
 
             await _storageService.WriteFileAsync(
                 _storageContainerName,
-                attachmentReference.Filename,
-                attachment.Content,
-                attachment.ContentType ?? default,
+                aiModelReference.Filename,
+                JsonSerializer.Serialize<AIModelBase>(aiModel, _serializerSettings),
+                default,
                 default);
 
-            _attachmentReferences.AddOrUpdate(attachmentReference.Name, attachmentReference, (k, v) => attachmentReference);
+            _aiModelReferences.AddOrUpdate(aiModelReference.Name, aiModelReference, (k, v) => aiModelReference);
 
             await _storageService.WriteFileAsync(
                     _storageContainerName,
-                    ATTACHMENT_REFERENCES_FILE_PATH,
-                    JsonSerializer.Serialize(ResourceReferenceStore<AttachmentReference>.FromDictionary(_attachmentReferences.ToDictionary())),
+                    AIMODEL_REFERENCES_FILE_PATH,
+                    JsonSerializer.Serialize(ResourceReferenceStore<AIModelReference>.FromDictionary(_aiModelReferences.ToDictionary())),
                     default,
                     default);
 
             return new ResourceProviderUpsertResult
             {
-                ObjectId = (attachment as AttachmentFile)!.ObjectId
+                ObjectId = (aiModel as AIModelBase)!.ObjectId
             };
         }
 
@@ -302,8 +277,8 @@ namespace FoundationaLLM.Attachment.ResourceProviders
         {
             switch (resourcePath.ResourceTypeInstances.Last().ResourceType)
             {
-                case AttachmentResourceTypeNames.Attachments:
-                    await DeleteAttachment(resourcePath.ResourceTypeInstances);
+                case AIModelResourceTypeNames.AIModels:
+                    await DeleteAIModel(resourcePath.ResourceTypeInstances);
                     break;
                 default:
                     throw new ResourceProviderException($"The resource type {resourcePath.ResourceTypeInstances.Last().ResourceType} is not supported by the {_name} resource provider.",
@@ -313,29 +288,29 @@ namespace FoundationaLLM.Attachment.ResourceProviders
 
         #region Helpers for DeleteResourceAsync
 
-        private async Task DeleteAttachment(List<ResourceTypeInstance> instances)
+        private async Task DeleteAIModel(List<ResourceTypeInstance> instances)
         {
-            if (_attachmentReferences.TryGetValue(instances.Last().ResourceId!, out var attachmentReference))
+            if (_aiModelReferences.TryGetValue(instances.Last().ResourceId!, out var aiModelReference))
             {
-                if (!attachmentReference.Deleted)
+                if (!aiModelReference.Deleted)
                 {
-                    attachmentReference.Deleted = true;
+                    aiModelReference.Deleted = true;
 
                     await _storageService.DeleteFileAsync(
                         _storageContainerName,
-                        attachmentReference.Filename);
+                        aiModelReference.Filename);
 
                     await _storageService.WriteFileAsync(
                         _storageContainerName,
-                        ATTACHMENT_REFERENCES_FILE_PATH,
-                        JsonSerializer.Serialize(ResourceReferenceStore<AttachmentReference>.FromDictionary(_attachmentReferences.ToDictionary())),
+                        AIMODEL_REFERENCES_FILE_PATH,
+                        JsonSerializer.Serialize(ResourceReferenceStore<AIModelReference>.FromDictionary(_aiModelReferences.ToDictionary())),
                         default,
                         default);
                 }
             }
             else
             {
-                throw new ResourceProviderException($"Could not locate the {instances.Last().ResourceId} attachment resource.",
+                throw new ResourceProviderException($"Could not locate the {instances.Last().ResourceId} aiModel resource.",
                     StatusCodes.Status404NotFound);
             }
         }
@@ -350,15 +325,15 @@ namespace FoundationaLLM.Attachment.ResourceProviders
             if (resourcePath.ResourceTypeInstances.Count != 1)
                 throw new ResourceProviderException($"Invalid resource path");
 
-            if (typeof(T) != typeof(AttachmentFile))
+            if (typeof(T) != typeof(AIModelBase))
                 throw new ResourceProviderException($"The type of requested resource ({typeof(T)}) does not match the resource type specified in the path ({resourcePath.ResourceTypeInstances[0].ResourceType}).");
 
-            _attachmentReferences.TryGetValue(resourcePath.ResourceTypeInstances[0].ResourceId!, out var attachmentReference);
-            if (attachmentReference == null || attachmentReference.Deleted)
+            _aiModelReferences.TryGetValue(resourcePath.ResourceTypeInstances[0].ResourceId!, out var aiModelReference);
+            if (aiModelReference == null || aiModelReference.Deleted)
                 throw new ResourceProviderException($"The resource {resourcePath.ResourceTypeInstances[0].ResourceId!} of type {resourcePath.ResourceTypeInstances[0].ResourceType} was not found.");
 
-            var attachment = LoadAttachment(attachmentReference).Result;
-            return attachment as T
+            var aiModel = LoadAIModel(aiModelReference).Result;
+            return aiModel as T
                 ?? throw new ResourceProviderException($"The resource {resourcePath.ResourceTypeInstances[0].ResourceId!} of type {resourcePath.ResourceTypeInstances[0].ResourceType} was not found.");
         }
 
@@ -373,9 +348,9 @@ namespace FoundationaLLM.Attachment.ResourceProviders
 
             switch (e.Namespace)
             {
-                case EventSetEventNamespaces.FoundationaLLM_ResourceProvider_Attachment:
+                case EventSetEventNamespaces.FoundationaLLM_ResourceProvider_AIModel:
                     foreach (var @event in e.Events)
-                        await HandleAttachmentResourceProviderEvent(@event);
+                        await HandleAIModelResourceProviderEvent(@event);
                     break;
                 default:
                     // Ignore sliently any event namespace that's of no interest.
@@ -385,7 +360,7 @@ namespace FoundationaLLM.Attachment.ResourceProviders
             await Task.CompletedTask;
         }
 
-        private async Task HandleAttachmentResourceProviderEvent(CloudEvent e)
+        private async Task HandleAIModelResourceProviderEvent(CloudEvent e)
         {
             if (string.IsNullOrWhiteSpace(e.Subject))
                 return;
@@ -395,27 +370,28 @@ namespace FoundationaLLM.Attachment.ResourceProviders
             _logger.LogInformation("The file [{FileName}] managed by the [{ResourceProvider}] resource provider has changed and will be reloaded.",
                 fileName, _name);
 
-            var attachmentReference = new AttachmentReference
+            var aiModelReference = new AIModelReference
             {
                 Name = Path.GetFileNameWithoutExtension(fileName),
                 Filename = $"/{_name}/{fileName}",
-                Type =nameof(AttachmentFile),
+                Type = nameof(AIModelBase),
                 Deleted = false
             };
 
-            var attachment = await LoadAttachment(attachmentReference);
-            attachmentReference.Name = attachment.Name;
-            attachmentReference.Type = attachment.Type!;
+            var aiModel = await LoadAIModel(aiModelReference);
+            aiModelReference.Name = aiModel.Name;
+            aiModelReference.Type = aiModel.Type!;
 
-            _attachmentReferences.AddOrUpdate(
-                attachmentReference.Name,
-                attachmentReference,
+            _aiModelReferences.AddOrUpdate(
+                aiModelReference.Name,
+                aiModelReference,
                 (k, v) => v);
 
-            _logger.LogInformation("The attachment reference for the [{AttachmentName}] agent or type [{AttachmentType}] was loaded.",
-                attachmentReference.Name, attachmentReference.Type);
+            _logger.LogInformation("The aiModel reference for the [{AIModelName}] agent or type [{AIModelType}] was loaded.",
+                aiModelReference.Name, aiModelReference.Type);
         }
 
         #endregion
+
     }
 }
