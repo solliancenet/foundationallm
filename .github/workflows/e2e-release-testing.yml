@@ -1,0 +1,39 @@
+name: Daily End to End Testing
+
+on:
+  push:
+    branches:
+    - release/**
+    - poc/**
+  workflow_dispatch: {}
+
+jobs:
+  get_version:
+    name: Get Release Version
+    runs-on: ubuntu-latest
+    if: ${{ (startsWith(github.ref, 'refs/heads/release/') || startsWith(github.ref, 'refs/heads/poc/')) }}
+    outputs:
+      version: ${{ steps.get-version.outputs.result }}
+    steps:
+    - name: Get Release Version
+      id: get-version
+      run: |
+        VERSION=$(echo ${{ github.ref_name }} | cut -d'/' -f 2)
+        echo "VERSION=$VERSION" >> $GITHUB_ENV
+        echo "VERSION: $VERSION"
+        echo "result=$VERSION" >> $GITHUB_OUTPUT
+
+  daily_e2e_test:
+    if: ${{ (startsWith(github.ref, 'refs/heads/release/') || startsWith(github.ref, 'refs/heads/poc/')) }}
+    uses: ./.github/workflows/e2e-testing.yml
+    needs: get_version
+    with:
+      environment: "fllm-e2e-aca-release-${{ needs.get_version.outputs.version }}-${{ github.run_id }}"
+      deployOpenAi: true
+      openAiName: fllm-01
+      openAiResourceGroup: fllm-shared-01
+      location: EastUS2
+      enableTeardown: true
+      bypassAndTeardown: false
+      target: e2e
+    secrets: inherit

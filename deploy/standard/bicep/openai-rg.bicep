@@ -21,16 +21,11 @@ var deploymentConfigurations = [
   {
     name: 'completions'
     locations: [
-      'austrailiaeast'
-      'canadaeast'
       'eastus'
       'eastus2'
-      'francecentral'
       'japaneast'
       'northcentralus'
-      'swedencentral'
       'switzerlandnorth'
-      'uksouth'
     ]
     raiPolicyName: ''
     model: {
@@ -44,7 +39,7 @@ var deploymentConfigurations = [
     }
   }
   {
-    name: 'completions1106'
+    name: 'completions'
     locations: [
       'austrailiaeast'
       'canadaeast'
