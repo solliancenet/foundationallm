@@ -278,6 +278,41 @@
 				"field_name": "FoundationaLLM_Attachment_Attachments_Delete"
 			}
 		]
+	},
+	{
+		"category": "AIModel",
+		"actions": [
+			{
+				"name": "FoundationaLLM.AIModel/endpoints/read",
+				"description": "Read aimodel endpoints.",
+				"field_name": "FoundationaLLM_AIModel_Endpoints_Read"
+			},
+			{
+				"name": "FoundationaLLM.AIModel/models/read",
+				"description": "Read aimodels models",
+				"field_name": "FoundationaLLM_AIModel_Models_Read"
+			},
+			{
+				"name": "FoundationaLLM.AIModel/endpoints/write",
+				"description": "Create or update aimodel endpoints.",
+				"field_name": "FoundationaLLM_AIModel_Endpoints_Write"
+			},
+			{
+				"name": "FoundationaLLM.AIModel/models/write",
+				"description": "Create or update models.",
+				"field_name": "FoundationaLLM_AIModel_Models_Write"
+			},
+			{
+				"name": "FoundationaLLM.AIModel/endpoints/delete",
+				"description": "Delete endpoints.",
+				"field_name": "FoundationaLLM_AIModel_Endpoints_Delete"
+			},
+			{
+				"name": "FoundationaLLM.AIModel/models/delete",
+				"description": "Delete models.",
+				"field_name": "FoundationaLLM_AIModel_Models_Delete"
+			}
+		]
 	}
 
 ]

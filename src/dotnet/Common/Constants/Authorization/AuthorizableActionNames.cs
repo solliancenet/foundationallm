@@ -276,5 +276,39 @@ namespace FoundationaLLM.Common.Constants.Authorization
         public const string FoundationaLLM_Attachment_Attachments_Delete = "FoundationaLLM.Attachment/attachments/delete";
 
         #endregion
+
+        #region AIModel
+
+        /// <summary>
+        /// Read aimodel endpoints.
+        /// </summary>
+        public const string FoundationaLLM_AIModel_Endpoints_Read = "FoundationaLLM.AIModel/endpoints/read";
+
+        /// <summary>
+        /// Read aimodels models
+        /// </summary>
+        public const string FoundationaLLM_AIModel_Models_Read = "FoundationaLLM.AIModel/models/read";
+
+        /// <summary>
+        /// Create or update aimodel endpoints.
+        /// </summary>
+        public const string FoundationaLLM_AIModel_Endpoints_Write = "FoundationaLLM.AIModel/endpoints/write";
+
+        /// <summary>
+        /// Create or update models.
+        /// </summary>
+        public const string FoundationaLLM_AIModel_Models_Write = "FoundationaLLM.AIModel/models/write";
+
+        /// <summary>
+        /// Delete endpoints.
+        /// </summary>
+        public const string FoundationaLLM_AIModel_Endpoints_Delete = "FoundationaLLM.AIModel/endpoints/delete";
+
+        /// <summary>
+        /// Delete models.
+        /// </summary>
+        public const string FoundationaLLM_AIModel_Models_Delete = "FoundationaLLM.AIModel/models/delete";
+
+        #endregion
     }
 }

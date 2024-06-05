@@ -1128,6 +1128,11 @@
         /// The key section for the FoundationaLLM:Attachment:ResourceProviderService:Storage app configuration settings.
         /// </summary>
         public const string FoundationaLLM_Attachment_ResourceProviderService_Storage = "FoundationaLLM:Attachment:ResourceProviderService:Storage";
+
+        /// <summary>
+        /// The key section for the FoundationaLLM:Attachment:ResourceProviderService:Storage app configuration settings.
+        /// </summary>
+        public const string FoundationaLLM_AIModel_ResourceProviderService_Storage = "FoundationaLLM:AIModel:ResourceProviderService:Storage";
         #endregion
 
         #region Event Grid events
