@@ -294,7 +294,7 @@ namespace FoundationaLLM.Core.Examples.Catalogs
             },
             new KnowledgeManagementAgent
             {
-                Name = TestAgentNames.SemanticKernelDune,
+                Name = TestAgentNames.Dune01,
                 Description = "Knowledge Management Agent that queries the Dune books using SemanticKernel.",
                 InlineContext = false,
                 SessionsEnabled = true,
@@ -331,6 +331,124 @@ namespace FoundationaLLM.Core.Examples.Catalogs
                     }
                 }
             },
+            new KnowledgeManagementAgent
+            {
+                Name = TestAgentNames.Dune02,
+                Description = "Inline Context Agent that writes poems about Dune suitable for being used in wartime songs.",
+                InlineContext = true,
+                SessionsEnabled = true,
+                Vectorization = new AgentVectorizationSettings
+                {
+                    DedicatedPipeline = false,
+                    IndexingProfileObjectId = null,
+                    TextEmbeddingProfileObjectId = null
+                },
+                ConversationHistory = new ConversationHistory
+                {
+                    Enabled = true,
+                    MaxHistory = 10
+                },
+                Gatekeeper = new Gatekeeper
+                {
+                    UseSystemSetting = false
+                },
+                OrchestrationSettings = new OrchestrationSettings
+                {
+                    Orchestrator = LLMOrchestrationServiceNames.SemanticKernel,
+                    EndpointConfiguration = new Dictionary<string, object>
+                    {
+                        { "auth_type", "key" },
+                        { "provider", "microsoft" },
+                        { "endpoint", "FoundationaLLM:AzureOpenAI:API:Endpoint" },
+                        { "api_key", "FoundationaLLM:AzureOpenAI:API:Key" },
+                        { "api_version", "FoundationaLLM:AzureOpenAI:API:Version" }
+                    },
+                    ModelParameters = new Dictionary<string, object>
+                    {
+                        { "temperature", 0 },
+                        { "deployment_name", "completions" }
+                    }
+                }
+            },
+            new KnowledgeManagementAgent
+            {
+                Name = TestAgentNames.Dune03,
+                Description = "Answers questions about Dune by asking for help from other agents.",
+                InlineContext = true,
+                SessionsEnabled = true,
+                Vectorization = new AgentVectorizationSettings
+                {
+                    DedicatedPipeline = false,
+                    IndexingProfileObjectId = null,
+                    TextEmbeddingProfileObjectId = null
+                },
+                ConversationHistory = new ConversationHistory
+                {
+                    Enabled = true,
+                    MaxHistory = 10
+                },
+                Gatekeeper = new Gatekeeper
+                {
+                    UseSystemSetting = false
+                },
+                OrchestrationSettings = new OrchestrationSettings
+                {
+                    Orchestrator = LLMOrchestrationServiceNames.SemanticKernel,
+                    EndpointConfiguration = new Dictionary<string, object>
+                    {
+                        { "auth_type", "key" },
+                        { "provider", "microsoft" },
+                        { "endpoint", "FoundationaLLM:AzureOpenAI:API:Endpoint" },
+                        { "api_key", "FoundationaLLM:AzureOpenAI:API:Key" },
+                        { "api_version", "FoundationaLLM:AzureOpenAI:API:Version" }
+                    },
+                    ModelParameters = new Dictionary<string, object>
+                    {
+                        { "temperature", 0 },
+                        { "deployment_name", "completions" }
+                    }
+                }
+            },
+            new KnowledgeManagementAgent
+            {
+                Name = TestAgentNames.LangChainDune,
+                Description = "Knowledge Management Agent that queries the Dune books using LangChain.",
+                InlineContext = false,
+                SessionsEnabled = true,
+                Vectorization = new AgentVectorizationSettings
+                {
+                    DedicatedPipeline = false,
+                    IndexingProfileObjectId = null,
+                    TextEmbeddingProfileObjectId = null
+                },
+                ConversationHistory = new ConversationHistory
+                {
+                    Enabled = true,
+                    MaxHistory = 10
+                },
+                Gatekeeper = new Gatekeeper
+                {
+                    UseSystemSetting = false
+                },
+                OrchestrationSettings = new OrchestrationSettings
+                {
+                    Orchestrator = LLMOrchestrationServiceNames.LangChain,
+                    EndpointConfiguration = new Dictionary<string, object>
+                    {
+                        { "auth_type", "key" },
+                        { "provider", "microsoft" },
+                        { "endpoint", "FoundationaLLM:AzureOpenAI:API:Endpoint" },
+                        { "api_key", "FoundationaLLM:AzureOpenAI:API:Key" },
+                        { "api_version", "FoundationaLLM:AzureOpenAI:API:Version" }
+                    },
+                    ModelParameters = new Dictionary<string, object>
+                    {
+                        { "temperature", 0 },
+                        { "deployment_name", "completions" }
+                    }
+                }
+            },
+
         ];
         #endregion
 

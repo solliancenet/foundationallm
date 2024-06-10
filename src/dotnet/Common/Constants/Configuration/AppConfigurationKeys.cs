@@ -1081,6 +1081,14 @@
         /// </summary>
         public const string FoundationaLLM_Vectorization_AzureAISearchIndexingService = "FoundationaLLM:Vectorization:AzureAISearchIndexingService";
         /// <summary>
+        /// The key section for the FoundationaLLM:Vectorization:AzureCosmosDBNoSQLIndexingService app configuration settings.
+        /// </summary>
+        public const string FoundationaLLM_Vectorization_AzureCosmosDBNoSQLIndexingService = "FoundationaLLM:Vectorization:AzureCosmosDBNoSQLIndexingService";
+        /// <summary>
+        /// The key section for the FoundationaLLM:Vectorization:PostgresIndexingService app configuration settings.
+        /// </summary>
+        public const string FoundationaLLM_Vectorization_PostgresIndexingService = "FoundationaLLM:Vectorization:PostgresIndexingService";
+        /// <summary>
         /// The key section for the FoundationaLLM:Gateway app configuration settings.
         /// </summary>
         public const string FoundationaLLM_Gateway = "FoundationaLLM:Gateway";

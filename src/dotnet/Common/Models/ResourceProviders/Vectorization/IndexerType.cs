@@ -8,6 +8,16 @@
         /// <summary>
         /// Indexer using Azure AI Search vector indexes.
         /// </summary>
-        AzureAISearchIndexer
+        AzureAISearchIndexer,
+
+        /// <summary>
+        /// Indexer using Azure Cosmos DB NoSQL indexes.
+        /// </summary>
+        AzureCosmosDBNoSQLIndexer,
+
+        /// <summary>
+        /// Indexer using PostgreSQL indexes.
+        /// </summary>
+        PostgresIndexer
     }
 }

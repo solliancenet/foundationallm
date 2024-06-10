@@ -6,44 +6,49 @@ using Xunit.Abstractions;
 namespace FoundationaLLM.Core.Examples
 {
     /// <summary>
-    /// Example class for the Knowledge Management agent with SemanticKernel.
+    /// Example class for Agent-to-Agent Conversations.
     /// </summary>
-    public class Example0013_KnowledgeManagementSemanticKernelWithLargeIndex : BaseTest, IClassFixture<TestFixture>
+    public class Example0015_AgentToAgentConversations : BaseTest, IClassFixture<TestFixture>
     {
         private readonly IAgentConversationTestService _agentConversationTestService;
         private readonly IVectorizationTestService _vectorizationTestService;
+        private readonly IManagementAPITestManager _managementAPITestManager;
 
         private string textEmbeddingProfileName = "text_embedding_profile_generic";
         private string indexingProfileName = "indexing_profile_dune";
 
-        public Example0013_KnowledgeManagementSemanticKernelWithLargeIndex(ITestOutputHelper output, TestFixture fixture)
+        public Example0015_AgentToAgentConversations(ITestOutputHelper output, TestFixture fixture)
             : base(output, fixture.ServiceProvider)
         {
             _agentConversationTestService = GetService<IAgentConversationTestService>();
             _vectorizationTestService = GetService<IVectorizationTestService>();
+            _managementAPITestManager = GetService<IManagementAPITestManager>();
+
         }
 
         [Fact]
         public async Task RunAsync()
         {
-            WriteLine("============ Knowledge Management agent with SemanticKernel on Dune ============");
+            WriteLine("============ Agent-to-Agent Conversations with SemanticKernel on Dune ============");
             await RunExampleAsync();
         }
 
         private async Task RunExampleAsync()
         {
-            var agentName = TestAgentNames.Dune01;
+            var agentName = TestAgentNames.Dune03;
             var userPrompts = new List<string>
             {
-                "Who are you?",
-                "Who is the enemy of Paul Atreides?",
-                "Who is 'Paul-Muad'Dib' and what is his relationship to the Fremen?"
+                "Who is 'Paul-Muad'Dib' and what is his relationship to the Fremen?",
+                "Write a poem about Paul's ambition."
             };
 
             WriteLine($"Send questions to the {agentName} agent.");
 
             await _vectorizationTestService.CreateIndexingProfile(indexingProfileName);
             await _vectorizationTestService.CreateTextEmbeddingProfile(textEmbeddingProfileName);
+
+            await _managementAPITestManager.CreateAgent(TestAgentNames.Dune01, indexingProfileName, textEmbeddingProfileName);
+            await _managementAPITestManager.CreateAgent(TestAgentNames.Dune02);
 
             var response = await _agentConversationTestService.RunAgentConversationWithSession(
                 agentName, userPrompts, null, true, indexingProfileName, textEmbeddingProfileName);
@@ -61,6 +66,9 @@ namespace FoundationaLLM.Core.Examples
                     invalidAgentResponsesFound++;
                 }
             }
+
+            await _managementAPITestManager.DeleteAgent(TestAgentNames.Dune01);
+            await _managementAPITestManager.DeleteAgent(TestAgentNames.Dune02);
 
             Assert.True(invalidAgentResponsesFound == 0, $"{invalidAgentResponsesFound} invalid agent responses found.");
         }

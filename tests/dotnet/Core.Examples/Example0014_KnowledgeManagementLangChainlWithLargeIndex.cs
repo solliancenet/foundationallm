@@ -6,9 +6,9 @@ using Xunit.Abstractions;
 namespace FoundationaLLM.Core.Examples
 {
     /// <summary>
-    /// Example class for the Knowledge Management agent with SemanticKernel.
+    /// Example class for the Knowledge Management agent with LangChain.
     /// </summary>
-    public class Example0013_KnowledgeManagementSemanticKernelWithLargeIndex : BaseTest, IClassFixture<TestFixture>
+    public class Example0014_KnowledgeManagementLangChainWithLargeIndex : BaseTest, IClassFixture<TestFixture>
     {
         private readonly IAgentConversationTestService _agentConversationTestService;
         private readonly IVectorizationTestService _vectorizationTestService;
@@ -16,7 +16,7 @@ namespace FoundationaLLM.Core.Examples
         private string textEmbeddingProfileName = "text_embedding_profile_generic";
         private string indexingProfileName = "indexing_profile_dune";
 
-        public Example0013_KnowledgeManagementSemanticKernelWithLargeIndex(ITestOutputHelper output, TestFixture fixture)
+        public Example0014_KnowledgeManagementLangChainWithLargeIndex(ITestOutputHelper output, TestFixture fixture)
             : base(output, fixture.ServiceProvider)
         {
             _agentConversationTestService = GetService<IAgentConversationTestService>();
@@ -26,18 +26,18 @@ namespace FoundationaLLM.Core.Examples
         [Fact]
         public async Task RunAsync()
         {
-            WriteLine("============ Knowledge Management agent with SemanticKernel on Dune ============");
+            WriteLine("============ Knowledge Management agent with LangChain on Dune ============");
             await RunExampleAsync();
         }
 
         private async Task RunExampleAsync()
         {
-            var agentName = TestAgentNames.Dune01;
+            var agentName = TestAgentNames.LangChainDune;
             var userPrompts = new List<string>
             {
                 "Who are you?",
                 "Who is the enemy of Paul Atreides?",
-                "Who is 'Paul-Muad'Dib' and what is his relationship to the Fremen?"
+                "What is a sand worm?"
             };
 
             WriteLine($"Send questions to the {agentName} agent.");

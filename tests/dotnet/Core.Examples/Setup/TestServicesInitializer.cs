@@ -18,7 +18,7 @@ using FoundationaLLM.Core.Examples.Services;
 using FoundationaLLM.Core.Interfaces;
 using FoundationaLLM.Core.Services;
 using FoundationaLLM.SemanticKernel.Core.Models.Configuration;
-using FoundationaLLM.SemanticKernel.Core.Services;
+using FoundationaLLM.SemanticKernel.Core.Services.Indexing;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Fluent;
 using Microsoft.Extensions.Configuration;

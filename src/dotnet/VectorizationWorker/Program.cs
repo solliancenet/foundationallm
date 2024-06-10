@@ -5,6 +5,7 @@ using FoundationaLLM.Common.Authentication;
 using FoundationaLLM.Common.Constants;
 using FoundationaLLM.Common.Constants.Configuration;
 using FoundationaLLM.Common.Interfaces;
+using FoundationaLLM.Common.Models.Configuration.CosmosDB;
 using FoundationaLLM.Common.Models.Configuration.Storage;
 using FoundationaLLM.Common.OpenAPI;
 using FoundationaLLM.Common.Services.Azure;
@@ -12,14 +13,18 @@ using FoundationaLLM.Common.Services.Storage;
 using FoundationaLLM.Common.Services.Tokenizers;
 using FoundationaLLM.Common.Validation;
 using FoundationaLLM.SemanticKernel.Core.Models.Configuration;
-using FoundationaLLM.SemanticKernel.Core.Services;
+using FoundationaLLM.SemanticKernel.Core.Services.Indexing;
 using FoundationaLLM.Vectorization.Interfaces;
 using FoundationaLLM.Vectorization.Models.Configuration;
+using FoundationaLLM.Vectorization.Serializers;
 using FoundationaLLM.Vectorization.Services.ContentSources;
 using FoundationaLLM.Vectorization.Services.Text;
 using FoundationaLLM.Vectorization.Services.VectorizationStates;
 using FoundationaLLM.Vectorization.Worker;
+using Microsoft.Azure.Cosmos.Fluent;
+using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Options;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -95,6 +100,12 @@ builder.Services.AddOptions<SemanticKernelTextEmbeddingServiceSettings>()
 builder.Services.AddOptions<AzureAISearchIndexingServiceSettings>()
     .Bind(builder.Configuration.GetSection(AppConfigurationKeySections.FoundationaLLM_Vectorization_AzureAISearchIndexingService));
 
+builder.Services.AddOptions<AzureCosmosDBNoSQLIndexingServiceSettings>()
+    .Bind(builder.Configuration.GetSection(AppConfigurationKeySections.FoundationaLLM_Vectorization_AzureCosmosDBNoSQLIndexingService));
+
+builder.Services.AddOptions<PostgresIndexingServiceSettings>()
+    .Bind(builder.Configuration.GetSection(AppConfigurationKeySections.FoundationaLLM_Vectorization_PostgresIndexingService));
+
 builder.Services.AddKeyedSingleton(
     typeof(IConfigurationSection),
     DependencyInjectionKeys.FoundationaLLM_Vectorization_Queues,
@@ -106,6 +117,15 @@ builder.Services.AddKeyedSingleton(
     builder.Configuration.GetSection(AppConfigurationKeySections.FoundationaLLM_Vectorization_Steps));
 
 // Add services to the container.
+
+builder.Services.AddSingleton<CosmosClient>(serviceProvider =>
+{
+    var settings = serviceProvider.GetRequiredService<IOptions<AzureCosmosDBNoSQLIndexingServiceSettings>>().Value;
+    return new CosmosClientBuilder(settings.ConnectionString)
+        .WithCustomSerializer(new CosmosSystemTextJsonSerializer(JsonSerializerOptions.Default))
+        .WithConnectionModeGateway()
+        .Build();
+});
 
 builder.Services.AddKeyedSingleton<IStorageService, BlobStorageService>(
     DependencyInjectionKeys.FoundationaLLM_Vectorization_BlobStorageVectorizationStateService, (sp, obj) =>
@@ -147,6 +167,10 @@ builder.Services.AddHttpClient();
 // Indexing
 builder.Services.AddKeyedSingleton<IIndexingService, AzureAISearchIndexingService>(
     DependencyInjectionKeys.FoundationaLLM_Vectorization_AzureAISearchIndexingService);
+builder.Services.AddKeyedSingleton<IIndexingService, AzureCosmosDBNoSQLIndexingService>(
+    DependencyInjectionKeys.FoundationaLLM_Vectorization_AzureCosmosDBNoSQLIndexingService);
+builder.Services.AddKeyedSingleton<IIndexingService, PostgresIndexingService>(
+    DependencyInjectionKeys.FoundationaLLM_Vectorization_PostgresIndexingService);
 
 builder.Services.AddTransient<IAPIKeyValidationService, APIKeyValidationService>();
 

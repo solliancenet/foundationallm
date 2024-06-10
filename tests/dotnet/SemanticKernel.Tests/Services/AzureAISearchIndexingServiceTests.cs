@@ -5,20 +5,20 @@ using FoundationaLLM.Common.Interfaces;
 using FoundationaLLM.Common.Models.Vectorization;
 using FoundationaLLM.Common.Settings;
 using FoundationaLLM.SemanticKernel.Core.Models.Configuration;
-using FoundationaLLM.SemanticKernel.Core.Services;
+using FoundationaLLM.SemanticKernel.Core.Services.Indexing;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SemanticKernel.Tests.Models;
 
 namespace FoundationaLLM.SemanticKernel.Tests.Services
 {
-    public class AzureAISearchIndexingServiceTests
+    public class AzureAiSearchIndexingServiceTests
     {
         private readonly SearchIndexClient _searchIndexClient;
         private readonly IIndexingService _indexingService;
         private readonly string _indexName = Environment.GetEnvironmentVariable("AzureAISearchIndexingServiceTestsCollectionName") ?? "semantickernel-integration-tests";
 
-        public AzureAISearchIndexingServiceTests()
+        public AzureAiSearchIndexingServiceTests()
         {
             var endpoint = Environment.GetEnvironmentVariable("AzureAISearchIndexingServiceTestsSearchEndpoint") ?? "";
             _searchIndexClient = new SearchIndexClient(

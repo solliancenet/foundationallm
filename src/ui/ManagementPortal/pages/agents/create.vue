@@ -1061,7 +1061,7 @@ export default {
 
 					// Select the default data source, if any.
 					dataSourceObjectId = this.selectedDataSource?.object_id ?? '';
-					if (dataSourceObjectId === '') {
+					if (dataSourceObjectId === '' && this.dedicated_pipeline) {
 						const defaultDataSource = await api.getDefaultDataSource();
 						if (defaultDataSource !== null) {
 							dataSourceObjectId = defaultDataSource.object_id;
@@ -1105,8 +1105,8 @@ export default {
 					gatekeeper: {
 						use_system_setting: this.gatekeeperEnabled,
 						options: [
-							...this.selectedGatekeeperContentSafety.map((option: any) => option.code),
-							...this.selectedGatekeeperDataProtection.map((option: any) => option.code),
+							...(this.selectedGatekeeperContentSafety || []).map((option: any) => option.code),
+							...(this.selectedGatekeeperDataProtection || []).map((option: any) => option.code),
 						].filter((option) => option !== null),
 					},
 

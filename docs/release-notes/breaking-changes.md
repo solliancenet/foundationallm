@@ -122,10 +122,9 @@
 
 15. The following App Config setting needs to be added/updated as key-values:
 
-   - `FoundationaLLM_APIs_GatekeeperAPI_Configuration_EnableAzureContentSafetyPromptShield` (By default, the Gatekeeper API has Azure Content Safety Prompt Shield integration enabled. To disable this feature, set this value to false.)
-   - `FoundationaLLM:APIs:GatekeeperAPI:Configuration:EnableLakeraGuard`
-   - ` FoundationaLLM:APIs:GatekeeperAPI:Configuration:EnableEnkryptGuardrails`
-
+   - Add `FoundationaLLM:APIs:GatekeeperAPI:Configuration:EnableAzureContentSafetyPromptShield`
+   - Add `FoundationaLLM:APIs:GatekeeperAPI:Configuration:EnableLakeraGuard`
+   - Add `FoundationaLLM:APIs:GatekeeperAPI:Configuration:EnableEnkryptGuardrails`
    - Rename `FoundationaLLM:AzureContentSafety:APIKey` in `FoundationaLLM:APIs:Gatekeeper:AzureContentSafety:APIKey`
    - Rename `FoundationaLLM:AzureContentSafety:APIUrl` in `FoundationaLLM:APIs:Gatekeeper:AzureContentSafety:APIUrl`
    - Rename `FoundationaLLM:AzureContentSafety:HateSeverity` in `FoundationaLLM:APIs:Gatekeeper:AzureContentSafety:HateSeverity`

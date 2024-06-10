@@ -26,7 +26,7 @@
 							},
 						}"
 					/>
-					<span class="time-stamp">{{ $filters.timeAgo(new Date(message.timeStamp)) }}</span>
+					<span class="time-stamp" v-tooltip="formatTimeStamp(message.timeStamp)">{{ $filters.timeAgo(new Date(message.timeStamp)) }}</span>
 				</span>
 			</div>
 
@@ -167,6 +167,20 @@ export default {
 			};
 
 			displayNextWord();
+		},
+
+		formatTimeStamp(timeStamp: string) {
+			const date = new Date(timeStamp);
+			const options = {
+				year: 'numeric',
+				month: 'long',
+				day: 'numeric',
+				hour: 'numeric',
+				minute: 'numeric',
+				second: 'numeric',
+				timeZoneName: 'short'
+			};
+			return date.toLocaleString(undefined, options);
 		},
 
 		getDisplayName() {
