@@ -1,7 +1,12 @@
 ﻿using Azure;
+using FoundationaLLM.Common.Authentication;
 using FoundationaLLM.Common.Models.Infrastructure;
+using System.Net.Http.Headers;
+using System.Net.Http;
+using System.Runtime;
 using System.Text;
 using System.Text.Json;
+using Microsoft.Extensions.Options;
 
 namespace FoundationaLLM.Client.Management
 {
@@ -10,44 +15,54 @@ namespace FoundationaLLM.Client.Management
     /// </summary>
     public class ManagementRESTClient : IManagementRESTClient
     {
-        private HttpClient _httpClient = new HttpClient();
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly ClientSettings _settings;
+
         /// <summary>
         /// Constructs the client that calls the Management API with a given base address
         /// </summary>
-        /// <param name="apiBaseAddress">The base address of the Management API</param>
-        public ManagementRESTClient(string apiBaseAddress) => _httpClient.BaseAddress = new Uri(apiBaseAddress);
+        /// <param name="httpClientFactory">Client factory for creation on HttpClient instances</param>
+        public ManagementRESTClient(IHttpClientFactory httpClientFactory,
+            IOptions<ClientSettings> options)
+        {
+            _httpClientFactory = httpClientFactory;
+            _settings = options.Value;
+        }
 
         /// <inheritdoc/>
-        public async Task<ServiceStatusInfo> GetServiceStatusAsync()
+        public async Task<ServiceStatusInfo> GetServiceStatusAsync(string accessToken)
         {
-            var response = await _httpClient.GetAsync("/status");
+            var httpClient = await CreateHttpClient(accessToken);
+            var response = await httpClient.GetAsync("/status");
             response.EnsureSuccessStatusCode();
             var responseContent = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<ServiceStatusInfo>(responseContent)!;
         }
 
         /// <inheritdoc/>
-        public async Task<bool> IsAuthenticatedAsync()
+        public async Task<bool> IsAuthenticatedAsync(string accessToken)
         {
-            var response = await _httpClient.GetAsync("/status/auth");
+            var httpClient = await CreateHttpClient(accessToken);
+            var response = await httpClient.GetAsync("/status/auth");
             return response.IsSuccessStatusCode;
         }
 
         /// <inheritdoc/>
-        public async Task<List<T>> GetResources<T>(string instanceId, string resourceProvider, string resourcePath)
+        public async Task<List<T>> GetResources<T>(string instanceId, string resourceProvider, string resourcePath, string accessToken)
         {
-            var response = await _httpClient.GetAsync($"instances/{instanceId}/providers/{resourceProvider}/{resourcePath}");
+            var httpClient = await CreateHttpClient(accessToken);
+            var response = await httpClient.GetAsync($"instances/{instanceId}/providers/{resourceProvider}/{resourcePath}");
             response.EnsureSuccessStatusCode();
             var responseContent = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<List<T>>(responseContent)!;
 
         }
         /// <inheritdoc/>
-        public async Task<T> UpsertResource<T>(T resource, string instanceId, string resourceProvider, string resourcePath)
+        public async Task<T> UpsertResource<T>(T resource, string instanceId, string resourceProvider, string resourcePath, string accessToken)
         {
             string jsonContent = JsonSerializer.Serialize(resource);
-
-            var response = await _httpClient.PostAsync($"instances/{instanceId}/providers/{resourceProvider}/{resourcePath}",
+            var httpClient = await CreateHttpClient(accessToken);
+            var response = await httpClient.PostAsync($"instances/{instanceId}/providers/{resourceProvider}/{resourcePath}",
                 new StringContent(jsonContent, Encoding.UTF8, "application/json"));
             response.EnsureSuccessStatusCode();
             var responseContent = await response.Content.ReadAsStringAsync();
@@ -55,9 +70,27 @@ namespace FoundationaLLM.Client.Management
         }
 
         /// <inheritdoc/>
-        public async Task DeleteResource(string instanceId, string resourceProvider, string resourcePath)
+        public async Task DeleteResource(string instanceId, string resourceProvider, string resourcePath, string accessToken)
         {
-            var response = await _httpClient.DeleteAsync($"instances/{instanceId}/providers/{resourceProvider}/{resourcePath}");
+            var httpClient = await CreateHttpClient(accessToken);
+            var response = await httpClient.DeleteAsync($"instances/{instanceId}/providers/{resourceProvider}/{resourcePath}");
         }
+
+        private async Task<HttpClient> CreateHttpClient(string accessToken)
+        {
+            var httpClient = _httpClientFactory.CreateClient();
+            httpClient.BaseAddress = new Uri(_settings.APIUrl);
+
+            var credentials = DefaultAuthentication.AzureCredential;
+            var tokenResult = await credentials.GetTokenAsync(
+                new([_settings.APIScope]),
+                default);
+
+            httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", tokenResult.Token);
+
+            return httpClient;
+        }
+
     }
 }
