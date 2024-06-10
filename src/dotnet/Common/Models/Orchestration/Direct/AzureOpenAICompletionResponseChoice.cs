@@ -46,5 +46,14 @@ namespace FoundationaLLM.Common.Models.Orchestration.Direct
         [JsonPropertyName("message")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public CompletionMessage? Message { get; set; }
+
+        /// <summary>
+        /// Contains the completion response message(s) if any (extendedChat)
+        /// </summary>
+        [JsonPropertyName("messages")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public List<CompletionMessage>? Messages { get; set; }
+
+
     }
 }

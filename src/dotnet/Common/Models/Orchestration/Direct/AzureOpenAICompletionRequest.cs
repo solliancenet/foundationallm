@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using Microsoft.Graph.Models.Security;
+using System.Text.Json.Serialization;
 
 namespace FoundationaLLM.Common.Models.Orchestration.Direct
 {
@@ -20,5 +21,12 @@ namespace FoundationaLLM.Common.Models.Orchestration.Direct
         [JsonPropertyName("messages")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public CompletionMessage[]? Messages { get; set; }
+
+        /// <summary>
+        /// Any data sources that should be used
+        /// </summary>
+        [JsonPropertyName("dataSources")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public List<DataSource>? DataSources { get; set; }
     }
 }

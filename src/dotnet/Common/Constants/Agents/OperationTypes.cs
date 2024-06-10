@@ -14,5 +14,10 @@
         /// Chat completions operation.
         /// </summary>
         public const string Chat = "chat";
+
+        /// <summary>
+        /// Extended Chat completions operation.
+        /// </summary>
+        public const string ExtendedChat = "extendedChat";
     }
 }
