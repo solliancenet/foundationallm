@@ -7,89 +7,82 @@ using System.Runtime;
 using System.Text;
 using System.Text.Json;
 using Microsoft.Extensions.Options;
+using FoundationaLLM.Common.Settings;
+using FoundationaLLM.Common.Constants;
+using FoundationaLLM.Common.Extensions;
 
 namespace FoundationaLLM.Client.Management
 {
-    /// <summary>
-    /// Low level client for calling the Management API endpoints
-    /// </summary>
-    public class ManagementRESTClient : IManagementRESTClient
+    /// <inheritdoc/>
+    public class ManagementRESTClient(IHttpClientFactory httpClientFactory) : IManagementRESTClient
     {
-        private readonly IHttpClientFactory _httpClientFactory;
-        private readonly ClientSettings _settings;
+        private readonly JsonSerializerOptions _jsonSerializerOptions = CommonJsonSerializerOptions.GetJsonSerializerOptions();
 
-        /// <summary>
-        /// Constructs the client that calls the Management API with a given base address
-        /// </summary>
-        /// <param name="httpClientFactory">Client factory for creation on HttpClient instances</param>
-        public ManagementRESTClient(IHttpClientFactory httpClientFactory,
-            IOptions<ClientSettings> options)
+        /// <inheritdoc/>
+        public async Task<ServiceStatusInfo> GetServiceStatusAsync(string token)
         {
-            _httpClientFactory = httpClientFactory;
-            _settings = options.Value;
+            var mgmtClient = GetManagementClient(token);
+            var response = await mgmtClient.GetAsync("/status");
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                return JsonSerializer.Deserialize<ServiceStatusInfo>(responseContent, _jsonSerializerOptions)!;
+            }
+            throw new Exception($"Failed to get service status. Status code: {response.StatusCode}. Reason: {response.ReasonPhrase}");
         }
 
         /// <inheritdoc/>
-        public async Task<ServiceStatusInfo> GetServiceStatusAsync(string accessToken)
+        public async Task<bool> IsAuthenticatedAsync(string token)
         {
-            var httpClient = await CreateHttpClient(accessToken);
-            var response = await httpClient.GetAsync("/status");
-            response.EnsureSuccessStatusCode();
-            var responseContent = await response.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<ServiceStatusInfo>(responseContent)!;
-        }
-
-        /// <inheritdoc/>
-        public async Task<bool> IsAuthenticatedAsync(string accessToken)
-        {
-            var httpClient = await CreateHttpClient(accessToken);
-            var response = await httpClient.GetAsync("/status/auth");
+            var mgmtClient = GetManagementClient(token);
+            var response = await mgmtClient.GetAsync("/status/auth");
             return response.IsSuccessStatusCode;
         }
 
         /// <inheritdoc/>
-        public async Task<List<T>> GetResources<T>(string instanceId, string resourceProvider, string resourcePath, string accessToken)
+        public async Task<List<T>> GetResources<T>(string instanceId, string resourceProvider, string resourcePath, string token)
         {
-            var httpClient = await CreateHttpClient(accessToken);
-            var response = await httpClient.GetAsync($"instances/{instanceId}/providers/{resourceProvider}/{resourcePath}");
-            response.EnsureSuccessStatusCode();
-            var responseContent = await response.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<List<T>>(responseContent)!;
+            var mgmtClient = GetManagementClient(token);
+            var response = await mgmtClient.GetAsync($"instances/{instanceId}/providers/{resourceProvider}/{resourcePath}");
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                return JsonSerializer.Deserialize<List<T>>(responseContent, _jsonSerializerOptions)!;
+            }
+            throw new Exception($"Failed to get requested resource. Status code: {response.StatusCode}. Reason: {response.ReasonPhrase}");
 
         }
         /// <inheritdoc/>
-        public async Task<T> UpsertResource<T>(T resource, string instanceId, string resourceProvider, string resourcePath, string accessToken)
+        public async Task<T> UpsertResource<T>(T resource, string instanceId, string resourceProvider, string resourcePath, string token)
         {
+            var mgmtClient = GetManagementClient(token);
             string jsonContent = JsonSerializer.Serialize(resource);
-            var httpClient = await CreateHttpClient(accessToken);
-            var response = await httpClient.PostAsync($"instances/{instanceId}/providers/{resourceProvider}/{resourcePath}",
+            var response = await mgmtClient.PostAsync(
+                $"instances/{instanceId}/providers/{resourceProvider}/{resourcePath}",
                 new StringContent(jsonContent, Encoding.UTF8, "application/json"));
-            response.EnsureSuccessStatusCode();
-            var responseContent = await response.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<T>(responseContent)!;
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                return JsonSerializer.Deserialize<T>(responseContent, _jsonSerializerOptions)!;
+            }
+            throw new Exception($"Failed to upsert requested resource. Status code: {response.StatusCode}. Reason: {response.ReasonPhrase}");
         }
 
         /// <inheritdoc/>
-        public async Task DeleteResource(string instanceId, string resourceProvider, string resourcePath, string accessToken)
+        public async Task DeleteResource(string instanceId, string resourceProvider, string resourcePath, string token)
         {
-            var httpClient = await CreateHttpClient(accessToken);
-            var response = await httpClient.DeleteAsync($"instances/{instanceId}/providers/{resourceProvider}/{resourcePath}");
+            var mgmtClient = GetManagementClient(token);
+            var response = await mgmtClient.DeleteAsync($"instances/{instanceId}/providers/{resourceProvider}/{resourcePath}");
+            if (!response.IsSuccessStatusCode)
+                throw new Exception($"Failed to get requested resource. Status code: {response.StatusCode}. Reason: {response.ReasonPhrase}");
         }
 
-        private async Task<HttpClient> CreateHttpClient(string accessToken)
+        private HttpClient GetManagementClient(string token)
         {
-            var httpClient = _httpClientFactory.CreateClient();
-            httpClient.BaseAddress = new Uri(_settings.APIUrl);
-
-            var credentials = DefaultAuthentication.AzureCredential;
-            var tokenResult = await credentials.GetTokenAsync(
-                new([_settings.APIScope]),
-                default);
-
-            httpClient.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", tokenResult.Token);
-
-            return httpClient;
+            var mgmtClient = httpClientFactory.CreateClient(HttpClients.ManagementAPI);
+            mgmtClient.SetBearerToken(token);
+            return mgmtClient;
+             
         }
 
     }
