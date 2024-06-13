@@ -218,13 +218,13 @@ namespace FoundationaLLM.Vectorization.ResourceProviders
             resourcePath.ResourceTypeInstances[0].ResourceType switch
             {
                 VectorizationResourceTypeNames.TextPartitioningProfiles =>
-                    await UpdateResource<TextPartitioningProfile, VectorizationProfileBase>(resourcePath, serializedResource, _textPartitioningProfiles, TEXT_PARTITIONING_PROFILES_FILE_PATH),
+                    await UpdateResource<TextPartitioningProfile, VectorizationProfileBase>(resourcePath, serializedResource, userIdentity, _textPartitioningProfiles, TEXT_PARTITIONING_PROFILES_FILE_PATH),
                 VectorizationResourceTypeNames.TextEmbeddingProfiles =>
-                    await UpdateResource<TextEmbeddingProfile, VectorizationProfileBase>(resourcePath, serializedResource, _textEmbeddingProfiles, TEXT_EMBEDDING_PROFILES_FILE_PATH),
+                    await UpdateResource<TextEmbeddingProfile, VectorizationProfileBase>(resourcePath, serializedResource, userIdentity, _textEmbeddingProfiles, TEXT_EMBEDDING_PROFILES_FILE_PATH),
                 VectorizationResourceTypeNames.IndexingProfiles =>
-                    await UpdateResource<IndexingProfile, VectorizationProfileBase>(resourcePath, serializedResource, _indexingProfiles, INDEXING_PROFILES_FILE_PATH),
+                    await UpdateResource<IndexingProfile, VectorizationProfileBase>(resourcePath, serializedResource, userIdentity, _indexingProfiles, INDEXING_PROFILES_FILE_PATH),
                 VectorizationResourceTypeNames.VectorizationPipelines =>
-                    await UpdateResource<VectorizationPipeline, VectorizationPipeline>(resourcePath, serializedResource, _pipelines, PIPELINES_FILE_PATH),
+                    await UpdateResource<VectorizationPipeline, VectorizationPipeline>(resourcePath, serializedResource, userIdentity, _pipelines, PIPELINES_FILE_PATH),
                 VectorizationResourceTypeNames.VectorizationRequests =>
                     await UpdateVectorizationRequestResource(resourcePath, serializedResource),
                 _ => throw new ResourceProviderException($"The resource type {resourcePath.ResourceTypeInstances[0].ResourceType} is not supported by the {_name} resource provider.",
@@ -233,7 +233,7 @@ namespace FoundationaLLM.Vectorization.ResourceProviders
 
         #region Helpers for UpsertResourceAsync
 
-        private async Task<ResourceProviderUpsertResult> UpdateResource<T, TBase>(ResourcePath resourcePath, string serializedResource, ConcurrentDictionary<string, TBase> resourceStore, string storagePath)
+        private async Task<ResourceProviderUpsertResult> UpdateResource<T, TBase>(ResourcePath resourcePath, string serializedResource, UnifiedUserIdentity userIdentity, ConcurrentDictionary<string, TBase> resourceStore, string storagePath)
             where T : TBase
             where TBase: ResourceBase
         {
@@ -262,6 +262,11 @@ namespace FoundationaLLM.Vectorization.ResourceProviders
             if (resourcePath.ResourceTypeInstances[0].ResourceId != resource.Name)
                 throw new ResourceProviderException("The resource path does not match the object definition (name mismatch).",
                     StatusCodes.Status400BadRequest);
+
+            if (existingResource == null)
+                resource.CreatedBy = userIdentity.UPN;
+            else
+                resource.UpdatedBy = userIdentity.UPN;
 
             resourceStore.AddOrUpdate(resource.Name, resource, (k,v) => resource);
 

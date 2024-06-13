@@ -50,5 +50,12 @@ namespace FoundationaLLM.Common.Models.Authorization
         /// </summary>
         [JsonPropertyName("scope")]
         public required string Scope { get; set; }
+
+        /// <summary>
+        /// The entity who created the role assignment request.
+        /// </summary>
+        [JsonPropertyName("created_by")]
+        [JsonPropertyOrder(502)]
+        public string? CreatedBy { get; set; }
     }
 }

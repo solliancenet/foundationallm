@@ -68,6 +68,7 @@ param openAiResourceGroupName string
 /** Locals **/
 @description('KeyVault resource suffix')
 var opsResourceSuffix = '${project}-${environmentName}-${location}-ops'
+var storageResourceSuffix = '${project}-${environmentName}-${location}-storage'
 
 @description('Resource Suffix used in naming resources.')
 var resourceSuffix = '${project}-${environmentName}-${location}-${workload}'
@@ -203,6 +204,75 @@ module eventgrid 'modules/eventgrid.bicep' = {
   }
 }
 
+module configTopic 'modules/config-system-topic.bicep' = {
+  name: 'configTopic-${timestamp}'
+  scope: resourceGroup(opsResourceGroupName)
+  params: {
+    actionGroupId: actionGroupId
+    location: location
+    logAnalyticWorkspaceId: logAnalyticsWorkspaceId
+    resourceSuffix: opsResourceSuffix
+    tags: tags
+  }
+}
+
+module storageTopic 'modules/storage-system-topic.bicep' = {
+  name: 'storageTopic-${timestamp}'
+  scope: resourceGroup(storageResourceGroupName)
+  params: {
+    actionGroupId: actionGroupId
+    location: location
+    logAnalyticWorkspaceId: logAnalyticsWorkspaceId
+    resourceSuffix: storageResourceSuffix
+    tags: tags
+  }
+}
+
+module storageSub 'modules/system-topic-subscription.bicep' = {
+  name: 'storageSub-${timestamp}'
+  params: {
+    name: 'foundationallm-storage'
+    appResourceGroup: resourceGroup().name
+    destinationTopicName: 'storage'
+    eventGridName: eventgrid.outputs.name
+    filterPrefix: '/blobServices/default/containers/resource-provider/blobs'
+    includedEventTypes: [
+      'Microsoft.Storage.BlobCreated'
+      'Microsoft.Storage.BlobDeleted'
+    ]
+    advancedFilters: [
+      {
+        key: 'subject'
+        operatorType: 'StringNotEndsWith'
+        values: [
+          '_agent-references.json'
+          '_data-source-references.json'
+          '_prompt-references.json'
+        ]
+      }
+    ]
+    topicName: storageTopic.outputs.name
+  }
+  scope: resourceGroup(storageResourceGroupName)
+  dependsOn: [eventgrid, storageTopic]
+}
+
+module configSub 'modules/system-topic-subscription.bicep' = {
+  name: 'configSub-${timestamp}'
+  params: {
+    name: 'app-config'
+    appResourceGroup: resourceGroup().name
+    destinationTopicName: 'configuration'
+    eventGridName: eventgrid.outputs.name
+    includedEventTypes: [
+      'Microsoft.AppConfiguration.KeyValueModified'
+    ]
+    topicName: configTopic.outputs.name
+  }
+  scope: resourceGroup(opsResourceGroupName)
+  dependsOn: [eventgrid, configTopic]
+}
+
 @batchSize(3)
 module srBackend 'modules/service.bicep' = [for service in items(backendServices): {
   name: 'srBackend-${service.key}-${timestamp}'
@@ -334,25 +404,25 @@ module cosmosRoles './modules/sqlRoleAssignments.bicep' = {
 }
 
 module searchIndexDataReaderRole 'modules/utility/roleAssignments.bicep' = {
-  name: 'searchIndexDataReaderRole-${timestamp}'
+  name: 'searchIndexDataRole-${timestamp}'
   scope: resourceGroup(vectorizationResourceGroupName)
   params: {
     principalId: srVectorizationApi[indexOf(vecServiceNames, 'vectorization-api')].outputs.servicePrincipalId
     roleDefinitionIds: {
-      'Search Index Data Reader': '1407120a-92aa-4202-b7e9-c0e197c71c8f'
       'Search Index Data Contributor': '8ebe5a00-799e-43f5-93ac-243d3dce84a7'
+      'Search Service Contributor': '7ca78c08-252a-4471-8644-bb5ff32d4ba0'
     }
   }
 }
 
 module searchIndexDataReaderWorkerRole 'modules/utility/roleAssignments.bicep' = {
-  name: 'searchIndexDataReaderWorkerRole-${timestamp}'
+  name: 'searchIndexDataWorkerRole-${timestamp}'
   scope: resourceGroup(vectorizationResourceGroupName)
   params: {
     principalId: srBackend[indexOf(backendServiceNames, 'vectorization-job')].outputs.servicePrincipalId
     roleDefinitionIds: {
-      'Search Index Data Reader': '1407120a-92aa-4202-b7e9-c0e197c71c8f'
       'Search Index Data Contributor': '8ebe5a00-799e-43f5-93ac-243d3dce84a7'
+      'Search Service Contributor': '7ca78c08-252a-4471-8644-bb5ff32d4ba0'
     }
   }
 }
@@ -379,28 +449,6 @@ module cognitiveServicesOpenAiUserWorkerRole 'modules/utility/roleAssignments.bi
   }
 }
 
-module searchServiceContributorRole 'modules/utility/roleAssignments.bicep' = {
-  name: 'searchServiceContributorRole-${timestamp}'
-  scope: resourceGroup(vectorizationResourceGroupName)
-  params: {
-    principalId: srBackend[indexOf(vecServiceNames, 'vectorization-api')].outputs.servicePrincipalId
-    roleDefinitionIds: {
-      'Search Service Contributor': '7ca78c08-252a-4471-8644-bb5ff32d4ba0'
-    }
-  }
-}
-
-module searchServiceContributorWorkerRole 'modules/utility/roleAssignments.bicep' = {
-  name: 'searchServiceContributorWorkerRole-${timestamp}'
-  scope: resourceGroup(vectorizationResourceGroupName)
-  params: {
-    principalId: srBackend[indexOf(backendServiceNames, 'vectorization-job')].outputs.servicePrincipalId
-    roleDefinitionIds: {
-      'Search Service Contributor': '7ca78c08-252a-4471-8644-bb5ff32d4ba0'
-    }
-  }
-}
-
 module cognitiveServicesOpenAiUserGatewayRole 'modules/utility/roleAssignments.bicep' = {
   name: 'cognitiveServicesOpenAiUserGatewayRole-${timestamp}'
   scope: resourceGroup(openAiResourceGroupName)
@@ -419,6 +467,39 @@ module cognitiveServicesOpenAiUserLangChainRole 'modules/utility/roleAssignments
     principalId: srBackend[indexOf(backendServiceNames, 'langchain-api')].outputs.servicePrincipalId
     roleDefinitionIds: {
       'Cognitive Services OpenAI User': '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd'
+    }
+  }
+}
+
+module cognitiveServicesOpenAiUserSemanticKernelRole 'modules/utility/roleAssignments.bicep' = {
+  name: 'cognitiveServicesOpenAiUserSemKernelRole-${timestamp}'
+  scope: resourceGroup(openAiResourceGroupName)
+  params: {
+    principalId: srBackend[indexOf(backendServiceNames, 'semantic-kernel-api')].outputs.servicePrincipalId
+    roleDefinitionIds: {
+      'Cognitive Services OpenAI User': '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd'
+    }
+  }
+}
+
+module searchIndexDataReaderLangchainRole 'modules/utility/roleAssignments.bicep' = {
+  name: 'searchIndexDataReaderLangchainRole-${timestamp}'
+  scope: resourceGroup(vectorizationResourceGroupName)
+  params: {
+    principalId: srBackend[indexOf(backendServiceNames, 'langchain-api')].outputs.servicePrincipalId
+    roleDefinitionIds: {
+      'Search Index Data Reader': '1407120a-92aa-4202-b7e9-c0e197c71c8f'
+    }
+  }
+}
+
+module searchIndexDataReaderSemanticKernelRole 'modules/utility/roleAssignments.bicep' = {
+  name: 'searchIndexDataReaderSemKerRole-${timestamp}'
+  scope: resourceGroup(vectorizationResourceGroupName)
+  params: {
+    principalId: srBackend[indexOf(backendServiceNames, 'semantic-kernel-api')].outputs.servicePrincipalId
+    roleDefinitionIds: {
+      'Search Index Data Reader': '1407120a-92aa-4202-b7e9-c0e197c71c8f'
     }
   }
 }

@@ -274,6 +274,11 @@ namespace FoundationaLLM.Agent.ResourceProviders
                 }
             }
 
+            if (existingAgentReference == null)
+                agent.CreatedBy = userIdentity.UPN;
+            else
+                agent.UpdatedBy = userIdentity.UPN;
+
             await _storageService.WriteFileAsync(
                 _storageContainerName,
                 agentReference.Filename,

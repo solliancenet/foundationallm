@@ -54,7 +54,6 @@ $basenames = @(
     "api"
     "management"
     "management-api"
-    "vectorization-api"
     "www"
 )
 

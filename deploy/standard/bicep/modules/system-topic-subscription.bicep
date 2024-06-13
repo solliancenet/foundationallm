@@ -32,6 +32,7 @@ param destinationTopicName string
 param eventGridName string
 param filterPrefix string = ''
 param includedEventTypes array
+param advancedFilters array = []
 param name string
 param timestamp string = utcNow()
 param topicName string
@@ -71,6 +72,7 @@ resource resourceProviderSub 'Microsoft.EventGrid/systemTopics/eventSubscription
       }
     }
     filter: {
+      advancedFilters: advancedFilters
       enableAdvancedFilteringOnArrays: true
       includedEventTypes: includedEventTypes
       subjectBeginsWith: filterPrefix

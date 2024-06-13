@@ -225,6 +225,7 @@ namespace FoundationaLLM.Authorization.Services
                             PrincipalType = roleAssignmentRequest.PrincipalType,
                             RoleDefinitionId = roleAssignmentRequest.RoleDefinitionId,
                             Scope = roleAssignmentRequest.Scope,
+                            CreatedBy = roleAssignmentRequest.CreatedBy
                         };
 
                         roleAssignmentStore.RoleAssignments.Add(roleAssignment);

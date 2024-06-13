@@ -1,6 +1,7 @@
 appConfig:
   uri: {{appConfigEndpoint}}
   connectionString: {{appConfigConnectionString}}
+  rwConnectionString: {{appConfigRWConnectionString}}
 azureWorkloadIdentity:
   agentHubApiClientId: {{agentHubApiMiClientId}}
   chatUiClientId: {{chatUiMiClientId}}

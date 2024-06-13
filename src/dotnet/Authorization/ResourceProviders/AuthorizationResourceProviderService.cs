@@ -91,7 +91,8 @@ namespace FoundationaLLM.Authorization.ResourceProviders
                     PrincipalId = roleAssignment.PrincipalId,
                     PrincipalType = roleAssignment.PrincipalType,
                     RoleDefinitionId = roleAssignment.RoleDefinitionId,
-                    Scope = roleAssignment.Scope
+                    Scope = roleAssignment.Scope,
+                    CreatedBy = userIdentity.UPN
                 });
 
             if (roleAssignmentResult.Success)

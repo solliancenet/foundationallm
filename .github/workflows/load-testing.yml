@@ -1,0 +1,403 @@
+name: Load Testing
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: AZD Environment Name
+        type: string
+        default: fllm-e2e-aca
+      deployOpenAi:
+        description: Deploy a new OpenAI Instance
+        type: boolean
+        default: false
+      openAiName:
+        description: Shared OpenAI Instance Name
+        type: string
+        default: fllm-01
+      openAiResourceGroup:
+        description: Shared OpenAI Resource Group
+        type: string
+        default: fllm-shared-01
+      location:
+        description: AZD Target Location
+        type: choice
+        options:
+          - AustraliaEast
+          - CanadaEast
+          - EastUS
+          - EastUS2
+          - SwedenCentral
+        default: EastUS2
+
+jobs:
+  deploy_quickstart:
+    name: Deploy Quick Start
+    runs-on: ubuntu-latest
+    outputs:
+      azd-deployment-data: ${{ steps.apply-cosmos-db-rbac.outputs.AZD_DEPLOYMENT_DATA }}
+    env:
+      AZURE_ENV_NAME: ${{ inputs.environment }}
+      AZURE_LOCATION: ${{ inputs.location }}
+    steps:
+      - name: Sets Credentials for Sandbox
+        run: |
+          {
+            echo 'AZURE_CREDENTIALS<<EOF'
+            echo "$FLLM_SBX_AZURE_CREDENTIALS"
+            echo EOF
+          } >> "$GITHUB_ENV"
+        env:
+          FLLM_SBX_AZURE_CREDENTIALS: |
+            ${{ secrets.FLLM_SBX_AZURE_CREDENTIALS }}
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install azd
+        uses: Azure/setup-azd@v1.0.0
+        with:
+          version: "1.9.3"
+
+      - name: Log in with Azure (Client Credentials)
+        run: |
+          $info = $Env:AZURE_CREDENTIALS | ConvertFrom-Json -AsHashtable;
+          Write-Host "::add-mask::$($info.clientSecret)"
+
+          cd ./deploy/quick-start
+          azd auth login `
+            --client-id "$($info.clientId)" `
+            --client-secret "$($info.clientSecret)" `
+            --tenant-id "$($info.tenantId)"
+
+          az login `
+            --service-principal `
+            --username "$($info.clientId)" `
+            --password "$($info.clientSecret)" `
+            --tenant "$($info.tenantId)"
+
+          $env:AZCOPY_SPA_CLIENT_SECRET="$($info.clientSecret)"
+          azcopy login `
+            --service-principal `
+            --application-id "$($info.clientId)" `
+            --tenant-id "$($info.tenantId)"
+        shell: pwsh
+
+      - name: Provision App Registrations
+        id: provision-app-registrations
+        run: |
+          Write-Host "Provision App Registrations"
+          Push-Location ./tests/scripts
+          ./Create-FllmEntraIdApps.ps1 `
+            -authAppName FoundationaLLM-Authorization-E2E-${{ needs.generate_matrix.outputs.unique_id }} `
+            -coreAppName FoundationaLLM-Core-E2E-${{ needs.generate_matrix.outputs.unique_id }} `
+            -coreClientAppName FoundationaLLM-Core-E2E-Client-${{ needs.generate_matrix.outputs.unique_id }} `
+            -mgmtAppName FoundationaLLM-Management-E2E-${{ needs.generate_matrix.outputs.unique_id }} `
+            -mgmtClientAppName FoundationaLLM-Management-E2E-Client-${{ needs.generate_matrix.outputs.unique_id }}
+          Pop-Location
+        shell: pwsh
+
+      - name: Provision Admin Group
+        id: provision-admin-group
+        run: |
+          $info = $Env:AZURE_CREDENTIALS | ConvertFrom-Json -AsHashtable;
+          Write-Host "::add-mask::$($info.clientSecret)"
+
+          Write-Host "Provision Admin Group and add ObjectId to AZD Environment"
+          Push-Location ./tests/scripts
+          $spObjectId = $(az ad sp list --filter "appId eq '$($info.clientId)'" --query '[].id' --output tsv)
+          Write-Host "SP Object Id: $spObjectId"
+          ./Create-FllmAdminGroup.ps1 `
+            -groupName FLLM-E2E-Admins-${{ needs.generate_matrix.outputs.unique_id }}
+
+          $spAssignmentExists = $(az ad group member check `
+            --group FLLM-E2E-Admins-${{ needs.generate_matrix.outputs.unique_id }} `
+            --member-id $spObjectId `
+            --output json | ConvertFrom-Json).value
+
+          if (-not $spAssignmentExists)
+          {
+            az ad group member add `
+            --group FLLM-E2E-Admins-${{ needs.generate_matrix.outputs.unique_id }} `
+            --member-id $spObjectId `
+            --output json
+          }
+
+
+          if ('${{ inputs.target }}' -eq 'sandbox') {
+            $assignmentExists = $(az ad group member check `
+              --group FLLM-E2E-Admins-${{ needs.generate_matrix.outputs.unique_id }} `
+              --member-id d3bd4e8e-d413-477d-a420-0792b0504adf `
+              --output json | ConvertFrom-Json).value
+
+            if (-not $assignmentExists)
+            {
+              az ad group member add `
+              --group FLLM-E2E-Admins-${{ needs.generate_matrix.outputs.unique_id }} `
+              --member-id d3bd4e8e-d413-477d-a420-0792b0504adf `
+              --output json
+            }
+          }
+          Pop-Location
+        shell: pwsh
+
+      - name: Update AZD Environment
+        id: update-azd-environment
+        run: |
+          $info = $Env:AZURE_CREDENTIALS | ConvertFrom-Json -AsHashtable;
+          Write-Host "::add-mask::$($info.clientSecret)"
+
+          $spObjectId = $(az ad sp list --filter "appId eq '$($info.clientId)'" --query '[].id' --output tsv)
+
+          Write-Host "Create new AZD Environment"
+          Push-Location ./deploy/quick-start
+          azd env new ${{ inputs.environment }}
+          azd env set PIPELINE_DEPLOY "$true"
+          azd env set FLLM_E2E_SP_OBJECT_ID $spObjectId
+
+          if (${{ inputs.deployOpenAi }}) {
+            azd env set OPENAI_NAME ${{ inputs.openAiName }}
+            azd env set OPENAI_RESOURCE_GROUP ${{ inputs.openAiResourceGroup }}
+            azd env set OPENAI_SUBSCRIPTION_ID $($info.subscriptionId)
+          }
+
+          Pop-Location
+
+          Write-Host "Update AZD Environment with Service Docker Image Names"
+          $configPath = "./tests/config/e2e-test-manifest.json"
+          $config = Get-content $configPath | ConvertFrom-Json
+
+          Push-Location ./deploy/quick-start
+          foreach ($service in $($config.service_matrix)) {
+            $imageName = "${{ needs.generate_matrix.outputs.registry }}.azurecr.io/$($service.name):${{ needs.generate_matrix.outputs.docker_tag }}"
+            Write-Host "Setting $($service.azd_env_key) to $($imageName)..."
+            azd env set $($service.azd_env_key) "$($imageName)"
+
+            if ($LASTEXITCODE -ne 0) {
+                Write-Error("Failed to set $($value.Key).")
+                exit 1
+            }
+          }
+          Pop-Location
+
+          Write-Host "Update AZD Environment with App Registration Metadata"
+          Push-Location ./deploy/quick-start
+          ../../tests/scripts/Set-AzdEnv.ps1 `
+            -tenantId $($info.tenantId) `
+            -principalType ServicePrincipal `
+            -instanceId 6fa496ce-d5c0-4e02-9223-06a98c9c0176 `
+            -fllmApiName FoundationaLLM-Core-E2E-${{ needs.generate_matrix.outputs.unique_id }} `
+            -fllmClientName FoundationaLLM-Core-E2E-Client-${{ needs.generate_matrix.outputs.unique_id }} `
+            -fllmMgmtApiName FoundationaLLM-Management-E2E-${{ needs.generate_matrix.outputs.unique_id }} `
+            -fllmMgmtClientName FoundationaLLM-Management-E2E-Client-${{ needs.generate_matrix.outputs.unique_id }} `
+            -fllmAuthApiName FoundationaLLM-Authorization-E2E-${{ needs.generate_matrix.outputs.unique_id }} `
+            -fllmAdminGroupName FLLM-E2E-Admins-${{ needs.generate_matrix.outputs.unique_id }}
+          Pop-Location
+        shell: pwsh
+
+      - name: Provision Infrastructure
+        run: |
+          $info = $Env:AZURE_CREDENTIALS | ConvertFrom-Json -AsHashtable;
+          Write-Host "::add-mask::$($info.clientSecret)"
+
+          $env:AZURE_SUBSCRIPTION_ID=$($info.subscriptionId)
+
+          Push-Location ./deploy/quick-start
+          azd provision --no-prompt
+          Pop-Location
+        shell: pwsh
+
+      - name: Deploy Application
+        run: |
+          $info = $Env:AZURE_CREDENTIALS | ConvertFrom-Json -AsHashtable;
+          Write-Host "::add-mask::$($info.clientSecret)"
+
+          $env:AZURE_SUBSCRIPTION_ID=$($info.subscriptionId)
+
+          Push-Location ./deploy/quick-start
+          azd deploy --no-prompt
+          Pop-Location
+        shell: pwsh
+
+      - name: Update App Registration OAuth Callbacks
+        id: update-app-reg-oauth
+        run: |
+          Write-Host "Update App Registration OAuth Callbacks"
+          Push-Location ./deploy/quick-start
+          pwsh -File ../../tests/scripts/Update-OAuthCallbackUris.ps1 `
+            -fllmChatUiName FoundationaLLM-Core-E2E-Client-${{ needs.generate_matrix.outputs.unique_id }} `
+            -fllmMgmtUiName FoundationaLLM-Management-E2E-Client-${{ needs.generate_matrix.outputs.unique_id }}
+          Pop-Location
+        shell: pwsh
+
+      - name: Apply MS Graph API Role Assignments
+        id: apply-ms-graph-api-roles
+        run: |
+          Write-Host "Apply MS Graph API Role Assignments"
+          Push-Location ./deploy/quick-start
+          pwsh -File ../../tests/scripts/Apply-MSGraphAPIRoles.ps1
+          Pop-Location
+        shell: pwsh
+
+      - name: Apply Cosmos DB RBAC to Service Principal
+        id: apply-cosmos-db-rbac
+        run: |
+          $info = $Env:AZURE_CREDENTIALS | ConvertFrom-Json -AsHashtable;
+          Write-Host "::add-mask::$($info.clientSecret)"
+
+          Push-Location ./deploy/quick-start
+          
+          {
+            echo 'AZD_DEPLOYMENT_DATA<<EOF'
+            Get-Content "./.azure/${{ inputs.environment }}/.env" -Raw
+            echo EOF
+          } >> "$GITHUB_OUTPUT"
+
+          (azd env get-values) | foreach {
+              $name, $value = $_.split('=')
+              set-content env:\$name $value
+          }
+          Pop-Location
+
+          Write-Host "Apply Cosmos DB Role to Service Principal"
+          Push-Location ./tests/scripts
+          $spObjectId = $(az ad sp list --filter "appId eq '$($info.clientId)'" --query '[].id' --output tsv)
+          Write-Host "SP Object Id: $spObjectId"
+          $cosmosDbName = $env:AZURE_COSMOS_DB_NAME | ConvertFrom-Json
+          $cosmosDbObjectId = $(az cosmosdb show --name $cosmosDbName --resource-group rg-${{ inputs.environment }} --query 'id' --output tsv)
+          Write-Host "CosmosDB Object Id: $cosmosDbObjectId"
+          az cosmosdb sql role assignment create `
+            --account-name $cosmosDbName `
+            --resource-group rg-${{ inputs.environment }} `
+            --role-definition-id 00000000-0000-0000-0000-000000000002 `
+            --scope $cosmosDbObjectId `
+            --principal-id $spObjectId
+          Pop-Location
+        shell: pwsh
+
+  run_load_test:
+    name: Run Load Test
+    runs-on: ubuntu-latest
+    needs: deploy_quickstart
+    steps:
+      - name: Sets Credentials for Sandbox
+        run: |
+          {
+            echo 'AZURE_CREDENTIALS<<EOF'
+            echo "$FLLM_SBX_AZURE_CREDENTIALS"
+            echo EOF
+          } >> "$GITHUB_ENV"
+        env:
+          FLLM_SBX_AZURE_CREDENTIALS: |
+            ${{ secrets.FLLM_SBX_AZURE_CREDENTIALS }}
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Load Config File
+        uses: actions/github-script@v7
+        id: set-config
+        with:
+          result-encoding: string
+          script: |
+            const fs = require('fs')
+            return fs.readFileSync('./tests/config/load-testing-parameters.json')
+
+      - name: Log in with Azure (Client Credentials)
+        run: |
+          $info = $Env:AZURE_CREDENTIALS | ConvertFrom-Json -AsHashtable;
+          Write-Host "::add-mask::$($info.clientSecret)"
+
+          az login `
+            --service-principal `
+            --username "$($info.clientId)" `
+            --password "$($info.clientSecret)" `
+            --tenant "$($info.tenantId)"
+
+      - name: Download Question Bank & Load Testing File
+        run: |
+          az storage blob download `
+            --account-name ${{ steps.set-config.outputs.storage_account_name }} `
+            --container-name ${{ steps.set-config.outputs.storage_account_container }} `
+            --name ${{ steps.set-config.outputs.question_bank_file }} `
+            --file QuestionBank.csv `
+            --auth-mode login
+
+          az storage blob download `
+            --account-name ${{ steps.set-config.outputs.storage_account_name }} `
+            --container-name ${{ steps.set-config.outputs.storage_account_container }} `
+            --name ${{ steps.set-config.outputs.jmeter_file }} `
+            --file fllm-test-plan.jmx `
+            --auth-mode login
+
+      - name: Populate Load Testing Config
+        id: populate-load-testing-config
+        run: |
+          $info = $Env:AZURE_CREDENTIALS | ConvertFrom-Json -AsHashtable;
+          $load_test_name = "FLLM-Load-Test-$([int64](Get-Date -UFormat %s))"
+          $load_test_file_name = "$($load_test_name).csv"
+          $load_test_id = (New-Guid).Guid
+          
+          # Share with other steps
+          {
+            echo 'load_test_name<<EOF'
+            echo $load_test_name
+            echo EOF
+
+            echo 'load_test_id<<EOF'
+            echo $load_test_id
+            echo EOF
+          } >> "$GITHUB_ENV"
+
+          # Load .env
+          $configurationParameters = @{}
+          "${{ needs.deploy_quickstart.outputs.azd-deployment-data }}".Split([Environment]::NewLine, [System.StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object {
+            $envVar = $_ -split "="
+            $configurationParameters[$envVar[0]] = $envVar[1].Replace('"', '')
+          }
+
+          # Replace Placeholders
+          $config = @{
+            load_test_name = $load_test_name
+            load_test_id = $load_test_id
+            load_test_file_name = $load_test_file_name
+            client_id = $info.clientId
+            scope = $configurationParameters["ENTRA_CHAT_UI_SCOPES"]
+            tenant_id = $info.tenantId
+            core_api_endpoint = $configurationParameters["SERVICE_CORE_API_ENDPOINT_URL"]
+          }
+          $load_testing_config = Get-Content "./tests/config/load-testing-template.yml" -Raw
+          foreach ($h in $hash.GetEnumerator() )
+          {
+            $load_testing_config = $load_testing_config -replace "\${$($h.Name)}", $h.Value
+          }
+          Out-File -FilePath "load-testing.yml" -InputObject $load_testing_config
+          
+          # Randomly Sample 100 Lines for Testing
+          $file_content = Get-Content "QuestionBank.csv"
+          $lines = New-Object Collections.Generic.List[String]
+          1..100 | %{
+            $line = Get-Random -InputObject $file_content
+            while(1) {
+              # It's possible for the returned line to be empty
+              if ([string]::IsNullOrEmpty($line)) {
+                $line = Get-Random -InputObject $file_content
+              }
+              else {
+                break
+              }
+            }
+            $lines.Add($line)
+          }
+          Out-File -FilePath $load_test_file_name -InputObject $lines
+        shell: pwsh
+
+      - name: Run Load Test
+        run: |
+          # Create Agents
+          dotnet test --filter "FullyQualifiedName=FoundationaLLM.Core.Examples.CreateAgentsForLoadTest" ./tests/dotnet/Core.Examples/Core.Examples.csproj
+          az load test create `
+            --load-test-resource ${{ env.load_test_name }} `
+            --test-id ${{ env.load_test_id }} `
+            --load-test-config-file "load-testing.yml"
+        shell: pwsh

@@ -226,7 +226,7 @@ module apiKeySecret 'kvSecret.bicep' = [
     params: {
       kvName: opsKvName
       secretName: secretName
-      secretValue: 'HAOpenAIKey'
+      secretValue: main.listKeys().key1
       tags: tags
     }
   }

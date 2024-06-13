@@ -310,7 +310,7 @@
       },
       {
         "key": "FoundationaLLM:APIs:VectorizationAPI:APIUrl",
-        "value": "https://{{vectorizationApiHostname}}/vectorization",
+        "value": "http://vectorization-api/vectorization",
         "label": null,
         "content_type": "",
         "tags": {}
@@ -1244,48 +1244,6 @@
         "value": "{{vectorizationConfig}}",
         "label": null,
         "content_type": "application/json",
-        "tags": {}
-      },
-      {
-        "key": "FoundationaLLM:VectorizationAPI:Entra:CallbackPath",
-        "value": "/signin-oidc",
-        "label": null,
-        "content_type": "",
-        "tags": {}
-      },
-      {
-        "key": "FoundationaLLM:VectorizationAPI:Entra:ClientId",
-        "value": "{{vectorizationApiEntraClientId}}",
-        "label": null,
-        "content_type": "",
-        "tags": {}
-      },
-      {
-        "key": "FoundationaLLM:VectorizationAPI:Entra:ClientSecret",
-        "value": "{\"uri\":\"{{keyvaultUri}}secrets/foundationallm-apis-management-api-entra-clientsecret\"}",
-        "label": null,
-        "content_type": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8",
-        "tags": {}
-      },
-      {
-        "key": "FoundationaLLM:VectorizationAPI:Entra:Instance",
-        "value": "https://login.microsoftonline.com/",
-        "label": null,
-        "content_type": "",
-        "tags": {}
-      },
-      {
-        "key": "FoundationaLLM:VectorizationAPI:Entra:Scopes",
-        "value": "{{vectorizationApiEntraScopes}}",
-        "label": null,
-        "content_type": "",
-        "tags": {}
-      },
-      {
-        "key": "FoundationaLLM:VectorizationAPI:Entra:TenantId",
-        "value": "{{tenantId}}",
-        "label": null,
-        "content_type": "",
         "tags": {}
       }
     ]
