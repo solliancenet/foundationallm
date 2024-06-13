@@ -653,9 +653,18 @@ jobs:
           $env:FoundationaLLM_AppConfig_ConnectionString=$connectionString
 
           echo "Running End to End Test: ${{ matrix.object.name }}"
-          dotnet test --filter "FullyQualifiedName=${{ matrix.object.namespace }}.${{ matrix.object.task_name }}" ${{ matrix.object.target }}
+          dotnet test `
+            --filter "FullyQualifiedName=${{ matrix.object.namespace }}.${{ matrix.object.task_name }}" `
+            --logger:"html;verbosity=detailed;LogFileName=${{ github.workspace }}/${{ matrix.object.name }}.html" `
+            ${{ matrix.object.target }}
         shell: pwsh
 
+      - name: Publish Test Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.object.name }}-results
+          path: ${{ github.workspace }}/${{ matrix.object.name }}.html
+  
   teardown_quickstart:
     name: Tear Down Quick Start
     if: ${{ (cancelled() && inputs.bypassAndTeardown) || inputs.enableTeardown }}
@@ -751,4 +760,14 @@ jobs:
             -mgmtClientAppName FoundationaLLM-Management-E2E-Client-${{ needs.generate_matrix.outputs.unique_id }} `
             -interactiveMode $false
           Pop-Location
+        shell: pwsh
+
+  
+      - name: Check E2E Test Status
+        run: |
+          if ( '${{ needs.run_e2e_tests.result }}' -eq 'success' ) {
+            exit 0
+          }
+  
+          exit 1
         shell: pwsh
