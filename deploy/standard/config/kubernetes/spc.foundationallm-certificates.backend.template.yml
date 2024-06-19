@@ -19,13 +19,6 @@ spec:
           key: tls.key
         - objectName: managementapi
           key: tls.crt
-    - secretName: vectorizationapi-tls
-      type: kubernetes.io/tls
-      data:
-        - objectName: vectorizationapi
-          key: tls.key
-        - objectName: vectorizationapi
-          key: tls.crt
   parameters:
     keyvaultName: "{{keyVaultName}}"
     tenantId: "{{tenantId}}"
@@ -39,7 +32,4 @@ spec:
           objectType: secret
         - |
           objectName: managementapi
-          objectType: secret
-        - |
-          objectName: vectorizationapi
           objectType: secret

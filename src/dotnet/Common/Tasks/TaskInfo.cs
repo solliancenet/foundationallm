@@ -14,5 +14,11 @@
         /// The <see cref="Task"/> being run.
         /// </summary>
         public required Task Task { get; set; }
+
+
+        /// <summary>
+        /// The start time of the task.
+        /// </summary>
+        public required DateTimeOffset StartTime { get; set; }
     }
 }

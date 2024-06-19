@@ -74,11 +74,3 @@ $target = "https://$storageAccount.blob.core.windows.net/resource-provider/"
             
 & ../tools/azcopy_${os}_amd64_${AZCOPY_VERSION}/azcopy copy '../../common/data/resource-provider/*' $target `
     --exclude-pattern .git* --recursive=True --overwrite=True
-
-# Invoke-AndRequireSuccess "Uploading Resource Providers" {
-#     $target = "https://$storageAccount.blob.core.windows.net/resource-provider/"
-            
-#     & ../tools/azcopy_${os}_amd64_${AZCOPY_VERSION}/azcopy cp '../../common/data/resource-provider/*' $target `
-#         --exclude-pattern .git* --recursive=True
-# }
-

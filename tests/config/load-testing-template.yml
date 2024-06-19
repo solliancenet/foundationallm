@@ -1,0 +1,25 @@
+displayName: ${load_test_name}
+testPlan: fllm-test-plan.jmx
+description: ''
+engineInstances: 1
+testId: ${load_test_id}
+testType: JMX
+splitAllCSVs: False
+configurationFiles:
+- ${load_test_file_name}
+failureCriteria: []
+secrets:
+- name: client_secret
+  value: https://fllme2emkeyvault7f393d64.vault.azure.net/secrets/sp-client-secret/9fd20b661b774a2892a6b9df8385059f
+env:
+- name: client_id
+  value: ${client_id}
+- name: scope
+  value: ${scope}
+- name: tenant_id
+  value: ${tenant_id}
+- name: core_api_endpoint
+  value: ${core_api_endpoint}
+autoStop:
+  errorPercentage: 90
+  timeWindow: 60

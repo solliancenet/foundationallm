@@ -5,5 +5,9 @@
     /// </summary>
     public static class AuthorizationResourceProviderActions
     {
+        /// <summary>
+        /// Filter role assignments.
+        /// </summary>
+        public const string Filter = "filter";
     }
 }

@@ -21,12 +21,12 @@ namespace FoundationaLLM.Core.API.Controllers
     [Authorize(Policy = "DefaultPolicy")]
     [ApiController]
     [Route("[controller]")]
-    public class OrchestrationController : ControllerBase
+    public class CompletionsController : ControllerBase
     {
         private readonly ICoreService _coreService;
         private readonly IResourceProviderService _agentResourceProvider;
 #pragma warning disable IDE0052 // Remove unread private members.
-        private readonly ILogger<OrchestrationController> _logger;
+        private readonly ILogger<CompletionsController> _logger;
         ICallContext _callContext;
 
         /// <summary>
@@ -40,11 +40,11 @@ namespace FoundationaLLM.Core.API.Controllers
         /// <param name="callContext">The call context for the request.</param>
         /// <param name="resourceProviderServices">The list of <see cref="IResourceProviderService"/> resource provider services.</param>
         /// <param name="logger">The logging interface used to log under the
-        /// <see cref="OrchestrationController"/> type name.</param>
-        public OrchestrationController(ICoreService coreService,
+        /// <see cref="CompletionsController"/> type name.</param>
+        public CompletionsController(ICoreService coreService,
             ICallContext callContext,
             IEnumerable<IResourceProviderService> resourceProviderServices,
-            ILogger<OrchestrationController> logger)
+            ILogger<CompletionsController> logger)
         {
             _coreService = coreService;
             var resourceProviderServicesDictionary = resourceProviderServices.ToDictionary<IResourceProviderService, string>(
@@ -59,11 +59,11 @@ namespace FoundationaLLM.Core.API.Controllers
         /// <summary>
         /// Requests a completion from the downstream APIs.
         /// </summary>
-        /// <param name="directCompletionRequest">The user prompt for which to generate a completion.</param>
-        [HttpPost("completion", Name = "GetCompletion")]
-        public async Task<IActionResult> GetCompletion([FromBody] CompletionRequest directCompletionRequest)
+        /// <param name="completionRequest">The user prompt for which to generate a completion.</param>
+        [HttpPost(Name = "GetCompletion")]
+        public async Task<IActionResult> GetCompletion([FromBody] CompletionRequest completionRequest)
         {
-            var completionResponse = await _coreService.GetCompletionAsync(directCompletionRequest);
+            var completionResponse = await _coreService.GetCompletionAsync(completionRequest);
 
             return Ok(completionResponse);
         }

@@ -190,9 +190,12 @@ namespace FoundationaLLM.Common.Services.ResourceProviders
                 _allowedResourceTypes,
                 allowAction: false);
 
-            // Authorize access to the resource path.
-            await Authorize(parsedResourcePath, userIdentity, "read");
-
+            if(!parsedResourcePath.IsResourceTypePath)
+            {
+                // Authorize access to the resource path.
+                await Authorize(parsedResourcePath, userIdentity, "read");
+            }
+           
             return await GetResourcesAsync(parsedResourcePath, userIdentity);
         }
 

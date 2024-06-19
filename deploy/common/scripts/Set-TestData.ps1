@@ -122,12 +122,6 @@ function Set-Index {
 # Navigate to the script directory so that we can use relative paths.
 Push-Location $($MyInvocation.InvocationName | Split-Path)
 try {
-    $status = (azcopy login status)
-    if (-not $status.contains("Your login session is still active")) {
-        Write-Host -ForegroundColor Blue "Please Follow the instructions below to login to Azure using AzCopy."
-        azcopy login
-    }
-
     $indexBackupPath = "../data/test/index-backup" | Get-AbsolutePath
     Write-Host "Reading index-backup data from: $indexBackupPath" -ForegroundColor Yellow
 

@@ -129,8 +129,68 @@
             "target": "./tests/dotnet/Core.Examples/Core.Examples.csproj"
         },
         {
+            "name": "0002",
+            "task_name": "Example0002_KnowledgeManagementInlineContextAgentWithSemanticKernel.RunAsync",
+            "namespace": "FoundationaLLM.Core.Examples",
+            "target": "./tests/dotnet/Core.Examples/Core.Examples.csproj"
+        },
+        {
             "name": "0003",
             "task_name": "Example0003_KnowledgeManagementInlineContextAgentWithLangChain.RunAsync",
+            "namespace": "FoundationaLLM.Core.Examples",
+            "target": "./tests/dotnet/Core.Examples/Core.Examples.csproj"
+        },
+        {
+            "name": "0004",
+            "task_name": "Example0004_SynchronousVectorizationOfPDFFromDataLake.RunAsync",
+            "namespace": "FoundationaLLM.Core.Examples",
+            "target": "./tests/dotnet/Core.Examples/Core.Examples.csproj"
+        },
+        {
+            "name": "0005",
+            "task_name": "Example0005_AsynchronousVectorizationOfPDFFromDataLake.RunAsync",
+            "namespace": "FoundationaLLM.Core.Examples",
+            "target": "./tests/dotnet/Core.Examples/Core.Examples.csproj"
+        },
+        {
+            "name": "0010",
+            "task_name": "Example0010_VectorizationAsyncDune.RunAsync",
+            "namespace": "FoundationaLLM.Core.Examples",
+            "target": "./tests/dotnet/Core.Examples/Core.Examples.csproj"
+        },
+        {
+            "name": "0011",
+            "task_name": "Example0011_KnowledgeManagementAgentWithSemanticKernel.RunAsync",
+            "namespace": "FoundationaLLM.Core.Examples",
+            "target": "./tests/dotnet/Core.Examples/Core.Examples.csproj"
+        },
+        {
+            "name": "0012",
+            "task_name": "Example0012_KnowledgeManagementAgentWithLangChain.RunAsync",
+            "namespace": "FoundationaLLM.Core.Examples",
+            "target": "./tests/dotnet/Core.Examples/Core.Examples.csproj"
+        },
+        {
+            "name": "0013",
+            "task_name": "Example0013_KnowledgeManagementSemanticKernelWithLargeIndex.RunAsync",
+            "namespace": "FoundationaLLM.Core.Examples",
+            "target": "./tests/dotnet/Core.Examples/Core.Examples.csproj"
+        },
+        {
+            "name": "0014",
+            "task_name": "Example0014_KnowledgeManagementLangChainWithLargeIndex.RunAsync",
+            "namespace": "FoundationaLLM.Core.Examples",
+            "target": "./tests/dotnet/Core.Examples/Core.Examples.csproj"
+        },
+        {
+            "name": "0015",
+            "task_name": "Example0015_AgentToAgentConversations.RunAsync",
+            "namespace": "FoundationaLLM.Core.Examples",
+            "target": "./tests/dotnet/Core.Examples/Core.Examples.csproj"
+        },
+        {
+            "name": "0020",
+            "task_name": "Example0020_GenerateConversationsAboutProducts.RunAsync",
             "namespace": "FoundationaLLM.Core.Examples",
             "target": "./tests/dotnet/Core.Examples/Core.Examples.csproj"
         }

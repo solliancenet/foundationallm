@@ -66,10 +66,15 @@ export interface Agent {
 	orchestration_settings?: OrchestrationSettings;
 }
 
-export interface OrchestrationRequest {
+export interface CompletionRequest {
 	session_id?: string;
 	user_prompt: string;
 	agent_name?: string;
 	settings?: OrchestrationSettings;
 	attachments?: string[];
+}
+
+export interface Attachment {
+	id: string;
+	fileName: string;
 }

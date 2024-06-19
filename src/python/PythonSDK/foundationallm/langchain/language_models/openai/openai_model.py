@@ -1,6 +1,5 @@
 from langchain_core.embeddings import Embeddings
-from langchain_core.language_models import BaseLanguageModel
-from langchain_openai import AzureOpenAI, OpenAI, AzureChatOpenAI, ChatOpenAI, AzureOpenAIEmbeddings, OpenAIEmbeddings
+from langchain_openai import AzureOpenAIEmbeddings, OpenAIEmbeddings
 
 from foundationallm.config import Configuration
 from foundationallm.langchain.language_models import LanguageModelBase
@@ -93,7 +92,7 @@ class OpenAIModel(LanguageModelBase):
 
         if embedding_model.provider == LanguageModelProvider.MICROSOFT:
             return AzureOpenAIEmbeddings(
-                openai_api_key = self.config.get_value(embedding_model.api_key),
+                azure_ad_token = embedding_model.api_key,
                 openai_api_version = self.config.get_value(embedding_model.api_version),
                 deployment = self.config.get_value(embedding_model.deployment),
                 azure_endpoint = self.config.get_value(embedding_model.api_endpoint),

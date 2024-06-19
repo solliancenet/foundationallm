@@ -34,6 +34,8 @@ namespace FoundationaLLM.Vectorization.Services.VectorizationStates
         private const string EXECUTION_STATE_DIRECTORY = "execution-state";
         private const string PIPELINE_STATE_DIRECTORY = "pipeline-state";
 
+        private static readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
+
         /// <inheritdoc/>
         public async Task<bool> HasState(VectorizationRequest request) =>
             await _storageService.FileExistsAsync(
@@ -174,7 +176,7 @@ namespace FoundationaLLM.Vectorization.Services.VectorizationStates
                     .DefaultIfEmpty()
                 select new VectorizationStateItem
                 {
-                    PipelineName = state.PipelineName,
+                    PipelineName = state.PipelineName ?? "NoPipeline",
                     Position = tp.Position,
                     TextPartitionContent = tp.Content!,
                     TextPartitionHash = tp.ContentHash,
@@ -265,12 +267,22 @@ namespace FoundationaLLM.Vectorization.Services.VectorizationStates
             //vectorization-state/pipeline-state/pipeline-name/pipeline-name-pipeline-execution-id.json
             var pipelineStatePath = $"{PIPELINE_STATE_DIRECTORY}/{pipelineName}/{pipelineName}-{state.ExecutionId}.json";
             var content = JsonSerializer.Serialize(state);
-            await _storageService.WriteFileAsync(
-                BLOB_STORAGE_CONTAINER_NAME,
-                pipelineStatePath,
-                content,
-                default,
-                default);            
+
+            // add SemaphoreSlim async lock to avoid pipeline file contention - allows for a lock with an await in the body
+            await _semaphore.WaitAsync();
+            try
+            {
+                await _storageService.WriteFileAsync(
+                    BLOB_STORAGE_CONTAINER_NAME,
+                    pipelineStatePath,
+                    content,
+                    default,
+                    default);
+            }
+            finally
+            {
+                _semaphore.Release();
+            }           
         }
 
         /// <inheritdoc/>

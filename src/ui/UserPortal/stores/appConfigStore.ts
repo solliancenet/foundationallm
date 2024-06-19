@@ -25,6 +25,7 @@ export const useAppConfigStore = defineStore('appConfig', {
 		primaryButtonText: null,
 		secondaryButtonBg: null,
 		secondaryButtonText: null,
+		footerText: null,
 
 		// Auth: These settings configure the MSAL authentication.
 		auth: {
@@ -38,6 +39,15 @@ export const useAppConfigStore = defineStore('appConfig', {
 	getters: {},
 	actions: {
 		async getConfigVariables() {
+			const getConfigValueSafe = async (key: string, defaultValue: any = null) => {
+                try {
+                    return await api.getConfigValue(key);
+                } catch (error) {
+                    console.error(`Failed to get config value for key ${key}:`, error);
+                    return defaultValue;
+                }
+            };
+			
 			const [
 				apiUrl,
 				isKioskMode,
@@ -55,6 +65,7 @@ export const useAppConfigStore = defineStore('appConfig', {
 				primaryButtonText,
 				secondaryButtonBg,
 				secondaryButtonText,
+				footerText,
 				authClientId,
 				authInstance,
 				authTenantId,
@@ -62,21 +73,24 @@ export const useAppConfigStore = defineStore('appConfig', {
 				authCallbackPath,
 			] = await Promise.all([
 				api.getConfigValue('FoundationaLLM:APIs:CoreAPI:APIUrl'),
-				api.getConfigValue('FoundationaLLM:Branding:KioskMode'),
-				api.getConfigValue('FoundationaLLM:Branding:PageTitle'),
-				api.getConfigValue('FoundationaLLM:Branding:LogoUrl'),
-				api.getConfigValue('FoundationaLLM:Branding:LogoText'),
-				api.getConfigValue('FoundationaLLM:Branding:BackgroundColor'),
-				api.getConfigValue('FoundationaLLM:Branding:PrimaryColor'),
-				api.getConfigValue('FoundationaLLM:Branding:SecondaryColor'),
-				api.getConfigValue('FoundationaLLM:Branding:AccentColor'),
-				api.getConfigValue('FoundationaLLM:Branding:PrimaryTextColor'),
-				api.getConfigValue('FoundationaLLM:Branding:SecondaryTextColor'),
-				api.getConfigValue('FoundationaLLM:Branding:AccentTextColor'),
-				api.getConfigValue('FoundationaLLM:Branding:PrimaryButtonBackgroundColor'),
-				api.getConfigValue('FoundationaLLM:Branding:PrimaryButtonTextColor'),
-				api.getConfigValue('FoundationaLLM:Branding:SecondaryButtonBackgroundColor'),
-				api.getConfigValue('FoundationaLLM:Branding:SecondaryButtonTextColor'),
+				
+				getConfigValueSafe('FoundationaLLM:Branding:KioskMode'),
+				getConfigValueSafe('FoundationaLLM:Branding:PageTitle'),
+				getConfigValueSafe('FoundationaLLM:Branding:LogoUrl', 'foundationallm-logo-white.svg'),
+				getConfigValueSafe('FoundationaLLM:Branding:LogoText'),
+				getConfigValueSafe('FoundationaLLM:Branding:BackgroundColor', '#fff'),
+				getConfigValueSafe('FoundationaLLM:Branding:PrimaryColor', '#131833'),
+				getConfigValueSafe('FoundationaLLM:Branding:SecondaryColor', '#334581'),
+				getConfigValueSafe('FoundationaLLM:Branding:AccentColor', '#fff'),
+				getConfigValueSafe('FoundationaLLM:Branding:PrimaryTextColor', '#fff'),
+				getConfigValueSafe('FoundationaLLM:Branding:SecondaryTextColor', '#fff'),
+				getConfigValueSafe('FoundationaLLM:Branding:AccentTextColor', '#131833'),
+				getConfigValueSafe('FoundationaLLM:Branding:PrimaryButtonBackgroundColor', '#5472d4'),
+				getConfigValueSafe('FoundationaLLM:Branding:PrimaryButtonTextColor', '#fff'),
+				getConfigValueSafe('FoundationaLLM:Branding:SecondaryButtonBackgroundColor', '#70829a'),
+				getConfigValueSafe('FoundationaLLM:Branding:SecondaryButtonTextColor', '#fff'),
+				getConfigValueSafe('FoundationaLLM:Branding:FooterText'),
+				
 				api.getConfigValue('FoundationaLLM:Chat:Entra:ClientId'),
 				api.getConfigValue('FoundationaLLM:Chat:Entra:Instance'),
 				api.getConfigValue('FoundationaLLM:Chat:Entra:TenantId'),
@@ -102,6 +116,7 @@ export const useAppConfigStore = defineStore('appConfig', {
 			this.primaryButtonText = primaryButtonText;
 			this.secondaryButtonBg = secondaryButtonBg;
 			this.secondaryButtonText = secondaryButtonText;
+			this.footerText = footerText;
 
 			this.auth.clientId = authClientId;
 			this.auth.instance = authInstance;

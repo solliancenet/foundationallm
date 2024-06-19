@@ -133,13 +133,13 @@ namespace FoundationaLLM.Orchestration.Core.Orchestration
                         }
                     }
 
-                    if (!string.IsNullOrWhiteSpace(kmAgent.Vectorization.IndexingProfileObjectId))
+                    foreach (var indexingProfileName in kmAgent.Vectorization.IndexingProfileObjectIds ?? [])
                     {
                         var indexingProfile = await vectorizationResourceProvider.GetResource<VectorizationProfileBase>(
-                            kmAgent.Vectorization.IndexingProfileObjectId,
+                            indexingProfileName,
                             currentUserIdentity);
 
-                        kmAgent.OrchestrationSettings!.AgentParameters![kmAgent.Vectorization.IndexingProfileObjectId!] = indexingProfile;
+                        kmAgent.OrchestrationSettings!.AgentParameters![indexingProfileName] = indexingProfile;
                     }
 
                     if (!string.IsNullOrWhiteSpace(kmAgent.Vectorization.TextEmbeddingProfileObjectId))

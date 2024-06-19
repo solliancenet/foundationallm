@@ -24,5 +24,4 @@ public class Citation
     /// </summary>
     [JsonPropertyName("filepath")]
     public string? Filepath { get; set; }
-
 }

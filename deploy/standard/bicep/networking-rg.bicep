@@ -226,7 +226,7 @@ var subnets = [
           priority: 256
           protocol: '*'
           sourcePortRange: '*'
-          sourceAddressPrefixes: [ '172.16.0.0/24' ]
+          sourceAddressPrefixes: [ cidrFllmBackend ]
         }
         {
           access: 'Allow'

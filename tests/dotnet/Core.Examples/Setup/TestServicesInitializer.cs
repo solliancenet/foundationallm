@@ -18,7 +18,7 @@ using FoundationaLLM.Core.Examples.Services;
 using FoundationaLLM.Core.Interfaces;
 using FoundationaLLM.Core.Services;
 using FoundationaLLM.SemanticKernel.Core.Models.Configuration;
-using FoundationaLLM.SemanticKernel.Core.Services;
+using FoundationaLLM.SemanticKernel.Core.Services.Indexing;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Fluent;
 using Microsoft.Extensions.Configuration;
@@ -46,6 +46,7 @@ namespace FoundationaLLM.Core.Examples.Setup
                 .Bind(configRoot.GetSection("FoundationaLLM:Vectorization:ResourceProviderService:Storage"));
 
             RegisterInstance(services, configRoot);
+            RegisterClientLibraries(services, configRoot);
 			RegisterHttpClients(services, configRoot);
 			RegisterCosmosDb(services, configRoot);
             RegisterAzureAIService(services, configRoot);
@@ -69,6 +70,11 @@ namespace FoundationaLLM.Core.Examples.Setup
                 DependencyInjectionKeys.FoundationaLLM_Vectorization_AzureAISearchIndexingService);
 
         }
+
+        private static void RegisterClientLibraries(IServiceCollection services, IConfiguration configuration) =>
+            services.AddCoreClient(
+                configuration[AppConfigurationKeys.FoundationaLLM_APIs_CoreAPI_APIUrl]!,
+                DefaultAuthentication.AzureCredential!);
 
         private static void RegisterHttpClients(IServiceCollection services, IConfiguration configuration)
 		{
@@ -207,7 +213,8 @@ namespace FoundationaLLM.Core.Examples.Setup
         private static void RegisterServiceManagers(IServiceCollection services)
         {
             services.AddScoped<ICoreAPITestManager, CoreAPITestManager>();
-			services.AddScoped<IManagementAPITestManager, ManagementAPITestManager>();            
+			services.AddScoped<IManagementAPITestManager, ManagementAPITestManager>();
+            services.AddScoped<IAuthenticationService, MicrosoftEntraIDAuthenticationService>();
             services.AddScoped<IHttpClientManager, HttpClientManager>();
 			services.AddScoped<IAgentConversationTestService, AgentConversationTestService>();
             services.AddScoped<IVectorizationTestService, VectorizationTestService>();

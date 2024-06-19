@@ -37,26 +37,7 @@ namespace Vectorization.Tests.Services.RequestSources
             await _queueClient.CreateAsync();
 
             await _storageQueueRequestSourceService.SubmitRequest(
-                new VectorizationRequest {
-                    Name = "d4669c9c-e330-450a-a41c-a4d6649abdef",
-                    ContentIdentifier = new ContentIdentifier
-                    {
-                        MultipartId = new List<string> {
-                            "https://somesa.blob.core.windows.net",
-                            "vectorization-input",
-                            "somedata.pdf"
-                        },
-                        DataSourceObjectId = "SomePDFData",
-                        CanonicalId = "SomeBusinessUnit/SomePDFData"
-                    },
-                    ProcessingType = VectorizationProcessingType.Synchronous,
-                    Steps = new List<VectorizationStep>
-                    {
-                        new VectorizationStep { Id = "embed", Parameters = new Dictionary<string, string> { } }
-                    },
-                    CompletedSteps = new List<string> { },
-                    RemainingSteps = new List<string> { "embed" }
-                }
+               "d4669c9c-e330-450a-a41c-a4d6649abdef"
             );
 
             Assert.True(await _storageQueueRequestSourceService.HasRequests());
@@ -72,7 +53,7 @@ namespace Vectorization.Tests.Services.RequestSources
             // Correct Deserialization
             Assert.Equal(
                 "d4669c9c-e330-450a-a41c-a4d6649abdef",
-                vectorizationRequestQueueMessage.Request.Name
+                vectorizationRequestQueueMessage!.RequestName
             );
 
             // Message ID & Pop Receipt must be retained for deletion

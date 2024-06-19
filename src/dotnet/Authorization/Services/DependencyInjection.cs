@@ -1,6 +1,5 @@
 ﻿using FluentValidation;
 using FoundationaLLM.Authorization.Interfaces;
-using FoundationaLLM.Authorization.Models;
 using FoundationaLLM.Authorization.Models.Configuration;
 using FoundationaLLM.Authorization.Services;
 using FoundationaLLM.Authorization.Validation;

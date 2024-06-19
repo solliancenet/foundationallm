@@ -17,18 +17,33 @@ namespace FoundationaLLM.Authorization.Services
             return new ActionAuthorizationResult { AuthorizationResults = defaultResults };
         }
 
+        /// <inheritdoc/>
         public async Task<RoleAssignmentResult> ProcessRoleAssignmentRequest(string instanceId, RoleAssignmentRequest roleAssignmentRequest)
         {
             await Task.CompletedTask;
             return new RoleAssignmentResult { Success = true };
         }
 
-        public async Task<Dictionary<string, RoleAssignmentsWithactionsResult>> ProcessRoleAssignmentsWithActionsRequest(string instanceId, RoleAssignmentsWithActionsRequest request)
+        /// <inheritdoc/>
+        public async Task<Dictionary<string, RoleAssignmentsWithActionsResult>> ProcessRoleAssignmentsWithActionsRequest(string instanceId, RoleAssignmentsWithActionsRequest request)
         {
-            var defaultResults = request.Scopes.Distinct().ToDictionary(scp => scp, res => new RoleAssignmentsWithactionsResult() { Actions = [], Roles = [] });
+            var defaultResults = request.Scopes.Distinct().ToDictionary(scp => scp, res => new RoleAssignmentsWithActionsResult() { Actions = [], Roles = [] });
 
             await Task.CompletedTask;
             return defaultResults;
+        }
+
+        /// <inheritdoc/>
+        public async Task<List<object>> GetRoleAssignments(string instanceId, RoleAssignmentQueryParameters queryParameters)
+        {
+            await Task.CompletedTask;
+            return [];
+        }
+
+        public async Task<RoleAssignmentResult> RevokeRoleAssignment(string instanceId, string roleAssignment)
+        {
+            await Task.CompletedTask;
+            return new RoleAssignmentResult { Success = true };
         }
     }
 }

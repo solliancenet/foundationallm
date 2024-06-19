@@ -113,9 +113,9 @@ namespace FoundationaLLM.Orchestration.Core.Services
                 {
                     client.DefaultRequestHeaders.Add("api-key", endpointSettings.APIKey);
                 }
-                
+
                 client.BaseAddress = new Uri(endpointSettings.Endpoint);
-                
+
                 var modelParameters = agent.OrchestrationSettings?.ModelParameters;
                 var modelOverrides = request.Settings?.ModelParameters;
 

@@ -1,5 +1,6 @@
 ﻿using FoundationaLLM.Common.Constants.ResourceProviders;
 using FoundationaLLM.Common.Models.ResourceProviders;
+using FoundationaLLM.Common.Models.ResourceProviders.Vectorization;
 using FoundationaLLM.Common.Models.Vectorization;
 using FoundationaLLM.Vectorization.ResourceProviders;
 
@@ -42,6 +43,15 @@ namespace FoundationaLLM.Vectorization.Extensions
             string slug = activate ? "activate" : "deactivate";           
             await vectorizationResourceProvider.ExecuteActionAsync($"{pipelineObjectId}/{slug}");
         }
-        
+
+        /// <summary>
+        /// Retrieves the vectorization request resource with the specified name.
+        /// </summary>
+        /// <param name="vectorizationResourceProvider">An instance of the vectorization resource provider.</param>
+        /// <param name="requestName">The name of the request to retrieve.</param>
+        /// <returns>The vectorization request.</returns>
+        public static VectorizationRequest GetVectorizationRequestResource(this VectorizationResourceProviderService vectorizationResourceProvider, string requestName)
+            => vectorizationResourceProvider.GetResource<VectorizationRequest>($"/{VectorizationResourceTypeNames.VectorizationRequests}/{requestName}");
+
     }
 }

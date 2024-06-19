@@ -195,14 +195,14 @@ namespace FoundationaLLM.DataSource.ResourceProviders
         protected override async Task<object> UpsertResourceAsync(ResourcePath resourcePath, string serializedResource, UnifiedUserIdentity userIdentity) =>
             resourcePath.ResourceTypeInstances[0].ResourceType switch
             {
-                DataSourceResourceTypeNames.DataSources => await UpdateDataSource(resourcePath, serializedResource),
+                DataSourceResourceTypeNames.DataSources => await UpdateDataSource(resourcePath, serializedResource, userIdentity),
                 _ => throw new ResourceProviderException($"The resource type {resourcePath.ResourceTypeInstances[0].ResourceType} is not supported by the {_name} resource provider.",
                     StatusCodes.Status400BadRequest)
             };
 
         #region Helpers for UpsertResourceAsync
 
-        private async Task<ResourceProviderUpsertResult> UpdateDataSource(ResourcePath resourcePath, string serializedDataSource)
+        private async Task<ResourceProviderUpsertResult> UpdateDataSource(ResourcePath resourcePath, string serializedDataSource, UnifiedUserIdentity userIdentity)
         {
             var dataSource = JsonSerializer.Deserialize<DataSourceBase>(serializedDataSource)
                 ?? throw new ResourceProviderException("The object definition is invalid.",
@@ -238,6 +238,11 @@ namespace FoundationaLLM.DataSource.ResourceProviders
                         StatusCodes.Status400BadRequest);
                 }
             }
+
+            if (existingDataSourceReference == null)
+                dataSource.CreatedBy = userIdentity.UPN;
+            else
+                dataSource.UpdatedBy = userIdentity.UPN;
 
             await _storageService.WriteFileAsync(
                 _storageContainerName,

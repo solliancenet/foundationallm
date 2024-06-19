@@ -90,15 +90,15 @@ namespace FoundationaLLM.Vectorization.DataFormats.Office
                         {
                             IXLCell? cell = cells[i];
 
-                            if (this._withQuotes && cell is { Value.IsText: true })
+                            if (this._withQuotes && cell is { CachedValue.IsText: true })
                             {
                                 sb.Append('"')
-                                    .Append(cell.Value.GetText().Replace("\"", "\"\"", StringComparison.Ordinal))
+                                    .Append(cell.CachedValue.GetText().Replace("\"", "\"\"", StringComparison.Ordinal))
                                     .Append('"');
                             }
                             else
                             {
-                                sb.Append(cell.Value);
+                                sb.Append(cell.CachedValue);
                             }
 
                             if (i < cells.Count - 1)

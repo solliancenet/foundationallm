@@ -10,9 +10,11 @@ namespace FoundationaLLM.Common.Tasks
         private readonly int _maxConcurrentTasks;
         private readonly List<TaskStatus> _runningStates = new List<TaskStatus>
         {
+            TaskStatus.Created,
             TaskStatus.Running,
             TaskStatus.WaitingForActivation,
-            TaskStatus.WaitingToRun
+            TaskStatus.WaitingToRun,
+            TaskStatus.WaitingForChildrenToComplete
         };
 
         private TaskInfo[] _taskInfo;
@@ -59,7 +61,11 @@ namespace FoundationaLLM.Common.Tasks
         /// </summary>
         /// <param name="payloadId">The identifier of the payload.</param>
         /// <returns>True if the task pool already has a running task for the specified payload, false otherwise.</returns>
-        public bool HasRunningTaskForPayload(string payloadId) =>
-            _taskInfo.Any(ti => ti != null && ti.PayloadId == payloadId && _runningStates.Contains(ti.Task.Status));
+        public bool HasRunningTaskForPayload(string payloadId)
+        {
+            var result = _taskInfo.Any(ti => ti != null && ti.PayloadId == payloadId && _runningStates.Contains(ti.Task.Status));
+            return result;
+        }
+            
     }
 }

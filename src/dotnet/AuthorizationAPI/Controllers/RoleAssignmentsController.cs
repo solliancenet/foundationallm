@@ -32,6 +32,15 @@ namespace FoundationaLLM.Authorization.API.Controllers
             new OkObjectResult(_authorizationCore.ProcessRoleAssignmentsWithActionsRequest(instanceId, request));
 
         /// <summary>
+        /// Returns a list of role assignments for the specified instance.
+        /// </summary>
+        /// <param name="instanceId">The FoundationaLLM instance identifier.</param>
+        /// <returns>The list of all role assignments for the specified instance.</returns>
+        [HttpPost("query")]
+        public IActionResult GetRoleAssignments(string instanceId, [FromBody] RoleAssignmentQueryParameters queryParameters) =>
+            new OkObjectResult(_authorizationCore.GetRoleAssignments(instanceId, queryParameters));
+
+        /// <summary>
         /// Assigns a role to an Entra ID user or group.
         /// </summary>
         /// <param name="instanceId">The FoundationaLLM instance identifier.</param>
@@ -39,7 +48,7 @@ namespace FoundationaLLM.Authorization.API.Controllers
         /// <returns>The role assignment result.</returns>
         [HttpPost]
         public async Task<IActionResult> AssignRole(string instanceId, RoleAssignmentRequest roleAssignmentRequest) =>
-            new OkObjectResult(await _authorizationCore.AssignRole(instanceId, roleAssignmentRequest));
+            new OkObjectResult(await _authorizationCore.CreateRoleAssignment(instanceId, roleAssignmentRequest));
 
         /// <summary>
         /// Revokes a role from an Entra ID user or group.
@@ -48,8 +57,8 @@ namespace FoundationaLLM.Authorization.API.Controllers
         /// <param name="roleAssignment">The role assignment object identifier.</param>
         /// <returns>The role assignment result.</returns>
         [HttpDelete("{*roleAssignment}")]
-        public async Task<IActionResult> RevokeRole(string instanceId, string roleAssignment) =>
-            new OkObjectResult(await _authorizationCore.RevokeRole(instanceId, roleAssignment));
+        public async Task<IActionResult> RevokeRoleAssignment(string instanceId, string roleAssignment) =>
+            new OkObjectResult(await _authorizationCore.RevokeRoleAssignment(instanceId, roleAssignment));
 
         #endregion
     }

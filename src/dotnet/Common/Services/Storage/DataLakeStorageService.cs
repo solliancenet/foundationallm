@@ -58,7 +58,8 @@ namespace FoundationaLLM.Common.Services.Storage
         {
             List<string> retValue = new List<string>();
             var fileSystemClient = _dataLakeClient.GetFileSystemClient(containerName);
-            await foreach (PathItem pathItem in fileSystemClient.GetPathsAsync(path: directoryPath, recursive: recursive, cancellationToken: cancellationToken))
+            var filePaths = fileSystemClient.GetPathsAsync(path: directoryPath, recursive: recursive, cancellationToken: cancellationToken);
+            await foreach (PathItem pathItem in filePaths)
             {
                 if(pathItem.IsDirectory!.Value)
                     continue;

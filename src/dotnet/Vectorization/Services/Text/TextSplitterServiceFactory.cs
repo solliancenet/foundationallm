@@ -7,6 +7,7 @@ using FoundationaLLM.Common.Models.ResourceProviders;
 using FoundationaLLM.Common.Models.ResourceProviders.Vectorization;
 using FoundationaLLM.Common.Services.TextSplitters;
 using FoundationaLLM.Vectorization.Interfaces;
+using FoundationaLLM.Vectorization.ResourceProviders;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -17,25 +18,32 @@ namespace FoundationaLLM.Vectorization.Services.Text
     /// <summary>
     /// Creates text splitter service instances.
     /// </summary>
-    /// <param name="vectorizationResourceProviderService">The vectorization resource provider service.</param>
+    /// <param name="resourceProviderServices">The collection of registered resource providers.</param>
     /// <param name="configuration">The global configuration provider.</param>
     /// <param name="serviceProvider">The <see cref="IServiceProvider"/> providing dependency injection services.</param>
     /// <param name="loggerFactory">The logger factory used to create loggers.</param>
-    public class TextSplitterServiceFactory(
-        [FromKeyedServices(DependencyInjectionKeys.FoundationaLLM_ResourceProvider_Vectorization)] IResourceProviderService vectorizationResourceProviderService,
+    public class TextSplitterServiceFactory(        
+        IEnumerable<IResourceProviderService> resourceProviderServices,
         IConfiguration configuration,
         IServiceProvider serviceProvider,
         ILoggerFactory loggerFactory) : IVectorizationServiceFactory<ITextSplitterService>
-    {
-        private readonly IResourceProviderService _vectorizationResourceProviderService = vectorizationResourceProviderService;
+    {       
         private readonly IConfiguration _configuration = configuration;
         private readonly IServiceProvider _serviceProvider = serviceProvider;
         private readonly ILoggerFactory _loggerFactory = loggerFactory;
 
+        private readonly Dictionary<string, IResourceProviderService> _resourceProviderServices =
+            resourceProviderServices.ToDictionary<IResourceProviderService, string>(
+                rps => rps.Name);
+
         /// <inheritdoc/>
         public ITextSplitterService GetService(string serviceName)
         {
-            var textPartitionProfile = _vectorizationResourceProviderService.GetResource<TextPartitioningProfile>(
+            _resourceProviderServices.TryGetValue(ResourceProviderNames.FoundationaLLM_Vectorization, out var vectorizationResourceProviderService);
+            if (vectorizationResourceProviderService == null)
+                throw new VectorizationException($"The resource provider {ResourceProviderNames.FoundationaLLM_DataSource} was not loaded.");
+
+            var textPartitionProfile = vectorizationResourceProviderService.GetResource<TextPartitioningProfile>(
                 $"/{VectorizationResourceTypeNames.TextPartitioningProfiles}/{serviceName}");
 
             return textPartitionProfile.TextSplitter switch
@@ -49,7 +57,11 @@ namespace FoundationaLLM.Vectorization.Services.Text
         /// <inheritdoc/>
         public (ITextSplitterService Service, ResourceBase Resource) GetServiceWithResource(string serviceName)
         {
-            var textPartitionProfile = _vectorizationResourceProviderService.GetResource<TextPartitioningProfile>(
+            _resourceProviderServices.TryGetValue(ResourceProviderNames.FoundationaLLM_Vectorization, out var vectorizationResourceProviderService);
+            if (vectorizationResourceProviderService == null)
+                throw new VectorizationException($"The resource provider {ResourceProviderNames.FoundationaLLM_DataSource} was not loaded.");
+
+            var textPartitionProfile = vectorizationResourceProviderService.GetResource<TextPartitioningProfile>(
                 $"/{VectorizationResourceTypeNames.TextPartitioningProfiles}/{serviceName}");
 
             return textPartitionProfile.TextSplitter switch

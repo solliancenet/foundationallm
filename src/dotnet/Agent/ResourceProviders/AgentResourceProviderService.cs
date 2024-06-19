@@ -248,7 +248,7 @@ namespace FoundationaLLM.Agent.ResourceProviders
                             DataSourceObjectId = kmAgent.Vectorization.DataSourceObjectId!,
                             TextPartitioningProfileObjectId = kmAgent.Vectorization.TextPartitioningProfileObjectId!,
                             TextEmbeddingProfileObjectId = kmAgent.Vectorization.TextEmbeddingProfileObjectId!,
-                            IndexingProfileObjectId = kmAgent.Vectorization.IndexingProfileObjectId!,
+                            IndexingProfileObjectId = kmAgent.Vectorization.IndexingProfileObjectIds[0]!,
                             TriggerType = (VectorizationPipelineTriggerType) kmAgent.Vectorization.TriggerType!,
                             TriggerCronSchedule = kmAgent.Vectorization.TriggerCronSchedule
                         }),
@@ -273,6 +273,11 @@ namespace FoundationaLLM.Agent.ResourceProviders
                         StatusCodes.Status400BadRequest);
                 }
             }
+
+            if (existingAgentReference == null)
+                agent.CreatedBy = userIdentity.UPN;
+            else
+                agent.UpdatedBy = userIdentity.UPN;
 
             await _storageService.WriteFileAsync(
                 _storageContainerName,

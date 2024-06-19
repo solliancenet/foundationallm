@@ -1,4 +1,5 @@
-﻿using FoundationaLLM.Common.Models.Authorization;
+﻿using FoundationaLLM.Authorization.Models;
+using FoundationaLLM.Common.Models.Authorization;
 
 namespace FoundationaLLM.Authorization.Interfaces
 {
@@ -24,12 +25,12 @@ namespace FoundationaLLM.Authorization.Interfaces
         bool AllowAuthorizationRequestsProcessing(string instanceId, string securityPrincipalId);
 
         /// <summary>
-        /// Assigns a role to an Entra ID user or group.
+        /// Creates a role assignment for a specified security principal.
         /// </summary>
         /// <param name="instanceId">The FoundationaLLM instance identifier.</param>
         /// <param name="roleAssignmentRequest">The role assignment request.</param>
         /// <returns>The role assignment result.</returns>
-        Task<RoleAssignmentResult> AssignRole(string instanceId, RoleAssignmentRequest roleAssignmentRequest);
+        Task<RoleAssignmentResult> CreateRoleAssignment(string instanceId, RoleAssignmentRequest roleAssignmentRequest);
 
         /// <summary>
         /// Revokes a role from an Entra ID user or group.
@@ -37,7 +38,7 @@ namespace FoundationaLLM.Authorization.Interfaces
         /// <param name="instanceId">The FoundationaLLM instance identifier.</param>
         /// <param name="roleAssignment">The role assignment object identifier.</param>
         /// <returns>The role assignment result.</returns>
-        Task<RoleAssignmentResult> RevokeRole(string instanceId, string roleAssignment);
+        Task<RoleAssignmentResult> RevokeRoleAssignment(string instanceId, string roleAssignment);
 
         /// <summary>
         /// Returns a list of role names and a list of allowed actions for the specified scope.
@@ -45,6 +46,14 @@ namespace FoundationaLLM.Authorization.Interfaces
         /// <param name="instanceId">The FoundationaLLM instance identifier.</param>
         /// <param name="request">The get roles with actions request.</param>
         /// <returns>The get roles and actions result.</returns>
-        Dictionary<string, RoleAssignmentsWithactionsResult> ProcessRoleAssignmentsWithActionsRequest(string instanceId, RoleAssignmentsWithActionsRequest request);
+        Dictionary<string, RoleAssignmentsWithActionsResult> ProcessRoleAssignmentsWithActionsRequest(string instanceId, RoleAssignmentsWithActionsRequest request);
+
+        /// <summary>
+        /// Returns a list of role assignments for the specified instance and resource path.
+        /// </summary>
+        /// <param name="instanceId">The FoundationaLLM instance identifier.</param>
+        /// <param name="queryParameters">The <see cref="RoleAssignmentQueryParameters"/> providing the inputs for filtering the role assignments.</param>
+        /// <returns>The list of all role assignments for the specified instance.</returns>
+        List<RoleAssignment> GetRoleAssignments(string instanceId, RoleAssignmentQueryParameters queryParameters);
     }
 }

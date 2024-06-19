@@ -37,6 +37,10 @@
 		<div class="chat-thread__input">
 			<ChatInput :disabled="isLoading || isMessagePending" @send="handleSend" />
 		</div>
+
+		<footer v-if="$appConfigStore.footerText">
+			<div class="footer-item" v-html="$appConfigStore.footerText"></div>
+		</footer>
 	</div>
 </template>
 
@@ -130,7 +134,7 @@ export default {
 
 .chat-thread__input {
 	display: flex;
-	margin: 0px 24px 24px 24px;
+	margin: 0px 24px 8px 24px;
 	// box-shadow: 0 -5px 10px 0 rgba(27, 29, 33, 0.1);
 }
 
@@ -160,5 +164,11 @@ export default {
 	font-size: 1.2rem;
 	font-weight: 300;
 	font-style: italic;
+}
+
+footer {
+	text-align: right;
+	font-size: 0.85rem;
+    padding-right: 24px;
 }
 </style>

@@ -12,6 +12,11 @@
                             "Namespace": "ResourceProvider.FoundationaLLM.Vectorization",
                             "Source": "/subscriptions/{{subscriptionId}}/resourceGroups/{{storageResourceGroup}}/providers/Microsoft.Storage/storageAccounts/{{storageAccountAdlsName}}",
                             "SubjectPrefix": "/blobServices/default/containers/resource-provider/blobs/FoundationaLLM.Vectorization"
+                        },
+                        {
+                            "Namespace": "ResourceProvider.FoundationaLLM.DataSource",
+                            "Source": "/subscriptions/{{subscriptionId}}/resourceGroups/{{storageResourceGroup}}/providers/Microsoft.Storage/storageAccounts/{{storageAccountAdlsName}}",
+                            "SubjectPrefix": "/blobServices/default/containers/resource-provider/blobs/FoundationaLLM.DataSource"
                         }
                     ]
                 }

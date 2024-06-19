@@ -22,7 +22,7 @@ namespace FoundationaLLM
             builder.Services.AddSingleton(provider => new GraphServiceClient(DefaultAuthentication.AzureCredential));
 
             // Register the group membership service.
-            builder.Services.AddScoped<IGroupMembershipService, MicrosoftGraphGroupMembershipService>();
+            builder.Services.AddSingleton<IIdentityManagementService, MicrosoftGraphIdentityManagementService>();
         }
     }
 }

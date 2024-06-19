@@ -47,11 +47,17 @@ namespace FoundationaLLM.Vectorization.Services.DataSources
             {
                 //trim any preceding or trailing slashes
                 var trimmedFolder = folder.Trim('/');
-
                 //the first token is the container or workspace name
                 var container = trimmedFolder.Split('/')[0];
                 //remove the first token from the path
                 var path = trimmedFolder.Substring(trimmedFolder.IndexOf('/') + 1);
+
+                if(trimmedFolder.Equals(container) && container.Equals(path))
+                {
+                    //artifacts are in the root of the container
+                    path = string.Empty;
+                }
+
                 var filesList = await _dataLakeStorageService!.GetFilePathsAsync(container, path);
                 //pre-pend container name to the file path for each string in filesList
                 files.AddRange(filesList.Select(f => $"{container}/{f}"));

@@ -1,10 +1,9 @@
 ﻿using Azure.Storage.Queues;
 using FoundationaLLM.Common.Authentication;
-using FoundationaLLM.Common.Models.ResourceProviders.Vectorization;
 using FoundationaLLM.Vectorization.Interfaces;
+using FoundationaLLM.Vectorization.Models;
 using FoundationaLLM.Vectorization.Models.Configuration;
 using Microsoft.Extensions.Logging;
-using System.Text.Json;
 
 namespace FoundationaLLM.Vectorization.Services.RequestSources
 {
@@ -54,11 +53,11 @@ namespace FoundationaLLM.Vectorization.Services.RequestSources
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<(VectorizationRequest Request, string MessageId, string PopReceipt, long DequeueCount)>> ReceiveRequests(int count)
+        public async Task<IEnumerable<VectorizationDequeuedRequest>> ReceiveRequests(int count)
         {
             var receivedMessages = await _queueClient.ReceiveMessagesAsync(count, TimeSpan.FromSeconds(_settings.VisibilityTimeoutSeconds)).ConfigureAwait(false);
 
-            var result = new List<(VectorizationRequest, string, string, long)>();
+            var result = new List<VectorizationDequeuedRequest>();
 
             if (receivedMessages.HasValue)
             {
@@ -66,13 +65,16 @@ namespace FoundationaLLM.Vectorization.Services.RequestSources
                 {
                     try
                     {
-                        var vectorizationRequest = JsonSerializer.Deserialize<VectorizationRequest>(m.Body.ToString());
-                                               
-                        result.Add(new(
-                            vectorizationRequest!,
-                            m.MessageId,
-                            m.PopReceipt,
-                            m.DequeueCount));
+                        var vectorizationRequestName = m.Body.ToString();
+
+                        result.Add(new VectorizationDequeuedRequest()
+                        {
+                            RequestName = vectorizationRequestName,
+                            MessageId = m.MessageId,
+                            PopReceipt = m.PopReceipt!,
+                            DequeueCount = m.DequeueCount
+                        });
+                          
                     }
                     catch (Exception ex)
                     {
@@ -85,21 +87,25 @@ namespace FoundationaLLM.Vectorization.Services.RequestSources
         }
 
         /// <inheritdoc/>
-        public async Task DeleteRequest(string messageId, string popReceipt) =>
-            await _queueClient.DeleteMessageAsync(messageId, popReceipt).ConfigureAwait(false);
+        public async Task DeleteRequest(string messageId, string popReceipt)
+        {
+            var response = await _queueClient.DeleteMessageAsync(messageId, popReceipt).ConfigureAwait(false);
+            if(response.IsError)
+            {
+                _logger.LogError("Error deleting message with id {MessageId}.", messageId);
+            }
+            else
+            {
+                _logger.LogInformation("Message with id {MessageId} deleted.", messageId);
+            }           
+        }            
 
         /// <inheritdoc/>
-        public async Task SubmitRequest(VectorizationRequest request)
+        public async Task SubmitRequest(string requestName)
         {
-            var serializedMessage = JsonSerializer.Serialize(request);
+            var serializedMessage = requestName;
             await _queueClient.SendMessageAsync(serializedMessage).ConfigureAwait(false);
         }
-
-        /// <inheritdoc/>
-        public async Task UpdateRequest(string messageId, string popReceipt, VectorizationRequest request)
-        {
-            var serializedMessage = JsonSerializer.Serialize(request);
-            await _queueClient.UpdateMessageAsync(messageId, popReceipt, serializedMessage);
-        }
+        
     }
 }

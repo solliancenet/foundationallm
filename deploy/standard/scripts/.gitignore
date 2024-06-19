@@ -1,1 +1,6 @@
 Deployment-Manifest.json
+foundationallm.json
+foundationallm-authorization.json
+foundationallm-client.json
+foundationallm-management.json
+foundationallm-managementclient.json

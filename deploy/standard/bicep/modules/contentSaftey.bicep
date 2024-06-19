@@ -118,7 +118,7 @@ module apiKeySecret 'kvSecret.bicep' = {
   scope: resourceGroup(opsResourceGroupName)
   params: {
     kvName: kvName
-    secretName: 'foundationallm-azurecontentsafety-apikey'
+    secretName: 'foundationallm-apis-gatekeeper-azurecontentsafety-apikey'
     secretValue: main.listKeys().key1
     tags: tags
   }

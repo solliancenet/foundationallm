@@ -3,6 +3,6 @@
 /// <summary>
 /// The summary request object.
 /// </summary>
-public class SummaryRequest : OrchestrationRequest
+public class SummaryRequest : CompletionRequest
 {
 }

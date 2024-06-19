@@ -1,4 +1,5 @@
-﻿using FoundationaLLM.Common.Constants.ResourceProviders;
+﻿using FoundationaLLM.Authorization.ResourceProviders;
+using FoundationaLLM.Common.Constants.ResourceProviders;
 using FoundationaLLM.Common.Exceptions;
 using FoundationaLLM.Common.Models.ResourceProviders;
 using FoundationaLLM.Configuration.Services;
@@ -75,6 +76,7 @@ namespace FoundationaLLM.Authorization.Utils
                 ResourceProviderNames.FoundationaLLM_Vectorization => VectorizationResourceProviderMetadata.AllowedResourceTypes,
                 ResourceProviderNames.FoundationaLLM_Configuration => ConfigurationResourceProviderMetadata.AllowedResourceTypes,
                 ResourceProviderNames.FoundationaLLM_Attachment => AttachmentResourceProviderMetadata.AllowedResourceTypes,
+                ResourceProviderNames.FoundationaLLM_Authorization => AuthorizationResourceProviderMetadata.AllowedResourceTypes,
                 _ => []
             };
     }

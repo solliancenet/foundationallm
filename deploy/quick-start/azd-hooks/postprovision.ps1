@@ -195,12 +195,6 @@ else {
     $env:PATH = $env:PATH, "$($pwd.Path)/tools/azcopy_${os}_amd64_${AZCOPY_VERSION}" -join $separator
 }
 
-$status = (azcopy login status)
-if (-not $status.contains("Your login session is still active")) {
-    Write-Host -ForegroundColor Blue "Please Follow the instructions below to login to Azure using AzCopy."
-    azcopy login
-}
-
 $target = "https://$env:AZURE_STORAGE_ACCOUNT_NAME.blob.core.windows.net/resource-provider/"
 
 azcopy cp '../common/data/resource-provider/*' $target --exclude-pattern .git* --recursive=True
@@ -209,22 +203,21 @@ $target = "https://$env:AZURE_AUTHORIZATION_STORAGE_ACCOUNT_NAME.blob.core.windo
 
 azcopy cp ./data/role-assignments/$($env:FOUNDATIONALLM_INSTANCE_ID).json $target --recursive=True
 
-Invoke-AndRequireSuccess "Restarting Authorization API" {
-    # Grab suffix
-    $suffix = ($env:AZURE_KEY_VAULT_NAME).Substring(3)
-    $authApiContainerName = "caauthapi$suffix"
+Invoke-AndRequireSuccess "Restarting Container Apps" {
+
     $resourceGroup = "rg-$env:AZURE_ENV_NAME"
-    $revision = $(
-        az containerapp show `
-            --name  $authApiContainerName `
+
+    $apps = @(
+        az containerapp list `
             --resource-group $resourceGroup `
             --subscription $env:AZURE_SUBSCRIPTION_ID `
-            --query "properties.latestRevisionName" `
-            -o tsv
-    )
-    az containerapp revision restart `
-        --revision $revision `
-        --name $authApiContainerName `
-        --resource-group $resourceGroup `
-        --subscription $env:AZURE_SUBSCRIPTION_ID
+            --query "[].{name:name,revision:properties.latestRevisionName}" -o json | ConvertFrom-Json)
+
+    foreach ($app in $apps) {
+        az containerapp revision restart `
+            --revision $app.revision `
+            --name $app.name `
+            --resource-group $resourceGroup `
+            --subscription $env:AZURE_SUBSCRIPTION_ID
+    }
 }

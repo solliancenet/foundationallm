@@ -25,6 +25,7 @@ $ErrorActionPreference = "Stop"
 
 # AzCopy tool version to be downloaded
 $AZCOPY_VERSION = "10.25.0"
+$env:AZCOPY_AUTO_LOGIN_TYPE = "AZCLI"
 
 # Determine OS and set the download URL and file extension accordingly
 if ($IsWindows) {
@@ -42,12 +43,12 @@ if ($IsWindows) {
 }
 
 # Define paths for download and extraction
-$outputPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath("../tools/azcopy.${ext}")
-$destinationPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath("../tools")
-$toolPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath("../tools/azcopy_${os}_amd64_${AZCOPY_VERSION}/azcopy")
+$outputPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath("../../tools/azcopy.${ext}")
+$destinationPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath("../../tools")
+$toolPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath("../../tools/azcopy_${os}_amd64_${AZCOPY_VERSION}/azcopy")
 
 # Check if AzCopy already exists, download and extract if not
-if (Test-Path -Path "../tools/azcopy_${os}_amd64_${AZCOPY_VERSION}") {
+if (Test-Path -Path "../../tools/azcopy_${os}_amd64_${AZCOPY_VERSION}") {
 	Write-Host "azcopy_${os}_amd64_${AZCOPY_VERSION} already exists."
 }
 else {
@@ -58,15 +59,4 @@ else {
 	else {
 		Expand-Archive -Path $outputPath -DestinationPath $destinationPath
 	}
-}
-
-# Check AzCopy login status and prompt for login if not logged in
-Write-Host -ForegroundColor Blue "Checking AzCopy login status..."
-$status = & ../tools/azcopy_${os}_amd64_${AZCOPY_VERSION}/azcopy login status
-if (-not $status.contains("Your login session is still active")) {
-	Write-Host -ForegroundColor Blue "Please Follow the instructions below to login to Azure using AzCopy."
-	& ../tools/azcopy_${os}_amd64_${AZCOPY_VERSION}/azcopy login
-}
-else {
-	Write-Host -ForegroundColor Blue "AzCopy login session is still active."
 }

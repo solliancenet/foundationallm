@@ -76,9 +76,3 @@ if (-not (Test-Path "../data/role-assignments/$($instanceId)`.json")) {
 $target = "https://$storageAccountAdls.blob.core.windows.net/role-assignments/"
     
 & ../tools/azcopy_${os}_amd64_${AZCOPY_VERSION}/azcopy cp "../data/role-assignments/$($instanceId)`.json" "$target"
-
-# Invoke-AndRequireSuccess "Uploading Default Role Assignments to Authorization Store" {
-#     $target = "https://$storageAccountAdls.blob.core.windows.net/role-assignments/"
-    
-#     & ../tools/azcopy_${os}_amd64_${AZCOPY_VERSION}/azcopy cp "../data/role-assignments/$($instanceId)`.json" "$target"
-# }

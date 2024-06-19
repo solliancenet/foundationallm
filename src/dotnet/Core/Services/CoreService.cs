@@ -105,28 +105,20 @@ public partial class CoreService(
     /// Receive a prompt from a user, retrieve the message history from the related session,
     /// generate a completion response, and log full completion results.
     /// </summary>
-    public async Task<Completion> GetChatCompletionAsync(OrchestrationRequest orchestrationRequest)
+    public async Task<Completion> GetChatCompletionAsync(CompletionRequest completionRequest)
     {
         try
         {
-            ArgumentNullException.ThrowIfNull(orchestrationRequest.SessionId);
+            ArgumentNullException.ThrowIfNull(completionRequest.SessionId);
 
             // Retrieve conversation, including latest prompt.
-            var messages = await _cosmosDbService.GetSessionMessagesAsync(orchestrationRequest.SessionId, _callContext.CurrentUserIdentity?.UPN ??
+            var messages = await _cosmosDbService.GetSessionMessagesAsync(completionRequest.SessionId, _callContext.CurrentUserIdentity?.UPN ??
                 throw new InvalidOperationException("Failed to retrieve the identity of the signed in user when retrieving chat completions."));
             var messageHistoryList = messages
                 .Select(message => new MessageHistoryItem(message.Sender, string.IsNullOrWhiteSpace(message.Text) ? "" : message.Text))
                 .ToList();
 
-            var completionRequest = new CompletionRequest
-            {
-                SessionId = orchestrationRequest.SessionId,
-                AgentName = orchestrationRequest.AgentName,
-                UserPrompt = orchestrationRequest.UserPrompt,
-                MessageHistory = messageHistoryList,
-                Settings = orchestrationRequest.Settings,
-                Attachments = orchestrationRequest.Attachments
-            };
+            completionRequest.MessageHistory = messageHistoryList;
 
             var agentOption = await ProcessGatekeeperOptions(completionRequest);
 
@@ -136,21 +128,21 @@ public partial class CoreService(
             // Add to prompt and completion to cache, then persist in Cosmos as transaction.
             // Add the user's UPN to the messages.
             var upn = _callContext.CurrentUserIdentity?.UPN ?? throw new InvalidOperationException("Failed to retrieve the identity of the signed in user when adding prompt and completion messages.");
-            var promptMessage = new Message(orchestrationRequest.SessionId, nameof(Participants.User), result.PromptTokens, orchestrationRequest.UserPrompt, result.UserPromptEmbedding, null, upn, _callContext.CurrentUserIdentity?.Name);
-            var completionMessage = new Message(orchestrationRequest.SessionId, nameof(Participants.Assistant), result.CompletionTokens, result.Completion, null, null, upn, result.AgentName, result.Citations);
+            var promptMessage = new Message(completionRequest.SessionId, nameof(Participants.User), result.PromptTokens, completionRequest.UserPrompt, result.UserPromptEmbedding, null, upn, _callContext.CurrentUserIdentity?.Name);
+            var completionMessage = new Message(completionRequest.SessionId, nameof(Participants.Assistant), result.CompletionTokens, result.Completion, null, null, upn, result.AgentName, result.Citations);
             var completionPromptText =
                 $"User prompt: {result.UserPrompt}{Environment.NewLine}Agent: {result.AgentName}{Environment.NewLine}Prompt template: {(!string.IsNullOrWhiteSpace(result.FullPrompt) ? result.FullPrompt : result.PromptTemplate)}";
-            var completionPrompt = new CompletionPrompt(orchestrationRequest.SessionId, completionMessage.Id, completionPromptText);
+            var completionPrompt = new CompletionPrompt(completionRequest.SessionId, completionMessage.Id, completionPromptText);
             completionMessage.CompletionPromptId = completionPrompt.Id;
 
-            await AddPromptCompletionMessagesAsync(orchestrationRequest.SessionId, promptMessage, completionMessage, completionPrompt);
+            await AddPromptCompletionMessagesAsync(completionRequest.SessionId, promptMessage, completionMessage, completionPrompt);
 
             return new Completion { Text = result.Completion };
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error getting completion in session {SessionId} for user prompt [{UserPrompt}].",
-                orchestrationRequest.SessionId, orchestrationRequest.UserPrompt);
+                completionRequest.SessionId, completionRequest.UserPrompt);
             return new Completion { Text = "Could not generate a completion due to an internal error." };
         }
     }

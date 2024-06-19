@@ -13,7 +13,7 @@ namespace Vectorization.Tests.Services.RequestSources
         {
             RequestSourceServiceSettings requestSourceServiceSettings = A.Fake<RequestSourceServiceSettings>();
             ILogger<MemoryRequestSourceService> logger = A.Fake<ILogger<MemoryRequestSourceService>>();
-            VectorizationRequest vectorizationRequest = A.Fake<VectorizationRequest>();            
+            string vectorizationRequestName = Guid.NewGuid().ToString();            
             requestSourceServiceSettings.Name = "MemorySource";
 
             MemoryRequestSourceService memoryRequestSourceService = new MemoryRequestSourceService(
@@ -21,7 +21,7 @@ namespace Vectorization.Tests.Services.RequestSources
                 logger
             );
 
-            await memoryRequestSourceService.SubmitRequest(vectorizationRequest);
+            await memoryRequestSourceService.SubmitRequest(vectorizationRequestName);
 
             // Though we requested 5 vectorization requests, only 1 should be returned
             var vectorizationRequests = await memoryRequestSourceService.ReceiveRequests(5);

@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { useAppConfigStore } from './appConfigStore';
 import { useAuthStore } from './authStore';
-import type { Session, Message, Agent, ResourceProviderGetResult } from '@/js/types';
+import type { Session, Message, Agent, ResourceProviderGetResult, Attachment } from '@/js/types';
 import api from '@/js/api';
 
 export const useAppStore = defineStore('app', {
@@ -13,7 +13,7 @@ export const useAppStore = defineStore('app', {
 		agents: [] as ResourceProviderGetResult<Agent>[],
 		selectedAgents: new Map(),
 		lastSelectedAgent: null as ResourceProviderGetResult<Agent> | null,
-		attachments: [] as String[],
+		attachments: [] as Attachment[],
 	}),
 
 	getters: {},
@@ -170,7 +170,7 @@ export const useAppStore = defineStore('app', {
 				this.currentSession!.id,
 				text,
 				this.getSessionAgent(this.currentSession!).resource,
-				[...this.attachments.map(String)], // Convert attachments to an array of strings
+				this.attachments.map(attachment => String(attachment.id)), // Convert attachments to an array of strings
 			);
 			await this.getMessages();
 
@@ -228,9 +228,10 @@ export const useAppStore = defineStore('app', {
 		async uploadAttachment(file: FormData) {
 			try {
 				const id = await api.uploadAttachment(file);
+				const fileName = file.get('file')?.name;
 				// this.attachments.push(id);
 				// For now, we want to just replace the attachments with the new one.
-				this.attachments = [id as string];
+				this.attachments = [{ id, fileName}];
 				return id;
 			} catch (error) {
 				throw error;

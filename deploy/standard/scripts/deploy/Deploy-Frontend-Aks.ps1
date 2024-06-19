@@ -93,7 +93,8 @@ Invoke-AndRequireSuccess "Deploy ingress-nginx" {
     helm upgrade `
         --install gateway ingress-nginx/ingress-nginx `
         --namespace ${gatewayNamespace} `
-        --values ${ingressNginxValues}
+        --values ${ingressNginxValues} `
+        --version 4.10.0
 }
 
 Start-Sleep -Seconds 60

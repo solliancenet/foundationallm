@@ -3,6 +3,7 @@ name: Daily End to End Testing
 on:
   schedule:
   - cron: '0 3 * * *'
+  workflow_dispatch: {}
 
 jobs:
   daily_e2e_test:
@@ -13,6 +14,7 @@ jobs:
       openAiName: fllm-01
       openAiResourceGroup: fllm-shared-01
       location: EastUS2
+      notificationsEnabled: true
       enableTeardown: true
       bypassAndTeardown: false
       target: e2e

@@ -5,7 +5,7 @@ namespace FoundationaLLM.Common.Models.Authorization
     /// <summary>
     /// Represents the result of a GET roles with actions request.
     /// </summary>
-    public class RoleAssignmentsWithactionsResult
+    public class RoleAssignmentsWithActionsResult
     {
         /// <summary>
         /// List of authorized actions on the resource.

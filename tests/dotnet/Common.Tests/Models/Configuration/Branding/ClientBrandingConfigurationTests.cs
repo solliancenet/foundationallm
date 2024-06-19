@@ -27,7 +27,8 @@ namespace FoundationaLLM.Common.Tests.Models.Configuration.Branding
                 BackgroundColor = "#F0F0F0",
                 PrimaryTextColor = "#FFFFFF",
                 SecondaryTextColor = "#000000",
-                KioskMode = false
+                KioskMode = false,
+                FooterText = "Footer"
             };
 
             // Assert
@@ -43,6 +44,7 @@ namespace FoundationaLLM.Common.Tests.Models.Configuration.Branding
             Assert.Equal("#FFFFFF", brandingConfig.PrimaryTextColor);
             Assert.Equal("#000000", brandingConfig.SecondaryTextColor);
             Assert.False(brandingConfig.KioskMode);
+            Assert.Equal("Footer", brandingConfig.FooterText);
 
         }
     }

@@ -1,10 +1,9 @@
-name: Daily End to End Testing
+name: Release End to End Testing
 
 on:
   push:
     branches:
     - release/**
-    - poc/**
   workflow_dispatch: {}
 
 jobs:
@@ -28,11 +27,12 @@ jobs:
     uses: ./.github/workflows/e2e-testing.yml
     needs: get_version
     with:
-      environment: "fllm-e2e-aca-release-${{ needs.get_version.outputs.version }}-${{ github.run_id }}"
+      environment: "fllm-rel-${{ needs.get_version.outputs.version }}-${{ github.run_id }}"
       deployOpenAi: true
       openAiName: fllm-01
       openAiResourceGroup: fllm-shared-01
       location: EastUS2
+      notificationsEnabled: false
       enableTeardown: true
       bypassAndTeardown: false
       target: e2e

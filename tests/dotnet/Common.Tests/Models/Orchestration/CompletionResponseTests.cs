@@ -103,6 +103,25 @@ namespace FoundationaLLM.Common.Tests.Models.Orchestration
             Assert.Null(completionResponse.UserPromptEmbedding);
         }
 
+        [Fact]
+        public void OrchestrationRequest_Properties_Test()
+        {
+            // Arrange
+            string expectedSessionId = "12345";
+            string expectedUserPrompt = "Test user prompt";
+
+            // Act
+            var orchestrationRequest = new CompletionRequest
+            {
+                SessionId = expectedSessionId,
+                UserPrompt = expectedUserPrompt
+            };
+
+            // Assert
+            Assert.Equal(expectedSessionId, orchestrationRequest.SessionId);
+            Assert.Equal(expectedUserPrompt, orchestrationRequest.UserPrompt);
+        }
+
         public CompletionResponse CreateCompletionResponse(string completion, string userPrompt, int userPromptTokens, int responseTokens,float[]? userPromptEmbedding)
         {
             var completionResponse = new CompletionResponse(completion, userPrompt, userPromptTokens, responseTokens, userPromptEmbedding);

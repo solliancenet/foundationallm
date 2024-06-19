@@ -18,10 +18,10 @@ public interface ICoreAPITestManager
     /// <summary>
     /// Sends a user prompt to the specified agent within the specified session.
     /// </summary>
-    /// <param name="orchestrationRequest"></param>
+    /// <param name="completionRequestest"></param>
     /// <returns>Returns a completion response.</returns>
     /// <exception cref="FoundationaLLMException"></exception>
-    Task<Completion> SendSessionCompletionRequestAsync(OrchestrationRequest orchestrationRequest);
+    Task<Completion> SendSessionCompletionRequestAsync(CompletionRequest completionRequest);
 
     /// <summary>
     /// Gets a completion prompt by session ID and completion prompt ID.

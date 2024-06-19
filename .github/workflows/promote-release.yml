@@ -1,0 +1,180 @@
+name: Promote Release Artifacts
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version to promote (semver)
+        type: string
+      target:
+        description: Select target tenant/subscription
+        type: choice
+        options:
+          - sandbox
+          - e2e
+        default: sandbox
+  
+jobs:
+  generate_matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      registry: ${{ steps.set-registry.outputs.result }}
+      service_matrix: ${{ steps.set-service-matrix.outputs.result }}
+      test_matrix: ${{ steps.set-test-matrix.outputs.result }}
+      docker_tag: ${{ steps.docker-tag.outputs.docker_tag }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set Service Matrix
+      uses: actions/github-script@v7
+      id: set-service-matrix
+      with:
+        result-encoding: string
+        script: |
+          const fs = require('fs')
+          const jsonString = fs.readFileSync('./tests/config/e2e-test-manifest.json')
+          var data = JSON.parse(jsonString)
+          return JSON.stringify(data.service_matrix)
+    
+    - name: Set Test Matrix
+      uses: actions/github-script@v7
+      id: set-test-matrix
+      with:
+        result-encoding: string
+        script: |
+          const fs = require('fs')
+          const jsonString = fs.readFileSync('./tests/config/e2e-test-manifest.json')
+          var data = JSON.parse(jsonString)
+          return JSON.stringify(data.test_matrix)
+    
+    - name: Set Container registry
+      uses: actions/github-script@v7
+      id: set-registry
+      with:
+        result-encoding: string
+        script: |
+          const fs = require('fs')
+          const jsonString = fs.readFileSync('./tests/config/sandbox-registry.json')
+          var data = JSON.parse(jsonString)
+          return data.registry
+
+    - name: Set Git and Helm Tag
+      id: docker-tag
+      run: |
+        DOCKER_TAG=$(echo ${{ github.ref_name }} |  cut -d'/' -f 2)
+        echo "DOCKER_TAG=$DOCKER_TAG" >> $GITHUB_ENV
+        echo "docker_tag: Latest Tag is : $DOCKER_TAG"
+        echo "docker_tag=$DOCKER_TAG" >> $GITHUB_OUTPUT      
+
+  helm_promote:
+    name: Promote Helm Charts
+    runs-on: ubuntu-latest
+    needs: generate_matrix
+    strategy:
+      fail-fast: false
+      matrix:
+        object: ${{ fromJson(needs.generate_matrix.outputs.service_matrix) }}
+    steps:
+    - name: Sets Credentials for E2E
+      run: |
+        {
+          echo 'AZURE_CREDENTIALS<<EOF'
+          echo "$FLLM_E2E_AZURE_CREDENTIALS"
+          echo EOF
+        } >> "$GITHUB_ENV"
+      if: inputs.target == 'e2e'
+      env:
+        FLLM_E2E_AZURE_CREDENTIALS: |
+          ${{ secrets.FLLM_E2E_AZURE_CREDENTIALS }}
+
+    - name: Sets Credentials for Sandbox
+      run: |
+        {
+          echo 'AZURE_CREDENTIALS<<EOF'
+          echo "$FLLM_SBX_AZURE_CREDENTIALS"
+          echo EOF
+        } >> "$GITHUB_ENV"
+      if: inputs.target == 'sandbox'
+      env:
+        FLLM_SBX_AZURE_CREDENTIALS: |
+          ${{ secrets.FLLM_SBX_AZURE_CREDENTIALS }}
+
+    - name: Log in with Azure (Client Credentials)
+      run: |
+        $info = $Env:AZURE_CREDENTIALS | ConvertFrom-Json -AsHashtable;
+        Write-Host "::add-mask::$($info.clientSecret)"
+
+        az login `
+          --service-principal `
+          --username "$($info.clientId)" `
+          --password "$($info.clientSecret)" `
+          --tenant "$($info.tenantId)"
+      shell: pwsh
+    
+    - name: Promote Helm Charts
+      shell: pwsh
+      run: |
+        $srcChartUrl = "${{needs.generate_matrix.outputs.registry }}/helm/${{ matrix.object.name }}"
+        $destChartUrl = "ghcr.io/solliancenet/foundationallm/helm"
+        az acr login -n ${{needs.generate_matrix.outputs.registry }}
+        helm pull oci://$srcChartUrl --version ${{ inputs.version }}
+        echo ${{ github.token }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+        helm push "${{ matrix.object.name }}-${{ inputs.version }}.tgz" oci://$destChartUrl
+
+  docker_promote:
+    name: Promote Docker Images
+    runs-on: ubuntu-latest
+    needs: generate_matrix
+    strategy:
+      fail-fast: false
+      matrix:
+        object: ${{ fromJson(needs.generate_matrix.outputs.service_matrix) }}
+    steps:
+    - name: Sets Credentials for E2E
+      run: |
+        {
+          echo 'AZURE_CREDENTIALS<<EOF'
+          echo "$FLLM_E2E_AZURE_CREDENTIALS"
+          echo EOF
+        } >> "$GITHUB_ENV"
+      if: inputs.target == 'e2e'
+      env:
+        FLLM_E2E_AZURE_CREDENTIALS: |
+          ${{ secrets.FLLM_E2E_AZURE_CREDENTIALS }}
+
+    - name: Sets Credentials for Sandbox
+      run: |
+        {
+          echo 'AZURE_CREDENTIALS<<EOF'
+          echo "$FLLM_SBX_AZURE_CREDENTIALS"
+          echo EOF
+        } >> "$GITHUB_ENV"
+      if: inputs.target == 'sandbox'
+      env:
+        FLLM_SBX_AZURE_CREDENTIALS: |
+          ${{ secrets.FLLM_SBX_AZURE_CREDENTIALS }}
+
+    - name: Log in with Azure (Client Credentials)
+      run: |
+        $info = $Env:AZURE_CREDENTIALS | ConvertFrom-Json -AsHashtable;
+        Write-Host "::add-mask::$($info.clientSecret)"
+
+        az login `
+          --service-principal `
+          --username "$($info.clientId)" `
+          --password "$($info.clientSecret)" `
+          --tenant "$($info.tenantId)"
+      shell: pwsh
+
+    - name: Task
+      shell: pwsh
+      run: |
+        $imageWithTag = "${{ matrix.object.name }}:${{ inputs.version }}"
+        $srcImageUrl = "${{ needs.generate_matrix.outputs.registry }}/$imageWithTag"
+        $destImageUrl = "ghcr.io/solliancenet/foundationallm/$imageWithTag"
+        az acr login -n ${{ needs.generate_matrix.outputs.registry }}
+        docker pull $srcImageUrl
+        docker tag $srcImageUrl $destImageUrl
+        echo ${{ github.token }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+        docker push $destImageUrl

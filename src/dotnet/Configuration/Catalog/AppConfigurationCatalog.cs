@@ -641,71 +641,11 @@ namespace FoundationaLLM.Configuration.Catalog
         public static readonly List<AppConfigurationEntry> AzureContentSafety =
         [
             new(
-                key: AppConfigurationKeys.FoundationaLLM_AzureContentSafety_APIKey,
-                minimumVersion: "0.3.0",
-                defaultValue: "Key Vault secret name: `foundationallm-azurecontentsafety-apikey`",
-                description: "This is a Key Vault reference.",
-                keyVaultSecretName: KeyVaultSecretNames.FoundationaLLM_AzureContentSafety_APIKey,
-                contentType: "text/plain",
-                sampleObject: null
-            ),
-
-            new(
-                key: AppConfigurationKeys.FoundationaLLM_AzureContentSafety_APIUrl,
-                minimumVersion: "0.3.0",
-                defaultValue: "Enter the URL to the service.",
-                description: "",
-                keyVaultSecretName: "",
-                contentType: "text/plain",
-                sampleObject: null
-            ),
-
-            new(
-                key: AppConfigurationKeys.FoundationaLLM_AzureContentSafety_HateSeverity,
-                minimumVersion: "0.3.0",
-                defaultValue: "2",
-                description: "",
-                keyVaultSecretName: "",
-                contentType: "text/plain",
-                sampleObject: null
-            ),
-
-            new(
-                key: AppConfigurationKeys.FoundationaLLM_AzureContentSafety_SelfHarmSeverity,
-                minimumVersion: "0.3.0",
-                defaultValue: "2",
-                description: "",
-                keyVaultSecretName: "",
-                contentType: "text/plain",
-                sampleObject: null
-            ),
-
-            new(
-                key: AppConfigurationKeys.FoundationaLLM_AzureContentSafety_SexualSeverity,
-                minimumVersion: "0.3.0",
-                defaultValue: "2",
-                description: "",
-                keyVaultSecretName: "",
-                contentType: "text/plain",
-                sampleObject: null
-            ),
-
-            new(
-                key: AppConfigurationKeys.FoundationaLLM_AzureContentSafety_ViolenceSeverity,
-                minimumVersion: "0.3.0",
-                defaultValue: "2",
-                description: "",
-                keyVaultSecretName: "",
-                contentType: "text/plain",
-                sampleObject: null
-            ),
-
-            new(
                 key: AppConfigurationKeys.FoundationaLLM_APIs_Gatekeeper_AzureContentSafety_APIKey,
                 minimumVersion: "0.7.0",
-                defaultValue: "Key Vault secret name: `foundationallm-azurecontentsafety-apikey`",
+                defaultValue: "Key Vault secret name: `foundationallm-apis-gatekeeper-azurecontentsafety-apikey`",
                 description: "This is a Key Vault reference.",
-                keyVaultSecretName: KeyVaultSecretNames.FoundationaLLM_AzureContentSafety_APIKey,
+                keyVaultSecretName: KeyVaultSecretNames.FoundationaLLM_APIs_Gatekeeper_AzureContentSafety_APIKey,
                 contentType: "text/plain",
                 sampleObject: null
             ),

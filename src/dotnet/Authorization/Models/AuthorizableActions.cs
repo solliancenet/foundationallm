@@ -34,6 +34,13 @@ namespace FoundationaLLM.Authorization.Models
                         "Authorization")
                 },
                 {
+                    AuthorizableActionNames.FoundationaLLM_Authorization_RoleDefinitions_Read,
+                    new AuthorizableAction(
+                        AuthorizableActionNames.FoundationaLLM_Authorization_RoleDefinitions_Read,
+                        "Read role definitions.",
+                        "Authorization")
+                },
+                {
                     AuthorizableActionNames.FoundationaLLM_Agent_Agents_Read,
                     new AuthorizableAction(
                         AuthorizableActionNames.FoundationaLLM_Agent_Agents_Read,

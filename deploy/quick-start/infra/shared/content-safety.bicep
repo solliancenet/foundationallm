@@ -5,8 +5,7 @@ param sku string = 'S0'
 param tags object = {}
 
 var secretNames = [
-  'content-safety-apikey'
-  'foundationallm-azurecontentsafety-apikey'
+  'foundationallm-apis-gatekeeper-azurecontentsafety-apikey'
 ]
 
 resource contentSafety 'Microsoft.CognitiveServices/accounts@2023-05-01' = {

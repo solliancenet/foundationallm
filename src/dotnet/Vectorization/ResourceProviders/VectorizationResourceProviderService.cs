@@ -13,8 +13,7 @@ using FoundationaLLM.Common.Models.ResourceProviders.DataSource;
 using FoundationaLLM.Common.Models.ResourceProviders.Vectorization;
 using FoundationaLLM.Common.Models.Vectorization;
 using FoundationaLLM.Common.Services.ResourceProviders;
-using FoundationaLLM.Vectorization.Client;
-using FoundationaLLM.Vectorization.Models.Configuration;
+using FoundationaLLM.Vectorization.Interfaces;
 using FoundationaLLM.Vectorization.Models.Resources;
 using FoundationaLLM.Vectorization.Validation.Resources;
 using Microsoft.AspNetCore.Http;
@@ -29,24 +28,20 @@ namespace FoundationaLLM.Vectorization.ResourceProviders
 {
     /// <summary>
     /// Implements the FoundationaLLM.Vectorization resource provider.
-    /// </summary>
-    /// <param name="instanceOptions">The options providing the <see cref="InstanceSettings"/> with instance settings.</param>
-    /// <param name="vectorizationServiceSettings">The options for instantiating a Vectorization API client <see cref="VectorizationServiceSettings"/></param>
+    /// </summary>    
+    /// <param name="instanceOptions">The options providing the <see cref="InstanceSettings"/> with instance settings.</param>    
     /// <param name="authorizationService">The <see cref="IAuthorizationService"/> providing authorization services.</param>
     /// <param name="storageService">The <see cref="IStorageService"/> providing storage services.</param>
     /// <param name="eventService">The <see cref="IEventService"/> providing event services.</param>
-    /// <param name="resourceValidatorFactory">The <see cref="IResourceValidatorFactory"/> providing the factory to create resource validators.</param>
-    /// <param name="httpClientFactory">The factory responsible for creating HTTP client instances.</param>
+    /// <param name="resourceValidatorFactory">The <see cref="IResourceValidatorFactory"/> providing the factory to create resource validators.</param>    
     /// <param name="serviceProvider">The <see cref="IServiceProvider"/> of the main dependency injection container.</param>
     /// <param name="loggerFactory">The factory responsible for creating loggers.</param>    
-    public class VectorizationResourceProviderService(
+    public class VectorizationResourceProviderService(        
         IOptions<InstanceSettings> instanceOptions,
-        IOptions<VectorizationServiceSettings> vectorizationServiceSettings,
         IAuthorizationService authorizationService,
         [FromKeyedServices(DependencyInjectionKeys.FoundationaLLM_ResourceProvider_Vectorization)] IStorageService storageService,
         IEventService eventService,
-        IResourceValidatorFactory resourceValidatorFactory,
-        IHttpClientFactory httpClientFactory,
+        IResourceValidatorFactory resourceValidatorFactory,        
         IServiceProvider serviceProvider,
         ILoggerFactory loggerFactory)
         : ResourceProviderServiceBase(
@@ -218,13 +213,13 @@ namespace FoundationaLLM.Vectorization.ResourceProviders
             resourcePath.ResourceTypeInstances[0].ResourceType switch
             {
                 VectorizationResourceTypeNames.TextPartitioningProfiles =>
-                    await UpdateResource<TextPartitioningProfile, VectorizationProfileBase>(resourcePath, serializedResource, _textPartitioningProfiles, TEXT_PARTITIONING_PROFILES_FILE_PATH),
+                    await UpdateResource<TextPartitioningProfile, VectorizationProfileBase>(resourcePath, serializedResource, userIdentity, _textPartitioningProfiles, TEXT_PARTITIONING_PROFILES_FILE_PATH),
                 VectorizationResourceTypeNames.TextEmbeddingProfiles =>
-                    await UpdateResource<TextEmbeddingProfile, VectorizationProfileBase>(resourcePath, serializedResource, _textEmbeddingProfiles, TEXT_EMBEDDING_PROFILES_FILE_PATH),
+                    await UpdateResource<TextEmbeddingProfile, VectorizationProfileBase>(resourcePath, serializedResource, userIdentity, _textEmbeddingProfiles, TEXT_EMBEDDING_PROFILES_FILE_PATH),
                 VectorizationResourceTypeNames.IndexingProfiles =>
-                    await UpdateResource<IndexingProfile, VectorizationProfileBase>(resourcePath, serializedResource, _indexingProfiles, INDEXING_PROFILES_FILE_PATH),
+                    await UpdateResource<IndexingProfile, VectorizationProfileBase>(resourcePath, serializedResource, userIdentity, _indexingProfiles, INDEXING_PROFILES_FILE_PATH),
                 VectorizationResourceTypeNames.VectorizationPipelines =>
-                    await UpdateResource<VectorizationPipeline, VectorizationPipeline>(resourcePath, serializedResource, _pipelines, PIPELINES_FILE_PATH),
+                    await UpdateResource<VectorizationPipeline, VectorizationPipeline>(resourcePath, serializedResource, userIdentity, _pipelines, PIPELINES_FILE_PATH),
                 VectorizationResourceTypeNames.VectorizationRequests =>
                     await UpdateVectorizationRequestResource(resourcePath, serializedResource),
                 _ => throw new ResourceProviderException($"The resource type {resourcePath.ResourceTypeInstances[0].ResourceType} is not supported by the {_name} resource provider.",
@@ -233,7 +228,7 @@ namespace FoundationaLLM.Vectorization.ResourceProviders
 
         #region Helpers for UpsertResourceAsync
 
-        private async Task<ResourceProviderUpsertResult> UpdateResource<T, TBase>(ResourcePath resourcePath, string serializedResource, ConcurrentDictionary<string, TBase> resourceStore, string storagePath)
+        private async Task<ResourceProviderUpsertResult> UpdateResource<T, TBase>(ResourcePath resourcePath, string serializedResource, UnifiedUserIdentity userIdentity, ConcurrentDictionary<string, TBase> resourceStore, string storagePath)
             where T : TBase
             where TBase: ResourceBase
         {
@@ -262,6 +257,11 @@ namespace FoundationaLLM.Vectorization.ResourceProviders
             if (resourcePath.ResourceTypeInstances[0].ResourceId != resource.Name)
                 throw new ResourceProviderException("The resource path does not match the object definition (name mismatch).",
                     StatusCodes.Status400BadRequest);
+
+            if (existingResource == null)
+                resource.CreatedBy = userIdentity.UPN;
+            else
+                resource.UpdatedBy = userIdentity.UPN;
 
             resourceStore.AddOrUpdate(resource.Name, resource, (k,v) => resource);
 
@@ -405,20 +405,16 @@ namespace FoundationaLLM.Vectorization.ResourceProviders
         /// <exception cref="ResourceProviderException"></exception>
         private async Task<VectorizationResult> ProcessVectorizationRequest(ResourcePath resourcePath)
         {
-            var vectorizationRequestId = resourcePath.ResourceTypeInstances[0].ResourceId!;
-            // retrieve the vectorization request from the in-memory collection
+            var vectorizationRequestId = resourcePath.ResourceTypeInstances[0].ResourceId!;            
             var result = (List<VectorizationRequest>)(await GetResourcesAsync(resourcePath, GetUnifiedUserIdentity())); //should only return one or none
             if (result.Count == 0)
                 throw new ResourceProviderException($"The resource {vectorizationRequestId} was not found.",
                                        StatusCodes.Status404NotFound);
             var request = result.First();
-           
-            var client = new VectorizationServiceClient(
-                httpClientFactory,
-                vectorizationServiceSettings,
-                loggerFactory.CreateLogger<VectorizationServiceClient>());
-          
-            return await client.ProcessRequest(request);            
+
+            var requestProcessor = serviceProvider.GetService<IVectorizationRequestProcessor>();           
+            var response = await requestProcessor!.ProcessRequest(request);
+            return response;            
         }
 
         private ResourceNameCheckResult CheckProfileName<T>(string serializedAction, ConcurrentDictionary<string, VectorizationProfileBase> profileStore)

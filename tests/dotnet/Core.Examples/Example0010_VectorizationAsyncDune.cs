@@ -129,9 +129,9 @@ namespace FoundationaLLM.Core.Examples
             VectorizationRequest resource = await _vectorizationTestService.GetVectorizationRequest(request);
 
             // The finalized state of the vectorization request is either "Completed" or "Failed"
-            // Give it a max of 10 minutes to complete, then exit loop and fail the test.
+            // Give it a max of 15 minutes to complete, then exit loop and fail the test.
             WriteLine($"Polling the processing state of the async vectorization request: {id} by retrieving the request from the Management API");
-            int timeRemainingMilliseconds = 600000;
+            int timeRemainingMilliseconds = 900000;
             var pollDurationMilliseconds = 30000; //poll duration of 30 seconds
             while (resource.ProcessingState != VectorizationProcessingState.Completed && resource.ProcessingState != VectorizationProcessingState.Failed && timeRemainingMilliseconds > 0)
             {                

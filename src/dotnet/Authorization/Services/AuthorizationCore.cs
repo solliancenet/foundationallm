@@ -199,7 +199,7 @@ namespace FoundationaLLM.Authorization.Services
 
 
         /// <inheritdoc/>
-        public async Task<RoleAssignmentResult> AssignRole(string instanceId, RoleAssignmentRequest roleAssignmentRequest)
+        public async Task<RoleAssignmentResult> CreateRoleAssignment(string instanceId, RoleAssignmentRequest roleAssignmentRequest)
         {
             var roleAssignmentStoreFile = $"/{instanceId.ToLower()}.json";
 
@@ -225,6 +225,7 @@ namespace FoundationaLLM.Authorization.Services
                             PrincipalType = roleAssignmentRequest.PrincipalType,
                             RoleDefinitionId = roleAssignmentRequest.RoleDefinitionId,
                             Scope = roleAssignmentRequest.Scope,
+                            CreatedBy = roleAssignmentRequest.CreatedBy
                         };
 
                         roleAssignmentStore.RoleAssignments.Add(roleAssignment);
@@ -248,12 +249,35 @@ namespace FoundationaLLM.Authorization.Services
         }
 
         /// <inheritdoc/>
-        public Task<RoleAssignmentResult> RevokeRole(string instanceId, string roleAssignment) => throw new NotImplementedException();
+        public async Task<RoleAssignmentResult> RevokeRoleAssignment(string instanceId, string roleAssignment)
+        {
+            var existingRoleAssignment = _roleAssignmentStores[instanceId].RoleAssignments.SingleOrDefault(x => x.Name == roleAssignment);
+            if (existingRoleAssignment != null)
+            {
+                _roleAssignmentCaches[instanceId].RemoveRoleAssignment(roleAssignment);
+                _roleAssignmentStores[instanceId].RoleAssignments.Remove(existingRoleAssignment);
+
+                await _storageService.WriteFileAsync(
+                   ROLE_ASSIGNMENTS_CONTAINER_NAME,
+                   $"/{instanceId.ToLower()}.json",
+                   JsonSerializer.Serialize(_roleAssignmentStores[instanceId]),
+                   default,
+                   default);
+
+                return new RoleAssignmentResult() { Success = true };
+            }
+            
+            return new RoleAssignmentResult() { Success = false };
+        }
 
         /// <inheritdoc/>
-        public Dictionary<string, RoleAssignmentsWithactionsResult> ProcessRoleAssignmentsWithActionsRequest(string instanceId, RoleAssignmentsWithActionsRequest request)
+        public List<RoleAssignment> GetRoleAssignments(string instanceId, RoleAssignmentQueryParameters queryParameters) =>
+            _roleAssignmentStores[instanceId].RoleAssignments.Where(x => queryParameters.Scope!.Contains(x.Scope)).ToList();
+ 
+        /// <inheritdoc/>
+        public Dictionary<string, RoleAssignmentsWithActionsResult> ProcessRoleAssignmentsWithActionsRequest(string instanceId, RoleAssignmentsWithActionsRequest request)
         {
-            var result = request.Scopes.Distinct().ToDictionary(scp => scp, res => new RoleAssignmentsWithactionsResult() { Actions = [], Roles = [] });
+            var result = request.Scopes.Distinct().ToDictionary(scp => scp, res => new RoleAssignmentsWithActionsResult() { Actions = [], Roles = [] });
 
             foreach (var scope in request.Scopes)
             {

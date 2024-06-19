@@ -1,12 +1,8 @@
-﻿    using FoundationaLLM.Vectorization.Models;
-using System.Threading.Tasks;
-using System;
+﻿using FoundationaLLM.Vectorization.Models;
 using FoundationaLLM.Vectorization.Interfaces;
 using System.Collections.Concurrent;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Primitives;
 using FoundationaLLM.Vectorization.Models.Configuration;
-using FoundationaLLM.Common.Models.ResourceProviders.Vectorization;
 
 namespace FoundationaLLM.Vectorization.Services.RequestSources
 {
@@ -23,7 +19,8 @@ namespace FoundationaLLM.Vectorization.Services.RequestSources
 #pragma warning disable IDE0052 // Remove unread private members
         private readonly ILogger<MemoryRequestSourceService> _logger = logger;
 #pragma warning restore IDE0052 // Remove unread private members
-        private readonly ConcurrentQueue<VectorizationRequest> _requests = new();
+        // contains a list of queued request names
+        private readonly ConcurrentQueue<string> _requests = new();
 
         /// <inheritdoc/>
         public string SourceName => _settings.Name;
@@ -33,35 +30,33 @@ namespace FoundationaLLM.Vectorization.Services.RequestSources
             Task.FromResult(!_requests.IsEmpty);
 
         /// <inheritdoc/>
-        public Task<IEnumerable<(VectorizationRequest Request, string MessageId, string PopReceipt, long DequeueCount)>> ReceiveRequests(int count)
+        public Task<IEnumerable<VectorizationDequeuedRequest>> ReceiveRequests(int count)
         {
-            var result = new List<(VectorizationRequest, string, string, long)>();
+            var result = new List<VectorizationDequeuedRequest>();
 
             for (int i = 0; i < count; i++)
             {
                 if (_requests.TryDequeue(out var request))                    
-                    result.Add(new (request, string.Empty, string.Empty, 0));
+                    result.Add(new VectorizationDequeuedRequest(){
+                        RequestName = request,
+                        MessageId = string.Empty,
+                        PopReceipt = string.Empty,
+                        DequeueCount = 0
+                    });
                 else
                     break;
             }
             
-            return Task.FromResult<IEnumerable<(VectorizationRequest, string, string, long)>>(result);
+            return Task.FromResult<IEnumerable<VectorizationDequeuedRequest>>(result);
         }
 
         /// <inheritdoc/>
         public Task DeleteRequest(string requestId, string popReceipt) => Task.CompletedTask;
 
         /// <inheritdoc/>
-        public Task SubmitRequest(VectorizationRequest request)
+        public Task SubmitRequest(string requestName)
         {
-            _requests.Enqueue(request);
-            return Task.CompletedTask;
-        }
-
-        /// <inheritdoc/>
-        public Task UpdateRequest(string requestId, string popReceipt, VectorizationRequest request)
-        {
-            _requests.Single(r => r.Name == request.Name).ErrorCount = request.ErrorCount;
+            _requests.Enqueue(requestName);
             return Task.CompletedTask;
         }
     }

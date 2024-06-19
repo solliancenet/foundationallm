@@ -13,6 +13,10 @@ using FoundationaLLM.Common.Services.Azure;
 using FoundationaLLM.Common.Settings;
 using FoundationaLLM.Common.Validation;
 using FoundationaLLM.Management.Models.Configuration;
+using FoundationaLLM.Vectorization.Client;
+using FoundationaLLM.Vectorization.Interfaces;
+using FoundationaLLM.Vectorization.Models.Configuration;
+using FoundationaLLM.Vectorization.Services.RequestProcessors;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Polly;
@@ -49,12 +53,13 @@ namespace FoundationaLLM.Management.API
                 options.Select(AppConfigurationKeyFilters.FoundationaLLM_Branding);
                 options.Select(AppConfigurationKeyFilters.FoundationaLLM_ManagementAPI_Entra);
                 options.Select(AppConfigurationKeyFilters.FoundationaLLM_Vectorization);
+                options.Select(AppConfigurationKeyFilters.FoundationaLLM_APIs_VectorizationAPI);
                 options.Select(AppConfigurationKeyFilters.FoundationaLLM_Agent);
                 options.Select(AppConfigurationKeyFilters.FoundationaLLM_Prompt);
-                options.Select(AppConfigurationKeyFilters.FoundationaLLM_DataSource);
+                options.Select(AppConfigurationKeyFilters.FoundationaLLM_DataSource); //resource provider settings                
                 options.Select(AppConfigurationKeyFilters.FoundationaLLM_Events);
                 options.Select(AppConfigurationKeyFilters.FoundationaLLM_Configuration);
-                options.Select(AppConfigurationKeyFilters.FoundationaLLM_Attachment);
+                options.Select(AppConfigurationKeyFilters.FoundationaLLM_Attachment);                
             });
 
             if (builder.Environment.IsDevelopment())
@@ -66,6 +71,8 @@ namespace FoundationaLLM.Management.API
             // CORS policies
             builder.AddCorsPolicies();
 
+            builder.Services.AddOptions<VectorizationServiceSettings>()
+                .Bind(builder.Configuration.GetSection(AppConfigurationKeySections.FoundationaLLM_APIs_VectorizationAPI));
             builder.Services.AddOptions<CosmosDbSettings>()
                 .Bind(builder.Configuration.GetSection(AppConfigurationKeySections.FoundationaLLM_CosmosDB));
             builder.Services.AddOptions<ClientBrandingConfiguration>()
@@ -96,6 +103,9 @@ namespace FoundationaLLM.Management.API
 
             // Resource validation.
             builder.Services.AddSingleton<IResourceValidatorFactory, ResourceValidatorFactory>();
+
+            // Register the remote vectorization processor, for calls into the Vectorization API.            
+            builder.Services.AddSingleton<IVectorizationRequestProcessor, RemoteVectorizationRequestProcessor>();
 
             //----------------------------
             // Resource providers

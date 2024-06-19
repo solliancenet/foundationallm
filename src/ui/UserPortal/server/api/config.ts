@@ -24,6 +24,7 @@ const allowedKeys = [
 	'FoundationaLLM:Branding:PrimaryButtonTextColor',
 	'FoundationaLLM:Branding:SecondaryButtonBackgroundColor',
 	'FoundationaLLM:Branding:SecondaryButtonTextColor',
+	'FoundationaLLM:Branding:FooterText',
 	'FoundationaLLM:Chat:Entra:ClientId',
 	'FoundationaLLM:Chat:Entra:Instance',
 	'FoundationaLLM:Chat:Entra:TenantId',

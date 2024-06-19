@@ -16,7 +16,7 @@
   
   <ItemGroup>
     <PackageReference Include="Azure.Data.AppConfiguration" Version="1.4.0" />
-    <PackageReference Include="Azure.Identity" Version="1.11.0" />
+    <PackageReference Include="Azure.Identity" Version="1.12.0" />
     <PackageReference Include="Azure.Messaging.EventGrid" Version="4.22.0-beta.1" />
     <PackageReference Include="Azure.Monitor.OpenTelemetry.AspNetCore" Version="1.1.0" />
     <PackageReference Include="Azure.ResourceManager.CognitiveServices" Version="1.3.2" />

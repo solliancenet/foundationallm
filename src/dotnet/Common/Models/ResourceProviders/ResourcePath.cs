@@ -40,6 +40,14 @@ namespace FoundationaLLM.Common.Models.ResourceProviders
         public bool IsRootPath => _isRootPath;
 
         /// <summary>
+        /// Indicates whether the resource path refers to a resource type (does not contain a resource name).
+        /// </summary>
+        public bool IsResourceTypePath =>
+            _resourceTypeInstances != null
+            && _resourceTypeInstances.Count > 0
+            && _resourceTypeInstances.Last().ResourceId == null;
+
+        /// <summary>
         /// The main resource type of the path.
         /// </summary>
         public string MainResourceType =>

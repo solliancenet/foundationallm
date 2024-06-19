@@ -187,14 +187,14 @@ namespace FoundationaLLM.Prompt.ResourceProviders
         protected override async Task<object> UpsertResourceAsync(ResourcePath resourcePath, string serializedResource, UnifiedUserIdentity userIdentity) =>
             resourcePath.ResourceTypeInstances[0].ResourceType switch
             {
-                PromptResourceTypeNames.Prompts => await UpdatePrompt(resourcePath, serializedResource),
+                PromptResourceTypeNames.Prompts => await UpdatePrompt(resourcePath, serializedResource, userIdentity),
                 _ => throw new ResourceProviderException($"The resource type {resourcePath.ResourceTypeInstances[0].ResourceType} is not supported by the {_name} resource provider.",
                     StatusCodes.Status400BadRequest),
             };
 
         #region Helpers for UpsertResourceAsync
 
-        private async Task<ResourceProviderUpsertResult> UpdatePrompt(ResourcePath resourcePath, string serializedPrompt)
+        private async Task<ResourceProviderUpsertResult> UpdatePrompt(ResourcePath resourcePath, string serializedPrompt, UnifiedUserIdentity userIdentity)
         {
             var prompt = JsonSerializer.Deserialize<PromptBase>(serializedPrompt)
                 ?? throw new ResourceProviderException("The object definition is invalid.");
@@ -217,6 +217,11 @@ namespace FoundationaLLM.Prompt.ResourceProviders
             };
 
             prompt.ObjectId = resourcePath.GetObjectId(_instanceSettings.Id, _name);
+
+            if (existingPromptReference == null)
+                prompt.CreatedBy = userIdentity.UPN;
+            else
+                prompt.UpdatedBy = userIdentity.UPN;
 
             await _storageService.WriteFileAsync(
                 _storageContainerName,

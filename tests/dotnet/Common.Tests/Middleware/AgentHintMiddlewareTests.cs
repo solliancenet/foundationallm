@@ -18,7 +18,7 @@ namespace FoundationaLLM.Common.Tests.Middleware
             // Arrange
             var context = new DefaultHttpContext();
             var claimsProviderService = Substitute.For<IUserClaimsProviderService>();
-            var groupMembershipService = Substitute.For<IGroupMembershipService>();
+            var identityManagementService = Substitute.For<IIdentityManagementService>();
             var callContext = Substitute.For<ICallContext>();
             var instanceSettings = Options.Create<InstanceSettings>(Substitute.For<InstanceSettings>());
             var middleware = new CallContextMiddleware(next: _ => Task.FromResult(0));
@@ -31,7 +31,7 @@ namespace FoundationaLLM.Common.Tests.Middleware
             }, "mock"));
 
             // Act
-            await middleware.InvokeAsync(context, claimsProviderService, groupMembershipService, callContext, instanceSettings);
+            await middleware.InvokeAsync(context, claimsProviderService, identityManagementService, callContext, instanceSettings);
 
             // Assert
             claimsProviderService.Received(1).GetUserIdentity(context.User);
@@ -44,7 +44,7 @@ namespace FoundationaLLM.Common.Tests.Middleware
             // Arrange
             var context = new DefaultHttpContext();
             var claimsProviderService = Substitute.For<IUserClaimsProviderService>();
-            var groupMembershipService = Substitute.For<IGroupMembershipService>();
+            var groupMembershipService = Substitute.For<IIdentityManagementService>();
             var callContext = Substitute.For<ICallContext>();
             var instanceSettings = Options.Create<InstanceSettings>(Substitute.For<InstanceSettings>());
             var middleware = new CallContextMiddleware(next: _ => Task.FromResult(0));

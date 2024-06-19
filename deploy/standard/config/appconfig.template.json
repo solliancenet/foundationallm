@@ -134,6 +134,20 @@
         "tags": {}
       },
       {
+        "key": "FoundationaLLM:APIs:GatekeeperAPI:Configuration:EnableLakeraGuard",
+        "value": "false",
+        "label": null,
+        "content_type": "",
+        "tags": {}
+      },
+      {
+        "key": "FoundationaLLM:APIs:GatekeeperAPI:Configuration:EnableEnkryptGuardrails",
+        "value": "false",
+        "label": null,
+        "content_type": "",
+        "tags": {}
+      },
+      {
         "key": "FoundationaLLM:APIs:GatekeeperAPI:Configuration:EnableMicrosoftPresidio",
         "value": "true",
         "label": null,
@@ -310,7 +324,7 @@
       },
       {
         "key": "FoundationaLLM:APIs:VectorizationAPI:APIUrl",
-        "value": "https://{{vectorizationApiHostname}}/vectorization",
+        "value": "http://vectorization-api/vectorization",
         "label": null,
         "content_type": "",
         "tags": {}
@@ -365,42 +379,42 @@
         "tags": {}
       },
       {
-        "key": "FoundationaLLM:AzureContentSafety:APIKey",
-        "value": "{\"uri\":\"{{keyvaultUri}}secrets/foundationallm-azurecontentsafety-apikey\"}",
+        "key": "FoundationaLLM:APIs:Gatekeeper:AzureContentSafety:APIKey",
+        "value": "{\"uri\":\"{{keyvaultUri}}secrets/foundationallm-apis-gatekeeper-azurecontentsafety-apikey\"}",
         "label": null,
         "content_type": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8",
         "tags": {}
       },
       {
-        "key": "FoundationaLLM:AzureContentSafety:APIUrl",
+        "key": "FoundationaLLM:APIs:Gatekeeper:AzureContentSafety:APIUrl",
         "value": "{{contentSafetyEndpointUri}}",
         "label": null,
         "content_type": "",
         "tags": {}
       },
       {
-        "key": "FoundationaLLM:AzureContentSafety:HateSeverity",
+        "key": "FoundationaLLM:APIs:Gatekeeper:AzureContentSafety:HateSeverity",
         "value": "2",
         "label": null,
         "content_type": "",
         "tags": {}
       },
       {
-        "key": "FoundationaLLM:AzureContentSafety:SelfHarmSeverity",
+        "key": "FoundationaLLM:APIs:Gatekeeper:AzureContentSafety:SelfHarmSeverity",
         "value": "2",
         "label": null,
         "content_type": "",
         "tags": {}
       },
       {
-        "key": "FoundationaLLM:AzureContentSafety:SexualSeverity",
+        "key": "FoundationaLLM:APIs:Gatekeeper:AzureContentSafety:SexualSeverity",
         "value": "2",
         "label": null,
         "content_type": "",
         "tags": {}
       },
       {
-        "key": "FoundationaLLM:AzureContentSafety:ViolenceSeverity",
+        "key": "FoundationaLLM:APIs:Gatekeeper:AzureContentSafety:ViolenceSeverity",
         "value": "2",
         "label": null,
         "content_type": "",
@@ -1244,48 +1258,6 @@
         "value": "{{vectorizationConfig}}",
         "label": null,
         "content_type": "application/json",
-        "tags": {}
-      },
-      {
-        "key": "FoundationaLLM:VectorizationAPI:Entra:CallbackPath",
-        "value": "/signin-oidc",
-        "label": null,
-        "content_type": "",
-        "tags": {}
-      },
-      {
-        "key": "FoundationaLLM:VectorizationAPI:Entra:ClientId",
-        "value": "{{vectorizationApiEntraClientId}}",
-        "label": null,
-        "content_type": "",
-        "tags": {}
-      },
-      {
-        "key": "FoundationaLLM:VectorizationAPI:Entra:ClientSecret",
-        "value": "{\"uri\":\"{{keyvaultUri}}secrets/foundationallm-apis-management-api-entra-clientsecret\"}",
-        "label": null,
-        "content_type": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8",
-        "tags": {}
-      },
-      {
-        "key": "FoundationaLLM:VectorizationAPI:Entra:Instance",
-        "value": "https://login.microsoftonline.com/",
-        "label": null,
-        "content_type": "",
-        "tags": {}
-      },
-      {
-        "key": "FoundationaLLM:VectorizationAPI:Entra:Scopes",
-        "value": "{{vectorizationApiEntraScopes}}",
-        "label": null,
-        "content_type": "",
-        "tags": {}
-      },
-      {
-        "key": "FoundationaLLM:VectorizationAPI:Entra:TenantId",
-        "value": "{{tenantId}}",
-        "label": null,
-        "content_type": "",
         "tags": {}
       }
     ]

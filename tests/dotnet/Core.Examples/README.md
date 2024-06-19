@@ -471,6 +471,134 @@ Agent conversation history:
 - Assistant: Paul-Muad'Dib is a character in the world of Dune. He is also known as the Mahdi or the Lisan al-Gaib. Paul is the son of Duke Leto Atreides and Lady Jessica and becomes a leader among the Fremen, a group of desert-dwelling people on the planet Arrakis, also known as Dune. The Fremen see him as their messiah and a figure of religious and political importance. They believe he possesses wisdom, strength, and the ability to create water, hide from the sun, and multiply over the land. Paul's relationship with the Fremen is one of acceptance and respect, and he becomes their leader and instructor, particularly in the ways of the desert.
 ```
 
+### Example 14: Knowledge Management agent with LangChain on Dune
+
+**Purpose**: Verify that the Knowledge Management agent with LangChain can respond to user queries using Dune.
+
+**File**: [Example0014_KnowledgeManagementLangChainWithLargeIndex.cs](Example0014_KnowledgeManagementLangChainWithLargeIndex.cs)
+
+This example demonstrates how to use the Management API to create a Knowledge Management agent without an Inline Context and how to use the Core API to send user prompts to the agent and receive completions.
+
+#### Setup
+
+##### Azure AI Search Index
+
+This test requires an index called `fllm-dune` located in the deployment's Azure AI Search service.
+
+#### Running the example
+
+Run the example by running a test on the `Example0014_KnowledgeManagementLangChainWithLargeIndex.cs` file. You can run the test using the Visual Studio Test Explorer, the command line, or by simply right-clicking anywhere on the `Example0014_KnowledgeManagementLangChainWithLargeIndex.cs` file and selecting **Run Tests**.
+
+You will see an output similar to the following after the test is completed:
+
+```text
+ ============ Knowledge Management agent with LangChain on Dune ============
+Send questions to the KMAgentWithLangChainDune agent.
+Agent conversation history:
+- User: Who are you?
+- Assistant: I am an intelligent assistant for the world of Dune, also known as Arrakis.
+- User: Who is the enemy of Paul Atreides?
+- Assistant: The enemy of Paul Atreides is the Emperor.
+- User: Who is 'Paul-Muad'Dib' and what is his relationship to the Fremen?
+- Assistant: Paul-Muad'Dib is a character in the world of Dune. He is also known as the Mahdi or the Lisan al-Gaib. Paul is the son of Duke Leto Atreides and Lady Jessica and becomes a leader among the Fremen, a group of desert-dwelling people on the planet Arrakis, also known as Dune. The Fremen see him as their messiah and a figure of religious and political importance. They believe he possesses wisdom, strength, and the ability to create water, hide from the sun, and multiply over the land. Paul's relationship with the Fremen is one of acceptance and respect, and he becomes their leader and instructor, particularly in the ways of the desert.
+```
+
+### Example 15: Agent-to-Agent Conversations on Dune
+
+**Purpose**: Verify that the Agent-to-Agent Conversations on Dune can respond to user queries.
+
+**File**: [Example0015_AgentToAgentConversations.cs](Example0015_AgentToAgentConversations.cs)
+
+This example creates three agents, but it only sends requests to `DuneAuthorityAgentWithSemanticKernelInlineContext`.
+
+- `DuneAuthorityAgentWithSemanticKernelInlineContext`: This agent sends requests to other agents based on their descriptions.
+- `DuneAgentWithSemanticKernelInlineContext`: This agent crafts poems about Dune.
+- `KMAgentWithSemanticKernelDune`: This agent answers questions about the Dune books using an Azure AI Search index.
+
+#### Setup
+
+##### Azure AI Search Index
+
+This test requires an index called `fllm-dune` located in the deployment's Azure AI Search service.
+
+#### Running the example
+
+Run the example by running a test on the `Example0015_AgentToAgentConversations.cs` file. You can run the test using the Visual Studio Test Explorer, the command line, or by simply right-clicking anywhere on the `Example0015_AgentToAgentConversations.cs` file and selecting **Run Tests**.
+
+You will see an output similar to the following after the test is completed:
+
+```text
+============ Agent-to-Agent Conversations with SemanticKernel on Dune ============
+Send questions to the DuneAuthorityAgentWithSemanticKernelInlineContext agent.
+Agent conversation history:
+- User: Who is 'Paul-Muad'Dib' and what is his relationship to the Fremen?
+- Assistant: Paul-Muad'Dib, born as Paul Atreides, was the leader of the House Atreides and later became known as Muad'Dib, the Mahdi of all the Fremen. He forged a strong and lasting relationship with the Fremen, the native inhabitants of the desert planet Arrakis.
+
+The Fremen, initially skeptical of outsiders, came to recognize Paul's unique abilities and his understanding of the desert way of life. They saw him as their messiah and rallied behind his cause. Inspired by his leadership, the Fremen spread across the universe in a religious government, influenced by Paul's teachings and his vision.
+
+Paul-Muad'Dib's relationship with the Fremen was marked by mutual respect and loyalty. He treated the Fremen as equals and valued their wisdom and knowledge of the harsh desert environment. In turn, the Fremen regarded Paul as their leader and embraced his teachings and strategies.
+
+Together, Paul-Muad'Dib and the Fremen conquered their enemies and fought against oppression. They formed a powerful and unbreakable bond, united by their shared purpose and commitment to each other. The Fremen followed Paul's commands without question, and he relied on their skills and expertise to navigate the challenges they faced.
+
+Paul-Muad'Dib's relationship with the Fremen was a cornerstone of his journey and his ultimate success in transforming Arrakis and shaping the destiny of the universe. He embodied their values and traditions, becoming not only their leader but also their inspiration and hope for a better future.
+
+- User: Write a poem about Paul's ambition.
+- Assistant: In realms of battles fierce and grand,
+Where valor bloomed and fate did stand,
+There rose a young and fearless man,
+Ambition forged in desert sand.
+
+Paul Atreides, with eyes of flame,
+A noble heart, a destined claim,
+With dreams that stirred the echoes bold,
+In his veins, a legacy untold.
+
+Endowed with mystic prescience rare,
+He saw a future none could share,
+A path diverged, a choice to make,
+To seize a universe at stake.
+
+His soul ablaze like stars set high,
+A burning light that could not die,
+In every step, in every breath,
+Fulfillment danced upon his quest.
+
+Through every trial, every test,
+He emerged, resolute and blessed,
+A warrior, fierce and wise with might,
+Unyielding in the darkest night.
+
+Yet blossomed within him a fire untamed,
+A thirst for power, untamed as it claimed,
+For ambition, a double-edged blade,
+On destiny's wings, his heart betrayed.
+
+For noble as his cause might be,
+Ambition gilded chains so free,
+Conquering worlds, he sought to grow,
+But chains of power may not bestow.
+
+In passion's grip, his heart entwined,
+A burning star of dreams combined,
+Yet shadows lingered, consuming the light,
+An empire's fate hung in the night.
+
+The cost he paid, both dark and dear,
+A web of choices, whispers near,
+In each step forward, sacrifice ablaze,
+A struggle eternal, through endless days.
+
+Paul Atreides, a warrior's grace,
+With love and power he sought to embrace,
+Ambition's dance a perilous waltz,
+A journey paved with noble faults.
+
+Thus, let his ambition be praised,
+For in his soul, desire blazed,
+Oh, Paul Atreides, your yearning unfurled,
+A tragic hero, king of the world.
+```
+
 ### Example 16: Completion quality measurements with Azure AI Studio
 
 **Purpose**: Verify that the completion quality measurements can be completed successfully with Azure AI Studio.

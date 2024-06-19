@@ -41,12 +41,12 @@ namespace FoundationaLLM.Core.Examples.Services
         }
 
         /// <inheritdoc/>
-        public async Task<Completion> SendSessionCompletionRequestAsync(OrchestrationRequest orchestrationRequest)
+        public async Task<Completion> SendSessionCompletionRequestAsync(CompletionRequest completionRequest)
         {
             var coreClient = await httpClientManager.GetHttpClientAsync(HttpClients.CoreAPI);
-            var serializedRequest = JsonSerializer.Serialize(orchestrationRequest, _jsonSerializerOptions);
+            var serializedRequest = JsonSerializer.Serialize(completionRequest, _jsonSerializerOptions);
 
-            var sessionUrl = $"sessions/{orchestrationRequest.SessionId}/completion"; // Session-based - message history and data is retained in Cosmos DB. Must create a session if it does not exist.
+            var sessionUrl = $"sessions/{completionRequest.SessionId}/completion"; // Session-based - message history and data is retained in Cosmos DB. Must create a session if it does not exist.
             var responseMessage = await coreClient.PostAsync(sessionUrl,
                 new StringContent(
                     serializedRequest,

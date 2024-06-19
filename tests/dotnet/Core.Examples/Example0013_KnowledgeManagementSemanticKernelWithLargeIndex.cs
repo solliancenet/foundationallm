@@ -32,7 +32,7 @@ namespace FoundationaLLM.Core.Examples
 
         private async Task RunExampleAsync()
         {
-            var agentName = TestAgentNames.SemanticKernelDune;
+            var agentName = TestAgentNames.Dune01;
             var userPrompts = new List<string>
             {
                 "Who are you?",

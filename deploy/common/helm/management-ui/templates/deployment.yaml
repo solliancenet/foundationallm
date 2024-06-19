@@ -34,7 +34,6 @@ spec:
       {{- end }}
       containers:
         - name: {{ .Chart.Name }}
-          command: ["node", ".output/server/index.mjs"]
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:

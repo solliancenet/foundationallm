@@ -60,11 +60,6 @@ namespace FoundationaLLM.Configuration.Catalog
                 description: ""
             ),
             new(
-                secretName: KeyVaultSecretNames.FoundationaLLM_AzureContentSafety_APIKey,
-                minimumVersion: "0.3.0",
-                description: ""
-            ),
-            new(
                 secretName: KeyVaultSecretNames.FoundationaLLM_AzureOpenAI_Api_Key,
                 minimumVersion: "0.3.0",
                 description: ""

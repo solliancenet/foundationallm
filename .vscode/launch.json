@@ -5,8 +5,22 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "command": "npm run dev",
+            "name": "User Portal UI",
+            "request": "launch",
+            "type": "node-terminal",
+            "cwd" : "${workspaceFolder}/src/ui/UserPortal",
+        },
+        {
+            "command": "npm run dev",
+            "name": "Mgmt Portal UI",
+            "request": "launch",
+            "type": "node-terminal",
+            "cwd" : "${workspaceFolder}/src/ui/ManagementPortal",
+        },
+        {
             "name": "Python: AgentHubAPI",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "module": "uvicorn",
             "cwd" : "${workspaceFolder}/src/python/AgentHubAPI/app",
@@ -17,7 +31,7 @@
         },
         {
             "name": "Python: DataSourceHubAPI",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "module": "uvicorn",
             "cwd" : "${workspaceFolder}/src/python/DataSourceHubAPI/app",
@@ -28,7 +42,7 @@
         },
         {
             "name": "Python: PromptHubAPI",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "module": "uvicorn",
             "cwd" : "${workspaceFolder}/src/python/PromptHubAPI/app",
@@ -39,19 +53,19 @@
         },
         {
             "name": "Python: LangChainAPI",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "module": "uvicorn",
             "cwd" : "${workspaceFolder}/src/python/LangChainAPI/app",
             "env": {
-                "PYTHONPATH": "d:/repos/solliance-foundationallm/src/python/LangChainAPI;d:/repos/solliance-foundationallm/src/python/PythonSDK;d:/repos/fllm/foundationallm/src/python/LangChainAPI;d:/repos/fllm/foundationallm/src/python/PythonSDK"
+                "PYTHONPATH": "d:/repos/solliance-foundationallm/src/python/LangChainAPI;d:/repos/solliance-foundationallm/src/python/PythonSDK;"
             },
             "args": ["main:app","--reload", "--port", "8765"],
             "python": "${workspaceFolder}/src/python/LangChainAPI/env/Scripts/python.exe"
         },
         {
             "name": "Python: Current File",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",

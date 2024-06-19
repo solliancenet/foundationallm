@@ -213,7 +213,7 @@ namespace FoundationaLLM.Core.Examples.Services
             if (!inlineContext)
             {
                 if(!string.IsNullOrEmpty(indexingProfileName))
-                    ((KnowledgeManagementAgent)agent).Vectorization.IndexingProfileObjectId = (await GetIndexingProfile(indexingProfileName)).ObjectId;
+                    ((KnowledgeManagementAgent)agent).Vectorization.IndexingProfileObjectIds = [(await GetIndexingProfile(indexingProfileName)).ObjectId];
 
                 if (!string.IsNullOrEmpty(textEmbeddingProfileName))
                     ((KnowledgeManagementAgent)agent).Vectorization.TextEmbeddingProfileObjectId = (await GetTextEmbeddingProfile(textEmbeddingProfileName)).ObjectId;
