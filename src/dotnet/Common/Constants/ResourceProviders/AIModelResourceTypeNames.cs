@@ -5,7 +5,7 @@
     /// </summary>
     public class AIModelResourceTypeNames
     {
-        public const string AIModelEndpoints = "aimodelendpoints";
+        public const string AIEndpoints = "aiendpoints";
         /// <summary>
         /// AIModels.
         /// </summary>

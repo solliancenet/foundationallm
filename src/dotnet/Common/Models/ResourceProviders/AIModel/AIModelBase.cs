@@ -1,5 +1,6 @@
 ﻿using FoundationaLLM.Common.Exceptions;
 using FoundationaLLM.Common.Models.ResourceProviders.Agent;
+using Microsoft.Graph.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,20 +12,23 @@ namespace FoundationaLLM.Common.Models.ResourceProviders.AIModel
 {
     public class AIModelBase : ResourceBase
     {
-        public List<AIModelEndpoint> Endpoints { get; set; }
-        public List<AIModel> Models { get; set; }
+        /// <summary>
+        /// The endpoint metadata needed to call the AI model endpoint
+        /// </summary>
+        public AIEndpoint? Endpoint { get; set; }
+        /// <summary>
+        /// The version for the AI model
+        /// </summary>
+        public string? Version { get; set; }
 
         /// <summary>
-        /// The object type of the agent.
+        /// Deployment name for the AI model
         /// </summary>
-        [JsonIgnore]
-        public Type AgentType =>
-            Type switch
-            {
-                AgentTypes.KnowledgeManagement => typeof(KnowledgeManagementAgent),
-                AgentTypes.InternalContext => typeof(KnowledgeManagementAgent), // Temporary until InternalContextAgent is completeyl removed.
-                _ => throw new ResourceProviderException($"The agent type {Type} is not supported.")
-            };
+        public string? DeploymentName { get; set; }
+        /// <summary>
+        /// Key value parameters configured for the model
+        /// </summary>
+        public Dictionary<string, object> ModelParameters { get; set; } = new Dictionary<string, object>();
 
     }
 }
