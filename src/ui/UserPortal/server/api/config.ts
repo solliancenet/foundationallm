@@ -11,6 +11,7 @@ const allowedKeys = [
 	'FoundationaLLM:Branding:AllowAgentSelection',
 	'FoundationaLLM:Branding:KioskMode',
 	'FoundationaLLM:Branding:PageTitle',
+	'FoundationaLLM:Branding:FavIconUrl',
 	'FoundationaLLM:Branding:LogoUrl',
 	'FoundationaLLM:Branding:LogoText',
 	'FoundationaLLM:Branding:BackgroundColor',

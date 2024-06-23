@@ -5,7 +5,7 @@
 			<Button
 				icon="pi pi-paperclip"
 				label=""
-				class="file-upload-button"
+				class="file-upload-button secondary-button"
 				style="height: 100%;"
 				@click="toggleFileAttachmentOverlay"
 				:badge="$appStore.attachments.length.toString() || null"
@@ -36,7 +36,11 @@
 					<Button
 						label="Upload File"
 						icon="pi pi-upload"
-						class="p-button-primary"
+						:style="{
+							backgroundColor: secondaryButtonBg,
+							borderColor: secondaryButtonBg,
+							color: secondaryButtonText
+						}"
 						@click="showFileUploadDialog = true"
 					/>
 				</div>
@@ -131,6 +135,10 @@ export default {
 			agents: [],
 			agentListOpen: false,
 			showFileUploadDialog: false,
+			primaryButtonBg: this.$appConfigStore.primaryButtonBg,
+      		primaryButtonText: this.$appConfigStore.primaryButtonText,
+			secondaryButtonBg: this.$appConfigStore.secondaryButtonBg,
+      		secondaryButtonText: this.$appConfigStore.secondaryButtonText,
 		};
 	},
 
@@ -225,6 +233,12 @@ export default {
 	background-color: var(--primary-button-bg) !important;
 	border-color: var(--primary-button-bg) !important;
 	color: var(--primary-button-text) !important;
+}
+
+.secondary-button {
+	background-color: var(--secondary-button-bg) !important;
+	border-color: var(--secondary-button-bg) !important;
+	color: var(--secondary-button-text) !important;
 }
 
 .pre-input {

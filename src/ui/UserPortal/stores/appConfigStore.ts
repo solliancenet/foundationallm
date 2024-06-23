@@ -12,6 +12,7 @@ export const useAppConfigStore = defineStore('appConfig', {
 
 		// Style: These settings impact the visual style of the chat interface.
 		pageTitle: null,
+		favIconUrl: null,
 		logoUrl: null,
 		logoText: null,
 		primaryBg: null,
@@ -52,6 +53,7 @@ export const useAppConfigStore = defineStore('appConfig', {
 				apiUrl,
 				isKioskMode,
 				pageTitle,
+				favIconUrl,
 				logoUrl,
 				logoText,
 				primaryBg,
@@ -76,6 +78,7 @@ export const useAppConfigStore = defineStore('appConfig', {
 				
 				getConfigValueSafe('FoundationaLLM:Branding:KioskMode'),
 				getConfigValueSafe('FoundationaLLM:Branding:PageTitle'),
+				getConfigValueSafe('FoundationaLLM:Branding:FavIconUrl'),
 				getConfigValueSafe('FoundationaLLM:Branding:LogoUrl', 'foundationallm-logo-white.svg'),
 				getConfigValueSafe('FoundationaLLM:Branding:LogoText'),
 				getConfigValueSafe('FoundationaLLM:Branding:BackgroundColor', '#fff'),
@@ -103,6 +106,7 @@ export const useAppConfigStore = defineStore('appConfig', {
 			this.isKioskMode = JSON.parse(isKioskMode.toLowerCase());
 
 			this.pageTitle = pageTitle;
+			this.favIconUrl = favIconUrl;
 			this.logoUrl = logoUrl;
 			this.logoText = logoText;
 			this.primaryBg = primaryBg;

@@ -12,7 +12,7 @@
     Specifies the version of AzCopy to download and use. This parameter is fixed in the script.
 
 .EXAMPLE
-    .\SetupAzCopy.ps1
+    .\Get-AzCopy.ps1
 
 .NOTES
     Ensure that the PowerShell session has sufficient permissions to download and execute files, and that internet connectivity is available.
@@ -29,34 +29,43 @@ $env:AZCOPY_AUTO_LOGIN_TYPE = "AZCLI"
 
 # Determine OS and set the download URL and file extension accordingly
 if ($IsWindows) {
-	$url = "https://aka.ms/downloadazcopy-v10-windows"
+	$url = "https://azcopyvnext.azureedge.net/releases/release-10.25.0-20240522/azcopy_windows_amd64_10.25.0.zip"
 	$os = "windows"
 	$ext = "zip"
 }elseif ($IsMacOS) {
-	$url = "https://aka.ms/downloadazcopy-v10-mac"
+	$url = "https://azcopyvnext.azureedge.net/releases/release-10.25.0-20240522/azcopy_darwin_amd64_10.25.0.zip"
 	$os = "darwin"
 	$ext = "zip"
 }elseif ($IsLinux) {
-	$url = "https://aka.ms/downloadazcopy-v10-linux"
+	$url = "https://azcopyvnext.azureedge.net/releases/release-10.25.0-20240522/azcopy_linux_amd64_10.25.0.tar.gz"
 	$os = "linux"
 	$ext = "tar.gz"
 }
 
 # Define paths for download and extraction
-$outputPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath("../../tools/azcopy.${ext}")
-$destinationPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath("../../tools")
-$toolPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath("../../tools/azcopy_${os}_amd64_${AZCOPY_VERSION}/azcopy")
+$archivePath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath("../tools/azcopy.${ext}")
+$destinationPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath("../tools")
+$extractedPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath("../tools/azcopy_${os}_amd64_${AZCOPY_VERSION}")
+$renamedPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath("../tools/azcopy")
+$toolPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath("../tools/azcopy/azcopy")
 
 # Check if AzCopy already exists, download and extract if not
-if (Test-Path -Path "../../tools/azcopy_${os}_amd64_${AZCOPY_VERSION}") {
-	Write-Host "azcopy_${os}_amd64_${AZCOPY_VERSION} already exists."
+if (Test-Path -Path "../tools/azcopy") {
+	Write-Host "azcopy already exists."
 }
 else {
-	Invoke-WebRequest -Uri $url -OutFile $outputPath
+	Invoke-WebRequest -Uri $url -OutFile $archivePath
+	
 	if ($IsLinux) {
-		tar -xvzf $outputPath -C $destinationPath
+		tar -xvzf $archivePath -C $destinationPath
 	}
 	else {
-		Expand-Archive -Path $outputPath -DestinationPath $destinationPath
+		Expand-Archive -Path $archivePath -DestinationPath $destinationPath
+	}
+
+	Move-Item -Path $extractedPath -Destination $renamedPath
+
+	if (!$IsWindows) {
+		chmod +x $toolPath
 	}
 }

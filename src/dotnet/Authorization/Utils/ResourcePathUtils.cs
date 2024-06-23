@@ -2,7 +2,6 @@
 using FoundationaLLM.Common.Constants.ResourceProviders;
 using FoundationaLLM.Common.Exceptions;
 using FoundationaLLM.Common.Models.ResourceProviders;
-using FoundationaLLM.Configuration.Services;
 using System.Collections.Immutable;
 
 namespace FoundationaLLM.Authorization.Utils

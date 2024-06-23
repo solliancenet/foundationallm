@@ -27,7 +27,7 @@
 export default {
 	data() {
 		return {
-			pageTitle: 'FoundationaLLM',
+			pageTitle: this.$appConfigStore.pageTitle || 'FoundationaLLM',
 		};
 	},
 

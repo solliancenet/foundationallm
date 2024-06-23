@@ -394,3 +394,4 @@ deploy/quick-start/.env
 .sonarqube/
 
 *.lutconfig
+dist

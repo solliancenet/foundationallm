@@ -68,6 +68,7 @@ namespace FoundationaLLM.Common.Services.Security
                 [
                     "user",
                     "group",
+                    "servicePrincipal",
                 ],
             };
 
@@ -99,6 +100,11 @@ namespace FoundationaLLM.Common.Services.Security
                     email = group.Mail;
                     displayName = group.DisplayName;
                     objectType = ObjectTypes.Group;
+                }
+                else if (directoryObject is ServicePrincipal servicePrincipal)
+                {
+                    displayName = servicePrincipal.DisplayName;
+                    objectType = ObjectTypes.Other;
                 }
 
                 results.Add(new ObjectQueryResult

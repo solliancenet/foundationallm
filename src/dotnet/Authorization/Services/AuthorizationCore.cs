@@ -12,6 +12,7 @@ using FoundationaLLM.Common.Models.ResourceProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Collections.Concurrent;
+using System.Collections.Immutable;
 using System.Text;
 using System.Text.Json;
 
@@ -271,8 +272,19 @@ namespace FoundationaLLM.Authorization.Services
         }
 
         /// <inheritdoc/>
-        public List<RoleAssignment> GetRoleAssignments(string instanceId, RoleAssignmentQueryParameters queryParameters) =>
-            _roleAssignmentStores[instanceId].RoleAssignments.Where(x => queryParameters.Scope!.Contains(x.Scope)).ToList();
+        public List<RoleAssignment> GetRoleAssignments(string instanceId, RoleAssignmentQueryParameters queryParameters)
+        {
+            if (string.IsNullOrWhiteSpace(queryParameters?.Scope))
+                return [];
+
+            var resourcePath = ResourcePathUtils.ParseForRoleAssignmentScope(
+                queryParameters.Scope,
+                _settings.InstanceIds);
+
+            return _roleAssignmentStores[instanceId].RoleAssignments
+                .Where(ra => resourcePath.IncludesResourcePath(ra.ScopeResourcePath!))
+                .ToList();
+        }
  
         /// <inheritdoc/>
         public Dictionary<string, RoleAssignmentsWithActionsResult> ProcessRoleAssignmentsWithActionsRequest(string instanceId, RoleAssignmentsWithActionsRequest request)

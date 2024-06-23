@@ -559,6 +559,37 @@ jobs:
             -storageAccountName $env:AZURE_STORAGE_ACCOUNT_NAME `
             -aiSearchName $env:AZURE_COGNITIVE_SEARCH_NAME
 
+  build_e2e_tests:
+    name: Build End to End Tests
+    if: ${{ !inputs.bypassAndTeardown }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 8.x
+      
+      - name: Build Tests
+        shell: pwsh
+        run: |
+          dotnet restore ./src/FoundationaLLM.sln --output ./dist
+          dotnet build ./tests/dotnet/Common.Tests/Common.Tests.csproj --output ./dist
+          dotnet build ./tests/dotnet/Core.Examples/Core.Examples.csproj --output ./dist
+          dotnet build ./tests/dotnet/Core.Test/Core.Tests.csproj --output ./dist
+          dotnet build ./tests/dotnet/Gatekeeper.Tests/Gatekeeper.Tests.csproj --output ./dist
+          dotnet build ./tests/dotnet/Orchestration.Tests/Orchestration.Tests.csproj --output ./dist
+          dotnet build ./tests/dotnet/SemanticKernel.Tests/SemanticKernel.Tests.csproj --output ./dist
+          dotnet build ./tests/dotnet/Vectorization.Tests/Vectorization.Tests.csproj --output ./dist
+
+      - name: Publish Build
+        uses: actions/upload-artifact@v4
+        with:
+          name: build
+          path: ./dist
+
   run_e2e_tests:
     name: Run End to End Tests
     if: ${{ !inputs.bypassAndTeardown }}
@@ -567,7 +598,7 @@ jobs:
     env:
       AZURE_ENV_NAME: ${{ inputs.environment }}
       AZURE_LOCATION: ${{ inputs.location }}
-    needs: [generate_matrix, deploy_quickstart, add_test_data]
+    needs: [generate_matrix, deploy_quickstart, add_test_data, build_e2e_tests]
     strategy:
       fail-fast: false
       matrix:
@@ -599,6 +630,12 @@ jobs:
 
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Download Build
+        uses: actions/download-artifact@v4
+        with:
+          name: build
+          path: ./dist
 
       - name: Install azd
         uses: Azure/setup-azd@v1.0.0
@@ -661,6 +698,8 @@ jobs:
 
           echo "Running End to End Test: ${{ matrix.object.name }}"
           dotnet test `
+            --output ./dist `
+            --no-build `
             --filter "FullyQualifiedName=${{ matrix.object.namespace }}.${{ matrix.object.task_name }}" `
             --logger:"html;verbosity=detailed;LogFileName=${{ github.workspace }}/${{ matrix.object.name }}.html" `
             ${{ matrix.object.target }}
