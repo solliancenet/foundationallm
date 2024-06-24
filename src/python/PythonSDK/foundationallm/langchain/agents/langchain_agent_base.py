@@ -5,6 +5,11 @@ from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 
 from langchain_core.language_models import BaseLanguageModel
 from langchain_openai import AzureChatOpenAI, AzureOpenAI, ChatOpenAI, OpenAI
+from langchain_community.chat_models.azureml_endpoint import AzureMLChatOnlineEndpoint
+from langchain_community.chat_models.azureml_endpoint import (
+    AzureMLEndpointApiType,
+    CustomOpenAIChatContentFormatter,
+)
 from foundationallm.config.configuration import Configuration
 from foundationallm.langchain.exceptions import LangChainException
 from foundationallm.models.orchestration import OperationTypes
@@ -16,7 +21,7 @@ from foundationallm.models.orchestration import (
     CompletionResponse,
     EndpointSettings,
     MessageHistoryItem,
-    OrchestrationSettings
+    OrchestrationSettings   
 )
 from foundationallm.models.resource_providers.attachments import Attachment
 from foundationallm.models.resource_providers.prompts import MultipartPrompt
@@ -135,18 +140,26 @@ class LangChainAgentBase():
         except ValueError:
             raise LangChainException(f"The LLM provider {provider} is not supported.", 400)
 
-        if provider == LanguageModelProvider.MICROSOFT:
-            # Verify the endpoint_configuration inludes the api_version property for Azure OpenAI models.
-            if request.agent.orchestration_settings.endpoint_configuration.get('api_version') is None:
-                raise LangChainException("The ApiVersion property of the agent's OrchestrationSettings.EndpointConfiguration property cannot be null.", 400)
+        match provider:
+            case LanguageModelProvider.MICROSOFT:
+                # Verify the endpoint_configuration inludes the api_version property for Azure OpenAI models.
+                if request.agent.orchestration_settings.endpoint_configuration.get('api_version') is None:
+                    raise LangChainException("The ApiVersion property of the agent's OrchestrationSettings.EndpointConfiguration property cannot be null.", 400)
             
-            # model_parameters is required to provide the deployment_name for Azure OpenAI models.
-            if request.agent.orchestration_settings.model_parameters is None:
-                raise LangChainException("The ModelParameters property of the OrchestrationSettings cannot be null.", 400)
+                # model_parameters is required to provide the deployment_name for Azure OpenAI models.
+                if request.agent.orchestration_settings.model_parameters is None:
+                    raise LangChainException("The ModelParameters property of the OrchestrationSettings cannot be null.", 400)
 
-            # Verify that the deployment_name is provided for Azure OpenAI models.
-            if request.agent.orchestration_settings.model_parameters.get('deployment_name') is None:
-                raise LangChainException("The DeploymentName property of the agent's OrchestrationSettings.ModelParameters property cannot be null.", 400)
+                # Verify that the deployment_name is provided for Azure OpenAI models.
+                if request.agent.orchestration_settings.model_parameters.get('deployment_name') is None:
+                    raise LangChainException("The DeploymentName property of the agent's OrchestrationSettings.ModelParameters property cannot be null.", 400)
+            case LanguageModelProvider.AZUREML:
+                # Verify the endpoint_configuration inludes the endpoint property for AzureML models.
+                if request.agent.orchestration_settings.endpoint_configuration.get('endpoint') is None:
+                    raise LangChainException("The Endpoint property of the agent's OrchestrationSettings.EndpointConfiguration property cannot be null.", 400)
+                # Verify the endpoint_api_key property for AzureML models.
+                if request.agent.orchestration_settings.endpoint_configuration.get('api_key') is None:
+                    raise LangChainException("The APIKey property of the agent's OrchestrationSettings.EndpointConfiguration property cannot be null.", 400)
 
     def _build_conversation_history(self, messages:List[MessageHistoryItem]=None, message_count:int=None) -> str:
         """
@@ -211,7 +224,7 @@ class LangChainAgentBase():
             authentication_type=endpoint_configuration.get('auth_type'),
             provider=endpoint_configuration.get('provider'),
             api_version=endpoint_configuration.get('api_version'),
-            operation_type=endpoint_configuration.get('operation_type') or 'chat'
+            operation_type=endpoint_configuration.get('operation_type') or 'chat'            
         )
 
         endpoint_settings.api_type = 'azure_ad' if endpoint_settings.authentication_type == 'token' else 'azure'
@@ -244,79 +257,96 @@ class LangChainAgentBase():
         -------
         BaseLanguageModel
             Returns an API connector for a chat completion model.
-        """
+        """        
         endpoint_settings = self.__extract_endpoint_configuration(agent_orchestration_settings.endpoint_configuration)
-                
-        langauge_model:BaseLanguageModel = None
+        language_model:BaseLanguageModel = None
 
-        if endpoint_settings.provider == LanguageModelProvider.MICROSOFT:
-            # Get Azure OpenAI Chat model settings
-            deployment_name = (model_override_settings.model_parameters.get('deployment_name')
-                                if model_override_settings is not None
-                                    and model_override_settings.model_parameters is not None
-                                    and model_override_settings.model_parameters.get('deployment_name') is not None
-                                else agent_orchestration_settings.model_parameters.get('deployment_name'))
-            if deployment_name is None:
-                raise ValueError("Deployment name is required for Azure OpenAI completion requests.")
+        match endpoint_settings.provider:
+            case LanguageModelProvider.MICROSOFT:
+                # Get Azure OpenAI Chat model settings
+                deployment_name = (model_override_settings.model_parameters.get('deployment_name')
+                                    if model_override_settings is not None
+                                        and model_override_settings.model_parameters is not None
+                                        and model_override_settings.model_parameters.get('deployment_name') is not None
+                                    else agent_orchestration_settings.model_parameters.get('deployment_name'))
+                if deployment_name is None:
+                    raise ValueError("Deployment name is required for Azure OpenAI completion requests.")
 
-            if endpoint_settings.authentication_type == AuthenticationTypes.TOKEN:
-                try:
-                    # Set up a Azure AD token provider.
-                    # TODO: Determine if there is a more efficient way to get the token provider than making the request for every call.
-                    token_provider = get_bearer_token_provider(
-                        DefaultAzureCredential(exclude_environment_credential=True),
-                        'https://cognitiveservices.azure.com/.default'
-                    )
+                if endpoint_settings.authentication_type == AuthenticationTypes.TOKEN:
+                    try:
+                        # Set up a Azure AD token provider.
+                        # TODO: Determine if there is a more efficient way to get the token provider than making the request for every call.
+                        token_provider = get_bearer_token_provider(
+                            DefaultAzureCredential(exclude_environment_credential=True),
+                            'https://cognitiveservices.azure.com/.default'
+                        )
                 
-                    langauge_model = (
+                        language_model = (
+                            AzureChatOpenAI(
+                                azure_endpoint=endpoint_settings.endpoint,
+                                api_version=endpoint_settings.api_version,
+                                openai_api_type=endpoint_settings.api_type,
+                                azure_ad_token_provider=token_provider,
+                                azure_deployment=deployment_name
+                            ) if endpoint_settings.operation_type == OperationTypes.CHAT
+                            else AzureOpenAI(
+                                azure_endpoint=endpoint_settings.endpoint,
+                                api_version=endpoint_settings.api_version,
+                                openai_api_type=endpoint_settings.api_type,
+                                azure_ad_token_provider=token_provider,
+                                azure_deployment=deployment_name
+                            )
+                        )
+                    except Exception as e:
+                        raise LangChainException(f"Failed to create Azure OpenAI API connector: {str(e)}", 500)
+                else: # Key-based authentication
+                    language_model = (
                         AzureChatOpenAI(
                             azure_endpoint=endpoint_settings.endpoint,
+                            api_key=endpoint_settings.api_key,
                             api_version=endpoint_settings.api_version,
-                            openai_api_type=endpoint_settings.api_type,
-                            azure_ad_token_provider=token_provider,
                             azure_deployment=deployment_name
                         ) if endpoint_settings.operation_type == OperationTypes.CHAT
                         else AzureOpenAI(
                             azure_endpoint=endpoint_settings.endpoint,
+                            api_key=endpoint_settings.api_key,
                             api_version=endpoint_settings.api_version,
-                            openai_api_type=endpoint_settings.api_type,
-                            azure_ad_token_provider=token_provider,
                             azure_deployment=deployment_name
                         )
                     )
-                except Exception as e:
-                    raise LangChainException(f"Failed to create Azure OpenAI API connector: {str(e)}", 500)
-            else: # Key-based authentication
-                langauge_model = (
-                    AzureChatOpenAI(
-                        azure_endpoint=endpoint_settings.endpoint,
-                        api_key=endpoint_settings.api_key,
-                        api_version=endpoint_settings.api_version,
-                        azure_deployment=deployment_name
-                    ) if endpoint_settings.operation_type == OperationTypes.CHAT
-                    else AzureOpenAI(
-                        azure_endpoint=endpoint_settings.endpoint,
-                        api_key=endpoint_settings.api_key,
-                        api_version=endpoint_settings.api_version,
-                        azure_deployment=deployment_name
-                    )
+            case LanguageModelProvider.AZUREML:
+                # Overrides are handled in the model_kwargs parameter for AzureML models.
+                model_kwargs = agent_orchestration_settings.model_parameters;
+                # Override model parameters from completion request settings, if any exist.
+                if model_override_settings is not None and model_override_settings.model_parameters is not None:            
+                    for key, value in model_override_settings.model_parameters.items():
+                        if hasattr(model_kwargs, key):
+                            setattr(model_kwargs, key, value)
+                
+                language_model = AzureMLChatOnlineEndpoint(
+                    endpoint_url=endpoint_settings.endpoint,
+                    endpoint_api_key=endpoint_settings.api_key,
+                    endpoint_api_type=AzureMLEndpointApiType.dedicated,
+                    content_formatter=CustomOpenAIChatContentFormatter(),
+                    model_kwargs=model_kwargs                    
+                )                
+            case _:
+                language_model = (
+                    ChatOpenAI(base_url=endpoint_settings.endpoint, api_key=endpoint_settings.api_key)
+                    if endpoint_settings.operation_type == OperationTypes.CHAT
+                    else OpenAI(base_url=endpoint_settings.endpoint, api_key=endpoint_settings.api_key)
                 )
-        else:
-            langauge_model = (
-                ChatOpenAI(base_url=endpoint_settings.endpoint, api_key=endpoint_settings.api_key)
-                if endpoint_settings.operation_type == OperationTypes.CHAT
-                else OpenAI(base_url=endpoint_settings.endpoint, api_key=endpoint_settings.api_key)
-            )
-
+        
         # Set model parameters from agent orchestration settings.
-        for key, value in agent_orchestration_settings.model_parameters.items():
-            if hasattr(langauge_model, key):
-                setattr(langauge_model, key, value)
-
+        if agent_orchestration_settings.model_parameters is not None:
+            for key, value in agent_orchestration_settings.model_parameters.items():
+                if hasattr(language_model, key):
+                    setattr(language_model, key, value)
+                 
         # Override model parameters from completion request settings, if any exist.
         if model_override_settings is not None and model_override_settings.model_parameters is not None:            
             for key, value in model_override_settings.model_parameters.items():
-                if hasattr(langauge_model, key):
-                    setattr(langauge_model, key, value)
-
-        return langauge_model
+                if hasattr(language_model, key):
+                    setattr(language_model, key, value)
+                               
+        return language_model
