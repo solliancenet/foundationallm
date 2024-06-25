@@ -66,7 +66,7 @@ d. **Container Health Checks:**
 - Identify and address health check failures impacting container stability.
 
 e. **Container Image Update:**
-- Review the container image version, update to the latest version to recieve bug fixes and new features.
+- Review the container image version, update to the latest version to receive bug fixes and new features.
 
 ## Additional support and issue reporting
 

@@ -9,11 +9,11 @@
 #>
 
 Param(
-    [parameter(Mandatory = $false)][string]$authAppName="FoundationaLLM-Authorization-E2E",
-    [parameter(Mandatory = $false)][string]$coreAppName="FoundationaLLM-E2E",
-    [parameter(Mandatory = $false)][string]$coreClientAppName="FoundationaLLM-E2E-Client",
-    [parameter(Mandatory = $false)][string]$mgmtAppName="FoundationaLLM-Management-E2E",
-    [parameter(Mandatory = $false)][string]$mgmtClientAppName="FoundationaLLM-Management-E2E-Client",
+    [parameter(Mandatory = $false)][string]$authAppName="FoundationaLLM-Authorization-API",
+    [parameter(Mandatory = $false)][string]$coreAppName="FoundationaLLM-Core-API",
+    [parameter(Mandatory = $false)][string]$coreClientAppName="FoundationaLLM-Core-Portal",
+    [parameter(Mandatory = $false)][string]$mgmtAppName="FoundationaLLM-Management-API",
+    [parameter(Mandatory = $false)][string]$mgmtClientAppName="FoundationaLLM-Management-Portal",
 	[parameter(Mandatory=$false)][bool]$interactiveMode = $true
 )
 

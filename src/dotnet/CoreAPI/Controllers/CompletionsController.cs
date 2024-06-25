@@ -61,12 +61,9 @@ namespace FoundationaLLM.Core.API.Controllers
         /// </summary>
         /// <param name="completionRequest">The user prompt for which to generate a completion.</param>
         [HttpPost(Name = "GetCompletion")]
-        public async Task<IActionResult> GetCompletion([FromBody] CompletionRequest completionRequest)
-        {
-            var completionResponse = await _coreService.GetCompletionAsync(completionRequest);
-
-            return Ok(completionResponse);
-        }
+        public async Task<IActionResult> GetCompletion([FromBody] CompletionRequest completionRequest) =>
+            !string.IsNullOrWhiteSpace(completionRequest.SessionId) ? Ok(await _coreService.GetChatCompletionAsync(completionRequest)) :
+                Ok(await _coreService.GetCompletionAsync(completionRequest));
 
         /// <summary>
         /// Retrieves a list of global and private agents.

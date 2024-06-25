@@ -103,7 +103,7 @@ jobs:
       - name: Set Git and Helm Tag
         id: docker-tag
         run: |
-          if [ '${{ (startsWith(github.ref, 'refs/heads/release/') || startsWith(github.ref, 'refs/heads/poc/')) }}' -eq 'true' ]; then
+          if [ '${{ (startsWith(github.ref, 'refs/heads/release/') || startsWith(github.ref, 'refs/heads/poc/')) }}' == 'true' ]; then
             DOCKER_TAG=$(echo ${{ github.ref_name }} |  cut -d'/' -f 2)
           else
             DOCKER_TAG=0.0.0-${GITHUB_REF#refs/heads/}
@@ -153,9 +153,9 @@ jobs:
   deploy_quickstart:
     name: Deploy Quick Start
     runs-on: ubuntu-latest
-    needs: generate_matrix
+    needs: [generate_matrix, docker_build]
     outputs:
-      azd-deployment-data: ${{ steps.apply-cosmos-db-rbac.outputs.AZD_DEPLOYMENT_DATA }}
+      azd-deployment-data: ${{ steps.azd-deployment-data.outputs.AZD_DEPLOYMENT_DATA }}
     env:
       AZURE_ENV_NAME: ${{ inputs.environment }}
       AZURE_LOCATION: ${{ inputs.location }}
@@ -359,6 +359,14 @@ jobs:
           Pop-Location
         shell: pwsh
 
+      - name: Store AZD Deployment Information
+        id: azd-deployment-data
+        run: |
+          cd ./deploy/quick-start
+          echo 'AZD_DEPLOYMENT_DATA<<EOF' >> $GITHUB_OUTPUT
+          cat './.azure/${{ inputs.environment }}/.env' >> $GITHUB_OUTPUT
+          echo 'EOF' >> $GITHUB_OUTPUT
+      
       - name: Apply Cosmos DB RBAC to Service Principal
         id: apply-cosmos-db-rbac
         run: |
@@ -366,12 +374,6 @@ jobs:
           Write-Host "::add-mask::$($info.clientSecret)"
 
           Push-Location ./deploy/quick-start
-          
-          {
-            echo 'AZD_DEPLOYMENT_DATA<<EOF'
-            Get-Content "./.azure/${{ inputs.environment }}/.env" -Raw
-            echo EOF
-          } >> "$GITHUB_OUTPUT"
 
           (azd env get-values) | foreach {
               $name, $value = $_.split('=')
@@ -395,10 +397,136 @@ jobs:
           Pop-Location
         shell: pwsh
 
+  add_test_data:
+    if: ${{ !inputs.bypassAndTeardown }}
+    name: Add Test Data
+    needs: [deploy_quickstart]
+    runs-on: ubuntu-latest # this may need to change to windows
+    env:
+      AZURE_ENV_NAME: ${{ inputs.environment }}
+      AZURE_LOCATION: ${{ inputs.location }}
+    steps:
+      - name: Sets Credentials for Source (SBX)
+        run: |
+          {
+            echo 'AZURE_CREDENTIALS_SRC<<EOF'
+            echo "$FLLM_SBX_AZURE_CREDENTIALS"
+            echo EOF
+          } >> "$GITHUB_ENV"
+        env:
+          FLLM_SBX_AZURE_CREDENTIALS: |
+            ${{ secrets.FLLM_SBX_AZURE_CREDENTIALS }}
+
+      - name: Sets Credentials for Target (E2E)
+        run: |
+          {
+            echo 'AZURE_CREDENTIALS<<EOF'
+            echo "$FLLM_E2E_AZURE_CREDENTIALS"
+            echo EOF
+          } >> "$GITHUB_ENV"
+        if: inputs.target == 'e2e'
+        env:
+          FLLM_E2E_AZURE_CREDENTIALS: |
+            ${{ secrets.FLLM_E2E_AZURE_CREDENTIALS }}
+
+      - name: Sets Credentials for Target (Sandbox)
+        run: |
+          {
+            echo 'AZURE_CREDENTIALS<<EOF'
+            echo "$FLLM_SBX_AZURE_CREDENTIALS"
+            echo EOF
+          } >> "$GITHUB_ENV"
+        if: inputs.target == 'sandbox'
+        env:
+          FLLM_SBX_AZURE_CREDENTIALS: |
+            ${{ secrets.FLLM_SBX_AZURE_CREDENTIALS }}
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install azd
+        uses: Azure/setup-azd@v1.0.0
+        with:
+          version: "1.9.3"
+
+      - name: Log in with Azure (Client Credentials)
+        shell: pwsh
+        run: |
+          $info = $Env:AZURE_CREDENTIALS | ConvertFrom-Json -AsHashtable;
+          Write-Host "::add-mask::$($info.clientSecret)"
+
+          Push-Location ./deploy/quick-start
+          azd auth login `
+            --client-id "$($info.clientId)" `
+            --client-secret "$($info.clientSecret)" `
+            --tenant-id "$($info.tenantId)"
+          Pop-Location
+
+          az login `
+            --service-principal `
+            --username "$($info.clientId)" `
+            --password "$($info.clientSecret)" `
+            --tenant "$($info.tenantId)" `
+
+      - name: Copy Test Data
+        shell: pwsh
+        run: |
+          $src = $Env:AZURE_CREDENTIALS_SRC | ConvertFrom-Json -AsHashtable;
+          Write-Host "::add-mask::$($src.clientSecret)"
+
+          $info = $Env:AZURE_CREDENTIALS | ConvertFrom-Json -AsHashtable;
+          Write-Host "::add-mask::$($info.clientSecret)"
+
+          Write-Host "Create new AZD Environment"
+          Push-Location ./deploy/quick-start
+          azd env new ${{ inputs.environment }}
+          azd env set AZURE_SUBSCRIPTION_ID $($info.subscriptionId)
+          azd env set PIPELINE_DEPLOY "$true"
+          Pop-Location
+
+          Push-Location ./deploy/quick-start
+          ../../tests/scripts/Set-AzdEnv.ps1 `
+            -tenantId $($info.tenantId) `
+            -principalType ServicePrincipal `
+            -instanceId 6fa496ce-d5c0-4e02-9223-06a98c9c0176
+
+          azd env refresh --no-prompt
+
+          (azd env get-values) | foreach {
+              $name, $value = $_.split('=')
+              $value = $value.Trim('"')
+              set-content env:\$name $value
+          }
+          Pop-Location
+
+          # Assign “Search Index Data Contributor” on the target resource group
+          $objectId = (az ad sp list --all --query "[?appId=='$($info.clientId)'].id" --output tsv)
+          az role assignment create `
+            --role "Search Index Data Contributor" `
+            --assignee-object-id $objectId `
+            --assignee-principal-type ServicePrincipal `
+            --scope "/subscriptions/${env:AZURE_SUBSCRIPTION_ID}/resourceGroups/${env:RESOURCE_GROUP_NAME_DEFAULT}"
+
+          $env:AZCOPY_SPA_CLIENT_SECRET="$($src.clientSecret)"
+          azcopy login `
+            --login-type=SPN `
+            --application-id "$($src.clientId)" `
+            --tenant-id "$($src.tenantId)"
+          ./deploy/common/scripts/Get-TestData.ps1 -storageAccountName foundationallmdata
+
+          $env:AZCOPY_SPA_CLIENT_SECRET="$($info.clientSecret)"
+          azcopy login `
+            --login-type=SPN `
+            --application-id "$($info.clientId)" `
+            --tenant-id "$($info.tenantId)"
+          ./deploy/common/scripts/Set-TestData.ps1 `
+            -storageAccountName $env:AZURE_STORAGE_ACCOUNT_NAME `
+            -aiSearchName $env:AZURE_COGNITIVE_SEARCH_NAME
+
   run_load_test:
     name: Run Load Test
     runs-on: ubuntu-latest
-    needs: deploy_quickstart
+    needs: [deploy_quickstart, generate_matrix, add_test_data]
     steps:
       - name: Sets Credentials for Sandbox
         run: |
@@ -433,6 +561,7 @@ jobs:
             --username "$($info.clientId)" `
             --password "$($info.clientSecret)" `
             --tenant "$($info.tenantId)"
+        shell: pwsh
 
       - name: Download Question Bank & Load Testing File
         run: |
@@ -449,41 +578,42 @@ jobs:
             --name ${{ fromJson(steps.set-config.outputs.result).jmeter_file }} `
             --file fllm-test-plan.jmx `
             --auth-mode login
+        shell: pwsh
 
       - name: Populate Load Testing Config
         id: populate-load-testing-config
         run: |
           $info = $Env:AZURE_CREDENTIALS | ConvertFrom-Json -AsHashtable;
           $load_test_name = "FLLM-Load-Test-$([int64](Get-Date -UFormat %s))"
-          $load_test_file_name = "$($load_test_name).csv"
+          $load_test_file_name = "Load-Test-Questions.csv"
           $load_test_id = (New-Guid).Guid
-          
-          # Share with other steps
-          {
-            echo 'load_test_name<<EOF'
-            echo $load_test_name
-            echo EOF
-
-            echo 'load_test_id<<EOF'
-            echo $load_test_id
-            echo EOF
-          } >> "$GITHUB_ENV"
 
           # Load .env
           $configurationParameters = @{}
-          "${{ needs.deploy_quickstart.outputs.azd-deployment-data }}".Split([Environment]::NewLine, [System.StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object {
+          echo @"
+          ${{ needs.deploy_quickstart.outputs.azd-deployment-data }}
+          "@ >> .env
+          $fileData = Get-Content ".env" -Raw
+          $fileData.Split([Environment]::NewLine, [System.StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object {
             $envVar = $_ -split "="
-            $configurationParameters[$envVar[0]] = $envVar[1].Replace('"', '')
+            Write-Host $envVar
+            $configurationParameters[$envVar[0].Trim()] = $envVar[1].Replace('"', '')
           }
+
+          echo "load_test_name=$load_test_name" >> $env:GITHUB_ENV
+          echo "load_test_id=$load_test_id" >> $env:GITHUB_ENV
+          echo "AZURE_APP_CONFIG_NAME=$($configurationParameters['AZURE_APP_CONFIG_NAME'])" >> $env:GITHUB_ENV
+          echo "AZURE_ENV_NAME=$($configurationParameters['AZURE_ENV_NAME'])" >> $env:GITHUB_ENV
+          
+          $token = (az account get-access-token --scope "api://FoundationaLLM-Core-E2E-${{ needs.generate_matrix.outputs.unique_id }}/.default" --query accessToken | ConvertFrom-Json)
+          $kvUrl = (az keyvault secret set --vault-name "fllme2emkeyvault7f393d64" --name "bearer-token-${{ needs.generate_matrix.outputs.unique_id }}" --value $token --query '{id: id}' | ConvertFrom-Json).id
 
           # Replace Placeholders
           $config = @{
             load_test_name = $load_test_name
             load_test_id = $load_test_id
             load_test_file_name = $load_test_file_name
-            client_id = $info.clientId
-            scope = $configurationParameters["ENTRA_CHAT_UI_SCOPES"]
-            tenant_id = $info.tenantId
+            token = $kvUrl
             core_api_endpoint = $configurationParameters["SERVICE_CORE_API_ENDPOINT_URL"]
           }
           $load_testing_config = Get-Content "./tests/config/load-testing-template.yml" -Raw
@@ -515,11 +645,24 @@ jobs:
       - name: Run Load Test
         run: |
           # Create Agents
+          $connectionString = $(az appconfig credential list `
+            --name $env:AZURE_APP_CONFIG_NAME `
+            --resource-group rg-$($env:AZURE_ENV_NAME) `
+            --query "[].{name:name,connectionString:connectionString}[?name=='Primary Read Only'].connectionString" `
+            --output tsv)
+          $env:FoundationaLLM_AppConfig_ConnectionString=$connectionString
           dotnet test --filter "FullyQualifiedName=FoundationaLLM.Core.Examples.CreateAgentsForLoadTest.RunAsync" ./tests/dotnet/Core.Examples/Core.Examples.csproj
+                    
           az load test create `
-            --load-test-resource ${{ env.load_test_name }} `
-            --test-id ${{ env.load_test_id }} `
+            --load-test-resource ${{ fromJson(steps.set-config.outputs.result).load_test_resource }} `
+            --test-id $env:load_test_id `
             --load-test-config-file "load-testing.yml" `
+            -g ${{ fromJson(steps.set-config.outputs.result).resource_group_name }}
+
+          az load test-run create `
+            --load-test-resource ${{ fromJson(steps.set-config.outputs.result).load_test_resource }} `
+            --test-id $env:load_test_id `
+            --test-run-id $(New-Guid).Guid `
             -g ${{ fromJson(steps.set-config.outputs.result).resource_group_name }}
         shell: pwsh
 

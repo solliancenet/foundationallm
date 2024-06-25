@@ -1,0 +1,7 @@
+name: extended-test-env
+hooks:
+  postprovision:
+    continueOnError: false
+    interactive: false
+    run: azd-hooks/postprovision.ps1
+    shell: pwsh

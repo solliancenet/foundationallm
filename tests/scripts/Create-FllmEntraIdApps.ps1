@@ -1,11 +1,11 @@
 #! /usr/bin/pwsh
 
 Param(
-    [parameter(Mandatory = $false)][string]$authAppName="FoundationaLLM-Authorization-E2E",
-    [parameter(Mandatory = $false)][string]$coreAppName="FoundationaLLM-E2E",
-    [parameter(Mandatory = $false)][string]$coreClientAppName="FoundationaLLM-E2E-Client",
-    [parameter(Mandatory = $false)][string]$mgmtAppName="FoundationaLLM-Management-E2E",
-    [parameter(Mandatory = $false)][string]$mgmtClientAppName="FoundationaLLM-Management-E2E-Client"
+    [parameter(Mandatory = $false)][string]$authAppName="FoundationaLLM-Authorization-API",
+    [parameter(Mandatory = $false)][string]$coreAppName="FoundationaLLM-Core-API",
+    [parameter(Mandatory = $false)][string]$coreClientAppName="FoundationaLLM-Core-Portal",
+    [parameter(Mandatory = $false)][string]$mgmtAppName="FoundationaLLM-Management-API",
+    [parameter(Mandatory = $false)][string]$mgmtClientAppName="FoundationaLLM-Management-Portal"
 )
 
 Set-StrictMode -Version 3.0
@@ -62,6 +62,7 @@ function New-FllmEntraIdApps {
         [Parameter(Mandatory = $false)][bool]$createClientApp = $true,
         [Parameter(Mandatory = $true)][string]$fllmApi,
         [Parameter(Mandatory = $true)][string]$fllmApiConfigPath,
+        [Parameter(Mandatory = $true)][string]$fllmApiUri,
         [Parameter(Mandatory = $false)][string]$fllmClient,
         [Parameter(Mandatory = $false)][string]$fllmClientConfigPath       
     )
@@ -69,7 +70,10 @@ function New-FllmEntraIdApps {
     $fllmAppRegMetaData = @{}
     try {
         # Create the FLLM APIApp Registration
-        $($fllmAppRegMetaData).Api = @{ Name = $fllmApi }
+        $($fllmAppRegMetaData).Api = @{ 
+            Name = $fllmApi
+            Uri = $fllmApiUri
+        }
         Write-Host "Creating EntraID Application Registration named $($fllmAppRegMetaData.Api.Name)"
         $($fllmAppRegMetaData.Api).AppId = $(az ad app create --display-name $($fllmAppRegMetaData.Api.Name) --query appId --output tsv)
         $($fllmAppRegMetaData.Api).ObjectId = $(az ad app show --id $($fllmAppRegMetaData.Api.AppId) --query id --output tsv)
@@ -105,7 +109,6 @@ function New-FllmEntraIdApps {
             )
             $appConfig.api.preAuthorizedApplications = $preAuthorizedApp
         }
-        $($fllmAppRegMetaData.Api).Uri = "api://$($fllmAppRegMetaData.Api.Name)"
         $appConfig.identifierUris = @($($fllmAppRegMetaData.Api.Uri))
         $appConfigUpdate = $appConfig | ConvertTo-Json -Depth 20
         Write-Host "Final Update to API App Registration $($fllmAppRegMetaData.Api.Name)"
@@ -144,6 +147,7 @@ $params = @{
     fllmApi              = $coreAppName
     fllmClient           = $coreClientAppName
     fllmApiConfigPath    = "foundationalllm.json"
+    fllmApiUri           = "api://FoundationaLLM-Core"
     fllmClientConfigPath = "foundationalllm-client.json"
     appPermissionsId     = "6da07102-bb6a-421d-a71e-dfdb6031d3d8"
     appUrl               = ""
@@ -156,6 +160,7 @@ $params = @{
     fllmApi              = $mgmtAppName
     fllmClient           = $mgmtClientAppName
     fllmApiConfigPath    = "foundationalllm-management.json"
+    fllmApiUri           = "api://FoundationaLLM-Management"
     fllmClientConfigPath = "foundationalllm-managementclient.json"
     appPermissionsId     = "c57f4633-0e58-455a-8ede-5de815fe6c9c"
     appUrl               = ""
@@ -167,6 +172,7 @@ $($fllmAppRegs).Management = New-FllmEntraIdApps @params
 $params = @{
     fllmApi           = $authAppName
     fllmApiConfigPath = "foundationalllm-authorization.json"
+    fllmApiUri        = "api://FoundationaLLM-Authorization"
     appPermissionsId  = "9e313dd4-51e4-4989-84d0-c713e38e467d"
     createClientApp   = $false
 }

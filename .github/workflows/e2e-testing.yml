@@ -248,20 +248,6 @@ jobs:
             --tenant-id "$($info.tenantId)"
         shell: pwsh
 
-      - name: Provision App Registrations
-        id: provision-app-registrations
-        run: |
-          Write-Host "Provision App Registrations"
-          Push-Location ./tests/scripts
-          ./Create-FllmEntraIdApps.ps1 `
-            -authAppName FoundationaLLM-Authorization-E2E-${{ needs.generate_matrix.outputs.unique_id }} `
-            -coreAppName FoundationaLLM-Core-E2E-${{ needs.generate_matrix.outputs.unique_id }} `
-            -coreClientAppName FoundationaLLM-Core-E2E-Client-${{ needs.generate_matrix.outputs.unique_id }} `
-            -mgmtAppName FoundationaLLM-Management-E2E-${{ needs.generate_matrix.outputs.unique_id }} `
-            -mgmtClientAppName FoundationaLLM-Management-E2E-Client-${{ needs.generate_matrix.outputs.unique_id }}
-          Pop-Location
-        shell: pwsh
-
       - name: Provision Admin Group
         id: provision-admin-group
         run: |
@@ -351,11 +337,11 @@ jobs:
             -tenantId $($info.tenantId) `
             -principalType ServicePrincipal `
             -instanceId 6fa496ce-d5c0-4e02-9223-06a98c9c0176 `
-            -fllmApiName FoundationaLLM-Core-E2E-${{ needs.generate_matrix.outputs.unique_id }} `
-            -fllmClientName FoundationaLLM-Core-E2E-Client-${{ needs.generate_matrix.outputs.unique_id }} `
-            -fllmMgmtApiName FoundationaLLM-Management-E2E-${{ needs.generate_matrix.outputs.unique_id }} `
-            -fllmMgmtClientName FoundationaLLM-Management-E2E-Client-${{ needs.generate_matrix.outputs.unique_id }} `
-            -fllmAuthApiName FoundationaLLM-Authorization-E2E-${{ needs.generate_matrix.outputs.unique_id }} `
+            -fllmApiName FoundationaLLM-Core-API `
+            -fllmClientName FoundationaLLM-Core-Portal `
+            -fllmMgmtApiName FoundationaLLM-Management-API `
+            -fllmMgmtClientName FoundationaLLM-Management-Portal `
+            -fllmAuthApiName FoundationaLLM-Authorization-API `
             -fllmAdminGroupName FLLM-E2E-Admins-${{ needs.generate_matrix.outputs.unique_id }}
           Pop-Location
         shell: pwsh
@@ -390,8 +376,8 @@ jobs:
           Write-Host "Update App Registration OAuth Callbacks"
           Push-Location ./deploy/quick-start
           pwsh -File ../../tests/scripts/Update-OAuthCallbackUris.ps1 `
-            -fllmChatUiName FoundationaLLM-Core-E2E-Client-${{ needs.generate_matrix.outputs.unique_id }} `
-            -fllmMgmtUiName FoundationaLLM-Management-E2E-Client-${{ needs.generate_matrix.outputs.unique_id }}
+            -fllmChatUiName FoundationaLLM-Core-Portal `
+            -fllmMgmtUiName FoundationaLLM-Management-Portal
           Pop-Location
         shell: pwsh
 
@@ -659,7 +645,7 @@ jobs:
             --username "$($info.clientId)" `
             --password "$($info.clientSecret)" `
             --tenant "$($info.tenantId)" `
-            --scope api://FoundationaLLM-Core-E2E-${{ needs.generate_matrix.outputs.unique_id }}/.default
+            --scope api://FoundationaLLM-Core/.default
         shell: pwsh
 
       - name: Running End to End Tests
@@ -842,23 +828,19 @@ jobs:
             -principalType ServicePrincipal `
             -instanceId 6fa496ce-d5c0-4e02-9223-06a98c9c0176
 
+          Write-Host "Removing App Registration OAuth Callbacks"
+          Push-Location ./deploy/quick-start
+          pwsh -File ../../tests/scripts/Remove-OAuthCallbackUris.ps1 `
+            -fllmChatUiName FoundationaLLM-Core-Portal `
+            -fllmMgmtUiName FoundationaLLM-Management-Portal
+          Pop-Location
+
           azd env refresh --no-prompt
           azd down --force --purge --no-prompt
           Pop-Location
 
           Write-Host "Remove Admin Group"
           az ad group delete --group FLLM-E2E-Admins-${{ needs.generate_matrix.outputs.unique_id }} --output json
-
-          Write-Host "Tear down App Registrations"
-          Push-Location ./tests/scripts
-          ./Remove-EntraIdApps.ps1 `
-            -authAppName FoundationaLLM-Authorization-E2E-${{ needs.generate_matrix.outputs.unique_id }} `
-            -coreAppName FoundationaLLM-Core-E2E-${{ needs.generate_matrix.outputs.unique_id }} `
-            -coreClientAppName FoundationaLLM-Core-E2E-Client-${{ needs.generate_matrix.outputs.unique_id }} `
-            -mgmtAppName FoundationaLLM-Management-E2E-${{ needs.generate_matrix.outputs.unique_id }} `
-            -mgmtClientAppName FoundationaLLM-Management-E2E-Client-${{ needs.generate_matrix.outputs.unique_id }} `
-            -interactiveMode $false
-          Pop-Location
         shell: pwsh
 
       - name: Get E2E Test Results

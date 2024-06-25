@@ -29,8 +29,8 @@ namespace FoundationaLLM.Management.API.Controllers
         /// </summary>
         /// <param name="parameters"></param>
         /// <returns></returns>
-        [HttpGet("groups", Name = "GetGroups")]
-        public async Task<IActionResult> GetGroups(ObjectQueryParameters parameters)
+        [HttpPost("groups/retrieve", Name = "RetrieveGroups")]
+        public async Task<IActionResult> RetrieveGroups(ObjectQueryParameters parameters)
         {
             var groups = await identityManagementService.GetUserGroups(parameters);
             return new OkObjectResult(groups);
@@ -53,8 +53,8 @@ namespace FoundationaLLM.Management.API.Controllers
         /// </summary>
         /// <param name="parameters"></param>
         /// <returns></returns>
-        [HttpGet("users", Name = "GetUsers")]
-        public async Task<IActionResult> GetUsers(ObjectQueryParameters parameters)
+        [HttpPost("users/retrieve", Name = "RetrieveUsers")]
+        public async Task<IActionResult> RetrieveUsers(ObjectQueryParameters parameters)
         {
             var users = await identityManagementService.GetUsers(parameters);
             return new OkObjectResult(users);
@@ -77,8 +77,8 @@ namespace FoundationaLLM.Management.API.Controllers
         /// </summary>
         /// <param name="parameters"></param>
         /// <returns></returns>
-        [HttpGet("objects/getByIds", Name = "GetObjectsByIds")]
-        public async Task<IActionResult> GetObjectsByIds(ObjectQueryParameters parameters)
+        [HttpPost("objects/retrievebyids", Name = "RetrieveObjectsByIds")]
+        public async Task<IActionResult> RetrieveObjectsByIds(ObjectQueryParameters parameters)
         {
             var objects = await identityManagementService.GetObjectsByIds(parameters);
             return new OkObjectResult(objects);

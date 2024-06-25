@@ -1,0 +1,56 @@
+{
+	"api": {
+		"oauth2PermissionScopes": [
+			{
+				"adminConsentDescription": "Allows the app to read data on behalf of the signed-in user.",
+				"adminConsentDisplayName": "Read data on behalf of users",
+				"id": "6da07102-bb6a-421d-a71e-dfdb6031d3d8",
+				"isEnabled": true,
+				"type": "User",
+				"userConsentDescription": "Allows the app to read data on behalf of the signed-in user.",
+				"userConsentDisplayName": "Read data on behalf of users",
+				"value": "Data.Read"
+			}
+		],
+		"preAuthorizedApplications": [],
+		"requestedAccessTokenVersion": 2
+	},
+	"identifierUris": [],
+	"publicClient": {
+		"redirectUris": [
+			"https://oauth.pstmn.io/v1/callback"
+		]
+	},
+	"servicePrincipalLockConfiguration": {
+		"allProperties": true,
+		"credentialsWithUsageSign": true,
+		"credentialsWithUsageVerify": true,
+		"identifierUris": false,
+		"isEnabled": true,
+		"tokenEncryptionKeyId": true
+	},
+	"signInAudience": "AzureADMyOrg",
+	"spa": {
+		"redirectUris": []
+	},
+	"requiredResourceAccess": [
+		{
+			"resourceAccess": [
+				{
+					"id": "e1fe6dd8-ba31-4d61-89e7-88639da4683d",
+					"type": "Scope"
+				}
+			],
+			"resourceAppId": "00000003-0000-0000-c000-000000000000"
+		}
+	],
+	"web": {
+		"implicitGrantSettings": {
+			"enableAccessTokenIssuance": true,
+			"enableIdTokenIssuance": true
+		},
+		"redirectUris": [
+			"http://localhost"
+		]
+	}
+}

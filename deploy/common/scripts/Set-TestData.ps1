@@ -138,7 +138,7 @@ try {
     $testDataPath = "../data/test/vectorization-input" | Get-AbsolutePath | join-path -ChildPath "*"
     Write-Host "Reading vectorization-input data from: $testDataPath" -ForegroundColor Yellow
     Invoke-CLICommand "Copy vectorization-input data to the storage account ${storageAccountName}" {
-        azcopy copy $testDataPath "https://$($storageAccountName).blob.core.windows.net/vectorization-input" --recursive
+        azcopy copy "$testDataPath" "https://$($storageAccountName).blob.core.windows.net/vectorization-input" --recursive
     }
 }
 catch {

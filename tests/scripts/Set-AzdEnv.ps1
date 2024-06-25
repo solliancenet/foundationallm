@@ -71,7 +71,7 @@ $values = @(
     },
     @{
         Key = "ENTRA_CHAT_UI_SCOPES"
-        Value = "api://$fllmApiName/Data.Read"
+        Value = "api://FoundationaLLM-Core/Data.Read"
     },
     @{
         Key = "ENTRA_CHAT_UI_TENANT_ID"
@@ -110,7 +110,7 @@ $values = @(
     },
     @{
         Key = "ENTRA_MANAGEMENT_UI_SCOPES"
-        Value = "api://$fllmMgmtApiName/Data.Manage"
+        Value = "api://FoundationaLLM-Management/Data.Manage"
     },
     @{
         Key = "ENTRA_MANAGEMENT_UI_TENANT_ID"
@@ -123,7 +123,7 @@ $values = @(
     },
     @{
         Key = "ENTRA_AUTH_API_SCOPES"
-        Value = "api://$fllmAuthApiName"
+        Value = "api://FoundationaLLM-Authorization"
     },
     @{
         Key = "ENTRA_AUTH_API_TENANT_ID"

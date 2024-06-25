@@ -3,5 +3,6 @@
     "storage_account_container": "load-testing",
     "question_bank_file": "QuestionBank.csv",
     "jmeter_file": "Load-Testing.jmx",
-    "resource_group_name": "E2E-Testing-Resources"
+    "resource_group_name": "E2E-Testing-Resources",
+    "load_test_resource": "fllm-loadtest"
 }
