@@ -6,6 +6,7 @@ using Azure.Search.Documents.Indexes;
 using Azure.Search.Documents.Models;
 using FoundationaLLM.Common.Models.Configuration.Instance;
 using FoundationaLLM.Common.Models.ResourceProviders.Vectorization;
+using FoundationaLLM.Common.Models.Vectorization;
 using FoundationaLLM.Core.Examples.Interfaces;
 using FoundationaLLM.Core.Examples.Models;
 using FoundationaLLM.Core.Examples.Setup;
@@ -47,6 +48,18 @@ namespace FoundationaLLM.Core.Examples.Services
         public Task CreateIndexingProfile(string name)
         {
             return managementAPITestManager.CreateIndexingProfile(name);
+        }
+
+        public Task<string> CreateVectorizationPipeline(string vectorizationPipelineName, string dataSourceName, string indexingProfileName,
+                string textEmbeddingProfileName, string textPartitioningProfileName)
+        {
+            return managementAPITestManager.CreateVectorizationPipeline(vectorizationPipelineName, dataSourceName, indexingProfileName,
+                textEmbeddingProfileName, textPartitioningProfileName);
+        }
+
+        public async Task<VectorizationPipeline> GetVectorizationPipeline(string objectId)
+        {
+            return await managementAPITestManager.GetVectorizationPipeline(objectId);
         }
 
         public Task<string> CreateVectorizationRequest(VectorizationRequest request)
@@ -221,6 +234,11 @@ namespace FoundationaLLM.Core.Examples.Services
             }
 
             await managementAPITestManager.DeleteIndexingProfile(name);
+        }
+
+        public Task DeleteVectorizationPipeline(string name)
+        {
+            return managementAPITestManager.DeleteVectorizationPipeline(name);
         }
     }
 }
