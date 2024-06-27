@@ -49,18 +49,6 @@ function Format-EnvironmentVariables {
     $result | Out-File $render -Force
 }
 
-if ($IsWindows) {
-    $os = "windows"
-}
-elseif ($IsMacOS) {
-    $os = "mac"
-}
-elseif ($IsLinux) {
-    $os = "linux"
-}
-
-$AZCOPY_VERSION = "10.25.0"
-
 $env:DEPLOY_TIME = $((Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ss.fffffffZ'))
 $env:GUID01 = $($(New-Guid).Guid)
 $env:GUID02 = $($(New-Guid).Guid)
@@ -176,15 +164,12 @@ Invoke-AndRequireSuccess "Loading AppConfig Values" {
 }
 
 if ($IsWindows) {
-    $os = "windows"
     $separator = ";"
 }
 elseif ($IsMacOS) {
-    $os = "mac"
     $separator = ":"
 }
 elseif ($IsLinux) {
-    $os = "linux"
     $separator = ":"
 }
 
@@ -192,7 +177,7 @@ if ($env:PIPELINE_DEPLOY) {
     Write-Host "Using agent provided AzCopy"
 }
 else {
-    $env:PATH = $env:PATH, "$($pwd.Path)/tools/azcopy_${os}_amd64_${AZCOPY_VERSION}" -join $separator
+    $env:PATH = $env:PATH, "$(Split-Path -Path $pwd.Path -Parent)/common/tools/azcopy" -join $separator
 }
 
 $target = "https://$env:AZURE_STORAGE_ACCOUNT_NAME.blob.core.windows.net/resource-provider/"

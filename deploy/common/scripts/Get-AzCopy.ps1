@@ -69,3 +69,5 @@ else {
 		chmod +x $toolPath
 	}
 }
+
+Exit 0

@@ -68,31 +68,33 @@ $uris = @{
 }
 
 foreach ($uri in $uris.GetEnumerator()) {
-    $applicationUri = "https://graph.microsoft.com/v1.0/applications/" + $uri.Value.objectId
-    $redirects = @(az rest `
-        --method "get" `
-        --uri $applicationUri `
-        --headers "{'Content-Type': 'application/json'}" `
-        --query $uri.Value.query `
-        -o json | ConvertFrom-Json)
-
-    $redirect = ($uri.Value.endpoint | ConvertFrom-Json) + "/signin-oidc"
-
-
-    if ($redirects.Contains($redirect)) {
-        $redirects -= $redirect
-
-        $body = @{
-            spa = @{
-                redirectUris = $redirects
-            }
-        } | ConvertTo-Json -Compress
-
-        Set-Content -Path "$($uri.Key)`.json" $body
-        az rest `
-            --method "patch" `
+    if ($uri.Value.endpoint -ne $null)
+    {
+        $applicationUri = "https://graph.microsoft.com/v1.0/applications/" + $uri.Value.objectId
+        $redirects = @(az rest `
+            --method "get" `
             --uri $applicationUri `
             --headers "{'Content-Type': 'application/json'}" `
-            --body "@$($uri.Key)`.json"
+            --query $uri.Value.query `
+            -o json | ConvertFrom-Json)
+
+        $redirect = ($uri.Value.endpoint | ConvertFrom-Json) + "/signin-oidc"
+
+        if ($redirects.Contains($redirect)) {
+            $redirects -= $redirect
+
+            $body = @{
+                spa = @{
+                    redirectUris = $redirects
+                }
+            } | ConvertTo-Json -Compress
+
+            Set-Content -Path "$($uri.Key)`.json" $body
+            az rest `
+                --method "patch" `
+                --uri $applicationUri `
+                --headers "{'Content-Type': 'application/json'}" `
+                --body "@$($uri.Key)`.json"
+        }
     }
 }

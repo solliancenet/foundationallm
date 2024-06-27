@@ -2,6 +2,7 @@
 param apiKeySecretName string
 param applicationInsightsName string
 param containerAppsEnvironmentName string
+param cpu string
 param envSettings array = []
 param exists bool
 param hasIngress bool = false
@@ -9,7 +10,9 @@ param identityName string
 param imageName string
 param keyvaultName string
 param location string = resourceGroup().location
+param memory string
 param name string
+param replicaCount int
 param resourceToken string
 param secretSettings array = []
 param serviceName string
@@ -146,12 +149,15 @@ resource app 'Microsoft.App/containerApps@2023-04-01-preview' = {
             )
           )
           resources: {
-            cpu: json('1.0')
-            memory: '2.0Gi'
+            cpu: json(cpu)
+            memory: memory
           }
         }
       ]
-      scale: {
+      scale: replicaCount > 0 ? {
+        minReplicas: replicaCount
+        maxReplicas: replicaCount
+      } : {
         minReplicas: 1
         maxReplicas: 10
       }

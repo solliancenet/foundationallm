@@ -63,7 +63,9 @@ try {
     }
     if (-not $skipGetAzCopy) {
         Invoke-AndRequireSuccess "Download AzCopy for the FoundationaLLM solution" {
-            ./pre-provision/Get-AzCopy.ps1
+            Push-Location ../../common/scripts
+            ./Get-AzCopy.ps1
+            Pop-Location
         }
     }
     else {

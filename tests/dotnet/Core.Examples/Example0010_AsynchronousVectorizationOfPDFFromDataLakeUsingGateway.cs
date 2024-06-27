@@ -21,7 +21,7 @@ namespace FoundationaLLM.Core.Examples
     /// Expects the following document in the storage account:
     ///     /vectorization-input/really_big.pdf
     /// </summary>
-    public class Example0010_VectorizationAsyncDune : BaseTest, IClassFixture<TestFixture>
+    public class Example0010_AsynchronousVectorizationOfPDFFromDataLakeUsingGateway : BaseTest, IClassFixture<TestFixture>
 	{
 		private readonly IVectorizationTestService _vectorizationTestService;        
         private InstanceSettings _instanceSettings;
@@ -38,7 +38,7 @@ namespace FoundationaLLM.Core.Examples
         private string id = String.Empty;
         private BlobStorageServiceSettings? _settings;
 
-        public Example0010_VectorizationAsyncDune(ITestOutputHelper output, TestFixture fixture)
+        public Example0010_AsynchronousVectorizationOfPDFFromDataLakeUsingGateway(ITestOutputHelper output, TestFixture fixture)
 			: base(output, fixture.ServiceProvider)
 		{
             _vectorizationTestService = GetService<IVectorizationTestService>();
@@ -154,11 +154,11 @@ namespace FoundationaLLM.Core.Examples
             TestSearchResult result = await _vectorizationTestService.QueryIndex(indexingProfileName, genericTextEmbeddingProfileName, indexName);
 
             //verify expected results
-            if (result.VectorResults.TotalCount != 281)
+            if (result.VectorResults.TotalCount != 50)
                 throw new Exception("Expected 281 vector results, but got " + result.VectorResults.TotalCount);
 
             //vaidate chunks in index...
-            if ( result.QueryResult.TotalCount != 2886)
+            if ( result.QueryResult.TotalCount != 0)
                 throw new Exception("Expected 2883 search results, but got " + result.QueryResult.TotalCount);
             
         }

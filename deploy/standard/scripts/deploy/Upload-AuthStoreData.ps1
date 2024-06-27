@@ -57,4 +57,4 @@ if (-not (Test-Path "../data/role-assignments/$($instanceId)`.json")) {
 
 $target = "https://$storageAccountAdls.blob.core.windows.net/role-assignments/"
 
-& ../tools/azcopy/azcopy cp "../data/role-assignments/$($instanceId)`.json" "$target"
+& ../../common/tools/azcopy/azcopy cp "../data/role-assignments/$($instanceId)`.json" "$target"

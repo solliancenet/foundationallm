@@ -444,14 +444,14 @@ namespace FoundationaLLM.DataSource.ResourceProviders
 
             if (typeof(T) != typeof(DataSourceBase))
                 throw new ResourceProviderException($"The type of requested resource ({typeof(T)}) does not match the resource type specified in the path ({resourcePath.ResourceTypeInstances[0].ResourceType}).");
-
+                     
             _dataSourceReferences.TryGetValue(resourcePath.ResourceTypeInstances[0].ResourceId!, out var dataSourceReference);
-            if (dataSourceReference == null || dataSourceReference.Deleted)
-                throw new ResourceProviderException($"The resource {resourcePath.ResourceTypeInstances[0].ResourceId!} of type {resourcePath.ResourceTypeInstances[0].ResourceType} was not found.");
+            if (dataSourceReference is not null && dataSourceReference.Deleted)
+                throw new ResourceProviderException($"The resource {resourcePath.ResourceTypeInstances[0].ResourceId} of type {resourcePath.ResourceTypeInstances[0].ResourceType} has been soft deleted.");
 
-            var dataSource = LoadDataSource(dataSourceReference).Result;
+            var dataSource = LoadDataSource(dataSourceReference, resourcePath.ResourceTypeInstances[0].ResourceId).Result;
             return dataSource as T
-                ?? throw new ResourceProviderException($"The resource {resourcePath.ResourceTypeInstances[0].ResourceId!} of type {resourcePath.ResourceTypeInstances[0].ResourceType} was not found.");
+                ?? throw new ResourceProviderException($"The resource {resourcePath.ResourceTypeInstances[0].ResourceId} of type {resourcePath.ResourceTypeInstances[0].ResourceType} was not found.");
         }
         
 

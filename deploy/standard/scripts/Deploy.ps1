@@ -13,7 +13,7 @@ $ErrorActionPreference = "Stop"
 $env:AZCOPY_AUTO_LOGIN_TYPE="AZCLI"
 
 # Check if AzCopy already exists
-if (Test-Path -Path "../tools/azcopy") {
+if (Test-Path -Path "../../common/tools/azcopy") {
     Write-Host "azcopy exists."
 }
 else {
@@ -22,10 +22,10 @@ else {
 
 # Check if AzCopy login session is still active
 Write-Host -ForegroundColor Blue "Checking AzCopy login status..."
-$status = & ../tools/azcopy/azcopy login status
+$status = & ../../common/tools/azcopy/azcopy login status
 if (-not $status.contains("Your login session is still active")) {
     Write-Host -ForegroundColor Blue "Please Follow the instructions below to login to Azure using AzCopy."
-    & ../tools/azcopy/azcopy login
+    & ../../common/tools/azcopy/azcopy login
 }
  else {
      Write-Host -ForegroundColor Blue "AzCopy login session is still active."

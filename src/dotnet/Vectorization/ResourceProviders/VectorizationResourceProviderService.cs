@@ -596,7 +596,8 @@ namespace FoundationaLLM.Vectorization.ResourceProviders
             if (typeof(T) != typeof(TextPartitioningProfile))
                 throw new ResourceProviderException($"The type of requested resource ({typeof(T)}) does not match the resource type specified in the path ({resourcePath.ResourceTypeInstances[0].ResourceType}).");
 
-            _textPartitioningProfiles.TryGetValue(resourcePath.ResourceTypeInstances[0].ResourceId!, out var textPartitioningProfile);
+            var textPartitioningProfileGetResult = LoadResources<TextPartitioningProfile, VectorizationProfileBase>(resourcePath.ResourceTypeInstances[0], _textPartitioningProfiles).Result;
+            var textPartitioningProfile = textPartitioningProfileGetResult.FirstOrDefault()?.Resource;           
             return textPartitioningProfile as T
                 ?? throw new ResourceProviderException($"The resource {resourcePath.ResourceTypeInstances[0].ResourceId!} of type {resourcePath.ResourceTypeInstances[0].ResourceType} was not found.");
         }
@@ -609,7 +610,8 @@ namespace FoundationaLLM.Vectorization.ResourceProviders
             if (typeof(T) != typeof(TextEmbeddingProfile))
                 throw new ResourceProviderException($"The type of requested resource ({typeof(T)}) does not match the resource type specified in the path ({resourcePath.ResourceTypeInstances[0].ResourceType}).");
 
-            _textEmbeddingProfiles.TryGetValue(resourcePath.ResourceTypeInstances[0].ResourceId!, out var textEmbeddingProfile);
+            var textEmbeddingProfileGetResult = LoadResources<TextEmbeddingProfile, VectorizationProfileBase>(resourcePath.ResourceTypeInstances[0], _textEmbeddingProfiles).Result;
+            var textEmbeddingProfile = textEmbeddingProfileGetResult.FirstOrDefault()?.Resource;
             return textEmbeddingProfile as T
                 ?? throw new ResourceProviderException($"The resource {resourcePath.ResourceTypeInstances[0].ResourceId!} of type {resourcePath.ResourceTypeInstances[0].ResourceType} was not found.");
         }
@@ -622,7 +624,9 @@ namespace FoundationaLLM.Vectorization.ResourceProviders
             if (typeof(T) != typeof(IndexingProfile))
                 throw new ResourceProviderException($"The type of requested resource ({typeof(T)}) does not match the resource type specified in the path ({resourcePath.ResourceTypeInstances[0].ResourceType}).");
 
-            _indexingProfiles.TryGetValue(resourcePath.ResourceTypeInstances[0].ResourceId!, out var indexingProfile);
+            var indexingProfileGetResult = LoadResources<IndexingProfile, VectorizationProfileBase>(resourcePath.ResourceTypeInstances[0], _indexingProfiles).Result;
+            var indexingProfile = indexingProfileGetResult.FirstOrDefault()?.Resource;
+           
             return indexingProfile as T
                 ?? throw new ResourceProviderException($"The resource {resourcePath.ResourceTypeInstances[0].ResourceId!} of type {resourcePath.ResourceTypeInstances[0].ResourceType} was not found.");
         }
@@ -635,7 +639,9 @@ namespace FoundationaLLM.Vectorization.ResourceProviders
             if (typeof(T) != typeof(VectorizationPipeline))
                 throw new ResourceProviderException($"The type of requested resource ({typeof(T)}) does not match the resource type specified in the path ({resourcePath.ResourceTypeInstances[0].ResourceType}).");
 
-            _pipelines.TryGetValue(resourcePath.ResourceTypeInstances[0].ResourceId!, out var pipeline);
+            var pipelineGetResult = LoadResources<VectorizationPipeline, VectorizationPipeline>(resourcePath.ResourceTypeInstances[0], _pipelines).Result;
+            var pipeline = pipelineGetResult.FirstOrDefault()?.Resource;
+            
             return pipeline as T
                 ?? throw new ResourceProviderException($"The resource {resourcePath.ResourceTypeInstances[0].ResourceId!} of type {resourcePath.ResourceTypeInstances[0].ResourceType} was not found.");
         }
@@ -856,6 +862,9 @@ namespace FoundationaLLM.Vectorization.ResourceProviders
                     break;
                 case INDEXING_PROFILES_FILE_NAME:
                     _defaultIndexingProfileName = await LoadResourceStore<IndexingProfile, VectorizationProfileBase>(INDEXING_PROFILES_FILE_PATH, _indexingProfiles);
+                    break;
+                case PIPELINES_FILE_NAME:
+                    _ = await LoadResourceStore<VectorizationPipeline, VectorizationPipeline>(PIPELINES_FILE_PATH, _pipelines);
                     break;
                 default:
                     _logger.LogWarning("The file {FileName} is not managed by the FoundationaLLM.Vectorization resource provider.", fileName);

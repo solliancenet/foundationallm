@@ -54,5 +54,5 @@ $storageAccount = Invoke-AndRequireSuccess "Getting storage account name" {
 
 $target = "https://$storageAccount.blob.core.windows.net/resource-provider/"
 
-& ../tools/azcopy/azcopy copy '../../common/data/resource-provider/*' $target `
+& ../../common/tools/azcopy/azcopy copy '../../common/data/resource-provider/*' $target `
     --exclude-pattern .git* --recursive=True --overwrite=True

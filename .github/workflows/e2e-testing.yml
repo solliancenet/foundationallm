@@ -48,6 +48,10 @@ on:
           - sandbox
           - e2e
         default: e2e
+      deployAMLResources:
+        description: Deploy Azure Machine Learning resources & run tests that depend on them
+        type: boolean
+        default: false
   workflow_call:
     inputs:
       environment:
@@ -77,6 +81,9 @@ on:
       target:
         description: Select target tenant/subscription
         type: string
+      deployAMLResources:
+        description: Deploy Azure Machine Learning resources & run tests that depend on them
+        type: boolean
 
 jobs:
   generate_matrix:
@@ -246,6 +253,20 @@ jobs:
             --login-type=SPN `
             --application-id "$($info.clientId)" `
             --tenant-id "$($info.tenantId)"
+        shell: pwsh
+
+      - name: Deploy Azure Machine Learning
+        if: ${{ inputs.deployAMLResources }}
+        env:
+          AZURE_ENV_NAME: ext-${{ inputs.environment }}
+          AZURE_LOCATION: ${{ inputs.location }}
+        run: |
+          $info = $Env:AZURE_CREDENTIALS | ConvertFrom-Json -AsHashtable;
+          Push-Location ./tests/extended-test-env
+          azd env new ext-${{ inputs.environment }}
+          azd env set AZURE_SUBSCRIPTION_ID $($info.subscriptionId)
+          azd up --no-prompt
+          Pop-Location
         shell: pwsh
 
       - name: Provision Admin Group
@@ -587,6 +608,7 @@ jobs:
     needs: [generate_matrix, deploy_quickstart, add_test_data, build_e2e_tests]
     strategy:
       fail-fast: false
+      max-parallel: 1
       matrix:
         object: ${{ fromJson(needs.generate_matrix.outputs.test_matrix) }}
     steps:
@@ -809,6 +831,21 @@ jobs:
             --tenant "$($info.tenantId)"
         shell: pwsh
 
+      - name: Tearing Down Azure Machine Learning
+        if: ${{ inputs.deployAMLResources }}
+        env:
+          AZURE_ENV_NAME: ext-${{ inputs.environment }}
+          AZURE_LOCATION: ${{ inputs.location }}
+        run: |
+          $info = $Env:AZURE_CREDENTIALS | ConvertFrom-Json -AsHashtable;
+          Push-Location ./tests/extended-test-env
+          azd env new ext-${{ inputs.environment }}
+          $env:AZURE_SUBSCRIPTION_ID = $($info.subscriptionId)
+          azd env refresh --no-prompt
+          azd down --force --purge --no-prompt
+          Pop-Location
+        shell: pwsh
+      
       - name: Tearing Down AZD Deployment
         id: azd-down
         run: |
@@ -829,11 +866,9 @@ jobs:
             -instanceId 6fa496ce-d5c0-4e02-9223-06a98c9c0176
 
           Write-Host "Removing App Registration OAuth Callbacks"
-          Push-Location ./deploy/quick-start
           pwsh -File ../../tests/scripts/Remove-OAuthCallbackUris.ps1 `
             -fllmChatUiName FoundationaLLM-Core-Portal `
             -fllmMgmtUiName FoundationaLLM-Management-Portal
-          Pop-Location
 
           azd env refresh --no-prompt
           azd down --force --purge --no-prompt

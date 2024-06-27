@@ -18,4 +18,5 @@ jobs:
       enableTeardown: true
       bypassAndTeardown: false
       target: e2e
+      deployAMLResources: true
     secrets: inherit

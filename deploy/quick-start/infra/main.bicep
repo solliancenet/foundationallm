@@ -442,22 +442,28 @@ module configTopic 'shared/config-system-topic.bicep' = {
   name: 'configTopic-${timestamp}'
   params: {
     name: '${abbrs.eventGridDomainsTopics}config${resourceToken}'
+    eventGridName: eventgrid.outputs.name
+    destinationTopicName: 'configuration'
     location: location
     tags: tags
     appConfigAccountName: appConfig.outputs.name
   }
   scope: rg
+  dependsOn: [eventgrid]
 }
 
 module storageTopic 'shared/storage-system-topic.bicep' = {
   name: 'storageTopic-${timestamp}'
   params: {
     name: '${abbrs.eventGridDomainsTopics}storage${resourceToken}'
+    eventGridName: eventgrid.outputs.name
+    destinationTopicName: 'storage'
     location: location
     tags: tags
     storageAccountName: storage.outputs.name
   }
   scope: rg
+  dependsOn: [eventgrid]
 }
 
 module storageSub 'shared/system-topic-subscription.bicep' = {
@@ -527,6 +533,9 @@ module authAcaService './app/authAcaService.bicep' = {
     keyvaultName: authKeyvault.outputs.name
     applicationInsightsName: monitoring.outputs.applicationInsightsName
     containerAppsEnvironmentName: appsEnv.outputs.name
+    cpu: authService.cpu
+    memory: authService.memory
+    replicaCount: empty(authService.replicaCount) ? 0 : int(authService.replicaCount)
     exists: authServiceExists == 'true'
     appDefinition: serviceDefinition
     hasIngress: true
@@ -554,13 +563,16 @@ module acaServices './app/acaService.bicep' = [
       appDefinition: serviceDefinition
       applicationInsightsName: monitoring.outputs.applicationInsightsName
       containerAppsEnvironmentName: appsEnv.outputs.name
+      cpu: service.cpu
       exists: servicesExist['${service.name}'] == 'true'
       hasIngress: service.hasIngress
       identityName: '${abbrs.managedIdentityUserAssignedIdentities}${service.name}-${resourceToken}'
       imageName: service.image
       keyvaultName: keyVault.outputs.name
       location: location
+      memory: service.memory
       name: '${abbrs.appContainerApps}${service.name}'
+      replicaCount: empty(service.replicaCount) ? 0 : int(service.replicaCount)
       resourceToken: resourceToken
       serviceName: service.name
       tags: tags
@@ -622,6 +634,23 @@ module openAiRoles './shared/roleAssignments.bicep' = [
       roleDefinitionNames: [
         'Cognitive Services OpenAI User'
         'Reader'
+      ]
+    }
+  }
+]
+
+var contentSafetyTargets = [
+  'gatekeeper-api'
+]
+
+module contentSafetyRoles './shared/roleAssignments.bicep' = [
+  for target in contentSafetyTargets: {
+    scope: rg
+    name: '${target}-cs-roles-${timestamp}'
+    params: {
+      principalId: acaServices[indexOf(serviceNames, target)].outputs.miPrincipalId
+      roleDefinitionNames: [
+        'Cognitive Services User'
       ]
     }
   }

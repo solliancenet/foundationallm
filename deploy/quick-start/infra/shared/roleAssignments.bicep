@@ -10,6 +10,7 @@ var selectedRoleDefinitions = filter(items(roleDefinitions), (item) => contains(
 var roleDefinitions = {
   'App Configuration Data Reader':  '516239f1-63e1-4d78-a4de-a74fb236a071'
   'Cognitive Services OpenAI User': '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd'
+  'Cognitive Services User':        'a97b65f3-24c7-4388-baec-2e87135dc908'
   'Contributor':                    'b24988ac-6180-42a0-ab88-20f7382dd24c'
   'EventGrid Contributor':          '1e241071-0855-49ea-94dc-649edcd759de'
   'Key Vault Certificate User':     'db79e9a7-68ee-4b58-9aeb-b90e7c24fcba'
