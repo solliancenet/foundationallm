@@ -9,7 +9,7 @@ namespace FoundationaLLM.Common.Models.ResourceProviders.AIModel
     /// <summary>
     /// Defines the properties needed to call the endpoint for an AIModel
     /// </summary>
-    public class AIEndpoint : ResourceBase
+    public class AIModelEndpoint : ResourceBase
     {
         /// <summary>
         /// The URL for the endpoint

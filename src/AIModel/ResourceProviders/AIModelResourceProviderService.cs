@@ -71,6 +71,7 @@ namespace FoundationaLLM.AIModel.ResourceProviders
         protected override async Task InitializeInternal()
         {
             _logger.LogInformation("Starting to initialize the {ResourceProvider} resource provider...", _name);
+
             if (await _storageService.FileExistsAsync(_storageContainerName, AIMODEL_REFERENCES_FILE_PATH, default))
             {
                 var fileContent = await _storageService.ReadFileAsync(
@@ -160,75 +161,82 @@ namespace FoundationaLLM.AIModel.ResourceProviders
                 aiModelReference ??= new AIModelReference
                 {
                     Name = resourceId!,
-                    Type = nameof(AIModelBase),
-                    Filename = $"/{_name}/{resourceId}",
+                    Type = AIModelTypes.Basic,
+                    Filename = $"/{_name}/{resourceId}.json",
                     Deleted = false
                 };
 
 
-                return new AIModelBase
+                if (await _storageService.FileExistsAsync(_storageContainerName, aiModelReference.Filename, default))
                 {
-                    Name = aiModelReference.Name,
-                    Type = aiModelReference.Type,
-                    //Endpoints = ???,
-                    //Models = ???
-                };
+                    var fileContent = await _storageService.ReadFileAsync(_storageContainerName, aiModelReference.Filename, default);
+                    var aiModel = JsonSerializer.Deserialize(
+                               Encoding.UTF8.GetString(fileContent.ToArray()),
+                               aiModelReference.AIModelType,
+                               _serializerSettings) as AIModelBase
+                           ?? throw new ResourceProviderException($"Failed to load the AI Model {aiModelReference.Name}.",
+                               StatusCodes.Status400BadRequest);
+
+                    if (!string.IsNullOrWhiteSpace(resourceId))
+                    {
+                        aiModelReference.Type = aiModel.Type!;
+                        _aiModelReferences.AddOrUpdate(aiModelReference.Name, aiModelReference, (k, v) => aiModelReference);
+                    }
+
+                    return aiModel;
+                }
+
+                if (string.IsNullOrWhiteSpace(resourceId))
+                {
+                    // Remove the reference from the dictionary since the file does not exist.
+                    _aiModelReferences.TryRemove(aiModelReference.Name, out _);
+                    return null;
+                }
             }
-            throw new ResourceProviderException($"Could not locate the {aiModelReference?.Name} aiModel resource.",
+            throw new ResourceProviderException($"Could not locate the {aiModelReference.Name} AI model resource.",
                 StatusCodes.Status404NotFound);
         }
 
         #endregion
 
         /// <inheritdoc/>
-        protected override async Task<object> UpsertResourceAsync<T>(ResourcePath resourcePath, T resource)
-        {
-            var aiModel = resource as AIModelBase;
-            if (aiModel == null)
-                throw new ResourceProviderException($"Invalid resource type");
-
-            if (resourcePath.ResourceTypeInstances[0].ResourceType != AIModelResourceTypeNames.AIModels)
+        protected override async Task<object> UpsertResourceAsync(ResourcePath resourcePath, string serializedResource, UnifiedUserIdentity userIdentity) =>
+            resourcePath.ResourceTypeInstances[0].ResourceType switch
             {
-                throw new ResourceProviderException(
-                        $"The resource type {resourcePath.ResourceTypeInstances[0].ResourceType} is not supported by the {_name} resource provider.",
-                        StatusCodes.Status400BadRequest);
-            }
-            return await UpdateAIModel(resourcePath, aiModel);
-        }
-
-
-
-        /// <inheritdoc/>
-        protected override Task<object> UpsertResourceAsync(ResourcePath resourcePath, string serializedResource, UnifiedUserIdentity userIdentity) => null;
+                AIModelResourceTypeNames.AIModels => await UpdateAIModel(resourcePath, serializedResource, userIdentity),
+                _ => throw new ResourceProviderException($"The resource type {resourcePath.ResourceTypeInstances[0].ResourceType} is not supported by the {_name} resource provider.",
+                    StatusCodes.Status400BadRequest)
+            };
 
         #region Helpers for UpsertResourceAsync
 
-        private async Task<ResourceProviderUpsertResult> UpdateAIModel(ResourcePath resourcePath, AIModelBase aiModel)
+        private async Task<ResourceProviderUpsertResult> UpdateAIModel(ResourcePath resourcePath, string serializedAIModel, UnifiedUserIdentity userIdentity)
         {
+
+            var aiModel = JsonSerializer.Deserialize<AIModelBase>(serializedAIModel)
+                ?? throw new ResourceProviderException("The object definition is invalid.",
+                    StatusCodes.Status400BadRequest);
 
             if (_aiModelReferences.TryGetValue(aiModel.Name!, out var existingAIModelReference)
                 && existingAIModelReference!.Deleted)
-                throw new ResourceProviderException($"The aiModel resource {existingAIModelReference.Name} cannot be added or updated.",
+                throw new ResourceProviderException($"The AI model resource {existingAIModelReference.Name} cannot be added or updated.",
                         StatusCodes.Status400BadRequest);
 
             if (resourcePath.ResourceTypeInstances[0].ResourceId != aiModel.Name)
                 throw new ResourceProviderException("The resource path does not match the object definition (name mismatch).",
                     StatusCodes.Status400BadRequest);
 
-            var extension = GetFileExtension(aiModel.DisplayName!);
-            var fullName = $"{aiModel.Name}{extension}";
-
             var aiModelReference = new AIModelReference
             {
-                Name = aiModel.Name,
-                Type = nameof(AIModelBase),
-                Filename = $"/{_name}/{fullName}",
+                Name = aiModel.Name!,
+                Type = aiModel.Type!,
+                Filename = $"/{_name}/{aiModel.Name}.json",
                 Deleted = false
             };
 
             aiModel.ObjectId = resourcePath.GetObjectId(_instanceSettings.Id, _name);
 
-            var validator = _resourceValidatorFactory.GetValidator(typeof(AIModelBase));
+            var validator = _resourceValidatorFactory.GetValidator(aiModelReference.AIModelType);
             if (validator is IValidator aiModelValidator)
             {
                 var context = new ValidationContext<object>(aiModel);
@@ -239,6 +247,11 @@ namespace FoundationaLLM.AIModel.ResourceProviders
                         StatusCodes.Status400BadRequest);
                 }
             }
+
+            if (existingAIModelReference == null)
+                aiModel.CreatedBy = userIdentity.UPN;
+            else
+                aiModel.UpdatedBy = userIdentity.UPN;
 
             await _storageService.WriteFileAsync(
                 _storageContainerName,
@@ -252,7 +265,7 @@ namespace FoundationaLLM.AIModel.ResourceProviders
             await _storageService.WriteFileAsync(
                     _storageContainerName,
                     AIMODEL_REFERENCES_FILE_PATH,
-                    JsonSerializer.Serialize(ResourceReferenceStore<AIModelReference>.FromDictionary(_aiModelReferences.ToDictionary())),
+                    JsonSerializer.Serialize(AIModelReferenceStore.FromDictionary(_aiModelReferences.ToDictionary())),
                     default,
                     default);
 
@@ -295,10 +308,6 @@ namespace FoundationaLLM.AIModel.ResourceProviders
                 if (!aiModelReference.Deleted)
                 {
                     aiModelReference.Deleted = true;
-
-                    await _storageService.DeleteFileAsync(
-                        _storageContainerName,
-                        aiModelReference.Filename);
 
                     await _storageService.WriteFileAsync(
                         _storageContainerName,

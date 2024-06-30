@@ -6,7 +6,6 @@
     <Nullable>enable</Nullable>
     <AssemblyName>FoundationaLLM.Attachment</AssemblyName>
     <RootNamespace>FoundationaLLM.Attachment</RootNamespace>
-    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

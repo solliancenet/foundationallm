@@ -170,32 +170,31 @@ namespace FoundationaLLM.Attachment.ResourceProviders
                     Path = $"{_storageContainerName}{attachmentReference.Filename}"
                 };
 
-                // Was here as unreachable code - delete?
-                //if (await _storageService.FileExistsAsync(_storageContainerName, attachmentReference.Filename, default))
-                //{
-                //    var fileContent = await _storageService.ReadFileAsync(_storageContainerName, attachmentReference.Filename, default);
-                //    var attachment = JsonSerializer.Deserialize(
-                //               Encoding.UTF8.GetString(fileContent.ToArray()),
-                //               typeof(AttachmentFile),
-                //               _serializerSettings) as AttachmentFile
-                //           ?? throw new ResourceProviderException($"Failed to load the attachment {attachmentReference.Name}.",
-                //               StatusCodes.Status400BadRequest);
+                if (await _storageService.FileExistsAsync(_storageContainerName, attachmentReference.Filename, default))
+                {
+                    var fileContent = await _storageService.ReadFileAsync(_storageContainerName, attachmentReference.Filename, default);
+                    var attachment = JsonSerializer.Deserialize(
+                               Encoding.UTF8.GetString(fileContent.ToArray()),
+                               typeof(AttachmentFile),
+                               _serializerSettings) as AttachmentFile
+                           ?? throw new ResourceProviderException($"Failed to load the attachment {attachmentReference.Name}.",
+                               StatusCodes.Status400BadRequest);
 
-                //    if (!string.IsNullOrWhiteSpace(resourceId))
-                //    {
-                //        attachmentReference.Type = attachment.Type!;
-                //        _attachmentReferences.AddOrUpdate(attachmentReference.Name, attachmentReference, (k, v) => attachmentReference);
-                //    }
+                    if (!string.IsNullOrWhiteSpace(resourceId))
+                    {
+                        attachmentReference.Type = attachment.Type!;
+                        _attachmentReferences.AddOrUpdate(attachmentReference.Name, attachmentReference, (k, v) => attachmentReference);
+                    }
 
-                //    return attachment;
-                //}
+                    return attachment;
+                }
 
-                //if (string.IsNullOrWhiteSpace(resourceId))
-                //{
-                //    // Remove the reference from the dictionary since the file does not exist.
-                //    _attachmentReferences.TryRemove(attachmentReference.Name, out _);
-                //    return null;
-                //}
+                if (string.IsNullOrWhiteSpace(resourceId))
+                {
+                    // Remove the reference from the dictionary since the file does not exist.
+                    _attachmentReferences.TryRemove(attachmentReference.Name, out _);
+                    return null;
+                }
             }
             throw new ResourceProviderException($"Could not locate the {attachmentReference.Name} attachment resource.",
                 StatusCodes.Status404NotFound);

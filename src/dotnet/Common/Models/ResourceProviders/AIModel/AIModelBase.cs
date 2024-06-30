@@ -1,26 +1,28 @@
-﻿using FoundationaLLM.Common.Exceptions;
-using FoundationaLLM.Common.Models.ResourceProviders.Agent;
-using Microsoft.Graph.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using FoundationaLLM.Common.Constants.ResourceProviders;
+using FoundationaLLM.Common.Models.ResourceProviders.DataSource;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace FoundationaLLM.Common.Models.ResourceProviders.AIModel
 {
+    /// <summary>
+    /// Base model type for AIModel resources
+    /// </summary>
+    [JsonPolymorphic(TypeDiscriminatorPropertyName = "type")]
+    [JsonDerivedType(typeof(EmbeddingAIModel), AIModelTypes.Embedding)]
+    [JsonDerivedType(typeof(AzureDataLakeDataSource), DataSourceTypes.AzureDataLake)]
     public class AIModelBase : ResourceBase
     {
+        /// <inheritdoc/>
+        [JsonIgnore]
+        public override string? Type { get; set; }
         /// <summary>
         /// The endpoint metadata needed to call the AI model endpoint
         /// </summary>
-        public AIEndpoint? Endpoint { get; set; }
+        public AIModelEndpoint? Endpoint { get; set; }
         /// <summary>
         /// The version for the AI model
         /// </summary>
         public string? Version { get; set; }
-
         /// <summary>
         /// Deployment name for the AI model
         /// </summary>
