@@ -1,4 +1,4 @@
-﻿using Microsoft.SemanticKernel;
+using Microsoft.SemanticKernel;
 
 #pragma warning disable SKEXP0001
 
@@ -14,8 +14,8 @@ namespace FoundationaLLM.SemanticKernel.Core.Filters
         /// </summary>
         public string RenderedPrompt => _renderedPrompt;
 
-        private string _renderedPrompt = string.Empty;
-
+        private string _renderedPrompt = string.Empty;       
+        
         /// <inheritdoc/>
         public Task OnPromptRenderAsync(PromptRenderContext context, Func<PromptRenderContext, Task> next)
         {

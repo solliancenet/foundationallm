@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using Azure.AI.OpenAI;
 using FoundationaLLM.Common.Authentication;
 using FoundationaLLM.Common.Interfaces;
@@ -6,6 +6,7 @@ using FoundationaLLM.Common.Models.Orchestration;
 using FoundationaLLM.Common.Models.ResourceProviders.Agent;
 using FoundationaLLM.Common.Models.ResourceProviders.Prompt;
 using FoundationaLLM.Common.Models.ResourceProviders.Vectorization;
+using FoundationaLLM.SemanticKernel.Core.Connectors.AzureML.Extensions;
 using FoundationaLLM.SemanticKernel.Core.Exceptions;
 using FoundationaLLM.SemanticKernel.Core.Filters;
 using FoundationaLLM.SemanticKernel.Core.Plugins;
@@ -51,6 +52,8 @@ namespace FoundationaLLM.SemanticKernel.Core.Agents
         private string _indexName = string.Empty;
         private string _prompt = string.Empty;
         private Dictionary<string, string>? _agentDescriptions = [];
+        private string _authType = string.Empty;
+        private string _apiKey = string.Empty;
         private AzureAISearchIndexingServiceSettings? _azureAISearchIndexingServiceSettings = null;
         private AzureCosmosDBNoSQLIndexingServiceSettings? _azureCosmosDBNoSQLIndexingServiceSettings = null;
         private PostgresIndexingServiceSettings? _postgresIndexingServiceSettings = null;
@@ -72,6 +75,24 @@ namespace FoundationaLLM.SemanticKernel.Core.Agents
                     : allAgentDescriptions as Dictionary<string, string>;
             }
 
+            #endregion
+
+            #region Auth
+            if (agent.OrchestrationSettings.EndpointConfiguration!.TryGetValue("auth_type", out var auth))
+            {
+                _authType = ((JsonElement)auth).GetString();
+                if (_authType == "key")
+                {
+                    if (agent.OrchestrationSettings.EndpointConfiguration.TryGetValue("api_key", out var apiKey))
+                    {
+                        _apiKey = await GetConfigurationValue(((JsonElement)apiKey).GetString());
+                    }
+                    else
+                    {
+                        throw new SemanticKernelException("The API key is missing from the agent parameters and the Auth Type is set to \"key\".", StatusCodes.Status400BadRequest);
+                    }
+                }
+            }
             #endregion
 
             #region Prompt
@@ -226,33 +247,18 @@ namespace FoundationaLLM.SemanticKernel.Core.Agents
         {
             try
             {
-                var kernel = BuildKernel();
+                var credential = DefaultAuthentication.AzureCredential;
 
-                // Use observability features to capture the fully rendered prompt.
-                var promptFilter = new DefaultPromptFilter();
-                kernel.PromptRenderFilters.Add(promptFilter);
+                var builder = Kernel.CreateBuilder();
+                builder.Services.AddSingleton<ILoggerFactory>(_loggerFactory);
+                builder.AddAzureOpenAIChatCompletion(
+                    _deploymentName,
+                    _endpoint,
+                    credential);
 
-                var arguments = new KernelArguments()
-                {
-                    ["userPrompt"] = _request.UserPrompt!,
-                    ["messageHistory"] = _request.MessageHistory
-                };
+                var kernel = BuildKernel(builder);
+                return await GetCompletion(kernel);
 
-                var result = await kernel.InvokePromptAsync(_prompt, arguments);
-
-                var completion = result.GetValue<string>()!;
-                var completionUsage = (result.Metadata!["Usage"] as CompletionsUsage)!;
-
-                return new LLMCompletionResponse
-                {
-                    Completion = completion,
-                    UserPrompt = _request.UserPrompt!,
-                    FullPrompt = promptFilter.RenderedPrompt,
-                    AgentName = _request.Agent.Name,
-                    PromptTokens = completionUsage!.PromptTokens,
-                    CompletionTokens = completionUsage.CompletionTokens,
-                    TotalTokens = completionUsage.TotalTokens
-                };
             }
             catch (Exception ex)
             {
@@ -262,12 +268,33 @@ namespace FoundationaLLM.SemanticKernel.Core.Agents
             }
         }
 
-        private Kernel BuildKernel()
+        ///<inheritdoc/>
+        protected override async Task<LLMCompletionResponse> BuildResponseWithAzureML()
         {
-            var credential = DefaultAuthentication.AzureCredential;
+            try
+            {
+                var builder = Kernel.CreateBuilder();
+                builder.Services.AddSingleton<ILoggerFactory>(_loggerFactory);
+                builder.AddAzureMLChatCompletion(_endpoint, _apiKey, _deploymentName);
+                var kernel = BuildKernel(builder);
+                return await GetCompletion(kernel);
+            }
+            catch (Exception ex)
+            {
+                var message = "The response building process encountered an error.";
+                _logger.LogError(ex, message);
+                throw new SemanticKernelException(message, StatusCodes.Status500InternalServerError);
+            }
+        }
 
-            var builder = Kernel.CreateBuilder();
-            builder.Services.AddSingleton<ILoggerFactory>(_loggerFactory);
+        /// <summary>
+        /// Builds the common kernel services.
+        /// </summary>
+        /// <param name="builder">The kernel builder.</param>
+        /// <returns>The built kernel.</returns>
+        private Kernel BuildKernel(IKernelBuilder builder)
+        {
+            var credential = DefaultAuthentication.AzureCredential;                        
 
             // Create an HTTP client with to pass into AddAzureOpenAIChatCompletion           
             var httpClient = httpClientFactoryService.CreateUnregisteredClient(TimeSpan.FromMinutes(20));
@@ -344,6 +371,42 @@ namespace FoundationaLLM.SemanticKernel.Core.Agents
             }
 
             return kernel;
+        }
+
+        /// <summary>
+        /// Gets the completion response from the provided kernel.
+        /// </summary>
+        /// <param name="kernel">The kernel.</param>
+        /// <returns></returns>
+        private async Task<LLMCompletionResponse> GetCompletion(Kernel kernel)
+        {
+            // Use observability features to capture the fully rendered prompt.
+            var promptFilter = new DefaultPromptFilter();
+            kernel.PromptRenderFilters.Add(promptFilter);
+
+            var arguments = new KernelArguments()
+            {
+                ["userPrompt"] = _request.UserPrompt!,
+                ["messageHistory"] = _request.MessageHistory
+            };
+
+            var result = await kernel.InvokePromptAsync(_prompt, arguments);
+
+            var completion = result.GetValue<string>()!;
+            CompletionsUsage completionUsage = null;
+            if(result.Metadata is not null)
+                completionUsage = (result.Metadata!["Usage"] as CompletionsUsage)!;
+
+            return new LLMCompletionResponse
+            {
+                Completion = completion,
+                UserPrompt = _request.UserPrompt!,
+                FullPrompt = promptFilter.RenderedPrompt,
+                AgentName = _request.Agent.Name,
+                PromptTokens = completionUsage?.PromptTokens ?? 0,
+                CompletionTokens = completionUsage?.CompletionTokens ?? 0,
+                TotalTokens = completionUsage?.TotalTokens ?? 0
+            };
         }
     }
 }
