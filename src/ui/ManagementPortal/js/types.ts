@@ -343,6 +343,14 @@ export type CreateTextPartitioningProfileRequest = ResourceBase & {
 	};
 };
 
+export type Role = {
+	
+};
+
+export type RoleAssignment = {
+
+};
+
 // Type guards
 export function isAzureDataLakeDataSource(
 	dataSource: DataSource,

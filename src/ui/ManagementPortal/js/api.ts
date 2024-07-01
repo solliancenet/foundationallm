@@ -14,17 +14,18 @@ import type {
 	CreatePromptRequest,
 	CreateTextPartitioningProfileRequest,
 	ExternalOrchestrationService,
+	Role,
+	RoleAssignment,
 } from './types';
 import { convertToDataSource, convertToAppConfigKeyVault, convertToAppConfig } from '@/js/types';
-// import { mockAzureDataLakeDataSource1 } from './mock';
+import { mockRoles, mockRoleAssignmentsResponse } from './mock';
+import { $fetch } from 'ofetch';
 
 async function wait(milliseconds: number = 1000): Promise<void> {
 	return await new Promise<void>((resolve) => setTimeout(() => resolve(), milliseconds));
 }
 
 export default {
-	mockLoadTime: 1000,
-
 	apiVersion: '2024-02-16',
 	apiUrl: null as string | null,
 	setApiUrl(apiUrl: string) {
@@ -237,8 +238,6 @@ export default {
 
 	// App Configuration
 	async getAppConfig(key: string): Promise<ResourceProviderGetResult<AppConfigUnion>> {
-		// await wait(this.mockLoadTime);
-		// return mockAzureDataLakeDataSource1;
 		const data = await this.fetch(
 			`/instances/${this.instanceId}/providers/FoundationaLLM.Configuration/appConfigurations/${key}?api-version=${this.apiVersion}`,
 		);
@@ -461,11 +460,6 @@ export default {
 		);
 	},
 
-	async getAgentGatekeepers(): Promise<AgentGatekeeper[]> {
-		await wait(this.mockLoadTime);
-		return [];
-	},
-
 	// Prompts
 	async getPrompt(promptId: string): Promise<ResourceProviderGetResult<Prompt> | null> {
 		// Attempt to retrieve the prompt. If it doesn't exist, return an empty object.
@@ -534,5 +528,113 @@ export default {
 
 		// Return the updated external orchestration services.
 		return data;
+	},
+
+	async getRoleAssignments(): RoleAssignment[] {
+		return await this.fetch(
+			`/instances/${this.instanceId}/providers/FoundationaLLM.Authorization/roleAssignments/filter`,
+			{
+				method: 'POST',
+				body: JSON.stringify({
+					scope: `/instances/${this.instanceId}`,
+				}),
+			},
+		) as RoleAssignment[];
+	},
+
+	async getRoleAssignment(roleAssignmentId): RoleAssignment[] {
+		return await this.fetch(
+			`/instances/${this.instanceId}/providers/FoundationaLLM.Authorization/roleAssignments/${roleAssignmentId}`,
+			{
+				method: 'POST',
+				body: JSON.stringify({
+					scope: `/instances/${this.instanceId}`,
+				}),
+			},
+		) as RoleAssignment[];
+	},
+
+	async getRoleDefinitions(): RoleAssignment[] {
+		return await this.fetch(
+			`/instances/${this.instanceId}/providers/FoundationaLLM.Authorization/roleDefinitions`,
+		) as Object[];
+	},
+
+	async getRoleDefinition(roleAssignmentId): RoleAssignment {
+		return await this.fetch(
+			`/instances/${this.instanceId}/providers/FoundationaLLM.Authorization/roleDefinitions/${roleAssignmentId}`,
+		) as RoleAssignment[];
+	},
+
+	async updateRoleAssignment(roleAssignment: RoleAssignment) {
+		await wait(1000);
+		return roleAssignment;
+	},
+
+	async deleteRoleAssignment(roleAssignmentId): void {
+		await wait(1000);
+		return roleAssignmentId;
+	},
+
+	async getUsers(params) {
+		const defaults = {
+			name: '',
+			ids: [],
+			page_number: 1,
+			page_size: null,
+		};
+
+		return await this.fetch(
+			`/instances/${this.instanceId}/identity/users/retrieve`,
+			{
+				method: 'POST',
+				body: JSON.stringify({
+					...defaults,
+					...params,
+				}),
+			},
+		);
+	},
+
+	async getUser(userId) {
+		return await this.fetch(
+			`/instances/${this.instanceId}/identity/users/${userId}`,
+		);
+	},
+
+	async getGroups(params) {
+		const defaults = {
+			name: '',
+			ids: [],
+			page_number: 1,
+			page_size: null,
+		};
+
+		return await this.fetch(
+			`/instances/${this.instanceId}/identity/groups/retrieve`,
+			{
+				method: 'POST',
+				body: JSON.stringify({
+					...defaults,
+					...params,
+				}),
+			},
+		);
+	},
+
+	async getGroup(groupId) {
+		return await this.fetch(
+			`/instances/${this.instanceId}/identity/groups/${groupId}`,
+		);
+	},
+
+	async getObjects(params = { ids: [] }) {
+		return await this.fetch(
+			`/instances/${this.instanceId}/identity/objects/retrievebyids`,
+			{
+				method: 'POST',
+				body: JSON.stringify(params),
+			},
+		);
 	},
 };

@@ -55,7 +55,7 @@
 			<span>Security</span>
 		</div>
 
-		<div class="sidebar__item">Identity & Access Management (IAM)</div>
+		<NuxtLink to="/security/role-assignments" class="sidebar__item">Instance Access Control</NuxtLink>
 
 		<!-- FLLM Deployment -->
 		<div class="sidebar__section-header">
