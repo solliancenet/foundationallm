@@ -1,22 +1,23 @@
-﻿using Azure.Core;
-using FoundationaLLM.Client.Core.Interfaces;
+﻿using Azure;
+using Azure.Core;
+using FoundationaLLM.Client.Management.Interfaces;
 using FoundationaLLM.Common.Models.Infrastructure;
 using FoundationaLLM.Common.Settings;
 using System.Text.Json;
 
-namespace FoundationaLLM.Client.Core.Clients.Rest
+namespace FoundationaLLM.Client.Management.Clients.Rest
 {
     internal class StatusRESTClient(
         IHttpClientFactory httpClientFactory,
-        TokenCredential credential) : CoreRESTClientBase(httpClientFactory, credential), IStatusRESTClient
+        TokenCredential credential) : ManagementRESTClientBase(httpClientFactory, credential), IStatusRESTClient
     {
         private readonly JsonSerializerOptions _jsonSerializerOptions = CommonJsonSerializerOptions.GetJsonSerializerOptions();
 
         /// <inheritdoc/>
         public async Task<ServiceStatusInfo> GetServiceStatusAsync()
         {
-            var coreClient = await GetCoreClientAsync();
-            var response = await coreClient.GetAsync("status");
+            var managementClient = await GetManagementClientAsync();
+            var response = await managementClient.GetAsync("status");
 
             if (response.IsSuccessStatusCode)
             {
@@ -30,8 +31,8 @@ namespace FoundationaLLM.Client.Core.Clients.Rest
         /// <inheritdoc/>
         public async Task<bool> IsAuthenticatedAsync()
         {
-            var coreClient = await GetCoreClientAsync();
-            var response = await coreClient.GetAsync("status/auth");
+            var managementClient = await GetManagementClientAsync();
+            var response = await managementClient.GetAsync("status/auth");
 
             return response.IsSuccessStatusCode;
         }

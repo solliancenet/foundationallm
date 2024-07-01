@@ -41,29 +41,6 @@ public interface IManagementAPITestManager
     Task DeletePrompt(string promptName);
 
     /// <summary>
-    /// Retrieves one or more resources.
-    /// </summary>
-    /// <param name="instanceId">The FoundationaLLM instance identifier.</param>
-    /// <param name="resourceProvider">The name of the resource provider that should handle the request.</param>
-    /// <param name="resourcePath">The logical path of the resource type.</param>
-    /// <returns></returns>
-    /// <exception cref="FoundationaLLMException"></exception>
-    Task<T?> GetResourcesAsync<T>(string instanceId, string resourceProvider, string resourcePath);
-
-    /// <summary>
-    /// Creates or updates resources.
-    /// </summary>
-    /// <param name="instanceId">The FoundationaLLM instance identifier.</param>
-    /// <param name="resourceProvider">The name of the resource provider that should handle the request.</param>
-    /// <param name="resourcePath">The logical path of the resource type.</param>
-    /// <param name="resource">The resource to insert or update.</param>
-    /// <returns>The ObjectId of the created or updated resource.</returns>
-    /// <exception cref="InvalidOperationException"></exception>
-    /// <exception cref="FoundationaLLMException"></exception>
-    Task<string> UpsertResourceAsync(string instanceId, string resourceProvider, string resourcePath,
-        object resource);
-
-    /// <summary>
     /// Deletes a resource then purges it, so we can reuse the name.
     /// </summary>
     /// <param name="instanceId">The FoundationaLLM instance identifier.</param>

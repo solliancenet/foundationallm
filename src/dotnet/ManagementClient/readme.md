@@ -1,14 +1,14 @@
-# Foundationa**LLM** Core Client
+# Foundationa**LLM** Management Client
 
-The Foundationa**LLM** Core Client is a .NET client library that simplifies the process of interacting with the Foundationa**LLM** Core API. The client library provides a set of classes and methods that allow you to interact with the Foundationa**LLM** Core API in a more intuitive way.
+The Foundationa**LLM** Management Client is a .NET client library that simplifies the process of interacting with the Foundationa**LLM** Management API. The client library provides a set of classes and methods that allow you to interact with the Foundationa**LLM** Management API in a more intuitive way.
 
 This library contains two primary classes:
 
-- `CoreRESTClient`: A class that provides a set of methods for interacting with the Foundationa**LLM** Core API using REST. This is considered the low-level client and provides direct access to all Core API endpoints.
-- `CoreClient`: A class that provides a set of methods for interacting with the Foundationa**LLM** Core API using a higher-level abstraction. This class is designed to simplify the process of interacting with the Core API by providing a more intuitive interface. It does not contain all the methods available in the `CoreRESTClient` class, but it provides a more user-friendly way to interact with the Core API.
+- `ManagementRESTClient`: A class that provides a set of methods for interacting with the Foundationa**LLM** Management API using REST. This is considered the low-level client and provides direct access to all Management API endpoints.
+- `ManagementClient`: A class that provides a set of methods for interacting with the Foundationa**LLM** Management API using a higher-level abstraction. This class is designed to simplify the process of interacting with the Management API by providing a more intuitive interface. It does not contain all the methods available in the `ManagementRESTClient` class, but it provides a more user-friendly way to interact with the Management API.
 
 > [!NOTE]
-> These two classes are mutually exclusive, and you should choose one based on your requirements. If you need direct access to all Core API endpoints, use the `CoreRESTClient` class. If you need a more user-friendly interface, use the `CoreClient` class.
+> These two classes are mutually exclusive, and you should choose one based on your requirements. If you need direct access to all Core API endpoints, use the `ManagementRESTClient` class. If you need a more user-friendly interface, use the `ManagementClient` class.
 
 ## Getting started
 
@@ -25,36 +25,42 @@ dotnet add package FoundationaLLM.Client.Core
 
 Complete the following steps if you do not want to use dependency injection:
 
-1. Create a new instance of the `CoreRESTClient` and `CoreClient` classes:
+1. Create a new instance of the `ManagementRESTClient` and `ManagementClient` classes:
 
     ```csharp
-    var coreUri = "<YOUR_CORE_API_URL>"; // e.g., "https://myfoundationallmcoreapi.com"
+    var managementUri = "<YOUR_MANAGEMENT_API_URL>"; // e.g., "https://myfoundationallmmanagementapi.com"
+    var instanceId = "<YOUR_INSTANCE_ID>"; // Each FoundationaLLM deployment has a unique (GUID) ID. Locate this value in the FoundationaLLM Management Portal or in Azure App Config (FoundationaLLM:Instance:Id key)
+
     var credential = new AzureCliCredential(); // Can use any TokenCredential implementation, such as ManagedIdentityCredential or AzureCliCredential.
     var options = new APIClientSettings // Optional settings parameter. Default timeout is 900 seconds.
     {
         Timeout = TimeSpan.FromSeconds(600)
     };
 
-    var coreRestClient = new CoreRESTClient(
-        coreUri,
+    var managementRestClient = new ManagementRESTClient(
+        managementUri,
         credential,
+        instanceId,
         options);
-    var coreClient = new CoreClient(
-        coreUri,
+    var managementClient = new ManagementClient(
+        managementUri,
         credential,
+        instanceId,
         options);
     ```
 
-2. Make a request to the Core API with the `CoreRESTClient` class:
+2. Make a request to the Management API with the `ManagementRESTClient` class:
 
     ```csharp
-    var status = await coreRestClient.Status.GetServiceStatusAsync();
+    var status = await managementRestClient.Status.GetServiceStatusAsync();
     ```
 
-3. Make a request to the Core API with the `CoreClient` class:
+3. Make a request to the Management API with the `ManagementClient` class:
 
     ```csharp
-    var results = await coreClient.GetAgentsAsync();
+    await managementClient.DataSources.DeleteDataSourceAsync("<DATASOURCE_NAME>");
+    // Purge the data source so we can reuse the name.
+    await managementClient.DataSources.PurgeDataSourceAsync("<DATASOURCE_NAME>");
     ```
 
 > [!TIP]
@@ -67,7 +73,7 @@ Complete the following steps if you do not want to use dependency injection:
 
 ### Use dependency injection with a configuration file
 
-Rather than manually instantiating the `CoreRESTClient` and `CoreClient` classes, you can use dependency injection to manage the instances. This approach is more flexible and allows you to easily switch between different implementations of the `ICoreClient` and `ICoreRESTClient` interfaces.
+Rather than manually instantiating the `ManagementRESTClient` and `ManagementClient` classes, you can use dependency injection to manage the instances. This approach is more flexible and allows you to easily switch between different implementations of the `IManagementClient` and `IManagementRESTClient` interfaces.
 
 1. Create a configuration file (e.g., `appsettings.json`) with the following content:
 
@@ -75,10 +81,13 @@ Rather than manually instantiating the `CoreRESTClient` and `CoreClient` classes
     {
      "FoundationaLLM": {
       "APIs": {
-       "CoreAPI": {
-        "APIUrl": "https://localhost:63279/"
+       "ManagementAPI": {
+        "APIUrl": "https://localhost:63267/"
        }
-      }
+      },
+      "Instance": {
+       "Id": "00000000-0000-0000-0000-000000000000"
+      }"
      }
     }
     ```
@@ -91,35 +100,38 @@ Rather than manually instantiating the `CoreRESTClient` and `CoreClient` classes
         .Build();
     ```
 
-3. Use the `CoreClient` extension method to add the `CoreClient` and `CoreRESTClient` to the service collection:
+3. Use the `ManagementClient` extension method to add the `ManagementClient` and `ManagementRESTClient` to the service collection:
 
     ```csharp
     var services = new ServiceCollection();
     var credential = new AzureCliCredential(); // Can use any TokenCredential implementation, such as ManagedIdentityCredential or AzureCliCredential.
-    services.AddCoreClient(configuration[AppConfigurationKeys.FoundationaLLM_APIs_CoreAPI_APIUrl]!, credential);
+    services.AddManagementClient(
+        configuration[AppConfigurationKeys.FoundationaLLM_APIs_ManagementAPI_APIUrl]!,
+        credential,
+        configuration[AppConfigurationKeys.FoundationaLLM_Instance_Id]!);
 
     var serviceProvider = services.BuildServiceProvider();
     ```
 
-4. Retrieve the `CoreClient` and `CoreRESTClient` instances from the service provider:
+4. Retrieve the `ManagementClient` and `ManagementRESTClient` instances from the service provider:
 
     ```csharp
-    var coreClient = serviceProvider.GetRequiredService<ICoreClient>();
-    var coreRestClient = serviceProvider.GetRequiredService<ICoreRESTClient>();
+    var managementClient = serviceProvider.GetRequiredService<IManagementClient>();
+    var managementRestClient = serviceProvider.GetRequiredService<IManagementRESTClient>();
     ```
 
-Alternately, you can inject the `CoreClient` and `CoreRESTClient` instances directly into your classes using dependency injection.
+Alternately, you can inject the `ManagementClient` and `ManagementRESTClient` instances directly into your classes using dependency injection.
 
 ```csharp
 public class MyService
 {
-    private readonly ICoreClient _coreClient;
-    private readonly ICoreRESTClient _coreRestClient;
+    private readonly IManagementClient _managementClient;
+    private readonly IManagementRESTClient _managementRestClient;
 
-    public MyService(ICoreClient coreClient, ICoreRESTClient coreRestClient)
+    public MyService(IManagementClient managementClient, IManagementRESTClient managementRestClient)
     {
-        _coreClient = coreClient;
-        _coreRestClient = coreRestClient;
+        _managementClient = managementClient;
+        _managementRestClient = managementRestClient;
     }
 }
 ```
@@ -149,25 +161,28 @@ If you prefer to retrieve the configuration settings from Azure App Configuratio
 
     > If you have configured your [local development environment](https://docs.foundationallm.ai/development/development-local.html), you can obtain the App Config connection string from an environment variable (`Environment.GetEnvironmentVariable(EnvironmentVariables.FoundationaLLM_AppConfig_ConnectionString)`) when developing locally.
 
-2. Use the `CoreClient` extension method to add the `CoreClient` and `CoreRESTClient` to the service collection:
+2. Use the `ManagementClient` extension method to add the `ManagementClient` and `ManagementRESTClient` to the service collection:
 
     ```csharp
     var services = new ServiceCollection();
     var credential = new AzureCliCredential(); // Can use any TokenCredential implementation, such as ManagedIdentityCredential or AzureCliCredential.
 
-    services.AddCoreClient(configuration[AppConfigurationKeys.FoundationaLLM_APIs_CoreAPI_APIUrl]!, credential);
+    services.AddManagementClient(
+        configuration[AppConfigurationKeys.FoundationaLLM_APIs_ManagementAPI_APIUrl]!,
+        credential,
+        configuration[AppConfigurationKeys.FoundationaLLM_Instance_Id]!);
     ```
 
 3. Retrieve the `CoreClient` and `CoreRESTClient` instances from the service provider:
 
     ```csharp
-    var coreClient = serviceProvider.GetRequiredService<ICoreClient>();
-    var coreRestClient = serviceProvider.GetRequiredService<ICoreRESTClient>();
+    var managementClient = serviceProvider.GetRequiredService<IManagementClient>();
+    var managementRestClient = serviceProvider.GetRequiredService<IManagementRESTClient>();
     ```
 
 ### Example projects
 
-The `Core.Examples` test project contains several examples that demonstrate how to use the `CoreClient` and `CoreRESTClient` classes to interact with the Core API through a series of end-to-end tests.
+The `Core.Examples` test project contains several examples that demonstrate how to use the `ManagementClient` and `ManagementRESTClient` classes to interact with the Core API through a series of end-to-end tests.
 
 ## Foundationa**LLM**: The platform for deploying, scaling, securing and governing generative AI in the enterprises 🚀
 

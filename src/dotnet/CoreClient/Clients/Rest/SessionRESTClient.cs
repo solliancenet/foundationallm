@@ -1,8 +1,6 @@
 ﻿using Azure.Core;
 using FoundationaLLM.Client.Core.Interfaces;
 using FoundationaLLM.Common.Models.Chat;
-using FoundationaLLM.Common.Models.Orchestration;
-using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 

@@ -1,46 +1,42 @@
+using FoundationaLLM.Client.Management.Interfaces;
 using FoundationaLLM.Common.Constants;
 using FoundationaLLM.Common.Constants.ResourceProviders;
 using FoundationaLLM.Common.Models.Configuration.Instance;
 using FoundationaLLM.Common.Models.ResourceProviders;
+using FoundationaLLM.Common.Models.ResourceProviders.Agent;
 using FoundationaLLM.Common.Models.ResourceProviders.Configuration;
+using FoundationaLLM.Common.Models.ResourceProviders.Prompt;
 using FoundationaLLM.Common.Models.ResourceProviders.Vectorization;
 using FoundationaLLM.Common.Settings;
 using FoundationaLLM.Core.Examples.Catalogs;
 using FoundationaLLM.Core.Examples.Exceptions;
 using FoundationaLLM.Core.Examples.Interfaces;
+using FoundationaLLM.Core.Examples.Setup;
 using Microsoft.Extensions.Options;
 using System.Text;
 using System.Text.Json;
-using FoundationaLLM.Common.Models.ResourceProviders.Agent;
-using FoundationaLLM.Core.Examples.Setup;
-using FoundationaLLM.Common.Models.ResourceProviders.Prompt;
-using FoundationaLLM.Core.Examples.Resources;
 
 namespace FoundationaLLM.Core.Examples.Services
 {
     /// <inheritdoc/>
     public class ManagementAPITestManager(
         IHttpClientManager httpClientManager,
+        IManagementRESTClient managementRestClient,
+        IManagementClient managementClient,
         IOptions<InstanceSettings> instanceSettings) : IManagementAPITestManager
     {
         private readonly JsonSerializerOptions _jsonSerializerOptions = CommonJsonSerializerOptions.GetJsonSerializerOptions();
 
         public async Task CreateAppConfiguration(AppConfigurationKeyValue appConfigurationKeyValue)
         {
-            var managementClient = await httpClientManager.GetHttpClientAsync(HttpClients.ManagementAPI);
-            var serializedRequest = JsonSerializer.Serialize(appConfigurationKeyValue, _jsonSerializerOptions);
+            var response = await managementClient.Configuration.UpsertAppConfigurationAsync(appConfigurationKeyValue);
 
-            var response = await managementClient.PostAsync($"instances/{instanceSettings.Value.Id}/providers/{ResourceProviderNames.FoundationaLLM_Configuration}/appConfigurations",
-                                              new StringContent(serializedRequest, Encoding.UTF8, "application/json"));
-
-            if (response.IsSuccessStatusCode)
+            if (!string.IsNullOrWhiteSpace(GetObjectId(response)))
             {
-                var responseContent = await response.Content.ReadAsStringAsync();
-                var resources = JsonSerializer.Deserialize<object>(responseContent, _jsonSerializerOptions);
                 return;
             }
 
-            throw new FoundationaLLMException($"Failed to create app configuration. Status code: {response.StatusCode}. Reason: {response.ReasonPhrase}");
+            throw new FoundationaLLMException($"Failed to create app configuration.");
         }
 
         public async Task CreateDataSource(string dataSourceName)
@@ -49,15 +45,17 @@ namespace FoundationaLLM.Core.Examples.Services
 
             if (item == null)
             {
-                   throw new InvalidOperationException($"The data source {dataSourceName} was not found.");
+                throw new InvalidOperationException($"The data source {dataSourceName} was not found.");
             }
 
-            //upload the dune file...
-            var azureDataLakeDataSourceObjectId = await UpsertResourceAsync(
-                instanceSettings.Value.Id,
-                ResourceProviderNames.FoundationaLLM_DataSource,
-                $"dataSources/{dataSourceName}",
-                item);
+            var response = await managementClient.DataSources.UpsertDataSourceAsync(item);
+
+            if (!string.IsNullOrWhiteSpace(GetObjectId(response)))
+            {
+                return;
+            }
+
+            throw new FoundationaLLMException($"Failed to create data source: {dataSourceName}.");
         }
 
         public async Task CreateIndexingProfile(string indexingProfileName)
@@ -66,14 +64,17 @@ namespace FoundationaLLM.Core.Examples.Services
 
             if (indexingProfile == null)
             {
-                   throw new InvalidOperationException($"The indexing profile {indexingProfileName} was not found.");
+                throw new InvalidOperationException($"The indexing profile {indexingProfileName} was not found.");
             }
 
-            var indexingProfileObjectId = await UpsertResourceAsync(
-                instanceSettings.Value.Id,
-                ResourceProviderNames.FoundationaLLM_Vectorization,
-                $"indexingProfiles/{indexingProfileName}",
-                indexingProfile);
+            var response = await managementClient.Vectorization.UpsertIndexingProfileAsync(indexingProfile);
+
+            if (!string.IsNullOrWhiteSpace(GetObjectId(response)))
+            {
+                return;
+            }
+
+            throw new FoundationaLLMException($"Failed to create indexing profile: {indexingProfileName}.");
         }
 
         public async Task CreateTextEmbeddingProfile(string textEmbeddingProfileName)
@@ -82,14 +83,17 @@ namespace FoundationaLLM.Core.Examples.Services
 
             if (textEmbeddingProfile == null)
             {
-                   throw new InvalidOperationException($"The text embedding profile {textEmbeddingProfileName} was not found.");
+                throw new InvalidOperationException($"The text embedding profile {textEmbeddingProfileName} was not found.");
             }
 
-            var textEmbeddingProfileObjectId = await UpsertResourceAsync(
-                instanceSettings.Value.Id,
-                ResourceProviderNames.FoundationaLLM_Vectorization,
-                $"textEmbeddingProfiles/{textEmbeddingProfileName}",
-                textEmbeddingProfile);
+            var response = await managementClient.Vectorization.UpsertTextEmbeddingProfileAsync(textEmbeddingProfile);
+
+            if (!string.IsNullOrWhiteSpace(GetObjectId(response)))
+            {
+                return;
+            }
+
+            throw new FoundationaLLMException($"Failed to create text embedding profile: {textEmbeddingProfileName}.");
         }
 
         public async Task CreateTextPartitioningProfile(string textPartitioningProfileName)
@@ -98,28 +102,32 @@ namespace FoundationaLLM.Core.Examples.Services
 
             if (textPartitioningProfile == null)
             {
-                   throw new InvalidOperationException($"The text partitioning profile {textPartitioningProfileName} was not found.");
+                throw new InvalidOperationException($"The text partitioning profile {textPartitioningProfileName} was not found.");
             }
 
-            var textPartitioningProfileObjectId = await UpsertResourceAsync(
-                instanceSettings.Value.Id,
-                ResourceProviderNames.FoundationaLLM_Vectorization,
-                $"textPartitioningProfiles/{textPartitioningProfileName}",
-                textPartitioningProfile);
+            var response = await managementClient.Vectorization.UpsertTextPartitioningProfileAsync(textPartitioningProfile);
+
+            if (!string.IsNullOrWhiteSpace(GetObjectId(response)))
+            {
+                return;
+            }
+
+            throw new FoundationaLLMException($"Failed to create text partitioning profile: {textPartitioningProfileName}.");
         }
 
         public async Task<VectorizationRequest> GetVectorizationRequest(VectorizationRequest vectorizationRequest)
         {
-            return GetResourcesAsync<VectorizationRequest>(instanceSettings.Value.Id, ResourceProviderNames.FoundationaLLM_Vectorization, $"{vectorizationRequest.ObjectId}").Result;
+            return await managementRestClient.Resources.GetResourcesAsync<VectorizationRequest>(
+                    ResourceProviderNames.FoundationaLLM_Vectorization, vectorizationRequest.ObjectId!);
         }
 
         public async Task<string> CreateVectorizationRequest(VectorizationRequest vectorizationRequest)
         {
-            return await UpsertResourceAsync(
-                instanceSettings.Value.Id,
+            var response = await managementRestClient.Resources.UpsertResourceAsync(
                 ResourceProviderNames.FoundationaLLM_Vectorization,
-                vectorizationRequest.ObjectId!,
+                vectorizationRequest.ObjectId!, 
                 vectorizationRequest);
+            return GetObjectId(response);
         }
 
         /// <inheritdoc/>
@@ -128,8 +136,8 @@ namespace FoundationaLLM.Core.Examples.Services
             var resourceId = vectorizationRequest.ObjectId!.Split("/").Last();
             var fullPath = $"instances/{instanceSettings.Value.Id}/providers/{ResourceProviderNames.FoundationaLLM_Vectorization}/{VectorizationResourceTypeNames.VectorizationRequests}/{resourceId}/process";
 
-            var coreClient = await httpClientManager.GetHttpClientAsync(HttpClients.ManagementAPI);            
-            var response = await coreClient.PostAsync(fullPath, new StringContent("{}", Encoding.UTF8, "application/json"));
+            var managementClient = await httpClientManager.GetHttpClientAsync(HttpClients.ManagementAPI);            
+            var response = await managementClient.PostAsync(fullPath, new StringContent("{}", Encoding.UTF8, "application/json"));
             if (response.IsSuccessStatusCode)
             {
                 var responseContent = await response.Content.ReadAsStringAsync();
@@ -146,34 +154,54 @@ namespace FoundationaLLM.Core.Examples.Services
 
         public async Task DeleteDataSource(string profileName)
         {
-            await DeleteResourceAsync(
-                instanceSettings.Value.Id,
-                ResourceProviderNames.FoundationaLLM_DataSource,
-                $"dataSources/{profileName}");
+            await managementClient.DataSources.DeleteDataSourceAsync(profileName);
+            // Purge the data source so we can reuse the name.
+            await managementClient.DataSources.PurgeDataSourceAsync(profileName);
         }
 
         public async Task DeleteTextPartitioningProfile(string profileName)
         {
-            await DeleteResourceAsync(
-                instanceSettings.Value.Id,
-                ResourceProviderNames.FoundationaLLM_Vectorization,
-                $"textPartitioningProfiles/{profileName}");
+            await managementClient.Vectorization.DeleteTextPartitioningProfileAsync(profileName);
+            // Purge the text partitioning profile so we can reuse the name.
+            await managementClient.Vectorization.PurgeTextPartitioningProfileAsync(profileName);
         }
 
         public async Task DeleteIndexingProfile(string profileName)
         {
-            await DeleteResourceAsync(
-                instanceSettings.Value.Id,
-                ResourceProviderNames.FoundationaLLM_Vectorization,
-                $"indexingProfiles/{profileName}");
+            await managementClient.Vectorization.DeleteIndexingProfileAsync(profileName);
+            // Purge the indexing profile so we can reuse the name.
+            await managementClient.Vectorization.PurgeIndexingProfileAsync(profileName);
         }
 
         public async Task DeleteTextEmbeddingProfile(string profileName)
         {
-            await DeleteResourceAsync(
-                instanceSettings.Value.Id,
-                ResourceProviderNames.FoundationaLLM_Vectorization,
-                $"textEmbeddingProfiles/{profileName}");
+            await managementClient.Vectorization.DeleteTextEmbeddingProfileAsync(profileName);
+            // Purge the text embedding profile so we can reuse the name.
+            await managementClient.Vectorization.PurgeTextEmbeddingProfileAsync(profileName);
+        }
+
+        /// <inheritdoc/>
+        public async Task DeletePrompt(string promptName)
+        {
+            await managementClient.Prompts.DeletePromptAsync(promptName);
+            // Purge the prompt so we can reuse the name.
+            await managementClient.Prompts.PurgePromptAsync(promptName);
+        }
+
+        /// <inheritdoc/>
+        public async Task DeleteAgent(string agentName)
+        {
+            // Delete the agent and its dependencies.
+
+            // Delete the agent's prompt.
+            await DeletePrompt(agentName);
+
+            // TODO: Delete other dependencies for the agent here.
+
+            // Delete the agent.
+            await managementClient.Agents.DeleteAgentAsync(agentName);
+            // Purge the agent so we can reuse the name.
+            await managementClient.Agents.PurgeAgentAsync(agentName);
         }
 
         /// <inheritdoc/>
@@ -188,7 +216,6 @@ namespace FoundationaLLM.Core.Examples.Services
             {
                 throw new InvalidOperationException($"The agent {agentName} was not found.");
             }
-            
 
             // Resolve App Config values for the endpoint configuration as necessary.
             // Note: This is a temporary workaround until we have the Models and Endpoints resource provider in place.
@@ -203,9 +230,9 @@ namespace FoundationaLLM.Core.Examples.Services
                 }
             }
 
-            var agentPrommpt = await CreatePrompt(agentName);
+            var agentPrompt = await CreatePrompt(agentName);
             // Add the prompt ObjectId to the agent.
-            agent.PromptObjectId = agentPrommpt.ObjectId;
+            agent.PromptObjectId = agentPrompt.ObjectId;
 
             // TODO: Create any other dependencies for the agent here.
 
@@ -223,32 +250,11 @@ namespace FoundationaLLM.Core.Examples.Services
             }
 
             // Create the agent.
-            var agentObjectId = await UpsertResourceAsync(
-                instanceSettings.Value.Id,
-                ResourceProviderNames.FoundationaLLM_Agent,
-                $"agents/{agentName}",
-                agent);
+            var response = await managementClient.Agents.UpsertAgentAsync(agent);
 
-            agent.ObjectId = agentObjectId;
+            agent.ObjectId = GetObjectId(response);
 
             return agent;
-        }
-
-        /// <inheritdoc/>
-        public async Task DeleteAgent(string agentName)
-        {
-            // Delete the agent and its dependencies.
-
-            // Delete the agent's prompt.
-            await DeletePrompt(agentName);
-
-            // TODO: Delete other dependencies for the agent here.
-
-            // Delete the agent.
-            await DeleteResourceAsync(
-                instanceSettings.Value.Id,
-                ResourceProviderNames.FoundationaLLM_Agent,
-                $"agents/{agentName}");
         }
 
         /// <inheritdoc/>
@@ -260,100 +266,49 @@ namespace FoundationaLLM.Core.Examples.Services
                 throw new InvalidOperationException($"The prompt {promptName} was not found.");
             }
             
-            prompt.ObjectId = await UpsertResourceAsync(
-                instanceSettings.Value.Id,
-                ResourceProviderNames.FoundationaLLM_Prompt,
-                $"prompts/{promptName}",
-                prompt);
+            var response = await managementClient.Prompts.UpsertPromptAsync(prompt);
+            prompt.ObjectId = GetObjectId(response);
 
             return prompt;
         }
 
-        /// <inheritdoc/>
-        public async Task DeletePrompt(string promptName)
+        private string GetObjectId(ResourceProviderUpsertResult result)
         {
-            await DeleteResourceAsync(
-                  instanceSettings.Value.Id,
-                  ResourceProviderNames.FoundationaLLM_Prompt,
-                  $"prompts/{promptName}");
+            return result.ObjectId ?? throw new InvalidOperationException("The returned object ID is invalid.");
         }
-
-        /// <inheritdoc/>
-        public async Task<T?> GetResourcesAsync<T>(string instanceId, string resourceProvider, string resourcePath)
-        {
-            var coreClient = await httpClientManager.GetHttpClientAsync(HttpClients.ManagementAPI);
-            var response = await coreClient.GetAsync($"instances/{instanceId}/providers/{resourceProvider}/{resourcePath}");
-
-            if (response.IsSuccessStatusCode)
-            {
-                var responseContent = await response.Content.ReadAsStringAsync();
-                dynamic obj = JsonSerializer.Deserialize<dynamic>(responseContent, _jsonSerializerOptions);
-                var resources = JsonSerializer.Deserialize<T>(obj[0], _jsonSerializerOptions);
-                return resources;
-            }
-
-            throw new FoundationaLLMException($"Failed to get resources. Status code: {response.StatusCode}. Reason: {response.ReasonPhrase}");
-        }
-
-        /// <inheritdoc/>
-        public async Task<string> UpsertResourceAsync(string instanceId, string resourceProvider, string resourcePath,
-            object resource)
-        {
-            var coreClient = await httpClientManager.GetHttpClientAsync(HttpClients.ManagementAPI);
-            var serializedRequest = JsonSerializer.Serialize(resource, _jsonSerializerOptions);
-
-            var response = await coreClient.PostAsync($"instances/{instanceId}/providers/{resourceProvider}/{resourcePath}",
-                               new StringContent(serializedRequest, Encoding.UTF8, "application/json"));
-
-            if (response.IsSuccessStatusCode)
-            {
-                var responseContent = await response.Content.ReadAsStringAsync();
-                var upsertResult = JsonSerializer.Deserialize<ResourceProviderUpsertResult>(responseContent, _jsonSerializerOptions);
-                if (upsertResult != null)
-                    return upsertResult.ObjectId ??
-                           throw new InvalidOperationException("The returned object ID is invalid.");
-            }
-
-            throw new FoundationaLLMException($"Failed to upsert resource. Status code: {response.StatusCode}. Reason: {response.ReasonPhrase}");
-        }
-
       
         /// <inheritdoc/>
         public async Task DeleteResourceAsync(string instanceId, string resourceProvider, string resourcePath)
         {
-            var coreClient = await httpClientManager.GetHttpClientAsync(HttpClients.ManagementAPI);
-            var response = await coreClient.DeleteAsync($"instances/{instanceId}/providers/{resourceProvider}/{resourcePath}");
-
-            if (response.IsSuccessStatusCode)
+            try
             {
+                await managementRestClient.Resources.DeleteResourceAsync(resourceProvider, resourcePath);
                 // Resource was deleted successfully. Now purge the resource, so we can reuse the name.
-                await coreClient.PostAsync($"instances/{instanceId}/providers/{resourceProvider}/{resourcePath}/purge",
-                    new StringContent("{}", Encoding.UTF8, "application/json"));
-                if (!response.IsSuccessStatusCode)
-                {
-                    throw new FoundationaLLMException($"Successfully deleted the resource, but failed to purge it. Status code: {response.StatusCode}. Reason: {response.ReasonPhrase}");
-                }
-                return;
+                await managementRestClient.Resources
+                    .ExecuteResourceActionAsync<ResourceProviderActionResult>(resourceProvider, $"{resourcePath}/purge", new { });
             }
-
-            throw new FoundationaLLMException($"Failed to delete resource. Status code: {response.StatusCode}. Reason: {response.ReasonPhrase}");
+            catch (Exception ex)
+            {
+                throw new FoundationaLLMException($"Failed to delete resource: {ex}");
+            }
         }
 
-        async public Task<IndexingProfile> GetIndexingProfile(string name)
+        public async Task<IndexingProfile> GetIndexingProfile(string name)
         {
-           
-            return (await GetResourcesAsync<ResourceProviderGetResult<IndexingProfile>>(instanceSettings.Value.Id, ResourceProviderNames.FoundationaLLM_Vectorization, $"indexingProfiles/{name}")).Resource;
-
+            var response = await managementClient.Vectorization.GetIndexingProfileAsync(name);
+            return response.Resource;
         }
 
-        async public Task<TextEmbeddingProfile> GetTextEmbeddingProfile(string name)
+        public async Task<TextEmbeddingProfile> GetTextEmbeddingProfile(string name)
         {
-            return (await GetResourcesAsync<ResourceProviderGetResult<TextEmbeddingProfile>>(instanceSettings.Value.Id, ResourceProviderNames.FoundationaLLM_Vectorization, $"textEmbeddingProfiles/{name}")).Resource;
+            var response = await managementClient.Vectorization.GetTextEmbeddingProfileAsync(name);
+            return response.Resource;
         }
 
-        async public Task<TextPartitioningProfile> GetTextPartitioningProfile(string name)
+        public async Task<TextPartitioningProfile> GetTextPartitioningProfile(string name)
         {
-            return (await GetResourcesAsync<ResourceProviderGetResult<TextPartitioningProfile>>(instanceSettings.Value.Id, ResourceProviderNames.FoundationaLLM_Vectorization, $"textPartitioningProfiles/{name}")).Resource;
+            var response = await managementClient.Vectorization.GetTextPartitioningProfileAsync(name);
+            return response.Resource;
         }
     }
 }

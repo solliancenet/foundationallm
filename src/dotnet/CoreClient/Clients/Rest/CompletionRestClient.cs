@@ -22,7 +22,7 @@ namespace FoundationaLLM.Client.Core.Clients.Rest
             var coreClient = await GetCoreClientAsync();
             var serializedRequest = JsonSerializer.Serialize(completionRequest, SerializerOptions);
 
-            var responseMessage = await coreClient.PostAsync("completions", // Session-less - no message history or data retention in Cosmos DB.
+            var responseMessage = await coreClient.PostAsync("completions",
                 new StringContent(
                     serializedRequest,
                     Encoding.UTF8, "application/json"));

@@ -1,0 +1,45 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>FoundationaLLM.Client.Management</AssemblyName>
+    <RootNamespace>FoundationaLLM.Client.Management</RootNamespace>
+    <ProjectType>Library</ProjectType>
+    <InjectSharedSources>true</InjectSharedSources>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Description>FoundationaLLM.Client.Management is a .NET library that simplifies integrating the FoundationaLLM Management API into your projects and data workflows.</Description>
+    <PackageTags>FoundationaLLM;LLM;GPT;AI;SDK;ManagementClient;Management API</PackageTags>
+    <RepositoryUrl>https://github.com/solliancenet/foundationallm</RepositoryUrl>
+    <PackageId>FoundationaLLM.Client.Management</PackageId>
+    <Version>0.0.0</Version>
+    <!-- Placeholder version -->
+    <PackageIcon>fllm-icon-128.png</PackageIcon>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
+    <Title>FoundationaLLM Management Client</Title>
+    <Authors>Solliance</Authors>
+    <RepositoryType>git</RepositoryType>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PackageProjectUrl>https://foundationallm.ai</PackageProjectUrl>
+    <Copyright>Copyright © Solliance. All rights reserved.</Copyright>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj" />
+    <None Include="..\..\..\assets\fllm-icon-128.png" Pack="true" PackagePath="\" />
+    <None Include="readme.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+</Project>

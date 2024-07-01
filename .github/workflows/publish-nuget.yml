@@ -1,0 +1,50 @@
+name: Publish NuGet Packages
+
+on:
+  push:
+    branches:
+      - 'release/**'
+
+env:
+  DOTNET_VERSION: '8.0.x'
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up .NET Core SDK
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Run versioning script
+      run: ./versioning.sh
+      id: versioning
+
+    - name: Build CoreClient
+      working-directory: ./src/dotnet/CoreClient
+      run: dotnet build --configuration Release -p:GITHUB_ACTIONS=true
+
+    - name: Build ManagementClient
+      working-directory: ./src/dotnet/ManagementClient
+      run: dotnet build --configuration Release -p:GITHUB_ACTIONS=true
+
+    - name: Pack CoreClient
+      working-directory: ./src/dotnet/CoreClient
+      run: dotnet pack --configuration Release /p:PackageVersion=${{ steps.versioning.outputs.version }} -p:GITHUB_ACTIONS=true --output ./nupkg
+
+    - name: Pack ManagementClient
+      working-directory: ./src/dotnet/ManagementClient
+      run: dotnet pack --configuration Release /p:PackageVersion=${{ steps.versioning.outputs.version }} -p:GITHUB_ACTIONS=true --output ./nupkg
+
+    - name: Publish CoreClient to NuGet
+      working-directory: ./src/dotnet/CoreClient
+      run: dotnet nuget push ./nupkg/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+
+    - name: Publish ManagementClient to NuGet
+      working-directory: ./src/dotnet/ManagementClient
+      run: dotnet nuget push ./nupkg/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json

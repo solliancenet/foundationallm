@@ -8,9 +8,7 @@ using FoundationaLLM.Common.Models.ResourceProviders.Agent;
 
 namespace FoundationaLLM.Client.Core
 {
-    /// <summary>
-    /// Provides high-level methods to interact with the Core API.
-    /// </summary>
+    /// <inheritdoc/>
     public class CoreClient : ICoreClient
     {
         private readonly ICoreRESTClient _coreRestClient;
