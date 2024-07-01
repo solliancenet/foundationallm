@@ -107,6 +107,14 @@ main {
 	margin-bottom: 8px !important;
 }
 
+.mb-3 {
+	margin-bottom: 12px !important;
+}
+
+.mb-4 {
+	margin-bottom: 16px !important;
+}
+
 .w-100 {
 	width: 100%;
 }
