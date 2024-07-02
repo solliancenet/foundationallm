@@ -12,6 +12,7 @@ namespace FoundationaLLM.Core.Examples
     {
         private readonly IAgentConversationTestService _agentConversationTestService;
         private readonly IVectorizationTestService _vectorizationTestService;
+        private readonly IManagementAPITestManager _managementAPITestManager;
 
         private string textEmbeddingProfileName = "text_embedding_profile_generic";
         private string indexingProfileName = "indexing_profile_sdzwa";
@@ -21,6 +22,7 @@ namespace FoundationaLLM.Core.Examples
         {
             _agentConversationTestService = GetService<IAgentConversationTestService>();
             _vectorizationTestService = GetService<IVectorizationTestService>();
+            _managementAPITestManager = GetService<IManagementAPITestManager>();
         }
 
         [Fact]
@@ -33,40 +35,46 @@ namespace FoundationaLLM.Core.Examples
         private async Task RunExampleAsync()
         {
             var agentName = TestAgentNames.SemanticKernelSDZWA;
-            var userPrompts = new List<string>
+            try
             {
-                "Who are you?",
-                "Tell me one interesting facts about the San Diego Zoo?",
-                "How many animals does the San Diego Zoo host?",
-                "What does the San Diego Zoo do to treat illness among it's inhabitants?"
-            };
-
-            WriteLine($"Send questions to the {agentName} agent.");
-
-            await _vectorizationTestService.CreateIndexingProfile(indexingProfileName);
-            await _vectorizationTestService.CreateTextEmbeddingProfile(textEmbeddingProfileName);
-
-            var response = await _agentConversationTestService.RunAgentConversationWithSession(
-                agentName, userPrompts, null, true, indexingProfileName, textEmbeddingProfileName);
-
-            WriteLine($"Agent conversation history:");
-
-            var invalidAgentResponsesFound = 0;
-            foreach (var message in response)
-            {
-                WriteLine($"- {message.Sender}: {message.Text}");
-
-                if (string.Equals(message.Sender, Common.Constants.Agents.InputMessageRoles.Assistant, StringComparison.CurrentCultureIgnoreCase) &&
-                    message.Text == TestResponseMessages.FailedCompletionResponse)
+                var userPrompts = new List<string>
                 {
-                    invalidAgentResponsesFound++;
+                    "Who are you?",
+                    "Tell me one interesting facts about the San Diego Zoo?",
+                    "How many animals does the San Diego Zoo host?",
+                    "What does the San Diego Zoo do to treat illness among it's inhabitants?"
+                };
+
+                WriteLine($"Send questions to the {agentName} agent.");
+
+                await _vectorizationTestService.CreateIndexingProfile(indexingProfileName);
+                await _vectorizationTestService.CreateTextEmbeddingProfile(textEmbeddingProfileName);
+
+                var response = await _agentConversationTestService.RunAgentConversationWithSession(
+                    agentName, userPrompts, null, true, indexingProfileName, textEmbeddingProfileName);
+
+                WriteLine($"Agent conversation history:");
+
+                var invalidAgentResponsesFound = 0;
+                foreach (var message in response)
+                {
+                    WriteLine($"- {message.Sender}: {message.Text}");
+
+                    if (string.Equals(message.Sender, Common.Constants.Agents.InputMessageRoles.Assistant, StringComparison.CurrentCultureIgnoreCase) &&
+                        message.Text == TestResponseMessages.FailedCompletionResponse)
+                    {
+                        invalidAgentResponsesFound++;
+                    }
                 }
+
+                Assert.True(invalidAgentResponsesFound == 0, $"{invalidAgentResponsesFound} invalid agent responses found.");
             }
-
-            await _vectorizationTestService.DeleteIndexingProfile(indexingProfileName, false);
-            await _vectorizationTestService.DeleteTextEmbeddingProfile(textEmbeddingProfileName);
-
-            Assert.True(invalidAgentResponsesFound == 0, $"{invalidAgentResponsesFound} invalid agent responses found.");
+            finally
+            {
+                await _managementAPITestManager.DeleteAgent(agentName);
+                await _vectorizationTestService.DeleteIndexingProfile(indexingProfileName, false);
+                await _vectorizationTestService.DeleteTextEmbeddingProfile(textEmbeddingProfileName);
+            }
         }
     }
 }

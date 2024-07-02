@@ -324,6 +324,9 @@ namespace FoundationaLLM.Core.Examples.Services
             var coreClient = await httpClientManager.GetHttpClientAsync(HttpClients.ManagementAPI);
             var response = await coreClient.DeleteAsync($"instances/{instanceId}/providers/{resourceProvider}/{resourcePath}");
 
+            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                return;
+
             if (response.IsSuccessStatusCode)
             {
                 // Resource was deleted successfully. Now purge the resource, so we can reuse the name.

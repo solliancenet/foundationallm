@@ -11,11 +11,13 @@ namespace FoundationaLLM.Core.Examples
     public class Example0003_KnowledgeManagementInlineContextAgentWithLangChain : BaseTest, IClassFixture<TestFixture>
 	{
 		private readonly IAgentConversationTestService _agentConversationTestService;
+        private readonly IManagementAPITestManager _managementAPITestManager;
 
 		public Example0003_KnowledgeManagementInlineContextAgentWithLangChain(ITestOutputHelper output, TestFixture fixture)
 			: base(output, fixture.ServiceProvider)
 		{
             _agentConversationTestService = GetService<IAgentConversationTestService>();
+            _managementAPITestManager = GetService<IManagementAPITestManager>();
 		}
 
 		[Fact]
@@ -28,29 +30,38 @@ namespace FoundationaLLM.Core.Examples
 		private async Task RunExampleAsync()
         {
             var agentName = Constants.TestAgentNames.GenericInlineContextAgentName;
-            var userPrompts = new List<string>
+            try
             {
-                "Who are you?",
-                "What is the significance of the Rosetta Stone in the history of linguistics?",
-                "What was the Rosetta Stone's role in ancient political dynamics?",
-                "How did the decipherment of the Rosetta Stone impact the study of ancient Egypt?"
-            };
-
-            WriteLine($"Send Rosetta Stone questions to the {agentName} agent.");
-            var response = await _agentConversationTestService.RunAgentConversationWithSession(
-                agentName, userPrompts, null, true);
-            WriteLine($"Agent conversation history:");
-            var invalidAgentResponsesFound = 0;
-            foreach (var message in response)
-            {
-                WriteLine($"- {message.Sender}: {message.Text}");
-                if (string.Equals(message.Sender, Common.Constants.Agents.InputMessageRoles.Assistant, StringComparison.CurrentCultureIgnoreCase) &&
-                    message.Text == TestResponseMessages.FailedCompletionResponse)
+                var userPrompts = new List<string>
                 {
-                    invalidAgentResponsesFound++;
+                    "Who are you?",
+                    "What is the significance of the Rosetta Stone in the history of linguistics?",
+                    "What was the Rosetta Stone's role in ancient political dynamics?",
+                    "How did the decipherment of the Rosetta Stone impact the study of ancient Egypt?"
+                };
+
+                WriteLine($"Send Rosetta Stone questions to the {agentName} agent.");
+
+                var response = await _agentConversationTestService.RunAgentConversationWithSession(
+                    agentName, userPrompts, null, true);
+
+                WriteLine($"Agent conversation history:");
+                var invalidAgentResponsesFound = 0;
+                foreach (var message in response!)
+                {
+                    WriteLine($"- {message.Sender}: {message.Text}");
+                    if (string.Equals(message.Sender, Common.Constants.Agents.InputMessageRoles.Assistant, StringComparison.CurrentCultureIgnoreCase) &&
+                        message.Text == TestResponseMessages.FailedCompletionResponse)
+                    {
+                        invalidAgentResponsesFound++;
+                    }
                 }
+                Assert.True(invalidAgentResponsesFound == 0, $"{invalidAgentResponsesFound} invalid agent responses found.");
             }
-            Assert.True(invalidAgentResponsesFound == 0, $"{invalidAgentResponsesFound} invalid agent responses found.");
+            finally
+            {
+                await _managementAPITestManager.DeleteAgent(agentName);
+            }
         }
 	}
 }

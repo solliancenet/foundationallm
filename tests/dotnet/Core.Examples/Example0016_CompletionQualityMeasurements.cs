@@ -11,11 +11,13 @@ namespace FoundationaLLM.Core.Examples
     public class Example0016_CompletionQualityMeasurements : BaseTest, IClassFixture<TestFixture>
 	{
 		private readonly IAgentConversationTestService _agentConversationTestService;
+        private readonly IManagementAPITestManager _managementAPITestManager;
 
-		public Example0016_CompletionQualityMeasurements(ITestOutputHelper output, TestFixture fixture)
+        public Example0016_CompletionQualityMeasurements(ITestOutputHelper output, TestFixture fixture)
 			: base(output, fixture.ServiceProvider)
 		{
             _agentConversationTestService = GetService<IAgentConversationTestService>();
+            _managementAPITestManager = GetService<IManagementAPITestManager>();
 		}
 
 		[Fact]
@@ -70,6 +72,8 @@ namespace FoundationaLLM.Core.Examples
             }
             catch (Exception e)
             {
+                if (agentPrompt.CreateAgent)
+                    await _managementAPITestManager.DeleteAgent(agentPrompt.AgentName);
                 Console.WriteLine(e);
                 throw;
             }

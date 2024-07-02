@@ -36,41 +36,48 @@ namespace FoundationaLLM.Core.Examples
         private async Task RunExampleAsync()
         {
             var agentName = TestAgentNames.Dune03;
-            var userPrompts = new List<string>
+            try
             {
-                "Who is 'Paul-Muad'Dib' and what is his relationship to the Fremen?",
-                "Write a poem about Paul's ambition."
-            };
-
-            WriteLine($"Send questions to the {agentName} agent.");
-
-            await _vectorizationTestService.CreateIndexingProfile(indexingProfileName);
-            await _vectorizationTestService.CreateTextEmbeddingProfile(textEmbeddingProfileName);
-
-            await _managementAPITestManager.CreateAgent(TestAgentNames.Dune01, indexingProfileName, textEmbeddingProfileName);
-            await _managementAPITestManager.CreateAgent(TestAgentNames.Dune02);
-
-            var response = await _agentConversationTestService.RunAgentConversationWithSession(
-                agentName, userPrompts, null, true, indexingProfileName, textEmbeddingProfileName);
-
-            WriteLine($"Agent conversation history:");
-
-            var invalidAgentResponsesFound = 0;
-            foreach (var message in response)
-            {
-                WriteLine($"- {message.Sender}: {message.Text}");
-
-                if (string.Equals(message.Sender, Common.Constants.Agents.InputMessageRoles.Assistant, StringComparison.CurrentCultureIgnoreCase) &&
-                    message.Text == TestResponseMessages.FailedCompletionResponse)
+                var userPrompts = new List<string>
                 {
-                    invalidAgentResponsesFound++;
+                    "Who is 'Paul-Muad'Dib' and what is his relationship to the Fremen?",
+                    "Write a poem about Paul's ambition."
+                };
+
+                WriteLine($"Send questions to the {agentName} agent.");
+
+                await _vectorizationTestService.CreateIndexingProfile(indexingProfileName);
+                await _vectorizationTestService.CreateTextEmbeddingProfile(textEmbeddingProfileName);
+
+                await _managementAPITestManager.CreateAgent(TestAgentNames.Dune01, indexingProfileName, textEmbeddingProfileName);
+                await _managementAPITestManager.CreateAgent(TestAgentNames.Dune02);
+
+                var response = await _agentConversationTestService.RunAgentConversationWithSession(
+                    agentName, userPrompts, null, true, indexingProfileName, textEmbeddingProfileName);
+
+                WriteLine($"Agent conversation history:");
+
+                var invalidAgentResponsesFound = 0;
+                foreach (var message in response)
+                {
+                    WriteLine($"- {message.Sender}: {message.Text}");
+
+                    if (string.Equals(message.Sender, Common.Constants.Agents.InputMessageRoles.Assistant, StringComparison.CurrentCultureIgnoreCase) &&
+                        message.Text == TestResponseMessages.FailedCompletionResponse)
+                    {
+                        invalidAgentResponsesFound++;
+                    }
                 }
+
+                Assert.True(invalidAgentResponsesFound == 0, $"{invalidAgentResponsesFound} invalid agent responses found.");
             }
-
-            await _managementAPITestManager.DeleteAgent(TestAgentNames.Dune01);
-            await _managementAPITestManager.DeleteAgent(TestAgentNames.Dune02);
-
-            Assert.True(invalidAgentResponsesFound == 0, $"{invalidAgentResponsesFound} invalid agent responses found.");
+            finally
+            {
+                await _managementAPITestManager.DeleteAgent(TestAgentNames.Dune01);
+                await _managementAPITestManager.DeleteAgent(TestAgentNames.Dune02);
+                await _vectorizationTestService.DeleteIndexingProfile(indexingProfileName, false);
+                await _vectorizationTestService.DeleteTextEmbeddingProfile(textEmbeddingProfileName);
+            }
         }
     }
 }

@@ -52,11 +52,16 @@ namespace FoundationaLLM.Core.Examples
         [Fact]
 		public async Task RunAsync()
 		{
-            await PreExecute();
+            try
+            {
+                await PreExecute();
 
-			await RunExampleAsync();
-
-            await PostExecute();
+                await RunExampleAsync();
+            }
+            finally
+            {
+                await PostExecute();
+            }
 		}
 
         private async Task PreExecute()
