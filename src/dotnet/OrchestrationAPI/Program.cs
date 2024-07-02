@@ -132,6 +132,7 @@ namespace FoundationaLLM.Orchestration.API
             builder.AddConfigurationResourceProvider();
             builder.AddDataSourceResourceProvider();
             builder.AddAttachmentResourceProvider();
+            builder.AddAIModelResourceProvider();
 
             // Register the downstream services and HTTP clients.
             RegisterDownstreamServices(builder);
