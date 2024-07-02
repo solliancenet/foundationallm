@@ -104,24 +104,24 @@ namespace FoundationaLLM.Authorization.Models
                         "Configuration")
                 },
                 {
-                    AuthorizableActionNames.FoundationaLLM_Configuration_ExternalOrchestrationServices_Read,
+                    AuthorizableActionNames.FoundationaLLM_Configuration_APIEndpoints_Read,
                     new AuthorizableAction(
-                        AuthorizableActionNames.FoundationaLLM_Configuration_ExternalOrchestrationServices_Read,
-                        "Read external orchestration services.",
+                        AuthorizableActionNames.FoundationaLLM_Configuration_APIEndpoints_Read,
+                        "Read API endpoints.",
                         "Configuration")
                 },
                 {
-                    AuthorizableActionNames.FoundationaLLM_Configuration_ExternalOrchestrationServices_Write,
+                    AuthorizableActionNames.FoundationaLLM_Configuration_APIEndpoints_Write,
                     new AuthorizableAction(
-                        AuthorizableActionNames.FoundationaLLM_Configuration_ExternalOrchestrationServices_Write,
-                        "Create or update external orchestration services.",
+                        AuthorizableActionNames.FoundationaLLM_Configuration_APIEndpoints_Write,
+                        "Create or update API endpoints.",
                         "Configuration")
                 },
                 {
-                    AuthorizableActionNames.FoundationaLLM_Configuration_ExternalOrchestrationServices_Delete,
+                    AuthorizableActionNames.FoundationaLLM_Configuration_APIEndpoints_Delete,
                     new AuthorizableAction(
-                        AuthorizableActionNames.FoundationaLLM_Configuration_ExternalOrchestrationServices_Delete,
-                        "Delete external orchestration services.",
+                        AuthorizableActionNames.FoundationaLLM_Configuration_APIEndpoints_Delete,
+                        "Delete API endpoints.",
                         "Configuration")
                 },
                 {

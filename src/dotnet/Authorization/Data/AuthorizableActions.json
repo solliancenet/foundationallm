@@ -78,19 +78,19 @@
 				"field_name": "FoundationaLLM_Configuration_KeyVaultSecrets_Delete"
 			},
 			{
-				"name": "FoundationaLLM.Configuration/externalOrchestrationServices/read",
-				"description": "Read external orchestration services.",
-				"field_name": "FoundationaLLM_Configuration_ExternalOrchestrationServices_Read"
+				"name": "FoundationaLLM.Configuration/apiEndpoints/read",
+				"description": "Read API endpoints.",
+				"field_name": "FoundationaLLM_Configuration_APIEndpoints_Read"
 			},
 			{
-				"name": "FoundationaLLM.Configuration/externalOrchestrationServices/write",
-				"description": "Create or update external orchestration services.",
-				"field_name": "FoundationaLLM_Configuration_ExternalOrchestrationServices_Write"
+				"name": "FoundationaLLM.Configuration/apiEndpoints/write",
+				"description": "Create or update API endpoints.",
+				"field_name": "FoundationaLLM_Configuration_APIEndpoints_Write"
 			},
 			{
-				"name": "FoundationaLLM.Configuration/externalOrchestrationServices/delete",
-				"description": "Delete external orchestration services.",
-				"field_name": "FoundationaLLM_Configuration_ExternalOrchestrationServices_Delete"
+				"name": "FoundationaLLM.Configuration/apiEndpoints/delete",
+				"description": "Delete API endpoints.",
+				"field_name": "FoundationaLLM_Configuration_APIEndpoints_Delete"
 			}
 		]
 	},

@@ -21,8 +21,8 @@
         public const string AppConfigurationKeyVaultReference = "appconfiguration-key-vault-reference";
 
         /// <summary>
-        /// External orchestration service.
+        /// Api endpoint resource.
         /// </summary>
-        public const string ExternalOrchestrationService = "external-orchestration-service";
+        public const string APIEndpoint = "api-endpoint";
     }
 }

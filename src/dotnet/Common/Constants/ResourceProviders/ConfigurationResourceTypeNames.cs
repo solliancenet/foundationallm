@@ -11,8 +11,8 @@
         public const string AppConfigurations = "appConfigurations";
 
         /// <summary>
-        /// External orchestration services.
+        /// API Endpoint key values.
         /// </summary>
-        public const string ExternalOrchestrationServices = "externalOrchestrationServices";
+        public const string APIEndpoints = "apiEndpoints";
     }
 }

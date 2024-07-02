@@ -64,13 +64,13 @@ namespace FoundationaLLM.Configuration.Services
         protected override Dictionary<string, ResourceTypeDescriptor> GetResourceTypes() =>
             ConfigurationResourceProviderMetadata.AllowedResourceTypes;
 
-        private ConcurrentDictionary<string, ExternalOrchestrationServiceReference> _externalOrchestrationServiceReferences = [];
+        private ConcurrentDictionary<string, ApiEndpointReference> _apiEndpointReferences = [];
 
         private const string KEY_VAULT_REFERENCE_CONTENT_TYPE = "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8";
 
-        private const string EXTERNAL_ORCHESTRATION_SERVICE_REFERENCES_FILE_NAME = "_external-orchestration-service-references.json";
-        private const string EXTERNAL_ORCHESTRATION_SERVICE_REFERENCES_FILE_PATH =
-            $"/{ResourceProviderNames.FoundationaLLM_Configuration}/{EXTERNAL_ORCHESTRATION_SERVICE_REFERENCES_FILE_NAME}";
+        private const string API_ENDPOINT_REFERENCES_FILE_NAME = "_api-endpoint-references.json";
+        private const string API_ENDPOINT_REFERENCES_FILE_PATH =
+            $"/{ResourceProviderNames.FoundationaLLM_Configuration}/{API_ENDPOINT_REFERENCES_FILE_NAME}";
 
         private readonly IAzureAppConfigurationService _appConfigurationService = appConfigurationService;
         private readonly IAzureKeyVaultService _keyVaultService = keyVaultService;
@@ -84,26 +84,26 @@ namespace FoundationaLLM.Configuration.Services
         {
             _logger.LogInformation("Starting to initialize the {ResourceProvider} resource provider...", _name);
 
-            if (await _storageService.FileExistsAsync(_storageContainerName, EXTERNAL_ORCHESTRATION_SERVICE_REFERENCES_FILE_PATH, default))
+            if (await _storageService.FileExistsAsync(_storageContainerName, API_ENDPOINT_REFERENCES_FILE_PATH, default))
             {
                 var fileContent = await _storageService.ReadFileAsync(
                     _storageContainerName,
-                    EXTERNAL_ORCHESTRATION_SERVICE_REFERENCES_FILE_PATH,
+                    API_ENDPOINT_REFERENCES_FILE_PATH,
                     default);
 
                 var resourceReferenceStore =
-                    JsonSerializer.Deserialize<ResourceReferenceStore<ExternalOrchestrationServiceReference>>(
+                    JsonSerializer.Deserialize<ResourceReferenceStore<ApiEndpointReference>>(
                         Encoding.UTF8.GetString(fileContent.ToArray()));
 
-                _externalOrchestrationServiceReferences = new ConcurrentDictionary<string, ExternalOrchestrationServiceReference>(
+                _apiEndpointReferences = new ConcurrentDictionary<string, ApiEndpointReference>(
                         resourceReferenceStore!.ToDictionary());
             }
             else
             {
                 await _storageService.WriteFileAsync(
                     _storageContainerName,
-                    EXTERNAL_ORCHESTRATION_SERVICE_REFERENCES_FILE_PATH,
-                    JsonSerializer.Serialize(new ResourceReferenceStore<ExternalOrchestrationServiceReference>
+                    API_ENDPOINT_REFERENCES_FILE_PATH,
+                    JsonSerializer.Serialize(new ResourceReferenceStore<ApiEndpointReference>
                     {
                         ResourceReferences = []
                     }),
@@ -121,7 +121,7 @@ namespace FoundationaLLM.Configuration.Services
             resourcePath.ResourceTypeInstances[0].ResourceType switch
             {
                 ConfigurationResourceTypeNames.AppConfigurations => await LoadAppConfigurationKeys(resourcePath.ResourceTypeInstances[0]),
-                ConfigurationResourceTypeNames.ExternalOrchestrationServices => await LoadExternalOrchestrationServices(resourcePath.ResourceTypeInstances[0]),
+                ConfigurationResourceTypeNames.APIEndpoints => await LoadAPIEndpoints(resourcePath.ResourceTypeInstances[0]),
                 _ => throw new ResourceProviderException($"The resource type {resourcePath.ResourceTypeInstances[0].ResourceType} is not supported by the {_name} resource provider.",
                     StatusCodes.Status400BadRequest)
             };
@@ -167,44 +167,44 @@ namespace FoundationaLLM.Configuration.Services
             return result;
         }
 
-        private async Task<List<ResourceProviderGetResult<ExternalOrchestrationService>>> LoadExternalOrchestrationServices(ResourceTypeInstance instance)
+        private async Task<List<ResourceProviderGetResult<APIEndpoint>>> LoadAPIEndpoints(ResourceTypeInstance instance)
         {
             if (instance.ResourceId == null)
             {
-                var externalOrchestrationServices = (await Task.WhenAll(
-                        _externalOrchestrationServiceReferences.Values
-                            .Where(eosr => !eosr.Deleted)
-                            .Select(eosr => LoadExternalOrchestrationService(eosr)))).ToList();
+                var apiEndpoints = (await Task.WhenAll(
+                        _apiEndpointReferences.Values
+                            .Where(apie => !apie.Deleted)
+                            .Select(apie => LoadApiEndpoint(apie)))).ToList();
 
-                return externalOrchestrationServices.Select(service => new ResourceProviderGetResult<ExternalOrchestrationService>() { Resource = service, Actions = [], Roles = [] }).ToList();
+                return apiEndpoints.Select(service => new ResourceProviderGetResult<APIEndpoint>() { Resource = service, Actions = [], Roles = [] }).ToList();
             }
             else
             {
-                if (!_externalOrchestrationServiceReferences.TryGetValue(instance.ResourceId, out var resourceReference)
+                if (!_apiEndpointReferences.TryGetValue(instance.ResourceId, out var resourceReference)
                     || resourceReference.Deleted)
-                    throw new ResourceProviderException($"Could not locate the {instance.ResourceId} external orchestration service resource.",
+                    throw new ResourceProviderException($"Could not locate the {instance.ResourceId} api endpoint resource.",
                         StatusCodes.Status404NotFound);
 
-                var externalOrchestrationService = await LoadExternalOrchestrationService(resourceReference);
+                var apiEndpoint = await LoadApiEndpoint(resourceReference);
 
-                return [new ResourceProviderGetResult<ExternalOrchestrationService>() { Resource = externalOrchestrationService, Actions = [], Roles = [] }];
+                return [new ResourceProviderGetResult<APIEndpoint>() { Resource = apiEndpoint, Actions = [], Roles = [] }];
             }
         }
 
-        private async Task<ExternalOrchestrationService> LoadExternalOrchestrationService(
-            ExternalOrchestrationServiceReference resourceReference)
+        private async Task<APIEndpoint> LoadApiEndpoint(
+            ApiEndpointReference apiEndpointReference)
         {
-            if (await _storageService.FileExistsAsync(_storageContainerName, resourceReference.Filename, default))
+            if (await _storageService.FileExistsAsync(_storageContainerName, apiEndpointReference.Filename, default))
             {
-                var fileContent = await _storageService.ReadFileAsync(_storageContainerName, resourceReference.Filename, default);
-                return JsonSerializer.Deserialize<ExternalOrchestrationService>(
+                var fileContent = await _storageService.ReadFileAsync(_storageContainerName, apiEndpointReference.Filename, default);
+                return JsonSerializer.Deserialize<APIEndpoint>(
                     Encoding.UTF8.GetString(fileContent.ToArray()),
                     _serializerSettings)
-                    ?? throw new ResourceProviderException($"Failed to load the external orchestration service {resourceReference.Name}.",
+                    ?? throw new ResourceProviderException($"Failed to load the api endpoint {apiEndpointReference.Name}.",
                         StatusCodes.Status400BadRequest);
             }
 
-            throw new ResourceProviderException($"Could not locate the {resourceReference.Name} external orchestration service resource.",
+            throw new ResourceProviderException($"Could not locate the {apiEndpointReference.Name} api endpoint resource.",
                 StatusCodes.Status404NotFound);
         }
 
@@ -215,9 +215,24 @@ namespace FoundationaLLM.Configuration.Services
             resourcePath.ResourceTypeInstances[0].ResourceType switch
             {
                 ConfigurationResourceTypeNames.AppConfigurations => await UpdateAppConfigurationKey(resourcePath, serializedResource),
+                ConfigurationResourceTypeNames.APIEndpoints => await UpdateAPIEndpoints(resourcePath, serializedResource, userIdentity),
                 _ => throw new ResourceProviderException($"The resource type {resourcePath.ResourceTypeInstances[0].ResourceType} is not supported by the {_name} resource provider.",
                     StatusCodes.Status400BadRequest)
             };
+
+        /// <inheritdoc/>
+        protected override async Task DeleteResourceAsync(ResourcePath resourcePath, UnifiedUserIdentity userIdentity)
+        {
+            switch (resourcePath.ResourceTypeInstances.Last().ResourceType)
+            {
+                case ConfigurationResourceTypeNames.APIEndpoints:
+                    await DeleteAPIEndpoint(resourcePath.ResourceTypeInstances);
+                    break;
+                default:
+                    throw new ResourceProviderException($"The resource type {resourcePath.ResourceTypeInstances.Last().ResourceType} is not supported by the {_name} resource provider.",
+                    StatusCodes.Status400BadRequest);
+            };
+        }
 
         #endregion
 
@@ -266,11 +281,84 @@ namespace FoundationaLLM.Configuration.Services
             };
         }
 
+        private async Task<ResourceProviderUpsertResult> UpdateAPIEndpoints(ResourcePath resourcePath, string serializedApiEndpoint, UnifiedUserIdentity userIdentity)
+        {
+            var apiEndpoint = JsonSerializer.Deserialize<APIEndpoint>(serializedApiEndpoint)
+               ?? throw new ResourceProviderException("The object definition is invalid.");
+
+            if (_apiEndpointReferences.TryGetValue(apiEndpoint.Name!, out var existingApiEndpointReference)
+                && existingApiEndpointReference!.Deleted)
+                throw new ResourceProviderException($"The api endpoint resource {existingApiEndpointReference.Name} cannot be added or updated.",
+                        StatusCodes.Status400BadRequest);
+
+            if (resourcePath.ResourceTypeInstances[0].ResourceId != apiEndpoint.Name)
+                throw new ResourceProviderException("The resource path does not match the object definition (name mismatch).",
+                    StatusCodes.Status400BadRequest);
+
+            var apiEndpointReference = new ApiEndpointReference
+            {
+                Name = apiEndpoint.Name!,
+                Type = apiEndpoint.Type!,
+                Filename = $"/{_name}/{apiEndpoint.Name}.json",
+                Deleted = false
+            };
+
+            apiEndpoint.ObjectId = resourcePath.GetObjectId(_instanceSettings.Id, _name);
+
+            if (existingApiEndpointReference == null)
+                apiEndpoint.CreatedBy = userIdentity.UPN;
+            else
+                apiEndpoint.UpdatedBy = userIdentity.UPN;
+
+            await _storageService.WriteFileAsync(
+                _storageContainerName,
+                apiEndpointReference.Filename,
+                JsonSerializer.Serialize(apiEndpoint, _serializerSettings),
+                default,
+                default);
+
+            _apiEndpointReferences.AddOrUpdate(apiEndpointReference.Name, apiEndpointReference, (k, v) => v);
+
+            await _storageService.WriteFileAsync(
+                    _storageContainerName,
+                    API_ENDPOINT_REFERENCES_FILE_PATH,
+                    JsonSerializer.Serialize(new ResourceReferenceStore<ApiEndpointReference>() { ResourceReferences = _apiEndpointReferences.Values.ToList() }),
+                    default,
+                    default);
+
+            return new ResourceProviderUpsertResult
+            {
+                ObjectId = (apiEndpoint as APIEndpoint)!.ObjectId
+            };
+        }
+
+        #endregion
+
+        #region Helpers for DeleteResourceAsync
+
+        private async Task DeleteAPIEndpoint(List<ResourceTypeInstance> instances)
+        {
+            if (_apiEndpointReferences.TryGetValue(instances.Last().ResourceId!, out var apiEndpointReference)
+                || apiEndpointReference!.Deleted)
+            {
+                apiEndpointReference.Deleted = true;
+
+                await _storageService.WriteFileAsync(
+                    _storageContainerName,
+                    API_ENDPOINT_REFERENCES_FILE_PATH,
+                    JsonSerializer.Serialize(new ResourceReferenceStore<ApiEndpointReference>() { ResourceReferences = _apiEndpointReferences.Values.ToList() }),
+                    default,
+                    default);
+            }
+            else
+                throw new ResourceProviderException($"Could not locate the {instances.Last().ResourceId} api endpoint resource.",
+                            StatusCodes.Status404NotFound);
+        }
         #endregion
 
         #region Event handling
 
-            /// <inheritdoc/>
+        /// <inheritdoc/>
         protected override async Task HandleEvents(EventSetEventArgs e)
         {
             _logger.LogInformation("{EventsCount} events received in the {EventsNamespace} events namespace.",

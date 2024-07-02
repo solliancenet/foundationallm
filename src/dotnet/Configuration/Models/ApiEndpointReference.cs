@@ -7,9 +7,9 @@ using System.Text.Json.Serialization;
 namespace FoundationaLLM.Configuration.Models
 {
     /// <summary>
-    /// Holds a reference to an external orchestration service.
+    /// Holds a reference to an api endpoint reference.
     /// </summary>
-    public class ExternalOrchestrationServiceReference : ResourceReference
+    public class ApiEndpointReference : ResourceReference
     {
         /// <summary>
         /// The object type of the agent.
@@ -18,7 +18,7 @@ namespace FoundationaLLM.Configuration.Models
         public Type ResourceType =>
             Type switch
             {
-                ConfigurationTypes.ExternalOrchestrationService => typeof(ExternalOrchestrationService),
+                ConfigurationTypes.APIEndpoint => typeof(APIEndpoint),
                 _ => throw new ResourceProviderException($"The resource type {Type} is not supported.")
             };
     }
