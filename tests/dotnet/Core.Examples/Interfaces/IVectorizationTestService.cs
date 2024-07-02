@@ -1,6 +1,7 @@
 ﻿using FoundationaLLM.Common.Models.Configuration.Instance;
 using FoundationaLLM.Common.Models.ResourceProviders.Configuration;
 using FoundationaLLM.Common.Models.ResourceProviders.Vectorization;
+using FoundationaLLM.Common.Models.Vectorization;
 using FoundationaLLM.Core.Examples.Models;
 
 namespace FoundationaLLM.Core.Examples.Interfaces;
@@ -13,6 +14,9 @@ public interface IVectorizationTestService
     public Task CreateTextPartitioningProfile(string name);
     public Task CreateTextEmbeddingProfile(string name);
     public Task CreateIndexingProfile(string name);
+    public Task<string> CreateVectorizationPipeline(string vectorizationPipelineName, string dataSourceName, string indexingProfileName,
+                string textEmbeddingProfileName, string textPartitioningProfileName);
+    public Task<VectorizationPipeline> GetVectorizationPipeline(string objectId);
     public Task<string> CreateVectorizationRequest(VectorizationRequest request);
     Task<VectorizationResult> ProcessVectorizationRequest(VectorizationRequest request);
     public Task<VectorizationRequest> GetVectorizationRequest(VectorizationRequest request);
@@ -22,4 +26,5 @@ public interface IVectorizationTestService
     public Task DeleteDataSource(string name);   
     public Task DeleteTextPartitioningProfile(string name);
     public Task DeleteTextEmbeddingProfile(string name);
+    public Task DeleteVectorizationPipeline(string name);
 }
