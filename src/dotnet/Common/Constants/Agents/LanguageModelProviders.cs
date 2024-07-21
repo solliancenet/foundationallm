@@ -16,8 +16,13 @@
         public const string OPENAI = "openai";
 
         /// <summary>
+        /// AzureML
+        /// </summary>
+        public const string AZUREML = "azureml";
+
+        /// <summary>
         /// All providers.
         /// </summary>
-        public readonly static string[] All = [MICROSOFT, OPENAI];
+        public readonly static string[] All = [MICROSOFT, OPENAI, AZUREML];
     }
 }

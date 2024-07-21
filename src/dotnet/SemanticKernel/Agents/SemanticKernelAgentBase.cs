@@ -1,4 +1,4 @@
-﻿using FoundationaLLM.Common.Constants.Agents;
+using FoundationaLLM.Common.Constants.Agents;
 using FoundationaLLM.Common.Constants.ResourceProviders;
 using FoundationaLLM.Common.Interfaces;
 using FoundationaLLM.Common.Models.Authentication;
@@ -44,6 +44,7 @@ namespace FoundationaLLM.SemanticKernel.Core.Agents
 
             return _llmProvider switch
             {
+                LanguageModelProviders.AZUREML => await BuildResponseWithAzureML(),
                 LanguageModelProviders.MICROSOFT => await BuildResponseWithAzureOpenAI(),
                 LanguageModelProviders.OPENAI => await BuildResponseWithOpenAI(),
                 _ => throw new SemanticKernelException($"The LLM provider '{_llmProvider}' is not supported.")
@@ -56,6 +57,17 @@ namespace FoundationaLLM.SemanticKernel.Core.Agents
         /// <returns>A <see cref="LLMCompletionResponse"/> object containing the completion response.</returns>
         /// <exception cref="NotImplementedException"></exception>
         protected virtual async Task<LLMCompletionResponse> BuildResponseWithAzureOpenAI()
+        {
+            await Task.CompletedTask;
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Builds the completion response using an Azure ML deployed model.
+        /// </summary>
+        /// <returns>A <see cref="LLMCompletionResponse"/> object containing the completion response.</returns>
+        /// <exception cref="NotImplementedException"></exception>
+        protected virtual async Task<LLMCompletionResponse> BuildResponseWithAzureML()
         {
             await Task.CompletedTask;
             throw new NotImplementedException();

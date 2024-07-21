@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -23,6 +23,10 @@
     <ProjectReference Include="..\Configuration\Configuration.csproj" />
     <ProjectReference Include="..\Prompt\Prompt.csproj" />
     <ProjectReference Include="..\Authorization\Authorization.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Connectors\AzureML\Models\" />
   </ItemGroup>
 
 </Project>
