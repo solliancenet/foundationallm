@@ -18,7 +18,7 @@ namespace Vectorization.Tests.Handlers
         {
             ITextEmbeddingService mockTextEmbeddingService = A.Fake<ITextEmbeddingService>();
 
-            A.CallTo(() => mockTextEmbeddingService.GetEmbeddingsAsync(A<IList<TextChunk>>._, string.Empty))
+            A.CallTo(() => mockTextEmbeddingService.GetEmbeddingsAsync("Instance123", A<IList<TextChunk>>._, string.Empty))
                 .Returns(new TextEmbeddingResult
                 {
                     TextChunks = [
@@ -53,6 +53,7 @@ namespace Vectorization.Tests.Handlers
             ILoggerFactory loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
 
             EmbeddingHandler handler = new EmbeddingHandler(
+                "Instance123",
                 "Queue-Message-1",
                 new Dictionary<string, string> { { "text_embedding_profile_name", "" } },
                 stepsConfiguration,

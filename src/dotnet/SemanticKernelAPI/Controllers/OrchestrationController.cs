@@ -11,7 +11,7 @@ namespace FoundationaLLM.SemanticKernel.API.Controllers
     /// <param name="semanticKernelService">The Semantic Kernel service handling requests.</param>
     [ApiController]
     [APIKeyAuthentication]
-    [Route("[controller]")]
+    [Route("instances/{instanceId}/[controller]")]
     public class OrchestrationController(
         ISemanticKernelService semanticKernelService) : ControllerBase
     {

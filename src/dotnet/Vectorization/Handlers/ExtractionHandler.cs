@@ -12,6 +12,7 @@ namespace FoundationaLLM.Vectorization.Handlers
     /// <summary>
     /// Handles the extraction stage of the vectorization pipeline.
     /// </summary>
+    /// <param name="instanceId">The FoundationaLLM instance id.</param>
     /// <param name="messageId">The identifier of underlying message retrieved from the request source.</param>
     /// <param name="parameters">The dictionary of named parameters used to configure the handler.</param>
     /// <param name="stepsConfiguration">The app configuration section containing the configuration for vectorization pipeline steps.</param>
@@ -19,6 +20,7 @@ namespace FoundationaLLM.Vectorization.Handlers
     /// <param name="serviceProvider">The <see cref="IServiceProvider"/> implemented by the dependency injection container.</param>
     /// <param name="loggerFactory">The logger factory used to create loggers for logging.</param>
     public class ExtractionHandler(
+        string instanceId,
         string messageId,
         Dictionary<string, string> parameters,
         IConfigurationSection? stepsConfiguration,

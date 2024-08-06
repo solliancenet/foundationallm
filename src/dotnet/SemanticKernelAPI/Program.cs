@@ -5,10 +5,13 @@ using FoundationaLLM.Common.Constants;
 using FoundationaLLM.Common.Constants.Configuration;
 using FoundationaLLM.Common.Extensions;
 using FoundationaLLM.Common.Interfaces;
+using FoundationaLLM.Common.Middleware;
+using FoundationaLLM.Common.Models.Configuration.API;
 using FoundationaLLM.Common.Models.Configuration.Instance;
 using FoundationaLLM.Common.Models.Context;
 using FoundationaLLM.Common.OpenAPI;
 using FoundationaLLM.Common.Services.Azure;
+using FoundationaLLM.Common.Services.Security;
 using FoundationaLLM.Common.Validation;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -58,6 +61,8 @@ namespace FoundationaLLM.SemanticKernel.API
                 AppConfigurationKeys.FoundationaLLM_APIEndpoints_SemanticKernelAPI_Essentials_AppInsightsConnectionString,
                 ServiceNames.SemanticKernelAPI);
 
+            builder.Services.AddInstanceProperties(builder.Configuration);
+
             // CORS policies
             builder.AddCorsPolicies();
 
@@ -105,13 +110,19 @@ namespace FoundationaLLM.SemanticKernel.API
 
             // Add API Key Authorization
             builder.Services.AddHttpContextAccessor();
+            builder.Services.AddScoped<ICallContext, CallContext>();
+            builder.Services.AddScoped<IUserClaimsProviderService, NoOpUserClaimsProviderService>();
             builder.Services.AddScoped<APIKeyAuthenticationFilter>();
             builder.Services.AddOptions<APIKeyValidationSettings>()
                 .Bind(builder.Configuration.GetSection(AppConfigurationKeySections.FoundationaLLM_APIEndpoints_SemanticKernelAPI_Essentials));
-            builder.Services.AddOptions<InstanceSettings>()
-                .Bind(builder.Configuration.GetSection(AppConfigurationKeySections.FoundationaLLM_Instance));
             builder.Services.AddTransient<IAPIKeyValidationService, APIKeyValidationService>();
             builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
+
+            // Add authorization services.
+            builder.AddGroupMembership();
+
+            // Add services to the container.
+            builder.Services.AddAuthorization();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -143,7 +154,12 @@ namespace FoundationaLLM.SemanticKernel.API
             // Set the CORS policy before other middleware.
             app.UseCors(CorsPolicyNames.AllowAllOrigins);
 
-            app.UseExceptionHandler();
+            // Register the middleware to extract the user identity context and other HTTP request context data required by the downstream services.
+            app.UseMiddleware<CallContextMiddleware>();
+
+            app.UseExceptionHandler(exceptionHandlerApp
+                => exceptionHandlerApp.Run(async context
+                    => await Results.Problem().ExecuteAsync(context)));
 
             // Configure the HTTP request pipeline.
             app.UseSwagger(p => p.SerializeAsV2 = true);

@@ -9,7 +9,7 @@ namespace FoundationaLLM.Vectorization.Worker.Controllers
     /// Provides methods for checking the status of the service.
     /// </summary>
     [ApiController]
-    [Route("[controller]")]
+    [Route("instances/{instanceId}/[controller]")]
     public class StatusController : ControllerBase
     {
         /// <summary>

@@ -1,5 +1,6 @@
 ﻿using FoundationaLLM.Common.Interfaces;
 using FoundationaLLM.Common.Models.Azure;
+using FoundationaLLM.Common.Models.Configuration.Instance;
 using FoundationaLLM.Common.Models.Vectorization;
 using FoundationaLLM.Gateway.Exceptions;
 using FoundationaLLM.Gateway.Interfaces;
@@ -17,14 +18,17 @@ namespace FoundationaLLM.Gateway.Services
     /// </summary>
     /// <param name="armService">The <see cref="IAzureResourceManagerService"/> instance providing Azure Resource Manager services.</param>
     /// <param name="options">The options providing the <see cref="GatewayCoreSettings"/> object.</param>
+    /// <param name="instanceSettings">Contains the FoundationaLLM instance configuration settings.</param>
     /// <param name="loggerFactory">The <see cref="ILoggerFactory"/> used to create loggers for logging.</param>
     public class GatewayCore(
         IAzureResourceManagerService armService,
         IOptions<GatewayCoreSettings> options,
+        IOptions<InstanceSettings> instanceSettings,
         ILoggerFactory loggerFactory) : IGatewayCore
     {
         private readonly IAzureResourceManagerService _armService = armService;
         private readonly GatewayCoreSettings _settings = options.Value;
+        private readonly InstanceSettings _instanceSettings = instanceSettings.Value;
         private readonly ILoggerFactory _loggerFactory = loggerFactory;
         private readonly ILogger<GatewayCore> _logger = loggerFactory.CreateLogger<GatewayCore>();
 
@@ -58,6 +62,7 @@ namespace FoundationaLLM.Gateway.Services
                             {
                                 var embeddingModelContext = new EmbeddingModelDeploymentContext(
                                     deployment,
+                                    _instanceSettings.Id,
                                     _loggerFactory);
 
                                 if (!_embeddingModels.ContainsKey(deployment.ModelName))
@@ -111,7 +116,7 @@ namespace FoundationaLLM.Gateway.Services
         }
 
         /// <inheritdoc/>
-        public async Task<TextEmbeddingResult> StartEmbeddingOperation(TextEmbeddingRequest embeddingRequest)
+        public async Task<TextEmbeddingResult> StartEmbeddingOperation(string instanceId, TextEmbeddingRequest embeddingRequest)
         {
             if (!_initialized)
                 throw new GatewayException("The Gateway service is not initialized.");
@@ -152,7 +157,7 @@ namespace FoundationaLLM.Gateway.Services
         }
 
         /// <inheritdoc/>
-        public async Task<TextEmbeddingResult> GetEmbeddingOperationResult(string operationId)
+        public async Task<TextEmbeddingResult> GetEmbeddingOperationResult(string instanceId, string operationId)
         {
             if (!_initialized)
                 throw new GatewayException("The Gateway service is not initialized.");

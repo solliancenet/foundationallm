@@ -4,8 +4,11 @@ using FoundationaLLM.Common.Authentication;
 using FoundationaLLM.Common.Constants;
 using FoundationaLLM.Common.Constants.Configuration;
 using FoundationaLLM.Common.Interfaces;
+using FoundationaLLM.Common.Middleware;
+using FoundationaLLM.Common.Models.Context;
 using FoundationaLLM.Common.OpenAPI;
 using FoundationaLLM.Common.Services.Azure;
+using FoundationaLLM.Common.Services.Security;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -25,6 +28,7 @@ builder.Configuration.AddAzureAppConfiguration(options =>
     {
         options.SetCredential(DefaultAuthentication.AzureCredential);
     });
+    options.Select(AppConfigurationKeyFilters.FoundationaLLM_Instance);
     options.Select(AppConfigurationKeyFilters.FoundationaLLM_APIEndpoints_GatewayAPI_Essentials);
     options.Select(AppConfigurationKeyFilters.FoundationaLLM_APIEndpoints_GatewayAPI_Configuration);
 });
@@ -34,6 +38,8 @@ if (builder.Environment.IsDevelopment())
 builder.AddOpenTelemetry(
     AppConfigurationKeys.FoundationaLLM_APIEndpoints_GatewayAPI_Essentials_AppInsightsConnectionString,
     ServiceNames.GatewayAPI);
+
+builder.Services.AddInstanceProperties(builder.Configuration);
 
 // CORS policies
 builder.AddCorsPolicies();
@@ -57,9 +63,17 @@ builder.Services.AddControllers();
 
 // Add API Key Authorization
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ICallContext, CallContext>();
+builder.Services.AddScoped<IUserClaimsProviderService, NoOpUserClaimsProviderService>();
 builder.Services.AddScoped<APIKeyAuthenticationFilter>();
 builder.Services.AddOptions<APIKeyValidationSettings>()
     .Bind(builder.Configuration.GetSection(AppConfigurationKeySections.FoundationaLLM_APIEndpoints_GatewayAPI_Essentials));
+
+// Add authorization services.
+builder.AddGroupMembership();
+
+// Add services to the container.
+builder.Services.AddAuthorization();
 
 builder.Services
     .AddApiVersioning(options =>
@@ -96,7 +110,12 @@ var app = builder.Build();
 // Set the CORS policy before other middleware.
 app.UseCors(CorsPolicyNames.AllowAllOrigins);
 
-app.UseExceptionHandler();
+// Register the middleware to extract the user identity context and other HTTP request context data required by the downstream services.
+app.UseMiddleware<CallContextMiddleware>();
+
+app.UseExceptionHandler(exceptionHandlerApp
+    => exceptionHandlerApp.Run(async context
+        => await Results.Problem().ExecuteAsync(context)));
 
 app.UseSwagger();
 app.UseSwaggerUI(

@@ -64,6 +64,7 @@ namespace Vectorization.Tests.Handlers
             ILoggerFactory loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
 
             IndexingHandler handler = new IndexingHandler(
+                "Instance123",
                 "Queue-Message-1",
                 new Dictionary<string, string> { { "indexing_profile_name", "" } },
                 stepsConfiguration,

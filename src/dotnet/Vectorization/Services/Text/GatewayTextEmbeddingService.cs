@@ -14,15 +14,15 @@ namespace FoundationaLLM.Vectorization.Services.Text
         private readonly IGatewayServiceClient _gatewayService = gatewayService;
 
         /// <inheritdoc/>
-        public async Task<TextEmbeddingResult> GetEmbeddingsAsync(IList<TextChunk> textChunks, string modelName) =>
-            await _gatewayService.StartEmbeddingOperation(new TextEmbeddingRequest
+        public async Task<TextEmbeddingResult> GetEmbeddingsAsync(string instanceId, IList<TextChunk> textChunks, string modelName) =>
+            await _gatewayService.StartEmbeddingOperation(instanceId, new TextEmbeddingRequest
             {
                 EmbeddingModelName = modelName,
                 TextChunks = textChunks
             });
 
         /// <inheritdoc/>
-        public async Task<TextEmbeddingResult> GetEmbeddingsAsync(string operationId) =>
-            await _gatewayService.GetEmbeddingOperationResult(operationId);
+        public async Task<TextEmbeddingResult> GetEmbeddingsAsync(string instanceId, string operationId) =>
+            await _gatewayService.GetEmbeddingOperationResult(instanceId, operationId);
     }
 }

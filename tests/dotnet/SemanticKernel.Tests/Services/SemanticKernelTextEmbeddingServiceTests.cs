@@ -1,6 +1,5 @@
 ﻿using FoundationaLLM.Common.Constants.Authentication;
 using FoundationaLLM.Common.Models.Vectorization;
-using FoundationaLLM.Common.Settings;
 using FoundationaLLM.SemanticKernel.Core.Models.Configuration;
 using FoundationaLLM.SemanticKernel.Core.Services;
 using Microsoft.Extensions.Logging;
@@ -30,6 +29,7 @@ namespace SemanticKernel.Tests.Services
         public async void TestGetEmbedding()
         {
             var embeddingResult = await _semanticKernelTextEmbeddingService.GetEmbeddingsAsync(
+                "Instance123",
                 [new TextChunk { Position = 1, Content = "Some Test Text" }]);
             Assert.True(embeddingResult.TextChunks.Count > 0);
             Assert.IsType<int>(embeddingResult.TokenCount);
@@ -38,7 +38,9 @@ namespace SemanticKernel.Tests.Services
         [Fact]
         public async void TestGetEmbeddings()
         {
-            var embeddingResult = await _semanticKernelTextEmbeddingService.GetEmbeddingsAsync([new TextChunk { Position = 1, Content = "Some Test Text" }]);
+            var embeddingResult = await _semanticKernelTextEmbeddingService.GetEmbeddingsAsync(
+                "Instance123",
+                [new TextChunk { Position = 1, Content = "Some Test Text" }]);
             Assert.True(embeddingResult.TextChunks.Count > 0);
             Assert.IsType<int>(embeddingResult.TokenCount);
         }

@@ -54,6 +54,7 @@ namespace Vectorization.Tests.Handlers
             ILoggerFactory loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
 
             PartitionHandler handler = new PartitionHandler(
+                "Instance123",
                 "Queue-Message-1",
                 new Dictionary<string, string> { { "text_partition_profile_name", "" } },
                 stepsConfiguration,

@@ -10,6 +10,7 @@ using FoundationaLLM.Common.Models.ResourceProviders.Vectorization;
 using FoundationaLLM.Common.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using FoundationaLLM.Common.Constants.ResourceProviders;
+using FoundationaLLM.Common.Models.Configuration.Instance;
 using FoundationaLLM.Vectorization.Extensions;
 using FoundationaLLM.Vectorization.ResourceProviders;
 
@@ -21,6 +22,7 @@ namespace FoundationaLLM.Vectorization.Services
     public class RequestManagerService : IRequestManagerService
     {
         private readonly RequestManagerServiceSettings _settings;
+        private readonly InstanceSettings _instanceSettings;
         private readonly Dictionary<string, IRequestSourceService> _requestSourceServices;
         private readonly IRequestSourceService _incomingRequestSourceService;
         private readonly IVectorizationStateService _vectorizationStateService;
@@ -30,12 +32,13 @@ namespace FoundationaLLM.Vectorization.Services
         private readonly ILoggerFactory _loggerFactory;
         private readonly CancellationToken _cancellationToken;
         private readonly TaskPool _taskPool;
-                
+
         /// <summary>
         /// Initializes a new instance of the <see cref="RequestManagerService"/> class with the configuration and services
         /// required to manage vectorization requests originating from a specific request source.
         /// </summary>
         /// <param name="settings">The configuration settings used to initialize the instance.</param>
+        /// <param name="instanceSettings">Contains the FoundationaLLM instance configuration settings.</param>
         /// <param name="requestSourceServices">The dictionary with all the request source services registered in the vectorization platform.</param>
         /// <param name="vectorizationStateService">The service providing vectorization state management.</param>
         /// <param name="stepsConfiguration">The <see cref="IConfigurationSection"/> object providing access to the settings.</param>
@@ -45,6 +48,7 @@ namespace FoundationaLLM.Vectorization.Services
         /// <exception cref="VectorizationException">The exception thrown when the initialization of the instance fails.</exception>
         public RequestManagerService(
             RequestManagerServiceSettings settings,
+            InstanceSettings instanceSettings,
             Dictionary<string, IRequestSourceService> requestSourceServices,
             IVectorizationStateService vectorizationStateService,
             IConfigurationSection? stepsConfiguration,
@@ -53,6 +57,7 @@ namespace FoundationaLLM.Vectorization.Services
             CancellationToken cancellationToken)
         {
             _settings = settings;
+            _instanceSettings = instanceSettings;
             _requestSourceServices = requestSourceServices;
             _vectorizationStateService = vectorizationStateService;
             _stepsConfiguration = stepsConfiguration;
@@ -242,6 +247,7 @@ namespace FoundationaLLM.Vectorization.Services
         private async Task<bool> HandleRequest(VectorizationRequest request, VectorizationState state, string messageId, CancellationToken cancellationToken)
         {
             var stepHandler = VectorizationStepHandlerFactory.Create(
+                _instanceSettings.Id,
                 _settings.RequestSourceName,
                 messageId,
                 request[_settings.RequestSourceName]!.Parameters,

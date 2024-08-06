@@ -1,15 +1,12 @@
 ﻿using FoundationaLLM.Common.Constants;
 using FoundationaLLM.Common.Exceptions;
+using FoundationaLLM.Common.Models.Configuration.Instance;
 using FoundationaLLM.Vectorization.Interfaces;
-using FoundationaLLM.Vectorization.Models;
 using FoundationaLLM.Vectorization.Models.Configuration;
 using FoundationaLLM.Vectorization.Services;
 using FoundationaLLM.Vectorization.Services.RequestSources;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using System.Diagnostics;
 
 namespace FoundationaLLM.Vectorization
 {
@@ -19,6 +16,7 @@ namespace FoundationaLLM.Vectorization
     public class VectorizationWorkerBuilder
     {
         private VectorizationWorkerSettings? _settings;
+        private InstanceSettings? _instanceSettings;
         private IVectorizationStateService? _stateService;
         private CancellationToken _cancellationToken = default;
         private ILoggerFactory? _loggerFactory;
@@ -44,7 +42,7 @@ namespace FoundationaLLM.Vectorization
             if (_stateService == null)
                 throw new VectorizationException("Cannot build a vectorization worker without a valid vectorization state service.");
 
-            if (_settings == null)
+            if (_settings == null || _instanceSettings == null)
                 throw new VectorizationException("Cannot build a vectorization worker without valid settings.");
 
             if (_loggerFactory == null)
@@ -58,6 +56,7 @@ namespace FoundationaLLM.Vectorization
             var requestManagerServices = _settings!.RequestManagers!
                 .Select(rm => new RequestManagerService(
                     rm,
+                    _instanceSettings,
                     requestSourceServices,
                     _stateService,
                     _stepsConfiguration,
@@ -88,7 +87,7 @@ namespace FoundationaLLM.Vectorization
         /// </summary>
         /// <param name="settings">The <see cref="VectorizationWorkerSettings"/>object providing the settings.</param>
         /// <returns>The updated instance of the builder.</returns>
-        public VectorizationWorkerBuilder WithSettings(VectorizationWorkerSettings settings) 
+        public VectorizationWorkerBuilder WithSettings(VectorizationWorkerSettings settings, InstanceSettings instanceSettings) 
         {
             ValidateSettings(settings);
 

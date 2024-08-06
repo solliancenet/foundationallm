@@ -15,9 +15,11 @@ namespace FoundationaLLM.Gateway.Models
     /// Provides context associated with an embedding model deployment.
     /// </summary>
     /// <param name="deployment">The <see cref="AzureOpenAIAccountDeployment"/> object with the details of the model deployment.</param>
+    /// <param name="instanceId">The FoundationaLLM instance identifier.</param>
     /// <param name="loggerFactory">The <see cref="ILoggerFactory"/> used to create loggers for logging.</param>
     public class EmbeddingModelDeploymentContext(
         AzureOpenAIAccountDeployment deployment,
+        string instanceId,
         ILoggerFactory loggerFactory)
     {
         private const int OPENAI_MAX_INPUT_SIZE_TOKENS = 8191;
@@ -39,11 +41,11 @@ namespace FoundationaLLM.Gateway.Models
         private readonly JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions { WriteIndented = true };
 
         /// <summary>
-        /// The cummulated number of tokens for the current token rate window.
+        /// The cumulated number of tokens for the current token rate window.
         /// </summary>
         private int _tokenRateWindowTokenCount = 0;
         /// <summary>
-        /// The cummulated number of requests for the current request rate window.
+        /// The cumulated number of requests for the current request rate window.
         /// </summary>
         private int _requestRateWindowRequestCount = 0;
         /// <summary>
@@ -108,7 +110,7 @@ namespace FoundationaLLM.Gateway.Models
                     JsonSerializer.Serialize<GatewayTextEmbeddingRequestMetrics>(gatewayMetrics, _jsonSerializerOptions));
 
                 var embeddingResult =
-                    await _textEmbeddingService.GetEmbeddingsAsync(_inputTextChunks);
+                    await _textEmbeddingService.GetEmbeddingsAsync(instanceId, _inputTextChunks);
 
                 if (embeddingResult.Failed)
                     _logger.LogWarning("The text embedding request with id {RequestId} failed with the following error: {ErrorMessage}",

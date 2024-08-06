@@ -34,7 +34,8 @@ namespace FoundationaLLM.Gateway.Client
             _logger = logger;
         }
 
-        public async Task<TextEmbeddingResult> GetEmbeddingOperationResult(string operationId)
+        /// <inheritdoc/>
+        public async Task<TextEmbeddingResult> GetEmbeddingOperationResult(string instanceId, string operationId)
         {
             var fallback = new TextEmbeddingResult
             {
@@ -43,7 +44,7 @@ namespace FoundationaLLM.Gateway.Client
             };
 
             var client = await _httpClientFactoryService.CreateClient(HttpClientNames.GatewayAPI, _callContext.CurrentUserIdentity);
-            var response = await client.GetAsync($"embeddings?operationId={operationId}");
+            var response = await client.GetAsync($"instances/{instanceId}/embeddings?operationId={operationId}");
 
             if (response.IsSuccessStatusCode)
             {
@@ -56,7 +57,8 @@ namespace FoundationaLLM.Gateway.Client
             return fallback;
         }
 
-        public async Task<TextEmbeddingResult> StartEmbeddingOperation(TextEmbeddingRequest embeddingRequest)
+        /// <inheritdoc/>
+        public async Task<TextEmbeddingResult> StartEmbeddingOperation(string instanceId, TextEmbeddingRequest embeddingRequest)
         {
             var fallback = new TextEmbeddingResult
             {
@@ -66,7 +68,7 @@ namespace FoundationaLLM.Gateway.Client
 
             var client = await _httpClientFactoryService.CreateClient(HttpClientNames.GatewayAPI, _callContext.CurrentUserIdentity);
             var serializedRequest = JsonSerializer.Serialize(embeddingRequest);
-            var response = await client.PostAsync("embeddings",
+            var response = await client.PostAsync($"instances/{instanceId}/embeddings",
                 new StringContent(
                     serializedRequest,
                     Encoding.UTF8,

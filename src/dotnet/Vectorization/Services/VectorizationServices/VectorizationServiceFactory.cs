@@ -1,11 +1,13 @@
 ﻿using FoundationaLLM.Common.Constants.Configuration;
 using FoundationaLLM.Common.Interfaces;
+using FoundationaLLM.Common.Models.Configuration.Instance;
 using FoundationaLLM.Common.Models.ResourceProviders.Vectorization;
 using FoundationaLLM.Vectorization.Interfaces;
 using FoundationaLLM.Vectorization.Services.VectorizationStates;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace FoundationaLLM.Vectorization.Services.VectorizationServices
 {
@@ -23,6 +25,7 @@ namespace FoundationaLLM.Vectorization.Services.VectorizationServices
         MemoryVectorizationStateService inMemoryStateService,        
         IEnumerable<IResourceProviderService> resourceProviderServices,
         [FromKeyedServices(DependencyInjectionKeys.FoundationaLLM_Vectorization_Steps)] IConfigurationSection stepsConfiguration,
+        IOptions<InstanceSettings> instanceSettings,
         IServiceProvider serviceProvider,
         ILoggerFactory loggerFactory)
     {       
@@ -39,6 +42,7 @@ namespace FoundationaLLM.Vectorization.Services.VectorizationServices
                     inMemoryStateService,
                     resourceProviderServices,
                     stepsConfiguration,
+                    instanceSettings.Value,
                     serviceProvider,
                     loggerFactory);                    
             }

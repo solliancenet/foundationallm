@@ -11,7 +11,7 @@ namespace FoundationaLLM.Authorization.API.Controllers
     /// </summary>
     [Authorize(Policy = "RequiredClaims")]
     [ApiController]
-    [Route("status")]
+    [Route($"instances/{{instanceId}}/status")]
     [Consumes("application/json")]
     [Produces("application/json")]
     public class StatusController : ControllerBase

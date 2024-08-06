@@ -14,6 +14,7 @@ namespace FoundationaLLM.Vectorization.Handlers
         /// <summary>
         /// Creates a vectorization step handler capable of handling a specified vectorization pipeline step.
         /// </summary>
+        /// <param name="instanceId">The FoundationaLLM instance id.</param>
         /// <param name="step">The identifier of the vectorization pipeline step for which the handler is created.</param>
         /// <param name="messageId">The identifier of underlying message retrieved from the request source.</param>
         /// <param name="parameters">The parameters used to initialize the vectorization step handler.</param>
@@ -23,6 +24,7 @@ namespace FoundationaLLM.Vectorization.Handlers
         /// <param name="loggerFactory">The logger factory used to create loggers.</param>
         /// <returns>A class implementing <see cref="IVectorizationStepHandler"/>.</returns>
         public static IVectorizationStepHandler Create(
+            string instanceId,
             string step,
             string messageId,
             Dictionary<string, string> parameters,
@@ -32,10 +34,10 @@ namespace FoundationaLLM.Vectorization.Handlers
             ILoggerFactory loggerFactory) =>
             step switch
             {
-                VectorizationSteps.Extract => new ExtractionHandler(messageId, parameters, stepsConfiguration, stateService, serviceProvider, loggerFactory),
-                VectorizationSteps.Partition => new PartitionHandler(messageId, parameters, stepsConfiguration, stateService, serviceProvider, loggerFactory),
-                VectorizationSteps.Embed => new EmbeddingHandler(messageId, parameters, stepsConfiguration, stateService, serviceProvider, loggerFactory),
-                VectorizationSteps.Index => new IndexingHandler(messageId, parameters, stepsConfiguration, stateService, serviceProvider, loggerFactory),
+                VectorizationSteps.Extract => new ExtractionHandler(instanceId, messageId, parameters, stepsConfiguration, stateService, serviceProvider, loggerFactory),
+                VectorizationSteps.Partition => new PartitionHandler(instanceId, messageId, parameters, stepsConfiguration, stateService, serviceProvider, loggerFactory),
+                VectorizationSteps.Embed => new EmbeddingHandler(instanceId, messageId, parameters, stepsConfiguration, stateService, serviceProvider, loggerFactory),
+                VectorizationSteps.Index => new IndexingHandler(instanceId, messageId, parameters, stepsConfiguration, stateService, serviceProvider, loggerFactory),
                 _ => throw new VectorizationException($"There is no handler available for the vectorization pipeline step [{step}]."),
             };
     }

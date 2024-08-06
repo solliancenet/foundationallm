@@ -55,6 +55,7 @@ namespace Vectorization.Tests.Handlers
             ILoggerFactory loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
 
             ExtractionHandler handler = new ExtractionHandler(
+                "Instance123",
                 "Queue-Message-1",
                 new Dictionary<string, string> { { "configuration_section", "vectorization_parameters" } },
                 stepsConfiguration,

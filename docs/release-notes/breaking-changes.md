@@ -7,6 +7,10 @@
 
 ### Starting with 0.8.0
 
+Authorization API changes:
+
+1. All Authorization API endpoints have been moved to the `/instances/{instanceId}` path. For example, the `/status` endpoint is now `/instances/{instanceId}/status`.
+
 Core API changes:
 
 1. All Core API endpoints have been moved to the `/instances/{instanceId}` path. For example, the `/status` endpoint is now `/instances/{instanceId}/status`.
@@ -21,12 +25,31 @@ Core API changes:
 9. With the introduction of `Async-Completions`, long running operations can now report on completion status based on `Pending`, `InProgress`, `Completed` and `Failed` states.
 
 Gatekeeper API changes:
+
 1. All Gatekeeper API endpoints have been moved to the `/instances/{instanceId}` path. For example, the `/status` endpoint is now `/instances/{instanceId}/status`.
 2. The `/orchestration/*` endpoints have been moved to `/instances/{instanceId}/completions/*`.
 
+Gateway API changes:
+
+1. All Gateway API endpoints have been moved to the `/instances/{instanceId}` path. For example, the `/status` endpoint is now `/instances/{instanceId}/status`.
+
 Orchestration API changes:
+
 1. All Gatekeeper API endpoints have been moved to the `/instances/{instanceId}` path. For example, the `/status` endpoint is now `/instances/{instanceId}/status`.
 2. The `/orchestration/*` endpoints have been moved to `/instances/{instanceId}/completions/*`.
+
+SemanticKernel API changes:
+
+1. All SemanticKernel API endpoints have been moved to the `/instances/{instanceId}` path. For example, the `/status` endpoint is now `/instances/{instanceId}/status`.
+
+Vectorization API changes:
+
+1. All Vectorization API endpoints have been moved to the `/instances/{instanceId}` path. For example, the `/status` endpoint is now `/instances/{instanceId}/status`.
+
+VectorizationWorker API changes:
+
+1. All VectorizationWorker API endpoints have been moved to the `/instances/{instanceId}` path. For example, the `/status` endpoint is now `/instances/{instanceId}/status`.
+
 =======
 #### New APIs
 
@@ -35,8 +58,8 @@ Orchestration API changes:
 - `FoundationaLLM:APIs:GatewayAdapterAPI:APIUrl`
 - `FoundationaLLM:APIs:GatewayAdapterAPI:APIKey` (mapped to the `foundationallm-apis-gatewayadapterapi-apikey` secret)
 - `FoundationaLLM:APIs:GatewayAdapterAPI:APIAppInsightsConnectionString` (mapped to the `foundationallm-app-insights-connection-string` secret)
-- 
-**Stater API** - requires the following configuration settings:
+
+**State API** - requires the following configuration settings:
 
 - `FoundationaLLM:APIs:StateAPI:APIUrl`
 - `FoundationaLLM:APIs:StateAPI:APIKey` (mapped to the `foundationallm-apis-stateapi-apikey` secret)

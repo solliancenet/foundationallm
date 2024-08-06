@@ -17,7 +17,7 @@ namespace FoundationaLLM.Vectorization.API.Controllers
     /// </remarks>
     [ApiController]
     [APIKeyAuthentication]
-    [Route("[controller]")]
+    [Route("instances/{instanceId}/[controller]")]
     public class VectorizationRequestController(
         ICallContext callContext,
         IVectorizationRequestProcessor vectorizationRequestProcessor) : ControllerBase

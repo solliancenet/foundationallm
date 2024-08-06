@@ -44,7 +44,7 @@ namespace FoundationaLLM.SemanticKernel.Core.Services
         }
 
         /// <inheritdoc/>
-        public async Task<TextEmbeddingResult> GetEmbeddingsAsync(IList<TextChunk> textChunks, string modelName = "text-embedding-ada-002")
+        public async Task<TextEmbeddingResult> GetEmbeddingsAsync(string instanceId, IList<TextChunk> textChunks, string modelName = "text-embedding-ada-002")
         {
             try
             {
@@ -73,7 +73,7 @@ namespace FoundationaLLM.SemanticKernel.Core.Services
         }
 
         /// <inheritdoc/>
-        public Task<TextEmbeddingResult> GetEmbeddingsAsync(string operationId) => throw new NotImplementedException();
+        public Task<TextEmbeddingResult> GetEmbeddingsAsync(string instanceId, string operationId) => throw new NotImplementedException();
 
         private Kernel CreateKernel()
         {

@@ -12,6 +12,7 @@ namespace Vectorization.Tests.Handlers
         public void TestCreateStepHandler()
         {
             string messageId = "Some-Message-Name";
+            string instanceId = "Instance123";
             Dictionary<string, string> parameters = new Dictionary<string, string>();
             IConfigurationSection stepsConfiguration = A.Fake<IConfigurationSection>();
             IVectorizationStateService stateService = A.Fake<IVectorizationStateService>();
@@ -21,6 +22,7 @@ namespace Vectorization.Tests.Handlers
             string step = "extract";
             Assert.IsType<ExtractionHandler>(
                 VectorizationStepHandlerFactory.Create(
+                    instanceId,
                     step,
                     messageId,
                     parameters,
@@ -34,6 +36,7 @@ namespace Vectorization.Tests.Handlers
             step = "partition";
             Assert.IsType<PartitionHandler>(
                 VectorizationStepHandlerFactory.Create(
+                    instanceId,
                     step,
                     messageId,
                     parameters,
@@ -47,6 +50,7 @@ namespace Vectorization.Tests.Handlers
             step = "embed";
             Assert.IsType<EmbeddingHandler>(
                 VectorizationStepHandlerFactory.Create(
+                    instanceId,
                     step,
                     messageId,
                     parameters,
@@ -60,6 +64,7 @@ namespace Vectorization.Tests.Handlers
             step = "index";
             Assert.IsType<IndexingHandler>(
                 VectorizationStepHandlerFactory.Create(
+                    instanceId,
                     step,
                     messageId,
                     parameters,

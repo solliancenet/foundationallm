@@ -15,6 +15,7 @@ namespace FoundationaLLM.Vectorization.Handlers
     /// <summary>
     /// Handles the embedding stage of the vectorization pipeline.
     /// </summary>
+    /// <param name="instanceId">The FoundationaLLM instance id.</param>
     /// <param name="messageId">The identifier of underlying message retrieved from the request source.</param>
     /// <param name="parameters">The dictionary of named parameters used to configure the handler.</param>
     /// <param name="stepsConfiguration">The app configuration section containing the configuration for vectorization pipeline steps.</param>
@@ -22,6 +23,7 @@ namespace FoundationaLLM.Vectorization.Handlers
     /// <param name="serviceProvider">The <see cref="IServiceProvider"/> implemented by the dependency injection container.</param>
     /// <param name="loggerFactory">The logger factory used to create loggers for logging.</param>
     public class EmbeddingHandler(
+        string instanceId,
         string messageId,
         Dictionary<string, string> parameters,
         IConfigurationSection? stepsConfiguration,
@@ -55,7 +57,7 @@ namespace FoundationaLLM.Vectorization.Handlers
             {
                 // We have an ongoing operation, so we need to attempt to retrieve the emebdding results
 
-                embeddingResult = await textEmbeddingService.GetEmbeddingsAsync(runningOperation.OperationId);
+                embeddingResult = await textEmbeddingService.GetEmbeddingsAsync(instanceId, runningOperation.OperationId);
 
                 runningOperation.LastResponseTime = DateTime.UtcNow;
                 runningOperation.PollingCount++;
@@ -90,6 +92,7 @@ namespace FoundationaLLM.Vectorization.Handlers
                 }
 
                 embeddingResult = await textEmbeddingService.GetEmbeddingsAsync(
+                    instanceId,
                     textPartitioningArtifacts.Select(tpa => new TextChunk
                     {
                         Position = tpa.Position,

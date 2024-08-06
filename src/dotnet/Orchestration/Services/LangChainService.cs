@@ -6,10 +6,8 @@ using FoundationaLLM.Common.Models.Orchestration;
 using FoundationaLLM.Common.Settings;
 using FoundationaLLM.Orchestration.Core.Interfaces;
 using FoundationaLLM.Orchestration.Core.Models.ConfigurationOptions;
-using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -48,7 +46,7 @@ namespace FoundationaLLM.Orchestration.Core.Services
         {
             var client = await _httpClientFactoryService.CreateClient(HttpClientNames.LangChainAPI, _callContext.CurrentUserIdentity);
             var responseMessage = await client.SendAsync(
-                new HttpRequestMessage(HttpMethod.Get, "status"));
+                new HttpRequestMessage(HttpMethod.Get, $"instances/{instanceId}/status"));
 
             var responseContent = await responseMessage.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<ServiceStatusInfo>(responseContent)!;

@@ -3,6 +3,7 @@ using FoundationaLLM.Common.Constants.ResourceProviders;
 using FoundationaLLM.Common.Exceptions;
 using FoundationaLLM.Common.Interfaces;
 using FoundationaLLM.Common.Models.Authentication;
+using FoundationaLLM.Common.Models.Configuration.Instance;
 using FoundationaLLM.Common.Models.ResourceProviders.Vectorization;
 using FoundationaLLM.Vectorization.Extensions;
 using FoundationaLLM.Vectorization.Handlers;
@@ -27,6 +28,7 @@ namespace FoundationaLLM.Vectorization.Services.VectorizationServices
         MemoryVectorizationStateService vectorizationStateService,
         IEnumerable<IResourceProviderService> resourceProviderServices,
         [FromKeyedServices(DependencyInjectionKeys.FoundationaLLM_Vectorization_Steps)] IConfigurationSection stepsConfiguration,
+        InstanceSettings instanceSettings,
         IServiceProvider serviceProvider,
         ILoggerFactory loggerFactory) : IVectorizationService
     {        
@@ -57,6 +59,7 @@ namespace FoundationaLLM.Vectorization.Services.VectorizationServices
                 _logger.LogInformation("Starting step [{Step}] for request {RequestId}.", step.Id, vectorizationRequest.Name);
 
                 var stepHandler = VectorizationStepHandlerFactory.Create(
+                    instanceSettings.Id,
                     step.Id,
                 "N/A",
                     step.Parameters,
