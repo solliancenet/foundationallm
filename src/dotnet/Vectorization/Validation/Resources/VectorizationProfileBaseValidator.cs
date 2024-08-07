@@ -27,14 +27,6 @@ namespace FoundationaLLM.Vectorization.Validation.Resources
                     .Must((profile, kv) => !string.IsNullOrEmpty(kv.Key))
                     .WithMessage("Settings keys must not be empty.");
             });
-
-            // Validate ConfigurationReferences if needed.
-            When(x => x.ConfigurationReferences != null && x.ConfigurationReferences.Count != 0, () =>
-            {
-                RuleForEach(x => x.ConfigurationReferences)
-                    .Must((profile, kv) => !string.IsNullOrEmpty(kv.Key))
-                    .WithMessage("ConfigurationReferences keys must not be empty.");
-            });
         }
     }
 }

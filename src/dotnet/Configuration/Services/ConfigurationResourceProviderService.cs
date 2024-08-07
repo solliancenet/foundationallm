@@ -9,6 +9,7 @@ using FoundationaLLM.Common.Models.Configuration.AppConfiguration;
 using FoundationaLLM.Common.Models.Configuration.Instance;
 using FoundationaLLM.Common.Models.Events;
 using FoundationaLLM.Common.Models.ResourceProviders;
+using FoundationaLLM.Common.Models.ResourceProviders.AIModel;
 using FoundationaLLM.Common.Models.ResourceProviders.Configuration;
 using FoundationaLLM.Common.Services;
 using FoundationaLLM.Common.Services.ResourceProviders;
@@ -207,6 +208,24 @@ namespace FoundationaLLM.Configuration.Services
 
             throw new ResourceProviderException($"Could not locate the {apiEndpointReference.Name} api endpoint resource.",
                 StatusCodes.Status404NotFound);
+        }
+
+        /// <inheritdoc/>
+        protected override T GetResourceInternal<T>(ResourcePath resourcePath) where T : class
+        {
+            if (resourcePath.ResourceTypeInstances.Count != 1)
+                throw new ResourceProviderException($"Invalid resource path");
+
+            if (typeof(T) != typeof(APIEndpointConfiguration))
+                throw new ResourceProviderException($"The type of requested resource ({typeof(T)}) does not match the resource type specified in the path ({resourcePath.ResourceTypeInstances[0].ResourceType}).");
+
+            _apiEndpointReferences.TryGetValue(resourcePath.ResourceTypeInstances[0].ResourceId!, out var apiEndpointReference);
+            if (apiEndpointReference == null || apiEndpointReference.Deleted)
+                throw new ResourceProviderException($"The resource {resourcePath.ResourceTypeInstances[0].ResourceId!} of type {resourcePath.ResourceTypeInstances[0].ResourceType} was not found.");
+
+            var apiEndpoint = LoadAPIEndpoint(apiEndpointReference).Result;
+            return apiEndpoint as T
+                ?? throw new ResourceProviderException($"The resource {resourcePath.ResourceTypeInstances[0].ResourceId!} of type {resourcePath.ResourceTypeInstances[0].ResourceType} was not found.");
         }
 
         #endregion

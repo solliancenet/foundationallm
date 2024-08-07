@@ -39,6 +39,7 @@
     <Compile Include="foundationallm\models\agents\agent_gatekeeper_settings.py" />
     <Compile Include="foundationallm\models\agents\agent_orchestration_settings.py" />
     <Compile Include="foundationallm\models\agents\agent_vectorization_settings.py" />
+    <Compile Include="foundationallm\models\agents\knowledge_management_index_configuration.py" />
     <Compile Include="foundationallm\models\classification\audio_prediction_request.py" />
     <Compile Include="foundationallm\models\classification\audio_prediction_response.py" />
     <Compile Include="foundationallm\models\classification\__init__.py" />
@@ -94,7 +95,6 @@
     <Compile Include="foundationallm\models\resource_providers\prompts\__init__.py" />
     <Compile Include="foundationallm\models\resource_providers\resource_base.py" />
     <Compile Include="foundationallm\models\resource_providers\resource_name.py" />
-    <Compile Include="foundationallm\models\resource_providers\vectorization\embedding_profiles\azure_openai\azure_openai_configuration_references.py" />
     <Compile Include="foundationallm\models\resource_providers\vectorization\embedding_profiles\azure_openai\azure_openai_embedding_profile.py" />
     <Compile Include="foundationallm\models\resource_providers\vectorization\embedding_profiles\embedding_profile_base.py" />
     <Compile Include="foundationallm\models\resource_providers\vectorization\indexing_profiles\azure_ai_search\azure_ai_search_configuration_references.py" />

@@ -1,4 +1,4 @@
-﻿using FoundationaLLM.Common.Authentication;
+using FoundationaLLM.Common.Authentication;
 using FoundationaLLM.Common.Constants;
 using FoundationaLLM.Common.Constants.Configuration;
 using FoundationaLLM.Common.Interfaces;
@@ -50,22 +50,12 @@ namespace FoundationaLLM.Core.Examples.Setup
             RegisterAzureAIService(services, configRoot);
             RegisterLogging(services);
 			RegisterServiceManagers(services);
-            RegisterSearchIndex(services, configRoot);
         }
 
         private static void RegisterInstance(IServiceCollection services, IConfiguration configuration)
         {
             services.AddOptions<InstanceSettings>()
                 .Bind(configuration.GetSection(AppConfigurationKeySections.FoundationaLLM_Instance));
-        }
-
-		private static void RegisterSearchIndex(IServiceCollection services, IConfiguration configuration)
-		{
-            services.AddOptions<AzureAISearchIndexingServiceSettings>()
-                .Bind(configuration.GetSection(AppConfigurationKeySections.FoundationaLLM_APIEndpoints_AzureAISearchVectorStore_Configuration));
-
-            services.AddKeyedSingleton<IIndexingService, AzureAISearchIndexingService>(
-                DependencyInjectionKeys.FoundationaLLM_APIEndpoints_AzureAISearchVectorStore_Configuration);
         }
 
         private static void RegisterClientLibraries(IServiceCollection services, IConfiguration configuration)

@@ -4,6 +4,8 @@ using FoundationaLLM.Common.Constants.ResourceProviders;
 using FoundationaLLM.Common.Exceptions;
 using FoundationaLLM.Common.Interfaces;
 using FoundationaLLM.Common.Models.ResourceProviders;
+using FoundationaLLM.Common.Models.ResourceProviders.AIModel;
+using FoundationaLLM.Common.Models.ResourceProviders.Configuration;
 using FoundationaLLM.Common.Models.ResourceProviders.Vectorization;
 using FoundationaLLM.Common.Settings;
 using FoundationaLLM.SemanticKernel.Core.Models.Configuration;
@@ -75,25 +77,21 @@ namespace FoundationaLLM.Vectorization.Services.Text
 
         private ITextEmbeddingService CreateSemanticKernelTextEmbeddingService(TextEmbeddingProfile textEmbeddingProfile)
         {
-            if (!textEmbeddingProfile.ConfigurationReferences!.TryGetValue("EndpointUrl", out string? endpointConfigurationItem)
-                || string.IsNullOrWhiteSpace(endpointConfigurationItem))
-                throw new VectorizationException("The text embedding profile does not contain a valid EndpointUrl configuration reference.");
-
-            if (!textEmbeddingProfile.ConfigurationReferences!.TryGetValue("DeploymentName", out string? deploymentNameConfigurationItem)
-                || string.IsNullOrWhiteSpace(deploymentNameConfigurationItem))
-                throw new VectorizationException("The text embedding profile does not contain a valid DeploymentName configuration reference.");
-
+            // Get the EmbeddingAIModel resource
+            var embeddingAIModel = GetEmbeddingAIModelByObjectId(textEmbeddingProfile.EmbeddingAIModelObjectId);            
+            var embeddingAIModelAPIEndpointConfiguration = GetAPIEndpointConfigurationByObjectId(embeddingAIModel.EndpointObjectId);
+                        
             var deploymentName = 
                 (textEmbeddingProfile.Settings!.TryGetValue("deployment_name", out string? deploymentNameOverride)
                 || !string.IsNullOrWhiteSpace(deploymentNameOverride))
                 ? deploymentNameOverride
-                : _configuration[deploymentNameConfigurationItem];
+                : embeddingAIModel.DeploymentName;
 
             return new SemanticKernelTextEmbeddingService(
                 Options.Create<SemanticKernelTextEmbeddingServiceSettings>(new SemanticKernelTextEmbeddingServiceSettings
                 {
                     AuthenticationType = AuthenticationTypes.AzureIdentity,
-                    Endpoint = _configuration[endpointConfigurationItem]!,
+                    Endpoint = embeddingAIModelAPIEndpointConfiguration.Url,
                     DeploymentName = deploymentName!
                 }),
                 _loggerFactory);
@@ -107,6 +105,26 @@ namespace FoundationaLLM.Vectorization.Services.Text
                 ?? throw new VectorizationException($"Could not retrieve the Gateway text embedding service instance.");
 
             return textEmbeddingService!;
+        }
+
+        private EmbeddingAIModel GetEmbeddingAIModelByObjectId(string objectId)
+        {
+            _resourceProviderServices.TryGetValue(ResourceProviderNames.FoundationaLLM_AIModel, out var aiModelResourceProviderService);
+            if (aiModelResourceProviderService == null)
+                throw new VectorizationException($"The resource provider {ResourceProviderNames.FoundationaLLM_AIModel} was not loaded.");
+
+            var aiModelBase = aiModelResourceProviderService.GetResource<AIModelBase>(objectId);
+            var embeddingModel = aiModelBase as EmbeddingAIModel;
+            return embeddingModel!;
+        }
+
+        private APIEndpointConfiguration GetAPIEndpointConfigurationByObjectId(string objectId)
+        {
+            _resourceProviderServices.TryGetValue(ResourceProviderNames.FoundationaLLM_Configuration, out var configurationResourceProviderService);
+            if (configurationResourceProviderService == null)
+                throw new VectorizationException($"The resource provider {ResourceProviderNames.FoundationaLLM_Configuration} was not loaded.");
+
+            return configurationResourceProviderService.GetResource<APIEndpointConfiguration>(objectId);
         }
     }
 }

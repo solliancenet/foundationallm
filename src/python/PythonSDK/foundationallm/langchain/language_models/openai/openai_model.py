@@ -93,17 +93,17 @@ class OpenAIModel(LanguageModelBase):
         if embedding_model.provider == LanguageModelProvider.MICROSOFT:
             return AzureOpenAIEmbeddings(
                 azure_ad_token = embedding_model.api_key,
-                openai_api_version = self.config.get_value(embedding_model.api_version),
-                deployment = self.config.get_value(embedding_model.deployment),
-                azure_endpoint = self.config.get_value(embedding_model.api_endpoint),
+                openai_api_version = embedding_model.api_version,
+                deployment = embedding_model.deployment,
+                azure_endpoint = embedding_model.api_endpoint,
                 chunk_size = embedding_model.chunk_size
             )
         else:
             return OpenAIEmbeddings(
-                api_key = self.config.get_value(embedding_model.api_key),
-                api_version = self.config.get_value(embedding_model.api_version),
-                base_url = self.config.get_value(embedding_model.api_endpoint),
-                chunk_size = embedding_model.chunk_size or 1000,
-                deployment = self.config.get_value(embedding_model.deployment),
-                model = self.config.get_value(embedding_model.model)
+                api_key = embedding_model.api_key,
+                api_version = embedding_model.api_version,
+                base_url = embedding_model.api_endpoint,
+                chunk_size = embedding_model.chunk_size or 500,
+                deployment = embedding_model.deployment,
+                model = embedding_model.model
             )

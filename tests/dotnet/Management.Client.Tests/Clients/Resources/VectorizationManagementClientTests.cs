@@ -247,7 +247,8 @@ namespace Management.Client.Tests.Clients.Resources
                     {
                         Name = "test-profile",
                         TextEmbedding = TextEmbeddingType.SemanticKernelTextEmbedding,
-                        ObjectId = "test-object-id"
+                        ObjectId = "test-object-id",
+                        EmbeddingAIModelObjectId = "test-ai-model-object-id"
                     },
                     Actions = [],
                     Roles = []
@@ -258,7 +259,8 @@ namespace Management.Client.Tests.Clients.Resources
                     {
                         Name = "test-profile-2",
                         TextEmbedding = TextEmbeddingType.GatewayTextEmbedding,
-                        ObjectId = "test-object-id-2"
+                        ObjectId = "test-object-id-2",
+                        EmbeddingAIModelObjectId = "test-ai-model-object-id-2"
                     },
                     Actions = [],
                     Roles = []
@@ -294,7 +296,8 @@ namespace Management.Client.Tests.Clients.Resources
                 {
                     Name = profileName,
                     TextEmbedding = TextEmbeddingType.SemanticKernelTextEmbedding,
-                    ObjectId = "test-object-id"
+                    ObjectId = "test-object-id",
+                    EmbeddingAIModelObjectId = "test-ai-model-object-id"
                 },
                 Actions = [],
                 Roles = []
@@ -347,7 +350,8 @@ namespace Management.Client.Tests.Clients.Resources
                     Resource = new IndexingProfile
                     {
                         Name = "test-profile",
-                        Indexer = IndexerType.AzureAISearchIndexer
+                        Indexer = IndexerType.AzureAISearchIndexer,
+                        IndexingAPIEndpointConfigurationObjectId = "test-api-endpoint-object-id"
                     },
                     Actions = [],
                     Roles = []
@@ -357,7 +361,8 @@ namespace Management.Client.Tests.Clients.Resources
                     Resource = new IndexingProfile
                     {
                         Name = "test-profile-2",
-                        Indexer = IndexerType.AzureCosmosDBNoSQLIndexer
+                        Indexer = IndexerType.AzureCosmosDBNoSQLIndexer,
+                        IndexingAPIEndpointConfigurationObjectId = "test-api-endpoint-object-id-2"
                     },
                     Actions = [],
                     Roles = []
@@ -367,7 +372,8 @@ namespace Management.Client.Tests.Clients.Resources
                     Resource = new IndexingProfile
                     {
                         Name = "test-profile-3",
-                        Indexer = IndexerType.PostgresIndexer
+                        Indexer = IndexerType.PostgresIndexer,
+                        IndexingAPIEndpointConfigurationObjectId = "test-api-endpoint-object-id-3"
                     },
                     Actions = [],
                     Roles = []
@@ -402,7 +408,8 @@ namespace Management.Client.Tests.Clients.Resources
                 Resource = new IndexingProfile
                 {
                     Name = profileName,
-                    Indexer = IndexerType.AzureCosmosDBNoSQLIndexer
+                    Indexer = IndexerType.AzureCosmosDBNoSQLIndexer,
+                    IndexingAPIEndpointConfigurationObjectId = "test-api-endpoint-object-id"
                 },
                 Actions = [],
                 Roles = []
@@ -688,7 +695,8 @@ namespace Management.Client.Tests.Clients.Resources
                 new IndexingProfile
                 {
                     Name = "test-profile",
-                    Indexer = IndexerType.AzureAISearchIndexer
+                    Indexer = IndexerType.AzureAISearchIndexer,
+                    IndexingAPIEndpointConfigurationObjectId = "test-api-endpoint-object-id"
                 }
             };
 
@@ -834,7 +842,8 @@ namespace Management.Client.Tests.Clients.Resources
             var profile = new TextEmbeddingProfile
             {
                 Name = "test-profile",
-                TextEmbedding = TextEmbeddingType.SemanticKernelTextEmbedding
+                TextEmbedding = TextEmbeddingType.SemanticKernelTextEmbedding,
+                EmbeddingAIModelObjectId = "test-ai-model-object-id"
             };
             var expectedUpsertResult = new ResourceProviderUpsertResult
             {
@@ -868,7 +877,8 @@ namespace Management.Client.Tests.Clients.Resources
             var profile = new IndexingProfile
             {
                 Name = "test-profile",
-                Indexer = IndexerType.AzureAISearchIndexer
+                Indexer = IndexerType.AzureAISearchIndexer,
+                IndexingAPIEndpointConfigurationObjectId = "test-api-endpoint-object-id"
             };
             var expectedUpsertResult = new ResourceProviderUpsertResult
             {

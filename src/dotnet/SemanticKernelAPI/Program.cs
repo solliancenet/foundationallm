@@ -66,7 +66,7 @@ namespace FoundationaLLM.SemanticKernel.API
 
             builder.AddSemanticKernelService();
 
-            #region Resource providers (to be removed)
+            #region Resource providers
 
             builder.Services.AddSingleton<IAuthorizationService, NullAuthorizationService>();
 
@@ -83,6 +83,7 @@ namespace FoundationaLLM.SemanticKernel.API
 
             // Resource providers
             builder.AddConfigurationResourceProvider();
+            builder.AddAIModelResourceProvider();
 
             #endregion
 

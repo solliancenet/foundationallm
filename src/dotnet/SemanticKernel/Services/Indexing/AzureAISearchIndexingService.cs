@@ -29,13 +29,13 @@ namespace FoundationaLLM.SemanticKernel.Core.Services.Indexing
         /// <summary>
         /// Creates a new <see cref="AzureAISearchIndexingService"/> instance.
         /// </summary>
-        /// <param name="options">The <see cref="IOptions{TOptions}"/> providing configuration settings.</param>
+        /// <param name="settings">The <see cref="AzureAISearchIndexingServiceSettings"/> providing configuration settings.</param>
         /// <param name="logger">The <see cref="ILogger"/> used for logging.</param>
         public AzureAISearchIndexingService(
-            IOptions<AzureAISearchIndexingServiceSettings> options,
+            AzureAISearchIndexingServiceSettings settings,
             ILogger<AzureAISearchIndexingService> logger)
         {
-            _settings = options.Value;
+            _settings = settings;
             _logger = logger;
             _memoryStore = CreateMemoryStore();
         }

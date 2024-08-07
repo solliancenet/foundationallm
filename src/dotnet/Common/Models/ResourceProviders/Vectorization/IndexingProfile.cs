@@ -13,5 +13,11 @@ namespace FoundationaLLM.Common.Models.ResourceProviders.Vectorization
         [JsonPropertyName("indexer")]
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public required IndexerType Indexer { get; set; }
+
+        /// <summary>
+        /// The object id of the service used for indexing.
+        /// </summary>
+        [JsonPropertyName("indexing_api_endpoint_configuration_object_id")]
+        public required string IndexingAPIEndpointConfigurationObjectId { get; set; }
     }
 }

@@ -184,8 +184,18 @@ namespace FoundationaLLM.Orchestration.Core.Orchestration
                         var indexingProfile = await vectorizationResourceProvider.GetResource<VectorizationProfileBase>(
                             indexingProfileName,
                             currentUserIdentity);
+                        var indexingProfileCasted = indexingProfile as IndexingProfile;
+                        if (indexingProfileCasted == null)
+                            throw new OrchestrationException($"The indexing profile {indexingProfileName} is not a valid indexing profile.");
 
                         explodedObjects[indexingProfileName] = indexingProfile;
+                                               
+                        // Provide the indexing profile API endpoint configuration.
+                        var indexingProfileAPIEndpointConfiguration = await configurationResourceProvider.GetResource<APIEndpointConfiguration>(
+                            indexingProfileCasted.IndexingAPIEndpointConfigurationObjectId,
+                            currentUserIdentity);
+
+                        explodedObjects[indexingProfileCasted.IndexingAPIEndpointConfigurationObjectId] = indexingProfileAPIEndpointConfiguration;
                     }
 
                     if (!string.IsNullOrWhiteSpace(kmAgent.Vectorization.TextEmbeddingProfileObjectId))
@@ -194,7 +204,32 @@ namespace FoundationaLLM.Orchestration.Core.Orchestration
                             kmAgent.Vectorization.TextEmbeddingProfileObjectId,
                             currentUserIdentity);
 
-                        explodedObjects[kmAgent.Vectorization.TextEmbeddingProfileObjectId!] = textEmbeddingProfile;
+                        var textEmbeddingProfileCasted = textEmbeddingProfile as TextEmbeddingProfile;
+                        if (textEmbeddingProfileCasted == null)
+                            throw new OrchestrationException($"The text embedding profile {kmAgent.Vectorization.TextEmbeddingProfileObjectId} is not a valid text embedding profile.");
+
+                        explodedObjects[kmAgent.Vectorization.TextEmbeddingProfileObjectId!] = textEmbeddingProfileCasted;
+
+                        if(textEmbeddingProfileCasted.TextEmbedding != TextEmbeddingType.GatewayTextEmbedding)
+                        {
+                            // Provide the Embedding AI Model and associated API endpoint configuration.
+                            var embeddingAIModelBase = await aiModelResourceProvider.GetResource<AIModelBase>(
+                                textEmbeddingProfileCasted.EmbeddingAIModelObjectId!,
+                                currentUserIdentity);
+
+                            var embeddingAIModel = embeddingAIModelBase as EmbeddingAIModel;
+                            if (embeddingAIModel == null)
+                                throw new OrchestrationException($"The AI model {textEmbeddingProfileCasted.EmbeddingAIModelObjectId} is not a valid Embedding AI model.");
+
+                            explodedObjects[textEmbeddingProfileCasted.EmbeddingAIModelObjectId!] = embeddingAIModel;
+
+                            // Provide the embedding AI model API endpoint configuration.
+                            var embeddingAIModelAPIEndpointConfiguration = await configurationResourceProvider.GetResource<APIEndpointConfiguration>(
+                                embeddingAIModel.EndpointObjectId!,
+                                currentUserIdentity);
+                            explodedObjects[embeddingAIModel.EndpointObjectId!] = embeddingAIModelAPIEndpointConfiguration;
+                        }
+                       
                     }
                 }
             }

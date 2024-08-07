@@ -935,16 +935,6 @@
 		]
 	},
 	{
-		"namespace": "APIEndpoints:AzureAISearchVectorStore:Configuration",
-		"dependency_injection_key": {
-			"description": "Dependency injection key used to inject the implementation of IIndexingService based on Azure AI Search."
-		},
-		"configuration_section": {
-			"description": "Configuration section used to identify the settings for the Azure AI Search vector store service."
-		},
-		"configuration_keys": []
-	},
-	{
 		"namespace": "APIEndpoints:AzureCosmosDBNoSQLVectorStore:Configuration",
 		"dependency_injection_key": {
 			"description": "Dependency injection key used to inject the implementation of IIndexingService based on Azure Cosmos DB NoSQL."

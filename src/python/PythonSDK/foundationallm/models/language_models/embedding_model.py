@@ -6,8 +6,8 @@ class EmbeddingModel(BaseModel):
     """Embedding model metadata model."""
     type: str = LanguageModelType.OPENAI
     provider: Optional[str] = LanguageModelProvider.MICROSOFT
-    deployment: Optional[str] = "FoundationaLLM:AzureOpenAI:API:Embeddings:DeploymentName"    
-    chunk_size: Optional[int] = 1000
-    api_endpoint: Optional[str] = "FoundationaLLM:AzureOpenAI:API:Endpoint"
-    api_key: Optional[str] = "FoundationaLLM:AzureOpenAI:API:Key"
-    api_version: Optional[str] = "FoundationaLLM:AzureOpenAI:API:Version"
+    deployment: Optional[str] = None
+    chunk_size: Optional[int] = 500
+    api_endpoint: Optional[str] = None
+    api_key: Optional[str] = None
+    api_version: Optional[str] = None

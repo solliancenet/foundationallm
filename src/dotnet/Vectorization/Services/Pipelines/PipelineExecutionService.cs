@@ -73,7 +73,13 @@ namespace FoundationaLLM.Vectorization.Services.Pipelines
             while (!cancellationToken.IsCancellationRequested)
             {
                 try
-                {                    
+                {
+                    if(!vectorizationResourceProvider.IsInitialized)
+                    {
+                        _logger.LogInformation("Vectorization resource provider has not finished initializing.");
+                        await Task.Delay(TimeSpan.FromSeconds(5));
+                        continue;
+                    }
                     var activePipelines = await vectorizationResourceProvider.GetActivePipelines();
 
                     foreach (var activePipeline in activePipelines)

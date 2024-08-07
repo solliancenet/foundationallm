@@ -8,10 +8,13 @@ from foundationallm.langchain.retrievers import RetrieverFactory, CitationRetrie
 from foundationallm.models.orchestration import (
     CompletionResponse
 )
+from foundationallm.models.resource_providers.configuration import APIEndpointConfiguration
+from foundationallm.models.resource_providers.ai_models import EmbeddingAIModel
 from foundationallm.models.agents import (
     AgentConversationHistorySettings,
     KnowledgeManagementAgent,
-    KnowledgeManagementCompletionRequest
+    KnowledgeManagementCompletionRequest,
+    KnowledgeManagementIndexConfiguration
 )
 from foundationallm.models.authentication import AuthenticationTypes
 from foundationallm.models.language_models import LanguageModelProvider
@@ -116,20 +119,43 @@ class LangChainKnowledgeManagementAgent(LangChainAgentBase):
             text_embedding_profile = AzureOpenAIEmbeddingProfile.from_object(
                 request.objects[agent.vectorization.text_embedding_profile_object_id]
             )
-
-            indexing_profiles = []
+            
+            # text_embedding_profile has embedding_ai_model_object_id
+            text_embedding_model = EmbeddingAIModel.from_object(
+                request.objects[text_embedding_profile.embedding_ai_model_object_id]
+            )
+            
+            # text_embedding_model has endpoint_object_id
+            embedding_endpoint_configuration = APIEndpointConfiguration.from_object(
+                request.objects[text_embedding_model.endpoint_object_id]
+            )
+            
+            # array of objects containing the indexing profile and associated endpoint configuration
+            index_configurations = []
 
             if (agent.vectorization.indexing_profile_object_ids is not None) and (text_embedding_profile is not None):
                 for profile_id in agent.vectorization.indexing_profile_object_ids:
-                    indexing_profiles.append(
-                        AzureAISearchIndexingProfile.from_object(
+
+                    indexing_profile = AzureAISearchIndexingProfile.from_object(
                             request.objects[profile_id]
                         )
+
+                    # indexing profile has indexing_api_endpoint_configuration_object_id
+                    indexing_api_endpoint_configuration = APIEndpointConfiguration.from_object(
+                        request.objects[indexing_profile.indexing_api_endpoint_configuration_object_id]
                     )
+      
+                    index_configurations.append(
+                        KnowledgeManagementIndexConfiguration(
+                            indexing_profile = indexing_profile,
+                            api_endpoint_configuration = indexing_api_endpoint_configuration
+                        )
+                    )                
 
                 retriever_factory = RetrieverFactory(
-                                indexing_profiles,
-                                text_embedding_profile,
+                                index_configurations,
+                                text_embedding_model,
+                                embedding_endpoint_configuration,
                                 self.config)
                 retriever = retriever_factory.get_retriever()
         return retriever

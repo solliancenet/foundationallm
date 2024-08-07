@@ -19,6 +19,8 @@ Core API changes:
 7. `Status` controllers `\status` action in the .NET API projects return value has renamed the `Instance` property to `InstanceName`.
 8. The `CompletionController.cs` file under `dotnet/CoreApi/controllers` has introduced the `Async-Completions` endpoint to handle asynchronous completions.
 9. With the introduction of `Async-Completions`, long running operations can now report on completion status based on `Pending`, `InProgress`, `Completed` and `Failed` states.
+10. Vectorization Embedding Profile introduces a required field `EmbeddingAIModelObjectId` property (serializes to `embedding_ai_model_object_id`).
+11. Vectorization Indexing Profile introduces a required field `IndexingAPIEndpointConfigurationObjectId` property (serializes to `indexing_api_endpoint_configuration_object_id`).
 
 Gatekeeper API changes:
 1. All Gatekeeper API endpoints have been moved to the `/instances/{instanceId}` path. For example, the `/status` endpoint is now `/instances/{instanceId}/status`.
@@ -36,7 +38,7 @@ Orchestration API changes:
 - `FoundationaLLM:APIs:GatewayAdapterAPI:APIKey` (mapped to the `foundationallm-apis-gatewayadapterapi-apikey` secret)
 - `FoundationaLLM:APIs:GatewayAdapterAPI:APIAppInsightsConnectionString` (mapped to the `foundationallm-app-insights-connection-string` secret)
 - 
-**Stater API** - requires the following configuration settings:
+**State API** - requires the following configuration settings:
 
 - `FoundationaLLM:APIs:StateAPI:APIUrl`
 - `FoundationaLLM:APIs:StateAPI:APIKey` (mapped to the `foundationallm-apis-stateapi-apikey` secret)

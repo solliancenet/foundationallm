@@ -13,5 +13,12 @@ namespace FoundationaLLM.Common.Models.ResourceProviders.Vectorization
         [JsonPropertyName("text_embedding")]
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public required TextEmbeddingType TextEmbedding { get; set; }
+
+        /// <summary>
+        /// The object id of the AI model used for embedding.
+        /// Not required for Gateway embedding.
+        /// </summary>
+        [JsonPropertyName("embedding_ai_model_object_id")]
+        public string? EmbeddingAIModelObjectId { get; set; }
     }
 }
