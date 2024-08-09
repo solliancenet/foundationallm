@@ -71,6 +71,8 @@ namespace FoundationaLLM.SemanticKernel.API
 
             // Add authorization services.
             builder.AddGroupMembership();
+            #region Resource providers
+
             builder.Services.AddSingleton<IAuthorizationService, NullAuthorizationService>();
 
             // Resource validation
@@ -86,6 +88,7 @@ namespace FoundationaLLM.SemanticKernel.API
 
             // Resource providers
             builder.AddConfigurationResourceProvider();
+            builder.AddAIModelResourceProvider();
 
             builder.AddHttpClientFactoryService();
             builder.Services.AddScoped<ICallContext, CallContext>();

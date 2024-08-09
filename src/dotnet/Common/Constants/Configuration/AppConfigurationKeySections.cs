@@ -217,12 +217,6 @@ namespace FoundationaLLM.Common.Constants.Configuration
             "FoundationaLLM:APIEndpoints:AzureOpenAI:Essentials";
         
         /// <summary>
-        /// Configuration section used to identify the settings for the Azure AI Search vector store service.
-        /// </summary>
-        public const string FoundationaLLM_APIEndpoints_AzureAISearchVectorStore_Configuration =
-            "FoundationaLLM:APIEndpoints:AzureAISearchVectorStore:Configuration";
-        
-        /// <summary>
         /// Configuration section used to identify the settings for the Azure Cosmos DB NoSQL vector store service.
         /// </summary>
         public const string FoundationaLLM_APIEndpoints_AzureCosmosDBNoSQLVectorStore_Configuration =

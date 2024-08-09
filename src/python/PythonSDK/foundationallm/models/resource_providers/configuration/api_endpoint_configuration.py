@@ -1,10 +1,12 @@
 from pydantic import Field
-from typing import List, Optional
+from typing import Any, List, Self, Optional
 from foundationallm.models.resource_providers import ResourceBase
 from foundationallm.models.resource_providers.configuration import (
     ConfigurationTypes,
     UrlException
 )
+from foundationallm.models.utils import ObjectUtils
+from foundationallm.langchain.exceptions import LangChainException
 
 class APIEndpointConfiguration(ResourceBase):
     """
@@ -21,3 +23,18 @@ class APIEndpointConfiguration(ResourceBase):
     provider: Optional[str] = Field(default=None, description="The provider of the API endpoint.")
     api_version: Optional[str] = Field(default=None, description="The version to use when calling the API represented by the endpoint.")
     operation_type: Optional[str] = Field(default=None, description="The type of operation the API endpoint is performing.")
+
+    @staticmethod
+    def from_object(obj: Any) -> Self:
+
+        endpoint_configuration: APIEndpointConfiguration = None
+
+        try:
+            endpoint_configuration = APIEndpointConfiguration(**ObjectUtils.translate_keys(obj))
+        except Exception as e:
+            raise LangChainException(f"The API Endpoint Configuration object provided is invalid. {str(e)}", 400)
+        
+        if endpoint_configuration is None:
+            raise LangChainException("The API Endpoint Configuration object provided is invalid.", 400)
+
+        return endpoint_configuration

@@ -4,8 +4,11 @@ from langchain_core.retrievers import BaseRetriever
 from foundationallm.config import Configuration
 from foundationallm.langchain.language_models.openai import OpenAIModel
 from foundationallm.models.language_models import EmbeddingModel, LanguageModelType, LanguageModelProvider
+from foundationallm.models.resource_providers.configuration import APIEndpointConfiguration
+from foundationallm.models.resource_providers.ai_models import EmbeddingAIModel
 from .azure_ai_search_service_retriever import AzureAISearchServiceRetriever
 from foundationallm.models.resource_providers.vectorization import AzureAISearchIndexingProfile
+from foundationallm.models.agents import KnowledgeManagementIndexConfiguration
 
 class RetrieverFactory:
     """
@@ -13,13 +16,15 @@ class RetrieverFactory:
     """
     def __init__(
         self,
-        indexing_profiles: List[AzureAISearchIndexingProfile],
-        text_embedding_profile:str,
+        index_configurations: List[KnowledgeManagementIndexConfiguration],
+        embedding_ai_model: EmbeddingAIModel,
+        embedding_api_endpoint_configuration: APIEndpointConfiguration,
         config: Configuration):
 
         self.config = config
-        self.indexing_profiles = indexing_profiles
-        self.text_embedding_profile = text_embedding_profile
+        self.index_configurations = index_configurations
+        self.embedding_ai_model = embedding_ai_model
+        self.embedding_api_endpoint_configuration = embedding_api_endpoint_configuration
 
     def get_retriever(self) -> BaseRetriever:
         """
@@ -47,10 +52,10 @@ class RetrieverFactory:
             type = LanguageModelType.OPENAI,
             provider = LanguageModelProvider.MICROSOFT,
             # the OpenAI model uses config to retrieve the app config values - pass in the keys
-            deployment = self.text_embedding_profile.configuration_references.deployment_name,
-            api_endpoint = self.text_embedding_profile.configuration_references.endpoint,
+            deployment = self.embedding_ai_model.deployment_name,
+            api_endpoint = self.embedding_api_endpoint_configuration.url,
             api_key = credential.get_token("https://cognitiveservices.azure.com/.default").token,
-            api_version = self.text_embedding_profile.configuration_references.api_version
+            api_version = self.embedding_api_endpoint_configuration.api_version
         )
         oai_model = OpenAIModel(config = self.config)
         embedding_model = oai_model.get_embedding_model(e_model)
@@ -63,7 +68,7 @@ class RetrieverFactory:
 
         retriever = AzureAISearchServiceRetriever(
             config=self.config,
-            indexing_profiles=self.indexing_profiles,
+            index_configurations=self.index_configurations,
             embedding_model = embedding_model
         )
 

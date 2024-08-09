@@ -17,22 +17,16 @@ from azure.identity import DefaultAzureCredential
 from foundationallm.models.orchestration import Citation
 from foundationallm.models.vectors import VectorDocument
 from .citation_retrieval_base import CitationRetrievalBase
-from foundationallm.models.resource_providers.vectorization import AzureAISearchIndexingProfile
+from foundationallm.models.agents import KnowledgeManagementIndexConfiguration
 
 class AzureAISearchServiceRetriever(BaseRetriever, CitationRetrievalBase):
     """
     LangChain retriever for Azure AI Search.
     Properties:
-        endpoint: str -> Azure AI Search endpoint
-        index_name: str -> Azure AI Search index name
-        top_n : int -> number of results to return from vector search
-        embedding_field_name: str -> name of the field containing the embedding vector
-        text_field_name: str -> name of the field containing the raw text
-        id_field_name: str -> name of the field containing the document unique identifier in the index
-        metadata_field_name -> str -> name of the field containing the JSON metadata as a string
-        filters: str -> Azure AI Search filter expression
-        credential: AzureKeyCredential -> Azure AI Search credential
-        embedding_model: OpenAIEmbeddings -> OpenAIEmbeddings model
+        config: Any -> Application configuration
+        index_configurations: List[KnowledgeManagementIndexConfiguration]
+            -> List of indexing profiles and associated API endpoint configurations
+        embedding_model: OpenAIEmbeddings -> OpenAI Embeddings model
 
     Searches embedding and text fields in the index for the top_n most relevant documents.
 
@@ -48,7 +42,7 @@ class AzureAISearchServiceRetriever(BaseRetriever, CitationRetrievalBase):
         }
     """
     config : Any
-    indexing_profiles: List[AzureAISearchIndexingProfile]
+    index_configurations: List[KnowledgeManagementIndexConfiguration]
     embedding_model: OpenAIEmbeddings
     search_results: Optional[VectorDocument] = [] # Tuple of document id and document
 
@@ -69,44 +63,45 @@ class AzureAISearchServiceRetriever(BaseRetriever, CitationRetrievalBase):
         self.search_results.clear()
 
         #search each indexing profile
-        for profile in self.indexing_profiles:
+        for index_config in self.index_configurations:
 
-            credential_type = self.config.get_value(profile.configuration_references.authentication_type)
+            credential_type = index_config.api_endpoint_configuration.authentication_type
 
             credential = None
             if credential_type == "AzureIdentity":
                 credential = DefaultAzureCredential()
 
-            endpoint = self.config.get_value(profile.configuration_references.endpoint)
+            endpoint = index_config.api_endpoint_configuration.url
 
-            search_client = SearchClient(endpoint, profile.settings.index_name, credential)
+            search_client = SearchClient(endpoint, index_config.indexing_profile.settings.index_name, credential)
             vector_query = VectorizedQuery(vector=self.__get_embeddings(query),
                                             k_nearest_neighbors=3,
-                                            fields=profile.settings.embedding_field_name)
+                                            fields=index_config.indexing_profile.settings.embedding_field_name)
 
             results = search_client.search(
                 search_text=query,
-                filter=profile.settings.filters,
+                filter=index_config.indexing_profile.settings.filters,
                 vector_queries=[vector_query],
                 #query_type="semantic",
                 #semantic_configuration_name = "fllm",
-                top=profile.settings.top_n,
+                top=index_config.indexing_profile.settings.top_n,
                 #select=[self.id_field_name, self.text_field_name, self.metadata_field_name]
             )
 
             #load search results into VectorDocument objects for score processing
             for result in results:
-                metadata = {}
-
-                if profile.settings.metadata_field_name in result:
+                metadata = {}              
+                
+                if index_config.indexing_profile.settings.metadata_field_name in result:
+                    
                     try:
-                        metadata = json.loads(result[profile.settings.metadata_field_name]) if profile.settings.metadata_field_name in result else {}
+                        metadata = json.loads(result[index_config.indexing_profile.settings.metadata_field_name]) if index_config.indexing_profile.settings.metadata_field_name in result else {}
                     except Exception as e:
                         metadata = {}
 
                 document = VectorDocument(
-                        id=result[profile.settings.id_field_name],
-                        page_content=result[profile.settings.text_field_name],
+                        id=result[index_config.indexing_profile.settings.id_field_name],
+                        page_content=result[index_config.indexing_profile.settings.text_field_name],
                         metadata=metadata,
                         score=result["@search.score"]
                 )
@@ -117,7 +112,7 @@ class AzureAISearchServiceRetriever(BaseRetriever, CitationRetrievalBase):
         self.search_results.sort(key=lambda x: x.score, reverse=True)
 
         #take top n of search_results
-        self.search_results = self.search_results[:int(profile.settings.top_n)]
+        self.search_results = self.search_results[:int(index_config.indexing_profile.settings.top_n)]
 
         return self.search_results
 
@@ -139,6 +134,7 @@ class AzureAISearchServiceRetriever(BaseRetriever, CitationRetrievalBase):
         """
         citations = []
         added_ids = set()  # Avoid duplicates
+        
         for result in self.search_results:  # Unpack the tuple
             result_id = result.id
             metadata = result.metadata

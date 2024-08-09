@@ -27,13 +27,11 @@ namespace FoundationaLLM.SemanticKernel.Tests.Services
                 DefaultAuthentication.AzureCredential
             );
             _indexingService = new AzureAISearchIndexingService(
-                Options.Create(
-                    new AzureAISearchIndexingServiceSettings
-                    {
-                        Endpoint = endpoint,
-                        AuthenticationType = AuthenticationTypes.AzureIdentity
-                    }
-                ),
+                new AzureAISearchIndexingServiceSettings
+                {
+                    Endpoint = endpoint,
+                    AuthenticationType = AuthenticationTypes.AzureIdentity
+                },
                 LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger<AzureAISearchIndexingService>()
             );
         }

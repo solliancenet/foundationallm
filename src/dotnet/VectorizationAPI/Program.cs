@@ -52,7 +52,7 @@ builder.Configuration.AddAzureAppConfiguration(options =>
     options.Select(AppConfigurationKeyFilters.FoundationaLLM_APIEndpoints_VectorizationAPI_Essentials);
     options.Select(AppConfigurationKeyFilters.FoundationaLLM_Events_Profiles_VectorizationAPI);
     options.Select(AppConfigurationKeys.FoundationaLLM_Vectorization_Worker);
-
+    options.Select(AppConfigurationKeyFilters.FoundationaLLM_ResourceProviders_AIModel_Storage);
     options.Select(AppConfigurationKeyFilters.FoundationaLLM_ResourceProviders_Configuration_Storage);
     options.Select(AppConfigurationKeyFilters.FoundationaLLM_ResourceProviders_DataSource_Storage); //resource provider settings
     options.Select(AppConfigurationKeyFilters.FoundationaLLM_ResourceProviders_Vectorization_Storage);
@@ -86,9 +86,6 @@ builder.Services.AddAzureEventGridEvents(
 
 builder.Services.AddOptions<VectorizationWorkerSettings>()
     .Bind(builder.Configuration.GetSection(AppConfigurationKeys.FoundationaLLM_Vectorization_Worker));
-
-builder.Services.AddOptions<AzureAISearchIndexingServiceSettings>()
-    .Bind(builder.Configuration.GetSection(AppConfigurationKeySections.FoundationaLLM_APIEndpoints_AzureAISearchVectorStore_Configuration));
 
 builder.Services.AddOptions<AzureCosmosDBNoSQLIndexingServiceSettings>()
     .Bind(builder.Configuration.GetSection(AppConfigurationKeySections.FoundationaLLM_APIEndpoints_AzureCosmosDBNoSQLVectorStore_Configuration));
@@ -137,6 +134,7 @@ builder.Services.AddSingleton<IResourceValidatorFactory, ResourceValidatorFactor
 builder.AddConfigurationResourceProvider();
 builder.AddDataSourceResourceProvider();
 builder.AddVectorizationResourceProvider();
+builder.AddAIModelResourceProvider();
 
 builder.AddPipelineExecution();
 
@@ -159,8 +157,6 @@ builder.Services.AddScoped<ICallContext, CallContext>();
 builder.AddHttpClientFactoryService();
 
 // Indexing
-builder.Services.AddKeyedSingleton<IIndexingService, AzureAISearchIndexingService>(
-    DependencyInjectionKeys.FoundationaLLM_APIEndpoints_AzureAISearchVectorStore_Configuration);
 builder.Services.AddKeyedSingleton<IIndexingService, AzureCosmosDBNoSQLIndexingService>(
     DependencyInjectionKeys.FoundationaLLM_APIEndpoints_AzureCosmosDBNoSQLVectorStore_Configuration);
 builder.Services.AddKeyedSingleton<IIndexingService, PostgresIndexingService>(

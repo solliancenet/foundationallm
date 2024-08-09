@@ -18,6 +18,16 @@ namespace FoundationaLLM.Core.Examples.Catalogs
                 Url = "FoundationaLLM:AzureOpenAI:API:Endpoint", // must be filled in during the test environment setup
                 TimeoutSeconds = 1800,
                 RetryStrategyName = TestRetryStrategyNames.ExponentialBackoff
+            },
+            new APIEndpointConfiguration
+            {
+                Name = TestAPIEndpointConfigurationNames.DefaultAzureAISearch,
+                Description = "The default Azure AI Search endpoint.",
+                Category = APIEndpointCategory.LLM,
+                AuthenticationType = AuthenticationTypes.APIKey,
+                Url = "FoundationaLLM:AzureAISearch:API:Endpoint", // must be filled in during the test environment setup
+                TimeoutSeconds = 1800,
+                RetryStrategyName = TestRetryStrategyNames.ExponentialBackoff
             }
         ];
 

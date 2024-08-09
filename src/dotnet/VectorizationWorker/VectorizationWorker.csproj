@@ -28,6 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AIModel\AIModel.csproj" />
     <ProjectReference Include="..\Configuration\Configuration.csproj" />
     <ProjectReference Include="..\Gateway\Gateway.csproj" />
     <ProjectReference Include="..\Vectorization\Vectorization.csproj" />

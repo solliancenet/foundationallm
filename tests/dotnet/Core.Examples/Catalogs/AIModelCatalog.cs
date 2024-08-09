@@ -29,15 +29,25 @@ namespace FoundationaLLM.Core.Examples.Catalogs
             }
         ];
 
+        public static readonly List<EmbeddingAIModel> EmbeddingAIModels =
+        [
+            new EmbeddingAIModel {
+                    Name = TestAIModelNames.Embeddings_Default,
+                    Description = "The default embeddings AI model.",
+                    EndpointObjectId = TestAPIEndpointConfigurationNames.DefaultAzureOpenAI, // must be filled in during the test environment setup
+                    DeploymentName = TestAIModelNames.Embeddings_Default
+                }
+        ];
+
         /// <summary>
-        /// Retrieves all API endpoint configurations defined in the catalog.
+        /// Retrieves all AI models defined in the catalog.
         /// </summary>
         /// <returns></returns>
         public static List<AIModelBase> GetAllAIModels()
         {
             var aiModels = new List<AIModelBase>();
             aiModels.AddRange(CompletionAIModels);
-
+            aiModels.AddRange(EmbeddingAIModels);
             return aiModels;
         }
     }

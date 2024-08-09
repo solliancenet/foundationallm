@@ -26,6 +26,9 @@ using Microsoft.SemanticKernel.Connectors.AzureCosmosDBNoSQL;
 using Microsoft.SemanticKernel.Connectors.Postgres;
 using System.Runtime;
 using FoundationaLLM.Common.Constants.Authentication;
+using FoundationaLLM.Common.Models.ResourceProviders.AIModel;
+using FoundationaLLM.Common.Exceptions;
+using FoundationaLLM.Common.Models.ResourceProviders.Configuration;
 
 #pragma warning disable SKEXP0001, SKEXP0010, SKEXP0020, SKEXP0050, SKEXP0060
 
@@ -68,12 +71,42 @@ namespace FoundationaLLM.SemanticKernel.Core.Agents
 
             if (textEmbeddingProfile != null)
             {
-                _textEmbeddingDeploymentName = textEmbeddingProfile.Settings != null
-                    && textEmbeddingProfile.Settings.TryGetValue("deployment_name", out string? deploymentNameOverride)
-                    && !string.IsNullOrWhiteSpace(deploymentNameOverride)
-                    ? deploymentNameOverride
-                    : await GetConfigurationValue(textEmbeddingProfile.ConfigurationReferences!["DeploymentName"]);
-                _textEmbeddingEndpoint = await GetConfigurationValue(textEmbeddingProfile.ConfigurationReferences!["EndpointUrl"]);
+                // Get the text embedding ai model for deployment name and endpoint URL from its API endpoint configuration.
+               
+                if (!_request.Objects.TryGetValue(
+                        textEmbeddingProfile.EmbeddingAIModelObjectId, out var embeddingAIModelObject))
+                    throw new SemanticKernelException($"The AI Model object with id {textEmbeddingProfile.EmbeddingAIModelObjectId} is missing from the request's objects.");
+
+                // Validate deployment name and endpoint url are present.
+                var embeddingAIModel = embeddingAIModelObject is JsonElement embeddingAIModelJsonElement
+                    ? embeddingAIModelJsonElement.Deserialize<EmbeddingAIModel>()
+                    : embeddingAIModelObject as EmbeddingAIModel;
+
+                if (embeddingAIModel == null)
+                    throw new SemanticKernelException($"The AI Model object with id {textEmbeddingProfile.EmbeddingAIModelObjectId} provided in the request's objects is invalid.");
+
+                _deploymentName = embeddingAIModel.DeploymentName!;
+                //check for deployment name override from Settings
+                if(textEmbeddingProfile.Settings is not null && textEmbeddingProfile.Settings.TryGetValue("deployment_name", out string? deploymentNameOverride))
+                {
+                    _deploymentName = deploymentNameOverride;
+                }
+                if(!_request.Objects.TryGetValue(
+                            embeddingAIModel.EndpointObjectId, out var embeddingAIModelEndpointObject))
+                        throw new SemanticKernelException($"The AI Model API endpoint configuration object is missing from the request's objects.");
+
+                // Get the endpoint configuration object, ensure it can be deserialized to an APIEndpointConfiguration. URL is required on APIEndpointConfiguration, no further validation required.
+                var embeddingAIModelEndpoint = embeddingAIModelEndpointObject is JsonElement embeddingAIModelEndpointJsonElement
+                    ? embeddingAIModelEndpointJsonElement.Deserialize<APIEndpointConfiguration>()
+                    : embeddingAIModelEndpointObject as APIEndpointConfiguration;
+
+                if (embeddingAIModelEndpoint == null)
+                    throw new SemanticKernelException("The AI Model API endpoint configuration object provided in the request's objects is invalid.");
+
+                if (string.IsNullOrWhiteSpace(embeddingAIModelEndpoint.Url))
+                    throw new SemanticKernelException($"The AI Model API endpoint configuration URL is invalid.");
+
+                _textEmbeddingEndpoint = embeddingAIModelEndpoint.Url;
             }
 
             if ((indexingProfiles ?? []).Count > 0)
@@ -111,22 +144,25 @@ namespace FoundationaLLM.SemanticKernel.Core.Agents
             switch (indexingProfile.Indexer)
             {
                 case IndexerType.AzureAISearchIndexer:
-                    valid = indexingProfile.ConfigurationReferences != null
-                       && indexingProfile.ConfigurationReferences.TryGetValue("EndpointUrl",
-                               out indexingEndpointConfigurationItem)
-                       && !string.IsNullOrWhiteSpace(indexingEndpointConfigurationItem)
-                       && indexingProfile.ConfigurationReferences.TryGetValue("AuthenticationType",
-                                                       out authenticationType)
-                       && !string.IsNullOrWhiteSpace(authenticationType);
-                    if (valid)
+                    if (!_request.Objects.TryGetValue(
+                        indexingProfile.IndexingAPIEndpointConfigurationObjectId, out var endpointConfigurationObject))
+                        throw new SemanticKernelException($"The indexing profile endpoint object with id {indexingProfile.IndexingAPIEndpointConfigurationObjectId} is missing from the request's objects.");
+
+                    var endpointConfiguration = endpointConfigurationObject is JsonElement endpointConfigurationJsonElement
+                        ? endpointConfigurationJsonElement.Deserialize<APIEndpointConfiguration>()
+                        : endpointConfigurationObject as APIEndpointConfiguration;
+
+                    if(endpointConfiguration == null)
+                        throw new SemanticKernelException($"The indexing profile endpoint object with id {indexingProfile.IndexingAPIEndpointConfigurationObjectId} provided in the request's objects is invalid.");
+
+                    // URL and Authentication type is already required on the APIEndpointConfiguration, no further validation required.                                        
+                    _azureAISearchIndexingServiceSettings = new AzureAISearchIndexingServiceSettings
                     {
-                        _azureAISearchIndexingServiceSettings = new AzureAISearchIndexingServiceSettings
-                        {
-                            Endpoint = await GetConfigurationValue(indexingEndpointConfigurationItem!),
-                            AuthenticationType = Enum.Parse<AuthenticationTypes>(await GetConfigurationValue(authenticationType!))
-                        };
-                    }
-                    break;
+                        Endpoint = endpointConfiguration.Url,
+                        AuthenticationType = endpointConfiguration.AuthenticationType
+                    };
+                    
+                    break;                
                 case IndexerType.AzureCosmosDBNoSQLIndexer:
                     valid = indexingProfile.ConfigurationReferences != null
                         && indexingProfile.ConfigurationReferences.TryGetValue("ConnectionString",
@@ -160,7 +196,7 @@ namespace FoundationaLLM.SemanticKernel.Core.Agents
                             VectorSize = await GetConfigurationValue(vectorSizeConfigurationItem!)
                         };
                     }
-                    break;
+                    break;                
             }
 
             return valid;
