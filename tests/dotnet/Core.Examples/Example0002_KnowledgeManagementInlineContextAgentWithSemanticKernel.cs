@@ -65,7 +65,11 @@ namespace FoundationaLLM.Core.Examples
             }
             finally
             {
-                await _managementAPITestManager.DeleteAgent(agentName);
+                try
+                {
+                    await _managementAPITestManager.DeleteAgent(agentName);
+                }
+                catch (Exception) { }
             }
         }
     }

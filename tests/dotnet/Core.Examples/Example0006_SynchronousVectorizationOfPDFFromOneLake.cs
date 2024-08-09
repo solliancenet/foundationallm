@@ -138,16 +138,32 @@ namespace FoundationaLLM.Core.Examples
             finally
             {
                 WriteLine($"Delete the data source: {dataSourceName} via the Management API");
-                await _vectorizationTestService.DeleteDataSource(dataSourceName);
+                try
+                {
+                    await _vectorizationTestService.DeleteDataSource(dataSourceName);
+                }
+                catch (Exception) { }
 
                 WriteLine($"Delete the vectorization text partitioning profile: {textPartitioningProfileName} via the Management API");
-                await _vectorizationTestService.DeleteTextPartitioningProfile(textPartitioningProfileName);
+                try
+                {
+                    await _vectorizationTestService.DeleteTextPartitioningProfile(textPartitioningProfileName);
+                }
+                catch (Exception) { }
 
                 WriteLine($"Delete the vectorization text embedding profile: {textEmbeddingProfileName} via the Management API");
-                await _vectorizationTestService.DeleteTextEmbeddingProfile(textEmbeddingProfileName);
+                try
+                {
+                    await _vectorizationTestService.DeleteTextEmbeddingProfile(textEmbeddingProfileName);
+                }
+                catch (Exception) { }
 
                 WriteLine($"Delete the vectorization indexing profile: {indexingProfileName} via the Management API and delete the created index");
-                await _vectorizationTestService.DeleteIndexingProfile(indexingProfileName, true);
+                try
+                {
+                    await _vectorizationTestService.DeleteIndexingProfile(indexingProfileName, true);
+                }
+                catch (Exception) { }
             }
         }
     }

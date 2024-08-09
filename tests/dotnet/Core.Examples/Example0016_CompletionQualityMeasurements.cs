@@ -73,7 +73,13 @@ namespace FoundationaLLM.Core.Examples
             catch (Exception e)
             {
                 if (agentPrompt.CreateAgent)
-                    await _managementAPITestManager.DeleteAgent(agentPrompt.AgentName);
+                {
+                    try
+                    {
+                        await _managementAPITestManager.DeleteAgent(agentPrompt.AgentName);
+                    }
+                    catch (Exception) { }
+                }
                 Console.WriteLine(e);
                 throw;
             }
