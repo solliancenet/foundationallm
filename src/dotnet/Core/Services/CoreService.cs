@@ -167,6 +167,11 @@ public partial class CoreService(
     }
 
     /// <inheritdoc/>
+    public async Task<string> GetFileContentLink(string provider, string contentId) =>
+        //TODO: need to call the AzureOpenAI resource provider to get the file id
+        "assistant-lXnNz58DYgblDKDq7L0Wbk5r";
+
+    /// <inheritdoc/>
     public async Task<LongRunningOperation> StartCompletionOperation(string instanceId, CompletionRequest completionRequest)
     {
         completionRequest = PrepareCompletionRequest(completionRequest);
