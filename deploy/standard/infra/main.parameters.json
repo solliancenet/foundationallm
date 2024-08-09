@@ -18,7 +18,7 @@
         "value": "${ENTRA_AUTH_API_TENANT_ID}"
       },
       "cidrVnet": {
-        "value": "${FLLM_CIDR_VNET=10.220.128.0/20"
+        "value": "${FLLM_CIDR_VNET=10.220.128.0/20}"
       },
       "environmentName": {
         "value": "${AZURE_ENV_NAME}"
