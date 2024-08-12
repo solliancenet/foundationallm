@@ -230,6 +230,7 @@ namespace FoundationaLLM.Agent.ResourceProviders
             };
 
             agent.ObjectId = resourcePath.GetObjectId(_instanceSettings.Id, _name);
+            agent.Version = Version.Parse(_instanceSettings.Version);
 
             if ((agent is KnowledgeManagementAgent {Vectorization.DedicatedPipeline: true, InlineContext: false} kmAgent))
             {

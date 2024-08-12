@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using OpenTelemetry.Resources;
 using System.Collections.Concurrent;
 using System.Text;
 using System.Text.Json;
@@ -242,6 +243,7 @@ namespace FoundationaLLM.Vectorization.ResourceProviders
                         StatusCodes.Status400BadRequest);
 
             resource.ObjectId = resourcePath.GetObjectId(_instanceSettings.Id, _name);
+            resource.Version = Version.Parse(_instanceSettings.Version);
 
             var validator = _resourceValidatorFactory.GetValidator<T>();
             if (validator != null)
@@ -681,6 +683,8 @@ namespace FoundationaLLM.Vectorization.ResourceProviders
         private async Task<ResourceProviderUpsertResult> UpdateVectorizationRequest(ResourcePath resourcePath, VectorizationRequest request, UnifiedUserIdentity userIdentity)
         {
             request.ObjectId = resourcePath.GetObjectId(_instanceSettings.Id, _name);
+            request.Version = Version.Parse(_instanceSettings.Version);
+
             await PopulateRequestResourceFilePath(request);
 
             // if the vectorization request resource file path doesn't exist, create the resource file path using date in file name (UTC).

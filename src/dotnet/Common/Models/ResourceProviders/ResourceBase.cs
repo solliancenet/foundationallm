@@ -29,6 +29,13 @@ namespace FoundationaLLM.Common.Models.ResourceProviders
         public string? Description { get; set; }
 
         /// <summary>
+        /// The version of the resource.
+        /// </summary>
+        [JsonPropertyName("version")]
+        [JsonPropertyOrder(0)]
+        public Version? Version { get; set; }
+
+        /// <summary>
         /// The cost center of the resource.
         /// </summary>
         [JsonPropertyName("cost_center")]

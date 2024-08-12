@@ -11,6 +11,7 @@ using FoundationaLLM.Common.Models.Authentication;
 using FoundationaLLM.Common.Models.Configuration.Instance;
 using FoundationaLLM.Common.Models.Events;
 using FoundationaLLM.Common.Models.ResourceProviders;
+using FoundationaLLM.Common.Models.ResourceProviders.AzureOpenAI;
 using FoundationaLLM.Common.Models.ResourceProviders.DataSource;
 using FoundationaLLM.Common.Services.ResourceProviders;
 using FoundationaLLM.DataSource.Models;
@@ -227,6 +228,7 @@ namespace FoundationaLLM.DataSource.ResourceProviders
             };
 
             dataSource.ObjectId = resourcePath.GetObjectId(_instanceSettings.Id, _name);
+            dataSource.Version = Version.Parse(_instanceSettings.Version);
 
             var validator = _resourceValidatorFactory.GetValidator(dataSourceReference.DataSourceType);
             if (validator is IValidator dataSourceValidator)

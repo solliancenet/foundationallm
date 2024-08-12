@@ -1,5 +1,6 @@
 ﻿using Azure.AI.OpenAI.Assistants;
 using Azure.ResourceManager.Models;
+using FoundationaLLM.Authorization.Models;
 using FoundationaLLM.AzureOpenAI.Models;
 using FoundationaLLM.Common.Authentication;
 using FoundationaLLM.Common.Constants;
@@ -320,6 +321,7 @@ namespace FoundationaLLM.AzureOpenAI.ResourceProviders
                     StatusCodes.Status400BadRequest);
 
             assistantUserContext.ObjectId = resourcePath.GetObjectId(_instanceSettings.Id, _name);
+            assistantUserContext.Version = Version.Parse(_instanceSettings.Version);
 
             var gatewayClient = new GatewayServiceClient(
                 await _serviceProvider.GetRequiredService<IHttpClientFactoryService>()

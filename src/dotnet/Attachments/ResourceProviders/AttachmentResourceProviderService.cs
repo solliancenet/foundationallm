@@ -214,6 +214,8 @@ namespace FoundationaLLM.Attachment.ResourceProviders
             var fullName = $"{attachment.Name}{extension}";
 
             attachment.ObjectId = resourcePath.GetObjectId(_instanceSettings.Id, _name);
+            attachment.Version = Version.Parse(_instanceSettings.Version);
+
             var attachmentReference = new AttachmentReference
             {
                 ObjectId = attachment.ObjectId,

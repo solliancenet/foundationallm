@@ -101,6 +101,7 @@ namespace FoundationaLLM.Authorization.ResourceProviders
                     StatusCodes.Status400BadRequest);
 
             roleAssignment.ObjectId = resourcePath.GetObjectId(_instanceSettings.Id, _name);
+            roleAssignment.Version = Version.Parse(_instanceSettings.Version);
 
             var roleAssignmentValidator = _resourceValidatorFactory.GetValidator<RoleAssignment>()!;
             var context = new ValidationContext<object>(roleAssignment);

@@ -9,6 +9,7 @@ using FoundationaLLM.Common.Models.Configuration.AppConfiguration;
 using FoundationaLLM.Common.Models.Configuration.Instance;
 using FoundationaLLM.Common.Models.Events;
 using FoundationaLLM.Common.Models.ResourceProviders;
+using FoundationaLLM.Common.Models.ResourceProviders.AzureOpenAI;
 using FoundationaLLM.Common.Models.ResourceProviders.Configuration;
 using FoundationaLLM.Common.Services;
 using FoundationaLLM.Common.Services.ResourceProviders;
@@ -308,6 +309,7 @@ namespace FoundationaLLM.Configuration.Services
             };
 
             apiEndpoint.ObjectId = resourcePath.GetObjectId(_instanceSettings.Id, _name);
+            apiEndpoint.Version = Version.Parse(_instanceSettings.Version);
 
             if (existingApiEndpointReference == null)
                 apiEndpoint.CreatedBy = userIdentity.UPN;

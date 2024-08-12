@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.Graph.Models.Security;
 using System.Collections.Concurrent;
 using System.Text;
 using System.Text.Json;
@@ -218,6 +219,7 @@ namespace FoundationaLLM.Prompt.ResourceProviders
             };
 
             prompt.ObjectId = resourcePath.GetObjectId(_instanceSettings.Id, _name);
+            prompt.Version = Version.Parse(_instanceSettings.Version);
 
             if (existingPromptReference == null)
                 prompt.CreatedBy = userIdentity.UPN;
