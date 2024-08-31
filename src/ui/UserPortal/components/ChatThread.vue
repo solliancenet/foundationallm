@@ -27,7 +27,6 @@
 						:message="message"
 						:show-word-animation="index === 0 && userSentMessage && message.sender === 'Assistant'"
 						role="log"
-						:tabindex="getMessageOrderFromReversedIndex(index)"
 						:aria-flowto="
 							index === 0 ? null : `message-${getMessageOrderFromReversedIndex(index) + 1}`
 						"
