@@ -140,9 +140,8 @@ namespace FoundationaLLM.Orchestration.Core.Orchestration
             List<AttachmentProperties> result = [];
             await foreach (var attachment in attachments)
             {
-                var useAttachmentPath =
-                    string.IsNullOrWhiteSpace(attachment.SecondaryProvider)
-                    || (attachment.ContentType ?? string.Empty).StartsWith("image/", StringComparison.OrdinalIgnoreCase);
+                // Use the attachment path if a secondary provider is not set.
+                var useAttachmentPath = string.IsNullOrWhiteSpace(attachment.SecondaryProvider);
 
                 var fileMapping = fileUserContext.Files[attachment.ObjectId!];
                 if (fileMapping.RequiresVectorization)
