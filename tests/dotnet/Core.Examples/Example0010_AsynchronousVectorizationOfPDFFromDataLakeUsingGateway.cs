@@ -170,27 +170,40 @@ namespace FoundationaLLM.Core.Examples
 
         private async Task PostExecute()
         {
-            WriteLine($"Teardown: Delete data source {dataSourceName} via the Management API");
-            await _vectorizationTestService.DeleteDataSource(dataSourceName);
+            WriteLine($"Delete the data source: {dataSourceName} via the Management API");
+            try
+            {
+                await _vectorizationTestService.DeleteDataSource(dataSourceName);
+            }
+            catch (Exception) { }
 
-            WriteLine($"Teardown: Delete text partitioning profile {textPartitionProfileName} via the Management API");
-            await _vectorizationTestService.DeleteTextPartitioningProfile(textPartitionProfileName);
+            WriteLine($"Delete the vectorization text partitioning profile: {textPartitionProfileName} via the Management API");
+            try
+            {
+                await _vectorizationTestService.DeleteTextPartitioningProfile(textPartitionProfileName);
+            }
+            catch (Exception) { }
 
-            WriteLine($"Teardown: Delete text embedding profile {textEmbeddingProfileName} via the Management API");
-            await _vectorizationTestService.DeleteTextEmbeddingProfile(textEmbeddingProfileName);
-            WriteLine($"Teardown: Delete text embedding profile {genericTextEmbeddingProfileName} via the Management API");
-            await _vectorizationTestService.DeleteTextEmbeddingProfile(genericTextEmbeddingProfileName);
+            WriteLine($"Delete the vectorization text embedding profile: {textEmbeddingProfileName} via the Management API");
+            try
+            {
+                await _vectorizationTestService.DeleteTextEmbeddingProfile(textEmbeddingProfileName);
+            }
+            catch (Exception) { }
 
-            //indexing profile
-            //remove search index
-            //remove indexing profile
-            WriteLine($"Teardown: Delete indexing profile {indexingProfileName} via the Management API");
-            await _vectorizationTestService.DeleteIndexingProfile(indexingProfileName, true);
+            WriteLine($"Delete the vectorization text embedding profile: {genericTextEmbeddingProfileName} via the Management API");
+            try
+            {
+                await _vectorizationTestService.DeleteTextEmbeddingProfile(genericTextEmbeddingProfileName);
+            }
+            catch (Exception) { }
 
-            //indexing profile
-            //remove search index
-            //remove indexing profile           
-            
+            WriteLine($"Delete the vectorization indexing profile: {indexingProfileName} via the Management API and delete the created index");
+            try
+            {
+                await _vectorizationTestService.DeleteIndexingProfile(indexingProfileName, true);
+            }
+            catch (Exception) { }
         }
 	}
 }

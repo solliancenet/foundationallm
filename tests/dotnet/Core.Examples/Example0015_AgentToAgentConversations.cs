@@ -78,10 +78,29 @@ namespace FoundationaLLM.Core.Examples
             }
             finally
             {
-                await _managementAPITestManager.DeleteAgent(TestAgentNames.Dune01);
-                await _managementAPITestManager.DeleteAgent(TestAgentNames.Dune02);
-                await _vectorizationTestService.DeleteIndexingProfile(indexingProfileName, false);
-                await _vectorizationTestService.DeleteTextEmbeddingProfile(textEmbeddingProfileName);
+                try
+                {
+                    await _managementAPITestManager.DeleteAgent(TestAgentNames.Dune01);
+                }
+                catch (Exception) { }
+
+                try
+                {
+                    await _managementAPITestManager.DeleteAgent(TestAgentNames.Dune02);
+                }
+                catch (Exception) { }
+
+                try
+                {
+                    await _vectorizationTestService.DeleteIndexingProfile(indexingProfileName, false);
+                }
+                catch (Exception) { }
+
+                try
+                {
+                    await _vectorizationTestService.DeleteTextEmbeddingProfile(textEmbeddingProfileName);
+                }
+                catch (Exception) { }
             }
         }
     }

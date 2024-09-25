@@ -75,9 +75,23 @@ namespace FoundationaLLM.Core.Examples
             }
             finally
             {
-                await _managementAPITestManager.DeleteAgent(agentName);
-                await _vectorizationTestService.DeleteIndexingProfile(indexingProfileName, false);
-                await _vectorizationTestService.DeleteTextEmbeddingProfile(textEmbeddingProfileName);
+                try
+                {
+                    await _managementAPITestManager.DeleteAgent(agentName);
+                }
+                catch (Exception) { }
+
+                try
+                {
+                    await _vectorizationTestService.DeleteIndexingProfile(indexingProfileName, false);
+                }
+                catch (Exception) { }
+
+                try
+                {
+                    await _vectorizationTestService.DeleteTextEmbeddingProfile(textEmbeddingProfileName);
+                }
+                catch (Exception) { }
             }
         }
     }
