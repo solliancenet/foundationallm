@@ -3,6 +3,7 @@ from typing import List
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 
 from langchain_core.language_models import BaseLanguageModel
+from langchain_aws import ChatBedrockConverse
 from langchain_openai import AzureChatOpenAI, AzureOpenAI, ChatOpenAI, OpenAI
 from openai import AzureOpenAI as aoi
 from openai import AsyncAzureOpenAI as async_aoi
@@ -224,26 +225,65 @@ class LangChainAgentBase():
         if self.api_endpoint is None:
             raise LangChainException("API endpoint configuration settings are missing.", 400)
 
-        if self.api_endpoint.provider == LanguageModelProvider.MICROSOFT:
-            op_type = self.api_endpoint.operation_type
-            if override_operation_type is not None:
-                op_type = override_operation_type
-            if self.api_endpoint.authentication_type == AuthenticationTypes.AZURE_IDENTITY:
-                try:
-                    scope = self.api_endpoint.authentication_parameters.get('scope', 'https://cognitiveservices.azure.com/.default')
-                    # Set up a Azure AD token provider.
-                    # TODO: Determine if there is a more efficient way to get the token provider than making the request for every call.
-                    token_provider = get_bearer_token_provider(
-                        DefaultAzureCredential(exclude_environment_credential=True),
-                        scope
-                    )
+        match self.api_endpoint.provider:
+            case LanguageModelProvider.MICROSOFT:
+                op_type = self.api_endpoint.operation_type
+                if override_operation_type is not None:
+                    op_type = override_operation_type
+                if self.api_endpoint.authentication_type == AuthenticationTypes.AZURE_IDENTITY:
+                    try:
+                        scope = self.api_endpoint.authentication_parameters.get('scope', 'https://cognitiveservices.azure.com/.default')
+                        # Set up a Azure AD token provider.
+                        # TODO: Determine if there is a more efficient way to get the token provider than making the request for every call.
+                        token_provider = get_bearer_token_provider(
+                            DefaultAzureCredential(exclude_environment_credential=True),
+                            scope
+                        )
                     
+                        if op_type == OperationTypes.CHAT:
+                            language_model = AzureChatOpenAI(
+                                azure_endpoint=self.api_endpoint.url,
+                                api_version=self.api_endpoint.api_version,
+                                openai_api_type='azure_ad',
+                                azure_ad_token_provider=token_provider,
+                                azure_deployment=self.ai_model.deployment_name
+                            )
+                        elif op_type == OperationTypes.ASSISTANTS_API or op_type == OperationTypes.IMAGE_ANALYSIS:
+                            # Assistants API clients can't have deployment as that is assigned at the assistant level.
+                            if is_async:
+                                # create async client
+                                language_model = async_aoi(
+                                    azure_endpoint=self.api_endpoint.url,
+                                    api_version=self.api_endpoint.api_version,
+                                    openai_api_type='azure_ad',
+                                    azure_ad_token_provider=token_provider,
+                                )
+                            else:
+                                language_model = aoi(
+                                    azure_endpoint=self.api_endpoint.url,
+                                    api_version=self.api_endpoint.api_version,
+                                    openai_api_type='azure_ad',
+                                    azure_ad_token_provider=token_provider,
+                                )
+                        else:
+                            raise LangChainException(f"Unsupported operation type: {op_type}", 400)
+
+                    except Exception as e:
+                        raise LangChainException(f"Failed to create Azure OpenAI API connector: {str(e)}", 500)
+                else: # Key-based authentication
+                    try:
+                        api_key = self.config.get_value(self.api_endpoint.authentication_parameters.get('api_key_configuration_name'))
+                    except Exception as e:
+                        raise LangChainException(f"Failed to retrieve API key: {str(e)}", 500)
+
+                    if api_key is None:
+                        raise LangChainException("API key is missing from the configuration settings.", 400)
+                        
                     if op_type == OperationTypes.CHAT:
                         language_model = AzureChatOpenAI(
                             azure_endpoint=self.api_endpoint.url,
+                            api_key=api_key,
                             api_version=self.api_endpoint.api_version,
-                            openai_api_type='azure_ad',
-                            azure_ad_token_provider=token_provider,
                             azure_deployment=self.ai_model.deployment_name
                         )
                     elif op_type == OperationTypes.ASSISTANTS_API or op_type == OperationTypes.IMAGE_ANALYSIS:
@@ -252,23 +292,18 @@ class LangChainAgentBase():
                             # create async client
                             language_model = async_aoi(
                                 azure_endpoint=self.api_endpoint.url,
+                                api_key=api_key,
                                 api_version=self.api_endpoint.api_version,
-                                openai_api_type='azure_ad',
-                                azure_ad_token_provider=token_provider,
                             )
                         else:
                             language_model = aoi(
                                 azure_endpoint=self.api_endpoint.url,
+                                api_key=api_key,
                                 api_version=self.api_endpoint.api_version,
-                                openai_api_type='azure_ad',
-                                azure_ad_token_provider=token_provider,
                             )
                     else:
                         raise LangChainException(f"Unsupported operation type: {op_type}", 400)
-
-                except Exception as e:
-                    raise LangChainException(f"Failed to create Azure OpenAI API connector: {str(e)}", 500)
-            else: # Key-based authentication
+            case LanguageModelProvider.OPENAI:
                 try:
                     api_key = self.config.get_value(self.api_endpoint.authentication_parameters.get('api_key_configuration_name'))
                 except Exception as e:
@@ -276,46 +311,37 @@ class LangChainAgentBase():
 
                 if api_key is None:
                     raise LangChainException("API key is missing from the configuration settings.", 400)
-                        
-                if op_type == OperationTypes.CHAT:
-                    language_model = AzureChatOpenAI(
-                        azure_endpoint=self.api_endpoint.url,
-                        api_key=api_key,
-                        api_version=self.api_endpoint.api_version,
-                        azure_deployment=self.ai_model.deployment_name
-                    )
-                elif op_type == OperationTypes.ASSISTANTS_API or op_type == OperationTypes.IMAGE_ANALYSIS:
-                    # Assistants API clients can't have deployment as that is assigned at the assistant level.
-                    if is_async:
-                        # create async client
-                        language_model = async_aoi(
-                            azure_endpoint=self.api_endpoint.url,
-                            api_key=api_key,
-                            api_version=self.api_endpoint.api_version,
-                        )
-                    else:
-                        language_model = aoi(
-                            azure_endpoint=self.api_endpoint.url,
-                            api_key=api_key,
-                            api_version=self.api_endpoint.api_version,
-                        )
-                else:
-                    raise LangChainException(f"Unsupported operation type: {op_type}", 400)
-
-        else:
-            try:
-                api_key = self.config.get_value(self.api_endpoint.authentication_parameters.get('api_key_configuration_name'))
-            except Exception as e:
-                raise LangChainException(f"Failed to retrieve API key: {str(e)}", 500)
-
-            if api_key is None:
-                raise LangChainException("API key is missing from the configuration settings.", 400)
                 
-            language_model = (
-                ChatOpenAI(base_url=self.api_endpoint.url, api_key=api_key)
-                if self.api_endpoint.operation_type == OperationTypes.CHAT
-                else OpenAI(base_url=self.api_endpoint.url, api_key=api_key)
-            )
+                language_model = (
+                    ChatOpenAI(base_url=self.api_endpoint.url, api_key=api_key)
+                    if self.api_endpoint.operation_type == OperationTypes.CHAT
+                    else OpenAI(base_url=self.api_endpoint.url, api_key=api_key)
+                )
+            case LanguageModelProvider.BEDROCK:
+                try:
+                    access_key = self.config.get_value(self.api_endpoint.authentication_parameters.get('access_key'))
+                except Exception as e:
+                    raise LangChainException(f"Failed to retrieve access key: {str(e)}", 500)
+
+                if access_key is None:
+                    raise LangChainException("Access key is missing from the configuration settings.", 400)
+
+                try:
+                    secret_key = self.config.get_value(self.api_endpoint.authentication_parameters.get('secret_key'))
+                except Exception as e:
+                    raise LangChainException(f"Failed to retrieve secret key: {str(e)}", 500)
+
+                if secret_key is None:
+                    raise LangChainException("Secret key is missing from the configuration settings.", 400)
+                
+                # parse region from the URL, ex: https://bedrock-runtime.us-east-1.amazonaws.com/
+                region = self.api_endpoint.url.split('.')[1]
+                language_model = ChatBedrockConverse(
+                    model= self.ai_model.deployment_name,
+                    region_name = region,
+                    aws_access_key_id = access_key,
+                    aws_secret_access_key = secret_key
+                )
 
         # Set model parameters.
         for key, value in self.ai_model.model_parameters.items():

@@ -16,8 +16,13 @@
         public const string OPENAI = "openai";
 
         /// <summary>
+        /// Bedrock
+        /// </summary>
+        public const string BEDROCK = "bedrock";
+
+        /// <summary>
         /// All providers.
         /// </summary>
-        public readonly static string[] All = [MICROSOFT, OPENAI];
+        public readonly static string[] All = [MICROSOFT, OPENAI, BEDROCK];
     }
 }
