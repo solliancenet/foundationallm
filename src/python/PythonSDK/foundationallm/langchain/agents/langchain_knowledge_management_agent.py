@@ -383,7 +383,7 @@ class LangChainKnowledgeManagementAgent(LangChainAgentBase):
                 if len(image_attachments) > 0:
                     # Add image attachments to the input content.                   
                     for attachment in image_attachments:                       
-                        image_base64 = self._get_as_base64(mime_type=attachment.content_type, storage_account_name=attachment.provider_storage_account_name, file_path=attachment.provider_file_name)
+                        image_base64 = self._get_attachment_as_base64(mime_type=attachment.content_type, storage_account_name=attachment.provider_storage_account_name, file_path=attachment.provider_file_name)
                         if image_base64 is not None and image_base64 != '':
                             input_content.append(
                                 {"type": "image", "source": {"type": "base64", "media_type": attachment.content_type, "data": image_base64}}
@@ -559,12 +559,12 @@ class LangChainKnowledgeManagementAgent(LangChainAgentBase):
                 if len(image_attachments) > 0:
                     # Add image attachments to the input content.                   
                     for attachment in image_attachments:                       
-                        image_base64 = self._get_as_base64(mime_type=attachment.content_type, storage_account_name=attachment.provider_storage_account_name, file_path=attachment.provider_file_name)
+                        image_base64 = self._get_attachment_as_base64(mime_type=attachment.content_type, storage_account_name=attachment.provider_storage_account_name, file_path=attachment.provider_file_name)
                         if image_base64 is not None and image_base64 != '':
                             input_content.append(
                                 {"type": "image", "source": {"type": "base64", "media_type": attachment.content_type, "data": image_base64}}
                             )
-                            
+                          
                 response = await graph.ainvoke({'messages': [HumanMessage(content=input_content)]})
                 final_message = response["messages"][-1]
                 response_content = OpenAITextMessageContentItem(

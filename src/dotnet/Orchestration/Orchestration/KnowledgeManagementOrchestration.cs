@@ -138,25 +138,32 @@ namespace FoundationaLLM.Orchestration.Core.Orchestration
             List<AttachmentProperties> result = [];
             await foreach (var attachment in attachments)
             {
-                var useAttachmentPath =
-                    string.IsNullOrWhiteSpace(attachment.SecondaryProvider)
-                    || (attachment.ContentType ?? string.Empty).StartsWith("image/", StringComparison.OrdinalIgnoreCase);
+                var useAttachmentPath = false;
 
-                var fileMapping = fileUserContext.Files[attachment.ObjectId!];
-                if (fileMapping.RequiresVectorization)
+                if (string.IsNullOrWhiteSpace(attachment.SecondaryProvider))
                 {
-                    _ = await _gatewayClient!.CreateAgentCapability(
-                        _instanceId,
-                        AgentCapabilityCategoryNames.OpenAIAssistants,
-                        fileUserContext.AssistantUserContextName,
-                        new()
-                        {
-                            { OpenAIAgentCapabilityParameterNames.CreateAssistantFile, false },
-                            { OpenAIAgentCapabilityParameterNames.Endpoint, fileUserContext.Endpoint },
-                            { OpenAIAgentCapabilityParameterNames.AddAssistantFileToVectorStore, fileMapping.RequiresVectorization },
-                            { OpenAIAgentCapabilityParameterNames.AssistantVectorStoreId, _openAIVectorStoreId ?? string.Empty },
-                            { OpenAIAgentCapabilityParameterNames.AssistantFileId, fileMapping.OpenAIFileId! }
-                        });
+                    useAttachmentPath = true;
+                }
+                else
+                {
+                    useAttachmentPath = (attachment.ContentType ?? string.Empty).StartsWith("image/", StringComparison.OrdinalIgnoreCase);
+
+                    var fileMapping = fileUserContext.Files[attachment.ObjectId!];
+                    if (fileMapping.RequiresVectorization)
+                    {
+                        _ = await _gatewayClient!.CreateAgentCapability(
+                            _instanceId,
+                            AgentCapabilityCategoryNames.OpenAIAssistants,
+                            fileUserContext.AssistantUserContextName,
+                            new()
+                            {
+                                { OpenAIAgentCapabilityParameterNames.CreateAssistantFile, false },
+                                { OpenAIAgentCapabilityParameterNames.Endpoint, fileUserContext.Endpoint },
+                                { OpenAIAgentCapabilityParameterNames.AddAssistantFileToVectorStore, fileMapping.RequiresVectorization },
+                                { OpenAIAgentCapabilityParameterNames.AssistantVectorStoreId, _openAIVectorStoreId ?? string.Empty },
+                                { OpenAIAgentCapabilityParameterNames.AssistantFileId, fileMapping.OpenAIFileId! }
+                            });
+                    }
                 }
 
                 result.Add(new AttachmentProperties
