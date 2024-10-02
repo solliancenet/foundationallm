@@ -215,6 +215,7 @@ namespace FoundationaLLM.Orchestration.Core.Orchestration
             {
                 AgentCapabilityCategoryNames.OpenAIAssistants => TransformOpenAIAssistantsContentItem(contentItem, newFileMappings),
                 AgentCapabilityCategoryNames.FoundationaLLMKnowledgeManagement => TransformFoundationaLLMKnowledgeManagementContentItem(contentItem),
+                AgentCapabilityCategoryNames.LangChainToolCallingAgent => TransformLangChainToolCallingAgentContentItem(contentItem),
                 _ => throw new OrchestrationException($"The agent capability category {contentItem.AgentCapabilityCategory} is not supported.")
             };
 
@@ -343,6 +344,13 @@ namespace FoundationaLLM.Orchestration.Core.Orchestration
         #region FoundationaLLM Knowledge Management content items
 
         private MessageContentItemBase TransformFoundationaLLMKnowledgeManagementContentItem(MessageContentItemBase contentItem) =>
+            contentItem;
+
+        #endregion
+
+        #region LangChain Tool Calling Agent content items
+
+        private MessageContentItemBase TransformLangChainToolCallingAgentContentItem(MessageContentItemBase contentItem) =>
             contentItem;
 
         #endregion

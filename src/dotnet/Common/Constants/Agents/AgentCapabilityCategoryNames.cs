@@ -11,6 +11,11 @@
         public const string OpenAIAssistants = "OpenAI.Assistants";
 
         /// <summary>
+        /// Indicates the agent has the LangChain Tool Calling Agent capability.
+        /// </summary>
+        public const string LangChainToolCallingAgent = "LangChain.ToolCallingAgent";
+
+        /// <summary>
         /// Indicates the agent has the FoundationaLLM Knowledge Management capability.
         /// </summary>
         public const string FoundationaLLMKnowledgeManagement = "FoundationaLLM.KnowledgeManagement";

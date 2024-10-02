@@ -11,6 +11,7 @@ langchain==0.3.1
 langchain-aws==0.2.1
 langchain-experimental==0.3.2
 langchain-openai==0.2.1
+langgraph==0.2.32
 -e git+https://github.com/microsoft/CLAP.git@1af3d710ee796dc96d3a96e2b1fdf66ef2520e63#egg=msclap
 openai==1.40.2
 pydantic==2.8.2

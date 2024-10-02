@@ -1,8 +1,9 @@
 ﻿from langchain_community.callbacks import get_openai_callback
-from langchain_community.callbacks.manager import get_bedrock_anthropic_callback
 from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnablePassthrough, RunnableLambda
+from langchain_core.messages import HumanMessage
 from langchain_core.output_parsers import StrOutputParser
+from langgraph.prebuilt import create_react_agent
 from foundationallm.config import UserIdentity
 from foundationallm.langchain.agents import LangChainAgentBase
 from foundationallm.langchain.exceptions import LangChainException
@@ -14,7 +15,6 @@ from foundationallm.models.orchestration import (
 )
 from foundationallm.models.resource_providers.ai_models.completion_ai_model import CompletionAIModel
 from foundationallm.models.resource_providers.configuration import APIEndpointConfiguration
-from foundationallm.models.resource_providers.ai_models import EmbeddingAIModel
 from foundationallm.models.agents import (
     AgentConversationHistorySettings,
     KnowledgeManagementAgent,
@@ -34,6 +34,7 @@ from foundationallm.models.resource_providers.vectorization import (
 from foundationallm.models.services import OpenAIAssistantsAPIRequest
 from foundationallm.services import ImageAnalysisService, OpenAIAssistantsApiService
 from foundationallm.services.gateway_text_embedding import GatewayTextEmbeddingService
+from foundationallm.storage import BlobStorageManager
 from openai.types import CompletionUsage
 
 class LangChainKnowledgeManagementAgent(LangChainAgentBase):
@@ -240,6 +241,51 @@ class LangChainKnowledgeManagementAgent(LangChainAgentBase):
 
         self._validate_conversation_history(request.agent.conversation_history_settings)
 
+    def _get_attachment_as_base64(self, mime_type: str, storage_account_name, file_path: str) -> str:
+        """
+        Retrieves a file from its URL and converts it to a base64 string.
+
+        Parameters
+        ----------
+        mime_type : str
+            The mime type of the image.
+        storage_account_name : str
+            The name of the attachment storage account.
+        file_path : str
+            The path to the file.
+            
+        Returns
+        -------
+        str
+            The file as a base64 string.
+        """
+        try:
+            # Remove any leading slashes from the file path.
+            file_path = file_path.lstrip('/')
+            # Attempt to retrieve the image from blob storage.
+            container_name = file_path.split('/')[0]
+            # Get the file path without the container name.
+            file_name = file_path.removeprefix(container_name)
+
+            try:
+                storage_manager = BlobStorageManager(
+                    account_name=storage_account_name,
+                    container_name=container_name,
+                    authentication_type=self.config.get_value('FoundationaLLM:ResourceProviders:Attachment:Storage:AuthenticationType')
+                )
+            except Exception as e:
+                raise Exception(f'Error connecting to the {storage_account_name} blob storage account and the container named {container_name}: {e}')
+
+            # Get the image file from blob storage.
+            file_base64 = storage_manager.read_file_content_as_base64(file_name)
+            if file_base64 is not None:
+                   return file_base64
+            else:
+                raise Exception(f'The specified image {storage_account_name}/{file_path} does not exist.')        
+        except Exception as e:
+            print(f'Error getting image as base64: {e}')
+            return None
+
     def invoke(self, request: KnowledgeManagementCompletionRequest) -> CompletionResponse:
         """
         Executes a synchronous completion request.
@@ -257,9 +303,9 @@ class LangChainKnowledgeManagementAgent(LangChainAgentBase):
             generated full prompt with context and token utilization and execution cost details.
         """
         self._validate_request(request)
+        llm = self._get_language_model()
 
         agent = request.agent
-
         ai_model = CompletionAIModel.from_object(request.objects[agent.ai_model_object_id])
         ai_model_endpoint = APIEndpointConfiguration.from_object(request.objects[ai_model.endpoint_object_id])
         
@@ -267,7 +313,7 @@ class LangChainKnowledgeManagementAgent(LangChainAgentBase):
 
         image_analysis_results = None
         image_attachments = [attachment for attachment in request.attachments if (attachment.provider == AttachmentProviders.FOUNDATIONALLM_ATTACHMENT and attachment.content_type.startswith('image/'))] if request.attachments is not None else []
-        if len(image_attachments) > 0:
+        if AgentCapabilityCategories.TOOL_CALLING_AGENT not in agent.capabilities and len(image_attachments) > 0:
             image_analysis_client = self._get_language_model(override_operation_type=OperationTypes.IMAGE_ANALYSIS, is_async=False)
             image_analysis_svc = ImageAnalysisService(config=self.config, client=image_analysis_client, deployment_model=self.ai_model.deployment_name)
             image_analysis_results, usage = image_analysis_svc.analyze_images(image_attachments)
@@ -323,78 +369,103 @@ class LangChainKnowledgeManagementAgent(LangChainAgentBase):
          # Compose the LCEL chain
 
          # Get the vector document retriever, if it exists.
-        retriever = self._get_document_retriever(request, agent)
-        if retriever is not None:
-            self.has_retriever = True
-        # Get the prompt template.
-        prompt_template = self._get_prompt_template(
-            request,
-            agent.conversation_history_settings
-        )
-        if retriever is not None:
-            chain_context = { "context": retriever | retriever.format_docs, "question": RunnablePassthrough() }
-        elif image_analysis_results is not None:
-            chain_context = { "context": lambda x: image_analysis_svc.format_results(image_analysis_results), "question": RunnablePassthrough() }
-        else:
-            chain_context = { "context": RunnablePassthrough() }
-
-        # Compose LCEL chain
-        chain = (
-            chain_context
-            | prompt_template
-            | RunnableLambda(self._record_full_prompt)
-            | self._get_language_model()            
-        )
-        
-        retvalue = None
-        if ai_model_endpoint.provider == LanguageModelProvider.BEDROCK:            
-            completion = chain.invoke(request.user_prompt)
-            response_content = OpenAITextMessageContentItem(
-                        value = completion.content,
-                        agent_capability_category = AgentCapabilityCategories.FOUNDATIONALLM_KNOWLEDGE_MANAGEMENT
-                    )           
-            retvalue = CompletionResponse(
+        # Check for Tool Calling Agent capability
+        if AgentCapabilityCategories.TOOL_CALLING_AGENT in agent.capabilities:            
+            tools = []            
+            prompt = self._get_prompt_from_object_id(request.agent.prompt_object_id, request.objects)            
+            graph = create_react_agent(llm, tools=tools, state_modifier=prompt.prefix)
+            
+            if ai_model_endpoint.provider == LanguageModelProvider.BEDROCK:                
+                input_content = [
+                    {"type": "text", "text": request.user_prompt}
+                ]                
+                # Check for images.
+                if len(image_attachments) > 0:
+                    # Add image attachments to the input content.                   
+                    for attachment in image_attachments:                       
+                        image_base64 = self._get_as_base64(mime_type=attachment.content_type, storage_account_name=attachment.provider_storage_account_name, file_path=attachment.provider_file_name)
+                        if image_base64 is not None and image_base64 != '':
+                            input_content.append(
+                                {"type": "image", "source": {"type": "base64", "media_type": attachment.content_type, "data": image_base64}}
+                            )
+                            
+                response = graph.invoke({'messages': [HumanMessage(content=input_content)]})
+                final_message = response["messages"][-1]
+                response_content = OpenAITextMessageContentItem(
+                        value = final_message.content,
+                        agent_capability_category = AgentCapabilityCategories.TOOL_CALLING_AGENT
+                    )                
+                return CompletionResponse(
                         operation_id = request.operation_id,
-                        content = [response_content],                        
+                        content = [response_content],
+                        citations = [],
                         user_prompt = request.user_prompt,
-                        full_prompt = self.full_prompt.text,
-                        completion_tokens = completion.usage_metadata["output_tokens"] + image_analysis_token_usage.completion_tokens,
-                        prompt_tokens = completion.usage_metadata["input_tokens"] + image_analysis_token_usage.prompt_tokens,
-                        total_tokens = completion.usage_metadata["total_tokens"] + image_analysis_token_usage.total_tokens,
+                        full_prompt = prompt.prefix,
+                        completion_tokens = final_message.usage_metadata["output_tokens"] or 0,
+                        prompt_tokens = final_message.usage_metadata["input_tokens"] or 0,
+                        total_tokens = final_message.usage_metadata["total_tokens"] or 0,
                         total_cost = 0
-                    )    
-        else:
-            # OpenAI compatible models
-            with get_openai_callback() as cb:
-                # add output parser to openai callback
-                chain = chain | StrOutputParser()
-                try:
-                    completion = chain.invoke(request.user_prompt)                 
-                    response_content = OpenAITextMessageContentItem(
-                        value = completion,
-                        agent_capability_category = AgentCapabilityCategories.FOUNDATIONALLM_KNOWLEDGE_MANAGEMENT
-                    )                  
-                    retvalue =  CompletionResponse(
-                        operation_id = request.operation_id,
-                        content = [response_content],                        
-                        user_prompt = request.user_prompt,
-                        full_prompt = self.full_prompt.text,
-                        completion_tokens = cb.completion_tokens + image_analysis_token_usage.completion_tokens,
-                        prompt_tokens = cb.prompt_tokens + image_analysis_token_usage.prompt_tokens,
-                        total_tokens = cb.total_tokens + image_analysis_token_usage.total_tokens,
-                        total_cost = cb.total_cost
                     )
-                except Exception as e:
-                    raise LangChainException(f"An unexpected exception occurred when executing the completion request: {str(e)}", 500)
+            else:
+                raise LangChainException(f"Tool Calling Agent is not supported for {ai_model_endpoint.provider}.", 400)
 
-        if isinstance(retriever, CitationRetrievalBase):
-            retvalue.citations = retriever.get_document_citations() or []              
-        return retvalue
+        # FoundationaLLM.KnowledgeManagement capability
+        with get_openai_callback() as cb:            
+            try:
+                # Build LCEL chain
+                # Get the vector document retriever, if it exists.
+                retriever = self._get_document_retriever(request, agent)
+                if retriever is not None:
+                    self.has_retriever = True
+                # Get the prompt template.
+                prompt_template = self._get_prompt_template(
+                    request,
+                    agent.conversation_history_settings
+                )
+
+                if retriever is not None:
+                    chain_context = { "context": retriever | retriever.format_docs, "question": RunnablePassthrough() }
+                elif image_analysis_results is not None:
+                    chain_context = { "context": lambda x: image_analysis_svc.format_results(image_analysis_results), "question": RunnablePassthrough() }
+                else:
+                    chain_context = { "context": RunnablePassthrough() }
+
+                # Compose LCEL chain
+                chain = (
+                    chain_context
+                    | prompt_template
+                    | RunnableLambda(self._record_full_prompt)
+                    | llm
+                    | StrOutputParser()
+                )    
+                
+                completion = chain.invoke(request.user_prompt)
+                
+                response_content = OpenAITextMessageContentItem(
+                    value = completion,
+                    agent_capability_category = AgentCapabilityCategories.FOUNDATIONALLM_KNOWLEDGE_MANAGEMENT
+                )
+                citations = []
+                if isinstance(retriever, CitationRetrievalBase):
+                    citations = retriever.get_document_citations() or []
+                return CompletionResponse(
+                    operation_id = request.operation_id,
+                    content = [response_content],
+                    citations = citations,
+                    user_prompt = request.user_prompt,
+                    full_prompt = self.full_prompt.text,
+                    completion_tokens = cb.completion_tokens + image_analysis_token_usage.completion_tokens,
+                    prompt_tokens = cb.prompt_tokens + image_analysis_token_usage.prompt_tokens,
+                    total_tokens = cb.total_tokens + image_analysis_token_usage.total_tokens,
+                    total_cost = cb.total_cost
+                )
+            except Exception as e:
+                raise LangChainException(f"An unexpected exception occurred when executing the completion request: {str(e)}", 500)        
 
     async def ainvoke(self, request: KnowledgeManagementCompletionRequest) -> CompletionResponse:
         """
         Executes an async completion request.
-        If a vector index exists, it will be queryied with the user prompt.
+        If a vector index exists, it will be queried with the user prompt.
 
         Parameters
         ----------
@@ -408,18 +479,19 @@ class LangChainKnowledgeManagementAgent(LangChainAgentBase):
             generated full prompt with context and token utilization and execution cost details.
         """
         self._validate_request(request)
+        llm = self._get_language_model()
 
         agent = request.agent
-
         ai_model = CompletionAIModel.from_object(request.objects[agent.ai_model_object_id])
-        ai_model_endpoint = APIEndpointConfiguration.from_object(request.objects[ai_model.endpoint_object_id])
+        ai_model_endpoint = APIEndpointConfiguration.from_object(request.objects[ai_model.endpoint_object_id])        
         
         image_analysis_token_usage = CompletionUsage(prompt_tokens=0, completion_tokens=0, total_tokens=0)
 
         image_analysis_results = None
         # Get image attachments that are images with URL file paths.
         image_attachments = [attachment for attachment in request.attachments if (attachment.provider == AttachmentProviders.FOUNDATIONALLM_ATTACHMENT and attachment.content_type.startswith('image/'))] if request.attachments is not None else []
-        if len(image_attachments) > 0:
+        # Tool calling agents will deal with image attachments differently.        
+        if AgentCapabilityCategories.TOOL_CALLING_AGENT not in agent.capabilities and len(image_attachments) > 0:
             image_analysis_client = self._get_language_model(override_operation_type=OperationTypes.IMAGE_ANALYSIS, is_async=True)
             image_analysis_svc = ImageAnalysisService(config=self.config, client=image_analysis_client, deployment_model=self.ai_model.deployment_name)
             image_analysis_results, usage = await image_analysis_svc.aanalyze_images(image_attachments)
@@ -428,7 +500,7 @@ class LangChainKnowledgeManagementAgent(LangChainAgentBase):
             image_analysis_token_usage.total_tokens += usage.total_tokens
 
         # Check for Assistants API capability
-        if "OpenAI.Assistants" in agent.capabilities:
+        if AgentCapabilityCategories.OPENAI_ASSISTANTS in agent.capabilities:
             operation_type_override = OperationTypes.ASSISTANTS_API
             # create the service
             assistant_svc = OpenAIAssistantsApiService(azure_openai_client=self._get_language_model(override_operation_type=operation_type_override, is_async=True))
@@ -473,79 +545,97 @@ class LangChainKnowledgeManagementAgent(LangChainAgentBase):
                 user_prompt = request.user_prompt
             )
         
-        # Build LCEL chain
-        # Get the vector document retriever, if it exists.
-        retriever = self._get_document_retriever(request, agent)
-        if retriever is not None:
-            self.has_retriever = True
-        # Get the prompt template.
-        prompt_template = self._get_prompt_template(
-            request,
-            agent.conversation_history_settings
-        )
-
-        if retriever is not None:
-            chain_context = { "context": retriever | retriever.format_docs, "question": RunnablePassthrough() }
-        elif image_analysis_results is not None:
-            chain_context = { "context": lambda x: image_analysis_svc.format_results(image_analysis_results), "question": RunnablePassthrough() }
-        else:
-            chain_context = { "context": RunnablePassthrough() }
-
-        # Compose LCEL chain
-        chain = (
-            chain_context
-            | prompt_template
-            | RunnableLambda(self._record_full_prompt)
-            | self._get_language_model()
-        )      
-
-        retvalue = None
-        if ai_model_endpoint.provider == LanguageModelProvider.BEDROCK:            
-            if self.has_retriever:
-                completion = chain.invoke(request.user_prompt)
-            else:
-                completion = await chain.ainvoke(request.user_prompt)
-            response_content = OpenAITextMessageContentItem(
-                        value = completion.content,
-                        agent_capability_category = AgentCapabilityCategories.FOUNDATIONALLM_KNOWLEDGE_MANAGEMENT
-                    )           
-            retvalue = CompletionResponse(
+        # Check for Tool Calling Agent capability
+        if AgentCapabilityCategories.TOOL_CALLING_AGENT in agent.capabilities:            
+            tools = []            
+            prompt = self._get_prompt_from_object_id(request.agent.prompt_object_id, request.objects)            
+            graph = create_react_agent(llm, tools=tools, state_modifier=prompt.prefix)
+            
+            if ai_model_endpoint.provider == LanguageModelProvider.BEDROCK:                
+                input_content = [
+                    {"type": "text", "text": request.user_prompt}
+                ]                
+                # Check for images.
+                if len(image_attachments) > 0:
+                    # Add image attachments to the input content.                   
+                    for attachment in image_attachments:                       
+                        image_base64 = self._get_as_base64(mime_type=attachment.content_type, storage_account_name=attachment.provider_storage_account_name, file_path=attachment.provider_file_name)
+                        if image_base64 is not None and image_base64 != '':
+                            input_content.append(
+                                {"type": "image", "source": {"type": "base64", "media_type": attachment.content_type, "data": image_base64}}
+                            )
+                            
+                response = await graph.ainvoke({'messages': [HumanMessage(content=input_content)]})
+                final_message = response["messages"][-1]
+                response_content = OpenAITextMessageContentItem(
+                        value = final_message.content,
+                        agent_capability_category = AgentCapabilityCategories.TOOL_CALLING_AGENT
+                    )                
+                return CompletionResponse(
                         operation_id = request.operation_id,
-                        content = [response_content],                        
+                        content = [response_content],
+                        citations = [],
                         user_prompt = request.user_prompt,
-                        full_prompt = self.full_prompt.text,
-                        completion_tokens = completion.usage_metadata["output_tokens"] + image_analysis_token_usage.completion_tokens,
-                        prompt_tokens = completion.usage_metadata["input_tokens"] + image_analysis_token_usage.prompt_tokens,
-                        total_tokens = completion.usage_metadata["total_tokens"] + image_analysis_token_usage.total_tokens,
+                        full_prompt = prompt.prefix,
+                        completion_tokens = final_message.usage_metadata["output_tokens"] or 0,
+                        prompt_tokens = final_message.usage_metadata["input_tokens"] or 0,
+                        total_tokens = final_message.usage_metadata["total_tokens"] or 0,
                         total_cost = 0
-                    )            
-        else:
-            with get_openai_callback() as cb:
-                # add output parser to openai callback
-                chain = chain | StrOutputParser()
-                try:
-                    # ainvoke isn't working if search is involved in the completion request. Need to dive deeper into how to get this working.
-                    if self.has_retriever:
-                        completion = chain.invoke(request.user_prompt)
-                    else:
-                        completion = await chain.ainvoke(request.user_prompt)
-                    response_content = OpenAITextMessageContentItem(
-                        value = completion,
-                        agent_capability_category = AgentCapabilityCategories.FOUNDATIONALLM_KNOWLEDGE_MANAGEMENT
-                    )                  
-                    retvalue =  CompletionResponse(
-                        operation_id = request.operation_id,
-                        content = [response_content],                        
-                        user_prompt = request.user_prompt,
-                        full_prompt = self.full_prompt.text,
-                        completion_tokens = cb.completion_tokens + image_analysis_token_usage.completion_tokens,
-                        prompt_tokens = cb.prompt_tokens + image_analysis_token_usage.prompt_tokens,
-                        total_tokens = cb.total_tokens + image_analysis_token_usage.total_tokens,
-                        total_cost = cb.total_cost
                     )
-                except Exception as e:
-                    raise LangChainException(f"An unexpected exception occurred when executing the completion request: {str(e)}", 500)
-        
-        if isinstance(retriever, CitationRetrievalBase):
-            retvalue.citations = retriever.get_document_citations() or []              
-        return retvalue
+            else:
+                raise LangChainException(f"Tool Calling Agent is not supported for {ai_model_endpoint.provider}.", 400)
+
+        # FoundationaLLM.KnowledgeManagement capability
+        with get_openai_callback() as cb:            
+            try:
+                # Build LCEL chain
+                # Get the vector document retriever, if it exists.
+                retriever = self._get_document_retriever(request, agent)
+                if retriever is not None:
+                    self.has_retriever = True
+                # Get the prompt template.
+                prompt_template = self._get_prompt_template(
+                    request,
+                    agent.conversation_history_settings
+                )
+
+                if retriever is not None:
+                    chain_context = { "context": retriever | retriever.format_docs, "question": RunnablePassthrough() }
+                elif image_analysis_results is not None:
+                    chain_context = { "context": lambda x: image_analysis_svc.format_results(image_analysis_results), "question": RunnablePassthrough() }
+                else:
+                    chain_context = { "context": RunnablePassthrough() }
+
+                # Compose LCEL chain
+                chain = (
+                    chain_context
+                    | prompt_template
+                    | RunnableLambda(self._record_full_prompt)
+                    | llm
+                    | StrOutputParser()
+                )     
+                # ainvoke isn't working if search is involved in the completion request. Need to dive deeper into how to get this working.
+                if self.has_retriever:
+                    completion = chain.invoke(request.user_prompt)
+                else:
+                    completion = await chain.ainvoke(request.user_prompt)
+                response_content = OpenAITextMessageContentItem(
+                    value = completion,
+                    agent_capability_category = AgentCapabilityCategories.FOUNDATIONALLM_KNOWLEDGE_MANAGEMENT
+                )
+                citations = []
+                if isinstance(retriever, CitationRetrievalBase):
+                    citations = retriever.get_document_citations() or []
+                return CompletionResponse(
+                    operation_id = request.operation_id,
+                    content = [response_content],
+                    citations = citations,
+                    user_prompt = request.user_prompt,
+                    full_prompt = self.full_prompt.text,
+                    completion_tokens = cb.completion_tokens + image_analysis_token_usage.completion_tokens,
+                    prompt_tokens = cb.prompt_tokens + image_analysis_token_usage.prompt_tokens,
+                    total_tokens = cb.total_tokens + image_analysis_token_usage.total_tokens,
+                    total_cost = cb.total_cost
+                )
+            except Exception as e:
+                raise LangChainException(f"An unexpected exception occurred when executing the completion request: {str(e)}", 500)
