@@ -2,6 +2,7 @@
 Class: OpenAIAssistantsApiService
 Description: Integration with the OpenAI Assistants API.
 """
+import os
 from typing import List, Union
 from openai import AsyncAzureOpenAI, AzureOpenAI
 from openai.pagination import AsyncCursorPage, SyncCursorPage
@@ -27,13 +28,15 @@ from foundationallm.models.orchestration import (
     AnalysisResult
 )
 from foundationallm.models.services import OpenAIAssistantsAPIRequest, OpenAIAssistantsAPIResponse
+from foundationallm.models.attachments import AttachmentProperties
+from foundationallm.config import Configuration
 
 class OpenAIAssistantsApiService:
     """
     Integration with the OpenAI Assistants API.
     """
 
-    def __init__(self, azure_openai_client: Union[AzureOpenAI, AsyncAzureOpenAI]):
+    def __init__(self, azure_openai_client: Union[AzureOpenAI, AsyncAzureOpenAI], config : Configuration):
         """
         Initializes an OpenAI Assistants API service.
 
@@ -44,6 +47,37 @@ class OpenAIAssistantsApiService:
             TODO: AzureOpenAI extends OpenAI, test with OpenAI client as input at some point, for now just focus on Azure.
         """
         self.client = azure_openai_client
+
+        #split string and trim whitespace
+        self.file_tool_file_types = [x.strip() for x in config.get_value('FoundationaLLM:APIEndpoints:CoreAPI:Configuration:AzureOpenAIAssistantsFileSearchFileExtensions').split(",")] #["c", "cpp", "cs", "css", "doc", "docx", "html", "java", "js", "json", "md", "pdf", "php", "pptx", "py", "rb", "sh", "tex", "ts", "txt"]
+        self.code_tool_file_types = [x.strip() for x in config.get_value('FoundationaLLM:APIEndpoints:CoreAPI:Configuration:AzureOpenAIAssistantsCodeInterpreterFileExtensions').split(",")] #["c", "cpp", "cs", "css", "doc", "docx", "html", "java", "js", "json", "md", "pdf", "php", "pptx", "py", "rb", "sh", "tex", "ts", "txt"]
+
+        self.tools = [
+            {
+                "type": "file_search"
+            },
+            {
+                "type": "code_interpreter"
+            }
+        ]
+
+    def create_file_attachment(self, attachment : AttachmentProperties):
+        file_attachment = {}
+        file_attachment['file_id'] = attachment.provider_file_name
+        file_attachment['tools'] = []
+
+        ext = os.path.splitext(attachment.original_file_name)[1].replace('.','')
+
+        for tool in self.tools:
+            if tool['type'] == 'file_search':
+                if ext in self.file_tool_file_types:
+                    file_attachment['tools'].append(tool)
+
+            if tool['type'] == 'code_interpreter':
+                if ext in self.code_tool_file_types:
+                    file_attachment['tools'].append(tool)
+
+        return file_attachment
 
     async def aadd_thread_message(self, thread_id: str, role: str, content: str, attachments: list = None):
         return await self.client.beta.threads.messages.create(
@@ -254,7 +288,7 @@ class OpenAIAssistantsApiService:
             The content items within the message.
         """
         ret_content = []
-        
+
         # for each content item in the message
         for ci in message.content:
                 match ci:

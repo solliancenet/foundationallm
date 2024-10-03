@@ -56,15 +56,15 @@ class LangChainKnowledgeManagementAgent(LangChainAgentBase):
             text_embedding_profile = AzureOpenAIEmbeddingProfile.from_object(
                 request.objects[agent.vectorization.text_embedding_profile_object_id]
             )
-            
+
             # text_embedding_profile has the embedding model name in Settings.
             text_embedding_model_name = text_embedding_profile.settings.get(EmbeddingProfileSettingsKeys.MODEL_NAME)
-            
+
             # objects dictionary has the gateway API endpoint configuration.
             gateway_endpoint_configuration = APIEndpointConfiguration.from_object(
                 request.objects[CompletionRequestObjectKeys.GATEWAY_API_ENDPOINT_CONFIGURATION]
             )
-            
+
             gateway_embedding_service = GatewayTextEmbeddingService(
                 instance_id= self.instance_id,
                 user_identity=self.user_identity,
@@ -72,7 +72,7 @@ class LangChainKnowledgeManagementAgent(LangChainAgentBase):
                 model_name = text_embedding_model_name,
                 config=self.config
                 )
-            
+
             # array of objects containing the indexing profile and associated endpoint configuration
             index_configurations = []
 
@@ -82,17 +82,17 @@ class LangChainKnowledgeManagementAgent(LangChainAgentBase):
                     indexing_profile = AzureAISearchIndexingProfile.from_object(
                             request.objects[profile_id]
                         )
-                    # indexing profile has indexing_api_endpoint_configuration_object_id in Settings.                    
+                    # indexing profile has indexing_api_endpoint_configuration_object_id in Settings.
                     indexing_api_endpoint_configuration = APIEndpointConfiguration.from_object(
                         request.objects[indexing_profile.settings.api_endpoint_configuration_object_id]
                     )
-      
+
                     index_configurations.append(
                         KnowledgeManagementIndexConfiguration(
                             indexing_profile = indexing_profile,
                             api_endpoint_configuration = indexing_api_endpoint_configuration
                         )
-                    )                
+                    )
 
                 retriever_factory = RetrieverFactory(
                                 index_configurations=index_configurations,
@@ -283,7 +283,7 @@ class LangChainKnowledgeManagementAgent(LangChainAgentBase):
         if "OpenAI.Assistants" in agent.capabilities:
             operation_type_override = OperationTypes.ASSISTANTS_API
             # create the service
-            assistant_svc = OpenAIAssistantsApiService(azure_openai_client=self._get_language_model(override_operation_type=operation_type_override, is_async=False))
+            assistant_svc = OpenAIAssistantsApiService(azure_openai_client=self._get_language_model(override_operation_type=operation_type_override, is_async=False),config=self.config)
 
             # populate service request object
             assistant_req = OpenAIAssistantsAPIRequest(
@@ -308,6 +308,21 @@ class LangChainKnowledgeManagementAgent(LangChainAgentBase):
                     role = "assistant",
                     content = image_analysis_svc.format_results(image_analysis_results),
                     attachments = []
+                )
+
+            for attachment in request.attachments:
+
+                if attachment.content_type.startswith('image/'):
+                    continue
+
+                file_attachment = assistant_svc.create_file_attachment(attachment)
+
+                # Add user message
+                assistant_svc.add_thread_message(
+                    thread_id = assistant_req.thread_id,
+                    role = "user",
+                    content = f"Summarize the attached {attachment.original_file_name} file.",
+                    attachments = [file_attachment],
                 )
 
             # Add user and assistant messages related to audio classification to the Assistants API request.
@@ -378,7 +393,7 @@ class LangChainKnowledgeManagementAgent(LangChainAgentBase):
                                 label = prediction['label']
                                 external_analysis_context += f'- {label}' + '\n'
                             external_analysis_context += '\n'
-                        
+
                     chain_context = { "context": lambda x: external_analysis_context, "question": RunnablePassthrough() }
                 else:
                     chain_context = { "context": RunnablePassthrough() }
@@ -458,7 +473,7 @@ class LangChainKnowledgeManagementAgent(LangChainAgentBase):
         if "OpenAI.Assistants" in agent.capabilities:
             operation_type_override = OperationTypes.ASSISTANTS_API
             # create the service
-            assistant_svc = OpenAIAssistantsApiService(azure_openai_client=self._get_language_model(override_operation_type=operation_type_override, is_async=True))
+            assistant_svc = OpenAIAssistantsApiService(azure_openai_client=self._get_language_model(override_operation_type=operation_type_override, is_async=True),config=self.config)
 
             # populate service request object
             assistant_req = OpenAIAssistantsAPIRequest(
@@ -483,6 +498,20 @@ class LangChainKnowledgeManagementAgent(LangChainAgentBase):
                     role = "assistant",
                     content = image_analysis_svc.format_results(image_analysis_results),
                     attachments = []
+                )
+
+            for attachment in request.attachments:
+                if attachment.content_type.startswith('image/'):
+                    continue
+
+                file_attachment = assistant_svc.create_file_attachment(attachment)
+
+                # Add user message
+                await assistant_svc.aadd_thread_message(
+                    thread_id = assistant_req.thread_id,
+                    role = "user",
+                    content = f"Summarize the attached {attachment.original_file_name} file.",
+                    attachments = [file_attachment],
                 )
 
             # Add user and assistant messages related to audio classification to the Assistants API request.

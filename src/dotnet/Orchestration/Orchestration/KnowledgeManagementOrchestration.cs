@@ -42,6 +42,7 @@ namespace FoundationaLLM.Orchestration.Core.Orchestration
         IHttpClientFactoryService httpClientFactoryService,
         Dictionary<string, IResourceProviderService> resourceProviderServices,
         bool dataSourceAccessDenied,
+        string? openAIThreadId,
         string? openAIVectorStoreId) : OrchestrationBase(orchestrationService)
     {
         private readonly string _instanceId = instanceId;
@@ -57,6 +58,7 @@ namespace FoundationaLLM.Orchestration.Core.Orchestration
         private readonly IResourceProviderService _azureOpenAIResourceProvider =
             resourceProviderServices[ResourceProviderNames.FoundationaLLM_AzureOpenAI];
         private readonly string? _openAIVectorStoreId = openAIVectorStoreId;
+        private readonly string? _openAIThreadId = openAIThreadId;
         private GatewayServiceClient _gatewayClient;
 
         /// <inheritdoc/>
@@ -155,6 +157,7 @@ namespace FoundationaLLM.Orchestration.Core.Orchestration
                             { OpenAIAgentCapabilityParameterNames.Endpoint, fileUserContext.Endpoint },
                             { OpenAIAgentCapabilityParameterNames.AddAssistantFileToVectorStore, fileMapping.RequiresVectorization },
                             { OpenAIAgentCapabilityParameterNames.AssistantVectorStoreId, _openAIVectorStoreId ?? string.Empty },
+                            { OpenAIAgentCapabilityParameterNames.AssistantThreadId, _openAIThreadId ?? string.Empty },
                             { OpenAIAgentCapabilityParameterNames.AssistantFileId, fileMapping.OpenAIFileId! }
                         });
                 }
