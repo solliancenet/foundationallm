@@ -16,6 +16,12 @@ from azure.search.documents import SearchClient
 from azure.search.documents.models import VectorizedQuery
 from azure.core.credentials import AzureKeyCredential
 
+from foundationallm.telemetry import Telemetry
+
+# Initialize telemetry logging
+logger = Telemetry.get_logger(__name__)
+tracer = Telemetry.get_tracer(__name__)
+
 class SearchServiceFilterRetriever(BaseRetriever):
     """
     LangChain retriever for Azure AI Search.
@@ -101,10 +107,10 @@ class SearchServiceFilterRetriever(BaseRetriever):
                             page_content=result[self.text_field_name]
                         ))
                     except Exception as e:
-                        print(e)
+                        logger.error(e)
 
             except Exception as e:
-                print(e)
+                logger.error(e)
 
             if ( filter == "search.ismatch('*', 'metadata', 'simple', 'all')"):
                 break

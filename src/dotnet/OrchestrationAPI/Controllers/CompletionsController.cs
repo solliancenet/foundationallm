@@ -1,9 +1,11 @@
 ﻿using FoundationaLLM.Common.Authentication;
+using FoundationaLLM.Common.Logging;
 using FoundationaLLM.Common.Models.Orchestration;
 using FoundationaLLM.Common.Models.Orchestration.Request;
 using FoundationaLLM.Common.Models.Orchestration.Response;
 using FoundationaLLM.Orchestration.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
 namespace FoundationaLLM.Orchestration.API.Controllers
 {
@@ -32,8 +34,19 @@ namespace FoundationaLLM.Orchestration.API.Controllers
         /// <param name="completionRequest">The completion request.</param>
         /// <returns>The completion response.</returns>
         [HttpPost("completions")]
-        public async Task<CompletionResponse> GetCompletion(string instanceId, [FromBody] CompletionRequest completionRequest) =>
-            await _orchestrationService.GetCompletion(instanceId, completionRequest);
+        public async Task<CompletionResponse> GetCompletion(string instanceId, [FromBody] CompletionRequest completionRequest)
+        {
+            using (var activity = ActivitySources.OrchestrationAPIActivitySource.StartActivity("GetCompletion", ActivityKind.Consumer, parentContext: default))
+            {
+                var completionResponse = await _orchestrationService.GetCompletion(instanceId, completionRequest);
+
+                activity?.AddTag("PromptTokens", completionResponse.PromptTokens);
+                activity?.AddTag("CompletionTokens", completionResponse.CompletionTokens);
+                activity?.AddTag("TotalTokens", completionResponse.TotalTokens);
+
+                return completionResponse;
+            }
+        }
 
         /// <summary>
         /// Begins a completion operation.
@@ -65,8 +78,20 @@ namespace FoundationaLLM.Orchestration.API.Controllers
         /// <param name="operationId">The ID of the operation to retrieve.</param>
         /// <returns>Returns a completion response</returns>
         [HttpGet("async-completions/{operationId}/result")]
-        public async Task<CompletionResponse> GetCompletionOperationResult(string instanceId, string operationId) =>
-            await _orchestrationService.GetCompletionOperationResult(instanceId, operationId);
+        public async Task<CompletionResponse> GetCompletionOperationResult(string instanceId, string operationId)
+        {
+            using (var activity = ActivitySources.OrchestrationAPIActivitySource.StartActivity("GetCompletionOperationResult", ActivityKind.Consumer, parentContext: default))
+            {
+
+                var completionResponse = await _orchestrationService.GetCompletionOperationResult(instanceId, operationId);
+
+                activity?.AddTag("PromptTokens", completionResponse.PromptTokens);
+                activity?.AddTag("CompletionTokens", completionResponse.CompletionTokens);
+                activity?.AddTag("TotalTokens", completionResponse.TotalTokens);
+
+                return completionResponse;
+            }
+        }
 
     }
 }

@@ -279,7 +279,7 @@ namespace FoundationaLLM.Common.Services
 
             var response = _sessions.GetItemQueryIterator<dynamic>(query);
 
-            Console.WriteLine($"Deleting {sessionId} session and related messages.");
+            _logger.LogInformation($"Deleting {sessionId} session and related messages.");
 
             var batch = _sessions.CreateTransactionalBatch(partitionKey);
             var count = 0;

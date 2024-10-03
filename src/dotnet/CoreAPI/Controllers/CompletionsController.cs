@@ -2,6 +2,7 @@ using FoundationaLLM.Common.Constants.ResourceProviders;
 using FoundationaLLM.Common.Exceptions;
 using FoundationaLLM.Common.Extensions;
 using FoundationaLLM.Common.Interfaces;
+using FoundationaLLM.Common.Logging;
 using FoundationaLLM.Common.Models.Orchestration;
 using FoundationaLLM.Common.Models.Orchestration.Request;
 using FoundationaLLM.Common.Models.Orchestration.Response;
@@ -10,6 +11,7 @@ using FoundationaLLM.Common.Models.ResourceProviders.Agent;
 using FoundationaLLM.Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
 namespace FoundationaLLM.Core.API.Controllers
 {
@@ -63,8 +65,13 @@ namespace FoundationaLLM.Core.API.Controllers
         /// <param name="completionRequest">The user prompt for which to generate a completion.</param>
         [HttpPost("completions", Name = "GetCompletion")]
         public async Task<IActionResult> GetCompletion(string instanceId, [FromBody] CompletionRequest completionRequest)
-        => !string.IsNullOrWhiteSpace(completionRequest.SessionId) ? Ok(await _coreService.GetChatCompletionAsync(instanceId, completionRequest)) :
-                Ok(await _coreService.GetCompletionAsync(instanceId, completionRequest));
+        {
+            using (var activity = ActivitySources.CoreAPIActivitySource.StartActivity("GetCompletion", ActivityKind.Consumer, parentContext: default, tags: new Dictionary<string, object> { { "UPN", _callContext.CurrentUserIdentity?.UPN }, { "RequestId", completionRequest.SessionId }, { "UserId", _callContext.CurrentUserIdentity?.UserId }, { "UserPrompt", completionRequest.UserPrompt } }))
+            {
+                return !string.IsNullOrWhiteSpace(completionRequest.SessionId) ? Ok(await _coreService.GetChatCompletionAsync(instanceId, completionRequest)) :
+                       Ok(await _coreService.GetCompletionAsync(instanceId, completionRequest));
+            }
+        }
         
 
             
@@ -78,8 +85,12 @@ namespace FoundationaLLM.Core.API.Controllers
         [HttpPost("async-completions")]
         public async Task<ActionResult<LongRunningOperation>> StartCompletionOperation(string instanceId, CompletionRequest completionRequest)
         {
-            var state = await _coreService.StartCompletionOperation(instanceId, completionRequest);
-            return Accepted(state);
+            using (var activity = ActivitySources.CoreAPIActivitySource.StartActivity("GetCompletion", ActivityKind.Consumer, parentContext: default, tags: new Dictionary<string, object> { { "UPN", _callContext.CurrentUserIdentity?.UPN }, { "RequestId", completionRequest.SessionId }, { "UserId", _callContext.CurrentUserIdentity?.UserId }, { "UserPrompt", completionRequest.UserPrompt } }))
+            {
+
+                var state = await _coreService.StartCompletionOperation(instanceId, completionRequest);
+                return Accepted(state);
+            }
         }
 
         /// <summary>

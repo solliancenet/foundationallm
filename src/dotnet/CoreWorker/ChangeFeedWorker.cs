@@ -10,7 +10,6 @@ namespace FoundationaLLM.Core.Worker
     public class ChangeFeedWorker : BackgroundService
     {
         private readonly ILogger<ChangeFeedWorker> _logger;
-        private readonly TelemetryClient _telemetryClient;
         private readonly ICosmosDbChangeFeedService _cosmosDbChangeFeedService;
 
         /// <summary>
@@ -23,11 +22,9 @@ namespace FoundationaLLM.Core.Worker
         /// <param name="cosmosDbChangeFeedService">The Cosmos DB change feed
         /// processor that performs the event processing tasks for the worker.</param>
         public ChangeFeedWorker(ILogger<ChangeFeedWorker> logger,
-            TelemetryClient telemetryClient,
             ICosmosDbChangeFeedService cosmosDbChangeFeedService)
         {
             _logger = logger;
-            _telemetryClient = telemetryClient;
             _cosmosDbChangeFeedService = cosmosDbChangeFeedService;
         }
 
@@ -39,10 +36,7 @@ namespace FoundationaLLM.Core.Worker
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             _logger.LogInformation("{time}: Starting the ChangeFeedWorker", DateTimeOffset.Now);
-            using (_telemetryClient.StartOperation<RequestTelemetry>("StartChangeFeedWorker"))
-            {
-                await _cosmosDbChangeFeedService.StartChangeFeedProcessorsAsync();
-            }
+            await _cosmosDbChangeFeedService.StartChangeFeedProcessorsAsync();
         }
     }
 }

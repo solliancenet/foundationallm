@@ -7,6 +7,12 @@ from openai import AzureOpenAI, AsyncAzureOpenAI
 from openai.types import CompletionUsage
 from typing import List, Union
 
+from foundationallm.telemetry import Telemetry
+
+# Initialize telemetry logging
+logger = Telemetry.get_logger(__name__)
+tracer = Telemetry.get_tracer(__name__)
+
 class ImageAnalysisService:
     """
     Performs image analysis via the Azure OpenAI SDK.
@@ -71,7 +77,7 @@ class ImageAnalysisService:
             else:
                 raise Exception(f'The specified image {storage_account_name}/{file_path} does not exist.')
         except Exception as e:
-            print(f'Error getting image as base64: {e}')
+            logger.error(f'Error getting image as base64: {e}')
             return None
 
     def format_results(self, image_analyses: dict) -> str:

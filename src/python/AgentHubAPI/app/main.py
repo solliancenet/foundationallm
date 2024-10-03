@@ -13,7 +13,7 @@ from foundationallm.telemetry import Telemetry
 # Open a connection to the app configuration
 config = get_config()
 # Start collecting telemetry
-# Telemetry.configure_monitoring(config, f'FoundationaLLM:APIEndpoints:{API_NAME}:Essentials:AppInsightsConnectionString')
+# Telemetry.configure_monitoring(config, f'FoundationaLLM:APIEndpoints:{API_NAME}:Essentials:AppInsightsConnectionString', API_NAME)
 
 app = FastAPI(
     title=f'FoundationaLLM {API_NAME}',
@@ -24,7 +24,7 @@ app = FastAPI(
     contact={
         'name':'Solliance, Inc.',
         'email':'contact@solliance.net',
-        'url':'https://solliance.net/' 
+        'url':'https://solliance.net/'
     },
     openapi_url='/swagger/v1/swagger.json',
     docs_url='/swagger',
@@ -43,7 +43,7 @@ app.include_router(status.router)
 async def root():
     """
     Root path of the API.
-    
+
     Returns
     -------
     str
