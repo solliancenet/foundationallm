@@ -322,7 +322,7 @@ class LangChainKnowledgeManagementAgent(LangChainAgentBase):
             image_analysis_token_usage.total_tokens += usage.total_tokens
        
         # Check for Assistants API capability
-        if "OpenAI.Assistants" in agent.capabilities:
+        if AgentCapabilityCategories.OPENAI_ASSISTANTS in agent.capabilities:
             operation_type_override = OperationTypes.ASSISTANTS_API
             # create the service
             assistant_svc = OpenAIAssistantsApiService(azure_openai_client=self._get_language_model(override_operation_type=operation_type_override, is_async=False))
@@ -370,7 +370,7 @@ class LangChainKnowledgeManagementAgent(LangChainAgentBase):
 
          # Get the vector document retriever, if it exists.
         # Check for Tool Calling Agent capability
-        if AgentCapabilityCategories.TOOL_CALLING_AGENT in agent.capabilities:            
+        if AgentCapabilityCategories.TOOL_CALLING_AGENT in agent.capabilities:
             tools = []            
             prompt = self._get_prompt_from_object_id(request.agent.prompt_object_id, request.objects)            
             graph = create_react_agent(llm, tools=tools, state_modifier=prompt.prefix)
@@ -546,26 +546,33 @@ class LangChainKnowledgeManagementAgent(LangChainAgentBase):
             )
         
         # Check for Tool Calling Agent capability
-        if AgentCapabilityCategories.TOOL_CALLING_AGENT in agent.capabilities:            
-            tools = []            
-            prompt = self._get_prompt_from_object_id(request.agent.prompt_object_id, request.objects)            
+        if AgentCapabilityCategories.TOOL_CALLING_AGENT in agent.capabilities:
+            tools = []
+            prompt = self._get_prompt_from_object_id(request.agent.prompt_object_id, request.objects)
             graph = create_react_agent(llm, tools=tools, state_modifier=prompt.prefix)
             
-            if ai_model_endpoint.provider == LanguageModelProvider.BEDROCK:                
+            if ai_model_endpoint.provider == LanguageModelProvider.BEDROCK:
                 input_content = [
                     {"type": "text", "text": request.user_prompt}
-                ]                
+                ]
                 # Check for images.
                 if len(image_attachments) > 0:
-                    # Add image attachments to the input content.                   
-                    for attachment in image_attachments:                       
+                    # Add image attachments to the input content.
+                    for attachment in image_attachments:
                         image_base64 = self._get_attachment_as_base64(mime_type=attachment.content_type, storage_account_name=attachment.provider_storage_account_name, file_path=attachment.provider_file_name)
                         if image_base64 is not None and image_base64 != '':
                             input_content.append(
                                 {"type": "image", "source": {"type": "base64", "media_type": attachment.content_type, "data": image_base64}}
                             )
-                          
-                response = await graph.ainvoke({'messages': [HumanMessage(content=input_content)]})
+                messages = [HumanMessage(content=input_content)]
+                print(agent.conversation_history_settings)
+                if agent.conversation_history_settings is not None and agent.conversation_history_settings.enabled:
+                    print("GOT HERE")
+                    chat_history = self._build_conversation_history_as_messages(request.message_history, agent.conversation_history_settings.max_history)
+                    messages = chat_history.extend(messages)
+
+                print(messages)
+                response = await graph.ainvoke({'messages': messages})
                 final_message = response["messages"][-1]
                 response_content = OpenAITextMessageContentItem(
                         value = final_message.content,

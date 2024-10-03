@@ -197,9 +197,29 @@ public partial class CoreService(
             // Retrieve conversation, including latest prompt.
             var messages = await _cosmosDBService.GetSessionMessagesAsync(completionRequest.SessionId, _callContext.CurrentUserIdentity?.UPN ??
                 throw new InvalidOperationException("Failed to retrieve the identity of the signed in user when retrieving chat completions."));
-            var messageHistoryList = messages
-                .Select(message => new MessageHistoryItem(message.Sender, string.IsNullOrWhiteSpace(message.Text) ? "" : message.Text))
-                .ToList();
+
+            var messageHistoryList = new List<MessageHistoryItem>();
+            foreach(var msg in messages)
+            {
+                
+                if (msg.Content is { Count: > 0 })
+                {
+                    string textContent = "";
+                    foreach (var content in msg.Content)
+                    {
+                        if (content.Type == MessageContentItemTypes.Text)
+                        {
+                            textContent += content.Value;                           
+                        }                        
+                    }
+                    messageHistoryList.Add(new MessageHistoryItem(msg.Sender, textContent));                    
+                }
+                else
+                {
+                    string textContent = string.IsNullOrWhiteSpace(msg.Text) ? "" : msg.Text;
+                    messageHistoryList.Add(new MessageHistoryItem(msg.Sender, msg.Text));
+                }
+            }           
 
             completionRequest.MessageHistory = messageHistoryList;
 
