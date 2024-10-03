@@ -45,6 +45,7 @@ namespace FoundationaLLM.Orchestration.API
                     options.SetCredential(DefaultAuthentication.AzureCredential);
                 });
                 options.Select(AppConfigurationKeyFilters.FoundationaLLM_Instance);
+                options.Select(AppConfigurationKeyFilters.FoundationaLLM_Logging);
                 options.Select(AppConfigurationKeyFilters.FoundationaLLM_Configuration);
 
                 //TODO: Replace this with a more granular approach that would only bring in the configuration namespaces that are actually needed.

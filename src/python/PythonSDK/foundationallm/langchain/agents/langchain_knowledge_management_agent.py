@@ -37,11 +37,18 @@ from foundationallm.services import (
 )
 from foundationallm.services.gateway_text_embedding import GatewayTextEmbeddingService
 from openai.types import CompletionUsage
+from openai import AzureOpenAI, AsyncAzureOpenAI
+
+from foundationallm.telemetry import Telemetry
 
 class LangChainKnowledgeManagementAgent(LangChainAgentBase):
     """
     The LangChain Knowledge Management agent.
     """
+
+    # Initialize telemetry logging
+    logger = Telemetry.get_logger(__name__)
+    tracer = Telemetry.get_tracer(__name__)
 
     def _get_document_retriever(
         self,
@@ -258,6 +265,8 @@ class LangChainKnowledgeManagementAgent(LangChainAgentBase):
             Returns a CompletionResponse with the generated summary, the user_prompt,
             generated full prompt with context and token utilization and execution cost details.
         """
+        self.logger.info("Executing synchronous completion request.")
+
         self._validate_request(request)
 
         agent = request.agent
@@ -266,6 +275,7 @@ class LangChainKnowledgeManagementAgent(LangChainAgentBase):
         image_analysis_results = None
         image_attachments = [attachment for attachment in request.attachments if (attachment.provider == AttachmentProviders.FOUNDATIONALLM_ATTACHMENT and attachment.content_type.startswith('image/'))] if request.attachments is not None else []
         if len(image_attachments) > 0:
+            self.logger.info(f"Analyzing {len(image_attachments)} images.")
             image_analysis_client = self._get_language_model(override_operation_type=OperationTypes.IMAGE_ANALYSIS, is_async=False)
             image_analysis_svc = ImageAnalysisService(config=self.config, client=image_analysis_client, deployment_model=self.ai_model.deployment_name)
             image_analysis_results, usage = image_analysis_svc.analyze_images(image_attachments)
@@ -281,6 +291,7 @@ class LangChainKnowledgeManagementAgent(LangChainAgentBase):
 
         # Check for Assistants API capability
         if "OpenAI.Assistants" in agent.capabilities:
+            self.logger.info("OpenAI.Assistants capability detected.")
             operation_type_override = OperationTypes.ASSISTANTS_API
             # create the service
             assistant_svc = OpenAIAssistantsApiService(azure_openai_client=self._get_language_model(override_operation_type=operation_type_override, is_async=False))
@@ -351,11 +362,14 @@ class LangChainKnowledgeManagementAgent(LangChainAgentBase):
                 user_prompt = request.user_prompt
             )
 
+        self.logger.info("No OpenAI.Assistants capability detected.")
+
         with get_openai_callback() as cb:
             try:
                 # Get the vector document retriever, if it exists.
                 retriever = self._get_document_retriever(request, agent)
                 if retriever is not None:
+                    self.logger.info("Document retriever found.")
                     self.has_retriever = True
                 # Get the prompt template.
                 prompt_template = self._get_prompt_template(
@@ -392,7 +406,8 @@ class LangChainKnowledgeManagementAgent(LangChainAgentBase):
                     | StrOutputParser()
                 )
 
-                completion = chain.invoke(request.user_prompt)
+                completion = chain.invoke(request.user_prompt, config={'callbacks' : self.lcel_callbacks})
+
                 response_content = OpenAITextMessageContentItem(
                     value = completion,
                     agent_capability_category = AgentCapabilityCategories.FOUNDATIONALLM_KNOWLEDGE_MANAGEMENT
@@ -569,9 +584,9 @@ class LangChainKnowledgeManagementAgent(LangChainAgentBase):
 
                 # ainvoke isn't working if search is involved in the completion request. Need to dive deeper into how to get this working.
                 if self.has_retriever:
-                    completion = chain.invoke(request.user_prompt)
+                    completion = chain.invoke(request.user_prompt, config={'callbacks' : self.lcel_callbacks})
                 else:
-                    completion = await chain.ainvoke(request.user_prompt)
+                    completion = await chain.ainvoke(request.user_prompt, config={'callbacks' : self.lcel_callbacks})
 
                 response_content = OpenAITextMessageContentItem(
                     value = completion,

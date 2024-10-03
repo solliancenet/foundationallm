@@ -34,7 +34,7 @@ class Configuration():
         ----------
         - key : str
             The key name of the configuration setting to retrieve.
-        
+
         Returns
         -------
         The configuration value
@@ -47,10 +47,10 @@ class Configuration():
         value = None
 
         # will have future usage with Azure App Configuration
-        # if foundationallm-configuration-allow-environment-variables exists and is True, 
+        # if foundationallm-configuration-allow-environment-variables exists and is True,
         #   then the environment variables will be checked first, then KV
-        # if foundationallm-configuration-allow-environment-variables does not exist 
-        #   OR foundationallm-configuration-allow-environment-variables is False, 
+        # if foundationallm-configuration-allow-environment-variables does not exist
+        #   OR foundationallm-configuration-allow-environment-variables is False,
         #   then check App config and then KV
         allow_env_vars = False
         if "foundationallm-configuration-allow-environment-variables" in os.environ:
@@ -82,11 +82,11 @@ class Configuration():
         ----------
         - key : str
             The key name of the feature flag to retrieve.
-        
+
         Returns
         -------
         The enabled value of the feature flag
-        
+
         """
         if key is None:
             raise KeyError('The key parameter is required for Configuration.get_feature_flag().')

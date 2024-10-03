@@ -288,7 +288,7 @@ namespace FoundationaLLM.Orchestration.Core.Orchestration
                 .ToDictionary(
                     a => $"({a.Text!})",
                     a => $"({a.FileUrl})");
-            
+
 
             var input = openAITextMessage.Value!;
             var regex = new Regex(@"\(sandbox:[^)]*\)");

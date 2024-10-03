@@ -41,6 +41,15 @@
 		]
 	},
 	{
+		"namespace": "Logging",
+		"dependency_injection_key": null,
+		"configuration_section": {
+			"description": "Configuration section used to configure logging for the FoundationaLLM services."
+		},
+		"configuration_keys": [
+		]
+	},
+	{
 		"namespace": "Configuration",
 		"dependency_injection_key": null,
 		"configuration_section": {

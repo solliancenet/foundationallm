@@ -17,7 +17,13 @@ namespace FoundationaLLM.Common.Constants.Configuration
         /// </summary>
         public const string FoundationaLLM_Instance =
             "FoundationaLLM:Instance:*";
-        
+
+        /// <summary>
+        /// Filter for the configuration section used to identify the settings related to the FoundationaLLM instance.
+        /// </summary>
+        public const string FoundationaLLM_Logging =
+            "Logging:*";
+
         /// <summary>
         /// Filter for the configuration section used to identify the Azure Key Vault settings related to the FoundationaLLM instance.
         /// </summary>
