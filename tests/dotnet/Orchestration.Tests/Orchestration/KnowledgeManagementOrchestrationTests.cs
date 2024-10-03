@@ -31,6 +31,7 @@ namespace FoundationaLLM.Orchestration.Tests.Orchestration
                 null,
                 null,
                 false,
+                string.Empty,
                 string.Empty);
         }
 

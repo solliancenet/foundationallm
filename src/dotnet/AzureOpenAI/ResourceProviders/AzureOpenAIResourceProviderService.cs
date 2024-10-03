@@ -348,11 +348,14 @@ namespace FoundationaLLM.AzureOpenAI.ResourceProviders
                 newOpenAIAssistantThreadId = ((JsonElement)newOpenAIAssistantThreadIdObject!).Deserialize<string>();
 
                 result.TryGetValue(OpenAIAgentCapabilityParameterNames.AssistantVectorStoreId, out var newOpenAIAssistantVectorStoreIdObject);
-                newOpenAIAssistantVectorStoreId = ((JsonElement)newOpenAIAssistantVectorStoreIdObject!).Deserialize<string>();
+                if (newOpenAIAssistantVectorStoreIdObject != null)
+                {
+                    newOpenAIAssistantVectorStoreId = ((JsonElement)newOpenAIAssistantVectorStoreIdObject!).Deserialize<string>();
+                    incompleteConversations[0].OpenAIVectorStoreId = newOpenAIAssistantVectorStoreId;
+                }
 
                 incompleteConversations[0].OpenAIThreadId = newOpenAIAssistantThreadId;
                 incompleteConversations[0].OpenAIThreadCreatedOn = DateTimeOffset.UtcNow;
-                incompleteConversations[0].OpenAIVectorStoreId = newOpenAIAssistantVectorStoreId;
 
                 #region Ensure that only one thread can update the assistant user context at a time.
 

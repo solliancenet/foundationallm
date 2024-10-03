@@ -19,6 +19,7 @@ using Microsoft.Extensions.Options;
 using OpenAI.Assistants;
 using OpenAI.Files;
 using OpenAI.VectorStores;
+using System.ClientModel;
 using System.Collections.Concurrent;
 using System.Text.Json;
 
@@ -275,21 +276,12 @@ namespace FoundationaLLM.Gateway.Services
                     }
                 });
 
-                var threadResult = await assistantClient.CreateThreadAsync(new ThreadCreationOptions
-                {
-                    ToolResources = new ToolResources()
-                    {
-                        FileSearch = new FileSearchToolResources()
-                        {
-                            VectorStoreIds = [vectorStoreResult.Value.Id]
-                        }
-                    }
-                });
+                //create but dont attach the vector store
+                var threadResult = await assistantClient.CreateThreadAsync(new ThreadCreationOptions{});
                 var thread = threadResult.Value;
-                var vectorStore = vectorStoreResult.Value;
-
+                
                 result[OpenAIAgentCapabilityParameterNames.AssistantThreadId] = thread.Id;
-                result[OpenAIAgentCapabilityParameterNames.AssistantVectorStoreId] = vectorStore.Id;
+                result[OpenAIAgentCapabilityParameterNames.AssistantVectorStoreId] = vectorStoreResult.Value.Id;
             }
 
             var fileId = GetParameterValue<string>(parameters, OpenAIAgentCapabilityParameterNames.AssistantFileId, string.Empty);
@@ -314,6 +306,43 @@ namespace FoundationaLLM.Gateway.Services
             {
                 var vectorStoreClient = GetAzureOpenAIVectorStoreClient(azureOpenAIAccount.Endpoint);
                 var vectorStoreId = GetRequiredParameterValue<string>(parameters, OpenAIAgentCapabilityParameterNames.AssistantVectorStoreId);
+
+                ClientResult<VectorStore> vectorStoreResult = null;
+
+                //try get vector store
+                if (!string.IsNullOrEmpty(vectorStoreId))
+                    vectorStoreResult = await vectorStoreClient.GetVectorStoreAsync(vectorStoreId);
+                else
+                {
+                    vectorStoreResult = await vectorStoreClient.CreateVectorStoreAsync(new VectorStoreCreationOptions
+                    {
+                        ExpirationPolicy = new VectorStoreExpirationPolicy
+                        {
+                            Anchor = VectorStoreExpirationAnchor.LastActiveAt,
+                            Days = 365
+                        }
+                    });
+
+                    result[OpenAIAgentCapabilityParameterNames.AssistantVectorStoreId] = vectorStoreResult.Value.Id;
+                }
+
+                var assistantClient = GetAzureOpenAIAssistantClient(azureOpenAIAccount.Endpoint);
+                var threadId = GetRequiredParameterValue<string>(parameters, OpenAIAgentCapabilityParameterNames.AssistantThreadId);
+                var thread = await assistantClient.GetThreadAsync(threadId);
+
+                if (thread.Value.ToolResources.FileSearch == null || thread.Value.ToolResources.FileSearch?.VectorStoreIds.Count == 0)
+                {
+                    var threadResult = await assistantClient.ModifyThreadAsync(thread, new ThreadModificationOptions
+                    {
+                        ToolResources = new ToolResources()
+                        {
+                            FileSearch = new FileSearchToolResources()
+                            {
+                                VectorStoreIds = [vectorStoreResult.Value.Id]
+                            }
+                        }
+                    });
+                }
 
                 var vectorizationResult = await vectorStoreClient.AddFileToVectorStoreAsync(vectorStoreId, fileId);
 

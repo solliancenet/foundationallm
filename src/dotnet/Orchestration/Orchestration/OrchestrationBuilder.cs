@@ -77,6 +77,8 @@ namespace FoundationaLLM.Orchestration.Core.Orchestration
                 callContext.CurrentUserIdentity!,
                 logger);
 
+            var threadId = result.ExplodedObjects?[CompletionRequestObjectsKeys.OpenAIAssistantThreadId] as string;
+
             if (result.Agent.AgentType == typeof(KnowledgeManagementAgent) || result.Agent.AgentType == typeof(AudioClassificationAgent))
             {
                 var orchestrationName = string.IsNullOrWhiteSpace(result.Agent.OrchestrationSettings?.Orchestrator)
@@ -95,6 +97,7 @@ namespace FoundationaLLM.Orchestration.Core.Orchestration
                     serviceProvider.GetRequiredService<IHttpClientFactoryService>(),
                     resourceProviderServices,
                     result.DataSourceAccessDenied,
+                    threadId,
                     vectorStoreId);
 
                 return kmOrchestration;
