@@ -50,6 +50,7 @@
     <Compile Include="foundationallm\services\gateway_text_embedding\__init__.py" />
     <Compile Include="foundationallm\services\http_client_service.py" />
     <Compile Include="foundationallm\services\image_analysis_service.py" />
+    <Compile Include="foundationallm\services\image_generation_service.py" />
     <Compile Include="foundationallm\services\openai_assistants_api_service.py" />
     <Compile Include="foundationallm\langchain\exceptions\langchain_exception.py" />
     <Compile Include="foundationallm\langchain\exceptions\__init__.py" />
