@@ -136,6 +136,7 @@ builder.Services.AddKeyedSingleton<IStorageService, BlobStorageService>(
     });
 
 // Vectorization state
+builder.Services.AddSingleton<MemoryVectorizationStateService, MemoryVectorizationStateService>(); //for sync requests
 builder.Services.AddSingleton<IVectorizationStateService, BlobStorageVectorizationStateService>();
 
 // Resource validation

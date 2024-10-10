@@ -5,8 +5,10 @@ using FoundationaLLM.Common.Authentication;
 using FoundationaLLM.Common.Constants;
 using FoundationaLLM.Common.Constants.Configuration;
 using FoundationaLLM.Common.Interfaces;
+using FoundationaLLM.Common.Models.Configuration.Storage;
 using FoundationaLLM.Common.Models.Context;
 using FoundationaLLM.Common.OpenAPI;
+using FoundationaLLM.Common.Services.Storage;
 using FoundationaLLM.Common.Services.Tokenizers;
 using FoundationaLLM.Common.Validation;
 using FoundationaLLM.SemanticKernel.Core.Models.Configuration;
@@ -89,6 +91,10 @@ builder.Services.AddAzureEventGridEvents(
 builder.Services.AddOptions<VectorizationWorkerSettings>()
     .Bind(builder.Configuration.GetSection(AppConfigurationKeys.FoundationaLLM_Vectorization_Worker));
 
+builder.Services.AddOptions<BlobStorageServiceSettings>(
+    DependencyInjectionKeys.FoundationaLLM_Vectorization_StateService_Storage)
+    .Bind(builder.Configuration.GetSection(AppConfigurationKeySections.FoundationaLLM_Vectorization_StateService_Storage));
+
 builder.Services.AddOptions<AzureCosmosDBNoSQLIndexingServiceSettings>()
     .Bind(builder.Configuration.GetSection(AppConfigurationKeySections.FoundationaLLM_APIEndpoints_AzureCosmosDBNoSQLVectorStore_Configuration));
 
@@ -118,6 +124,18 @@ builder.Services.AddSingleton<CosmosClient>(serviceProvider =>
 // Request sources cache
 builder.Services.AddSingleton<IRequestSourcesCache, RequestSourcesCache>();
 builder.Services.ActivateSingleton<IRequestSourcesCache>();
+
+builder.Services.AddKeyedSingleton<IStorageService, BlobStorageService>(
+    DependencyInjectionKeys.FoundationaLLM_Vectorization_StateService_Storage, (sp, obj) =>
+    {
+        var settings = sp.GetRequiredService<IOptionsMonitor<BlobStorageServiceSettings>>()
+            .Get(DependencyInjectionKeys.FoundationaLLM_Vectorization_StateService_Storage);
+        var logger = sp.GetRequiredService<ILogger<BlobStorageService>>();
+
+        return new BlobStorageService(
+            Options.Create<BlobStorageServiceSettings>(settings),
+            logger);
+    });
 
 // Vectorization state
 builder.Services.AddSingleton<MemoryVectorizationStateService, MemoryVectorizationStateService>(); //for sync requests
