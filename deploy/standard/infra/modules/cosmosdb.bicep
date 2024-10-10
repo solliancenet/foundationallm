@@ -77,6 +77,15 @@ var containers = [
     }
     defaultTtl: null
   }
+  {
+    name: 'Attachments'
+    partitionKey: {
+      paths: [
+        '/upn'
+      ]
+    }
+    defaultTtl: null
+  }
 ]
 
 @description('The Resource logs to enable')

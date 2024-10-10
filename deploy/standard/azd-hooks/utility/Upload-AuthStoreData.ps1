@@ -62,3 +62,15 @@ $azcopy = "../../common/tools/azcopy/azcopy" | Get-AbsolutePath
 
 Write-Host "$azcopy cp $sourceJson $target"
 & $azcopy cp $sourceJson $target
+
+$sourceJson = "../data/policy-assignments/$($instanceId)-policy`.json" | Get-AbsolutePath
+
+if (-not (Test-Path $sourceJson)) {
+    throw "Default role assignments json not found at $sourceJson"
+}
+
+$target = "https://$storageAccountAdls.blob.core.windows.net/policy-assignments/"
+$azcopy = "../../common/tools/azcopy/azcopy" | Get-AbsolutePath
+
+Write-Host "$azcopy cp $sourceJson $target"
+& $azcopy cp $sourceJson $target

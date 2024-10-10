@@ -18,6 +18,7 @@ param existingOpenAiInstanceSub string = ''
 param instanceId string
 param location string
 param networkName string = ''
+param oneDriveBaseUrl string
 param principalType string
 param project string
 param registry string
@@ -262,6 +263,8 @@ output FLLM_MGMT_API_HOSTNAME string = managementApiHostname
 output FOUNDATIONALLM_VNET_NAME string = networking.outputs.vnetName
 output FOUNDATIONALLM_VNET_ID string = networking.outputs.vnetId
 output FOUNDATIONALLM_HUB_VNET_ID string = networking.outputs.hubVnetId
+
+output ONEDRIVE_BASE_URL string = oneDriveBaseUrl
 
 output SERVICE_GATEKEEPER_API_ENDPOINT_URL string = 'http://gatekeeper-api/gatekeeper/'
 output SERVICE_GATEKEEPER_INTEGRATION_API_ENDPOINT_URL string = 'http://gatekeeper-integration-api/gatekeeperintegration'

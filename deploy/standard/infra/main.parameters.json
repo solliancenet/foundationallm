@@ -68,6 +68,9 @@
       "networkName": {
         "value": "${FOUNDATIONALLM_EXT_VNET_NAME}"
       },
+      "oneDriveBaseUrl": {
+        "value": "${ONEDRIVE_BASE_URL}"
+      },
       "principalType": {
         "value": "${AZURE_PRINCIPAL_TYPE=User}"
       },

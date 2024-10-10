@@ -230,6 +230,8 @@ $tokens.orchestrationApiRoleAssignmentGuid = $(New-Guid).Guid
 $tokens.gatekeeperApiRoleAssignmentGuid = $(New-Guid).Guid
 $tokens.gatewayApiRoleAssignmentGuid = $(New-Guid).Guid
 $tokens.vectorizationJobRoleAssignmentGuid = $(New-Guid).Guid
+$tokens.conversationPolicyGuid = $(New-Guid).Guid
+$tokens.attachmentPolicyGuid = $(New-Guid).Guid
 $tokens.subscriptionId = $subscriptionId
 $tokens.storageResourceGroup = $resourceGroups.storage
 $tokens.opsResourceGroup = $resourceGroups.ops
@@ -439,6 +441,8 @@ foreach ($service in $authServices.GetEnumerator()) {
     $service.Value.miClientId = $miClientId
 }
 
+$tokens.oneDriveBaseUrl = $env:ONEDRIVE_BASE_URL
+
 $tokens.orchestrationApiMiClientId = $services["orchestrationapi"].miClientId
 $tokens.orchestrationApiMiObjectId = $services["orchestrationapi"].miObjectId
 $tokens.agentHubApiMiClientId = $services["agenthubapi"].miClientId
@@ -553,5 +557,6 @@ PopulateTemplate $tokens "..,data,resource-provider,FoundationaLLM.Configuration
 PopulateTemplate $tokens "..,data,resource-provider,FoundationaLLM.Configuration,VectorizationWorker.template.json" "..,..,common,data,resource-provider,FoundationaLLM.Configuration,VectorizationWorker.json"
 PopulateTemplate $tokens "..,data,resource-provider,FoundationaLLM.Prompt,FoundationaLLM.template.json" "..,..,common,data,resource-provider,FoundationaLLM.Prompt,FoundationaLLM.json"
 PopulateTemplate $tokens "..,data,role-assignments,DefaultRoleAssignments.template.json" "..,data,role-assignments,$($instanceId).json"
+PopulateTemplate $tokens "..,data,policy-assignments,DefaultPolicyAssignments.template.json" "..,data,policy-assignments,$($instanceId)-policy.json"
 
 exit 0
