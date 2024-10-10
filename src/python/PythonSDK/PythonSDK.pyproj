@@ -25,6 +25,9 @@
     <Compile Include="foundationallm\config\context.py" />
     <Compile Include="foundationallm\config\environment_variables.py" />
     <Compile Include="foundationallm\config\user_identity.py" />
+    <Compile Include="foundationallm\event_handlers\openai_assistant_event_handler.py" />
+    <Compile Include="foundationallm\event_handlers\__init__.py" />
+    <Compile Include="foundationallm\langchain\agents\langchain_audio_classifier_agent.py" />
     <Compile Include="foundationallm\langchain\agents\langchain_knowledge_management_agent.py" />
     <Compile Include="foundationallm\models\attachments\attachment_properties.py" />
     <Compile Include="foundationallm\models\attachments\attachment_providers.py" />
@@ -131,13 +134,15 @@
     <Compile Include="foundationallm\models\resource_providers\vectorization\profile_base.py" />
     <Compile Include="foundationallm\models\resource_providers\vectorization\__init__.py" />
     <Compile Include="foundationallm\models\resource_providers\__init__.py" />
-    <Compile Include="foundationallm\models\utils\object_utils.py" />
-    <Compile Include="foundationallm\models\utils\__init__.py" />
+    <Compile Include="foundationallm\utils\object_utils.py" />
+    <Compile Include="foundationallm\utils\openai_assistants_helpers.py" />
+    <Compile Include="foundationallm\utils\__init__.py" />
     <Compile Include="foundationallm\models\__init__.py" />
     <Compile Include="foundationallm\config\configuration.py" />
     <Compile Include="foundationallm\config\__init__.py" />
     <Compile Include="foundationallm\operations\operations_manager.py" />
     <Compile Include="foundationallm\operations\__init__.py" />
+    <Compile Include="foundationallm\event_handlers\openai_assistant_async_event_handler.py" />
     <Compile Include="foundationallm\services\__init__.py" />
     <Compile Include="foundationallm\storage\blob_storage_manager.py" />
     <Compile Include="foundationallm\storage\storage_manager_base.py" />
@@ -165,6 +170,7 @@
     <Folder Include="foundationallm\langchain\exceptions\" />
     <Folder Include="foundationallm\models\attachments\" />
     <Folder Include="foundationallm\models\constants\" />
+    <Folder Include="foundationallm\event_handlers\" />
     <Folder Include="foundationallm\services\" />
     <Folder Include="foundationallm\langchain\retrievers\" />
     <Folder Include="foundationallm\langchain\orchestration\" />
@@ -178,7 +184,7 @@
     <Folder Include="foundationallm\models\operations\" />
     <Folder Include="foundationallm\models\resource_providers\ai_models\" />
     <Folder Include="foundationallm\models\resource_providers\configuration\" />
-    <Folder Include="foundationallm\models\utils\" />
+    <Folder Include="foundationallm\utils\" />
     <Folder Include="foundationallm\models\classification\" />
     <Folder Include="foundationallm\models\resource_providers\" />
     <Folder Include="foundationallm\models\orchestration\" />

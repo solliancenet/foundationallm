@@ -1,4 +1,5 @@
 using Azure.Search.Documents.Indexes;
+using FoundationaLLM.Common.Models.Orchestration;
 using FoundationaLLM.Common.Models.Orchestration.Response;
 using System.Text.Json.Serialization;
 
@@ -108,13 +109,21 @@ public record Message
     public List<MessageContent>? Content { get; set; }
 
     /// <summary>
+    /// The status of the long-running operation.
+    /// </summary>
+    [JsonPropertyName("status")]
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public OperationStatus Status { get; set; }
+
+    /// <summary>
     /// Constructor for Message.
     /// </summary>
     public Message(string sessionId, string sender, int? tokens, string text,
         float[]? vector, bool? rating, string upn, string? senderDisplayName = null,
         Citation[]? citations = null, string? expectedCompletion = null,
         List<MessageContent>? content = null, List<string>? attachments = null,
-        List<AttachmentDetail> attachmentDetails = null, List<AnalysisResult>? analysisResults = null)
+        List<AttachmentDetail>? attachmentDetails = null, List<AnalysisResult>? analysisResults = null,
+        OperationStatus status = OperationStatus.Pending)
     {
         Id = Guid.NewGuid().ToString();
         Type = nameof(Message);
@@ -133,5 +142,6 @@ public record Message
         AttachmentDetails = attachmentDetails;
         Content = content;
         AnalysisResults = analysisResults;
+        Status = status;
     }
 }

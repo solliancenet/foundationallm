@@ -3,18 +3,19 @@ from typing import List
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 
 from langchain_core.language_models import BaseLanguageModel
-from langchain_openai import AzureChatOpenAI, AzureOpenAI, ChatOpenAI, OpenAI
+from langchain_openai import AzureChatOpenAI, ChatOpenAI, OpenAI
 from openai import AzureOpenAI as aoi
 from openai import AsyncAzureOpenAI as async_aoi
 from foundationallm.config import Configuration, UserIdentity
 from foundationallm.langchain.exceptions import LangChainException
-from foundationallm.models.orchestration import OperationTypes
+from foundationallm.operations import OperationsManager
 from foundationallm.models.authentication import AuthenticationTypes
 from foundationallm.models.language_models import LanguageModelProvider
 from foundationallm.models.orchestration import (
     CompletionRequestBase,
     CompletionResponse,
-    MessageHistoryItem
+    MessageHistoryItem,
+    OperationTypes
 )
 from foundationallm.models.resource_providers.ai_models import AIModelBase
 from foundationallm.models.resource_providers.attachments import Attachment
@@ -25,7 +26,7 @@ class LangChainAgentBase():
     """
     Implements the base functionality for a LangChain agent.
     """
-    def __init__(self, instance_id: str, user_identity: UserIdentity, config: Configuration):
+    def __init__(self, instance_id: str, user_identity: UserIdentity, config: Configuration, operations_manager: OperationsManager):
         """
         Initializes a knowledge management agent.
 
@@ -43,6 +44,7 @@ class LangChainAgentBase():
         self.full_prompt = ''
         self.has_indexing_profiles = False
         self.has_retriever = False
+        self.operations_manager = operations_manager
 
     @abstractmethod
     def invoke(self, request: CompletionRequestBase) -> CompletionResponse:

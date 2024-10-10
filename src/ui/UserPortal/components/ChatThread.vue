@@ -150,7 +150,7 @@ export default {
 
 			if (agent.long_running) {
 				// Handle long-running operations
-				const operationId = await this.$appStore.startLongRunningProcess('/completions', {
+				const operationId = await this.$appStore.startLongRunningProcess('/async-completions', {
 					session_id: this.currentSession.id,
 					user_prompt: text,
 					agent_name: agent.name,

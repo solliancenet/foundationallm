@@ -32,7 +32,7 @@ class HttpClientService:
 
         # Check for base URL exceptions.
         for url_exception in self.api_endpoint_configuration.url_exceptions:
-            if url_exception.user_principal_name == self.user_identity.upn:
+            if url_exception.user_principal_name == self.user_identity.upn and url_exception.enabled:
                 self.base_url = url_exception.url.rstrip('/')
                 break
 

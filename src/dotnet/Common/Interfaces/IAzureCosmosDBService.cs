@@ -1,5 +1,6 @@
 ﻿using FoundationaLLM.Common.Models.Configuration.Users;
 using FoundationaLLM.Common.Models.Conversation;
+using FoundationaLLM.Common.Models.Orchestration;
 using FoundationaLLM.Common.Models.ResourceProviders;
 using FoundationaLLM.Common.Models.ResourceProviders.Attachment;
 
@@ -107,7 +108,7 @@ public interface IAzureCosmosDBService
     /// <param name="sessionId">The session id from which to retrieve the completion prompt.</param>
     /// <param name="completionPromptId">The id of the completion prompt to retrieve.</param>
     /// <returns></returns>
-    Task<CompletionPrompt> GetCompletionPrompt(string sessionId, string completionPromptId);
+    Task<CompletionPrompt> GetCompletionPromptAsync(string sessionId, string completionPromptId);
 
     /// <summary>
     /// Returns the user profile for a given user via their UPN.
@@ -125,6 +126,31 @@ public interface IAzureCosmosDBService
     /// <param name="cancellationToken">Cancellation token for async calls.</param>
     /// <returns></returns>
     Task UpsertUserProfileAsync(UserProfile userProfile, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Get the context for a long running operation.
+    /// </summary>
+    /// <param name="operationId">The identifier of the long running operation.</param>
+    /// <param name="cancellationToken">Cancellation token for async calls.</param>
+    /// <returns>A <see cref="LongRunningOperationContext"/> object providing the context for the long running operation.</returns>
+    Task<LongRunningOperationContext> GetLongRunningOperationContextAsync(string operationId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Inserts or updates a long running operation context.
+    /// </summary>
+    /// <param name="longRunningOperationContext">The <see cref="LongRunningOperationContext"/> object providing the context for the long running operation.</param>
+    /// <param name="cancellationToken">Cancellation token for async calls.</param>
+    /// <returns></returns>
+    Task UpsertLongRunningOperationContextAsync(LongRunningOperationContext longRunningOperationContext, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Updates a subset of the properties of a long running operation context.
+    /// </summary>
+    /// <param name="operationId">The identifier of the long running operation.</param>
+    /// <param name="propertyValues">The dictionary containing property names and updated values.</param>
+    /// <param name="cancellationToken">Cancellation token for async calls.</param>
+    /// <returns></returns>
+    Task UpdateLongRunningOperationContextPropertiesAsync(string operationId, Dictionary<string, object> propertyValues, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Gets an attachment.

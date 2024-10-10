@@ -60,9 +60,9 @@ import { fetchBlobUrl } from '@/js/fileService';
 
 export default {
 	props: {
-		contentencoded: {
-			type: String,
-			required: true,
+		value: {
+			type: Object,
+			required: false,
 		},
 	},
 
@@ -74,14 +74,8 @@ export default {
 		};
 	},
 
-	// computed: {
-	// 	content() {
-	// 		return JSON.parse(decodeURIComponent(this.contentencoded));
-	// 	},
-	// },
-
 	async created() {
-		this.content = JSON.parse(decodeURIComponent(this.contentencoded));
+		this.content = this.value;
 
 		if (['image_file', 'html', 'file_path'].includes(this.content.type)) {
 			this.loading = true;

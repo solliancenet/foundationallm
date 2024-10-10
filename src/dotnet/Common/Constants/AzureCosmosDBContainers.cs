@@ -3,7 +3,7 @@
     /// <summary>
     /// Core FoundationaLLM Cosmos DB container names.
     /// </summary>
-    public static class CosmosDbContainers
+    public static class AzureCosmosDBContainers
     {
         /// <summary>
         /// Stores chat sessions and related messages.
@@ -24,6 +24,11 @@
         /// Stores state data for background processing.
         /// </summary>
         public const string State = "State";
+
+        /// <summary>
+        /// Stores context for long running operations.
+        /// </summary>
+        public const string Operations = "Operations";
 
         /// <summary>
         /// The Cosmos DB change feed leases container.

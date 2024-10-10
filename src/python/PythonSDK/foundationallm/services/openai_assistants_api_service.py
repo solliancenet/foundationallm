@@ -2,38 +2,24 @@
 Class: OpenAIAssistantsApiService
 Description: Integration with the OpenAI Assistants API.
 """
-from typing import List, Union
+from typing import Union
 from openai import AsyncAzureOpenAI, AzureOpenAI
 from openai.pagination import AsyncCursorPage, SyncCursorPage
 from openai.types import FileObject
-from openai.types.beta.threads import (
-    FileCitationAnnotation,
-    FilePathAnnotation,
-    ImageFileContentBlock,
-    ImageURLContentBlock,
-    Message,
-    TextContentBlock
-)
+from openai.types.beta.threads import Message
 from openai.types.beta.threads.message import Attachment
-from openai.types.beta.threads.runs import (
-    CodeInterpreterToolCall,
-    RunStep
-)
-from foundationallm.models.constants import AgentCapabilityCategories
-from foundationallm.models.orchestration import (
-    OpenAIFilePathMessageContentItem,
-    OpenAIImageFileMessageContentItem,
-    OpenAITextMessageContentItem,
-    AnalysisResult
-)
+from openai.types.beta.threads.runs import RunStep
+from foundationallm.event_handlers import OpenAIAssistantAsyncEventHandler, OpenAIAssistantEventHandler
+from foundationallm.operations import OperationsManager
 from foundationallm.models.services import OpenAIAssistantsAPIRequest, OpenAIAssistantsAPIResponse
+from foundationallm.utils import OpenAIAssistantsHelpers
 
 class OpenAIAssistantsApiService:
     """
     Integration with the OpenAI Assistants API.
     """
 
-    def __init__(self, azure_openai_client: Union[AzureOpenAI, AsyncAzureOpenAI]):
+    def __init__(self, azure_openai_client: Union[AzureOpenAI, AsyncAzureOpenAI], operations_manager: OperationsManager):
         """
         Initializes an OpenAI Assistants API service.
 
@@ -41,9 +27,11 @@ class OpenAIAssistantsApiService:
         ----------
         azure_openai_client : AzureOpenAI
             Azure OpenAI client for interacting with the OpenAI Assistants API.
-            TODO: AzureOpenAI extends OpenAI, test with OpenAI client as input at some point, for now just focus on Azure.
+        operations_manager : OperationsManager
+            Operations manager for updating the operation.
         """
         self.client = azure_openai_client
+        self.operations_manager = operations_manager
 
     async def aadd_thread_message(self, thread_id: str, role: str, content: str, attachments: list = None):
         return await self.client.beta.threads.messages.create(
@@ -69,8 +57,12 @@ class OpenAIAssistantsApiService:
         ----------
         request : OpenAIAssistantsAPIRequest
             The request to run with the OpenAI Assistants API service.
-        """
 
+        Returns
+        -------
+        OpenAIAssistantsAPIResponse
+            The response parsed from the OpenAI Assistants API service response.
+        """
         # Process file attachments and assign tools
         attachments = self._get_request_attachments(request)
 
@@ -83,15 +75,14 @@ class OpenAIAssistantsApiService:
         )
 
         # Create and execute the run
-        run = self.client.beta.threads.runs.create_and_poll(
+        run = None
+        with self.client.beta.threads.runs.stream(
             thread_id = request.thread_id,
-            assistant_id = request.assistant_id
-        )
-
-        # Retrieve the messages in the thread after the prompt message was appended.
-        messages = self.client.beta.threads.messages.list(
-            thread_id = request.thread_id, order="asc", after=message.id
-        )
+            assistant_id = request.assistant_id,
+            event_handler = OpenAIAssistantEventHandler(self.operations_manager, request)
+        ) as stream:
+            stream.until_done()
+            run = stream.get_final_run()
 
         # Retrieve the steps from the run_steps for the analysis
         run_steps = self.client.beta.threads.runs.steps.list(
@@ -101,9 +92,15 @@ class OpenAIAssistantsApiService:
 
         analysis_results = self._parse_run_steps(run_steps.data)
 
+        # Retrieve the messages in the thread after the prompt message was appended.
+        messages = self.client.beta.threads.messages.list(
+            thread_id = request.thread_id, order="asc", after=message.id
+        )
+
         content = self._parse_messages(messages)
 
         return OpenAIAssistantsAPIResponse(
+            document_id = request.document_id,
             content = content,
             analysis_results = analysis_results,
             completion_tokens = run.usage.completion_tokens,
@@ -125,7 +122,6 @@ class OpenAIAssistantsApiService:
         OpenAIAssistantsAPIResponse
             The response parsed from the OpenAI Assistants API service response.
         """
-
         # Process file attachments and assign tools
         attachments = await self._aget_request_attachments(request)
 
@@ -138,10 +134,14 @@ class OpenAIAssistantsApiService:
         )
 
         # Create and execute the run
-        run = await self.client.beta.threads.runs.create_and_poll(
+        run = None
+        async with self.client.beta.threads.runs.stream(
             thread_id = request.thread_id,
-            assistant_id = request.assistant_id
-            )
+            assistant_id = request.assistant_id,
+            event_handler = OpenAIAssistantAsyncEventHandler(self.operations_manager, request)
+        ) as stream:
+            await stream.until_done()
+            run = await stream.get_final_run()
 
         # Retrieve the steps from the run_steps for the analysis
         run_steps = await self.client.beta.threads.runs.steps.list(
@@ -159,6 +159,7 @@ class OpenAIAssistantsApiService:
         content = await self._aparse_messages(messages)
 
         return OpenAIAssistantsAPIResponse(
+            document_id = request.document_id,
             content = content,
             analysis_results = analysis_results,
             completion_tokens = run.usage.completion_tokens,
@@ -237,67 +238,6 @@ class OpenAIAssistantsApiService:
                 )
         return attachments
 
-    def _parse_single_message(self, message: Message):
-        """
-        Parses a message from the OpenAI Assistants API
-        and returns the content items within the message
-        along with any annotations.
-
-        Parameters
-        ----------
-        message : Message
-            The message to parse.
-
-        Returns
-        -------
-        List[MessageContentItemBase]
-            The content items within the message.
-        """
-        ret_content = []
-        
-        # for each content item in the message
-        for ci in message.content:
-                match ci:
-                    case TextContentBlock():
-                        text_ci = OpenAITextMessageContentItem(
-                            value=ci.text.value,
-                            agent_capability_category = AgentCapabilityCategories.OPENAI_ASSISTANTS
-                        )
-                        for annotation in ci.text.annotations:
-                            match annotation:
-                                case FilePathAnnotation():
-                                    file_an = OpenAIFilePathMessageContentItem(
-                                        file_id=annotation.file_path.file_id,
-                                        start_index=annotation.start_index,
-                                        end_index=annotation.end_index,
-                                        text=annotation.text,
-                                        agent_capability_category = AgentCapabilityCategories.OPENAI_ASSISTANTS
-                                    )
-                                    text_ci.annotations.append(file_an)
-                                case FileCitationAnnotation():
-                                    file_cit = OpenAIFilePathMessageContentItem(
-                                        file_id=annotation.file_citation.file_id,
-                                        start_index=annotation.start_index,
-                                        end_index=annotation.end_index,
-                                        text=annotation.text,
-                                        agent_capability_category = AgentCapabilityCategories.OPENAI_ASSISTANTS
-                                    )
-                                    text_ci.annotations.append(file_cit)
-                        ret_content.append(text_ci)
-                    case ImageFileContentBlock():
-                        ci_img = OpenAIImageFileMessageContentItem(
-                            file_id=ci.image_file.file_id,
-                            agent_capability_category = AgentCapabilityCategories.OPENAI_ASSISTANTS
-                        )
-                        ret_content.append(ci_img)
-                    case ImageURLContentBlock():
-                        ci_img_url = OpenAIImageFileMessageContentItem(
-                            file_url=ci.image_url.url,
-                            agent_capability_category = AgentCapabilityCategories.OPENAI_ASSISTANTS
-                        )
-                        ret_content.append(ci_img_url)
-        return ret_content
-
     def _parse_messages(self, messages: SyncCursorPage[Message]):
         """
         Parses the messages from the OpenAI API.
@@ -314,7 +254,7 @@ class OpenAIAssistantsApiService:
         """
         ret_content = []
         for msg in messages:
-            ret_content.extend(self._parse_single_message(msg))
+            ret_content.extend(OpenAIAssistantsHelpers.parse_message(msg))
         return ret_content
 
     async def _aparse_messages(self, messages: AsyncCursorPage[Message]):
@@ -333,7 +273,7 @@ class OpenAIAssistantsApiService:
         """
         ret_content = []
         for msg in messages.data:
-            ret_content.extend(self._parse_single_message(msg))
+            ret_content.extend(OpenAIAssistantsHelpers.parse_message(msg))
         return ret_content
 
     def _parse_run_steps(self, run_steps: SyncCursorPage[RunStep]):
@@ -352,7 +292,7 @@ class OpenAIAssistantsApiService:
         """
         analysis_results = []
         for rs in run_steps:
-            analysis_result = self._parse_single_run_step(rs)
+            analysis_result = OpenAIAssistantsHelpers.parse_run_step(rs)
             if analysis_result is not None:
                 analysis_results.append(analysis_result)
         return analysis_results
@@ -373,43 +313,7 @@ class OpenAIAssistantsApiService:
         """
         analysis_results = []
         for rs in run_steps:
-            analysis_result = self._parse_single_run_step(rs)
+            analysis_result = OpenAIAssistantsHelpers.parse_run_step(rs)
             if analysis_result is not None:
                 analysis_results.append(analysis_result)
         return analysis_results
-
-    def _parse_single_run_step(self, run_step: RunStep):
-        """
-        Parses a single run step from the OpenAI API.
-
-        Parameters
-        ----------
-        run_step : RunStep
-            The run step to parse.
-
-        Returns
-        -------
-        AnalysisResult
-            The analysis result from the run step.
-        OR None
-            If the run step does not contain a tool call
-            to the code interpreter tool.
-        """
-        sd = run_step.step_details
-        if sd.type == "tool_calls":
-            tool_call_detail = sd.tool_calls
-            for details in tool_call_detail:
-                if isinstance(details, CodeInterpreterToolCall):
-                    result = AnalysisResult(
-                        tool_name= details.type,
-                        agent_capability_category= AgentCapabilityCategories.OPENAI_ASSISTANTS
-                    )
-                    result.tool_input += details.code_interpreter.input  # Source code
-                    for output in details.code_interpreter.outputs:  # Tool execution output
-                        if hasattr(output, 'image') and output.image:
-                            result.tool_output += "# Generated image file: " + output.image.file_id
-                        elif hasattr(output, 'logs') and output.logs:
-                            result.tool_output += output.logs
-                    return result
-        return None
-

@@ -15,6 +15,12 @@ namespace FoundationaLLM.Common.Models.Orchestration.Request
         public string? OperationId { get; set; }
 
         /// <summary>
+        /// Indicates whether this is a long-running operation.
+        /// </summary>
+        [JsonPropertyName("long_running_operation")]
+        public bool LongRunningOperation { get; set; }
+
+        /// <summary>
         /// The session ID.
         /// </summary>
         [JsonPropertyName("session_id")]

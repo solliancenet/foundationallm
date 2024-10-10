@@ -1,4 +1,4 @@
-﻿namespace FoundationaLLM.Core.Models
+﻿namespace FoundationaLLM.Common.Models.Conversation
 {
     /// <summary>
     /// Gatekeeper override options expressed by an agent.

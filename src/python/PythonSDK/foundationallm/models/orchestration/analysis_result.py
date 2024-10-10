@@ -3,7 +3,7 @@ Class: AnalysisResult
 Description: AnalysisResult class encapsulates the input and output of tool calls.
 """
 from typing import Optional
-from pydantic import BaseModel, Field, Extra
+from pydantic import BaseModel, Field
 from foundationallm.models.constants import AgentCapabilityCategories
 
 class AnalysisResult(BaseModel):
@@ -17,4 +17,4 @@ class AnalysisResult(BaseModel):
     class Config:
         use_enum_values = True
         populate_by_name = True
-        extra = Extra.forbid
+        extra = "forbid"

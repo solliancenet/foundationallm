@@ -57,16 +57,5 @@ namespace FoundationaLLM.Orchestration.API.Controllers
         [HttpGet("async-completions/{operationId}/status")]
         public async Task<LongRunningOperation> GetCompletionOperationStatus(string instanceId, string operationId) =>
             await _orchestrationService.GetCompletionOperationStatus(instanceId, operationId);
-
-        /// <summary>
-        /// Gets a completion operation from the Orchestration service.
-        /// </summary>
-        /// <param name="instanceId">The FoundationaLLM instance id.</param>
-        /// <param name="operationId">The ID of the operation to retrieve.</param>
-        /// <returns>Returns a completion response</returns>
-        [HttpGet("async-completions/{operationId}/result")]
-        public async Task<CompletionResponse> GetCompletionOperationResult(string instanceId, string operationId) =>
-            await _orchestrationService.GetCompletionOperationResult(instanceId, operationId);
-
     }
 }

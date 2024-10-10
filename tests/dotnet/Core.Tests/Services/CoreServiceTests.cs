@@ -368,7 +368,7 @@ namespace FoundationaLLM.Core.Tests.Services
             var messageId = Guid.NewGuid().ToString();
             var completionPromptId = Guid.NewGuid().ToString();
             var expectedPrompt = new CompletionPrompt(sessionId, messageId, "Text");
-            _cosmosDbService.GetCompletionPrompt(sessionId, completionPromptId).Returns(expectedPrompt);
+            _cosmosDbService.GetCompletionPromptAsync(sessionId, completionPromptId).Returns(expectedPrompt);
 
             // Act
             var actualPrompt = await _testedService.GetCompletionPrompt(_instanceId, sessionId, completionPromptId);

@@ -123,25 +123,19 @@ export default {
 	 * @returns A Promise that resolves to the operation ID if the process is successfully started.
 	 * @throws An error if the process fails to start.
 	 */
-	async startLongRunningProcess(url: string, requestBody: any) {
-		const options = {
-			method: 'POST',
-			body: JSON.stringify(requestBody),
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: `Bearer ${await this.getBearerToken()}`,
-			},
-		};
-
+	async startLongRunningProcess(requestBody: any) {
 		try {
-			const response = await $fetch(`${this.apiUrl}${url}`, options);
+			const response = await this.fetch(`/instances/${this.instanceId}/async-completions`, {
+				method: 'POST',
+				body: requestBody,
+			});
 			if (response.status === 202) {
 				return response.operationId;
 			} else {
 				throw new Error('Failed to start process');
 			}
 		} catch (error) {
-			throw new Error(this.formatError(error));
+			throw new Error(formatError(error));
 		}
 	},
 
@@ -153,19 +147,13 @@ export default {
 	 */
 	async checkProcessStatus(operationId: string) {
 		try {
-			const response = await $fetch(
-				`/instances/${this.instanceId}/async-completions/${operationId}/status`,
-				{
-					method: 'GET',
-					headers: {
-						Authorization: `Bearer ${await this.getBearerToken()}`,
-					},
-				},
+			const response = await this.fetch(
+				`/instances/${this.instanceId}/async-completions/${operationId}/status`
 			);
 
 			return response;
 		} catch (error) {
-			throw new Error(this.formatError(error));
+			throw new Error(formatError(error));
 		}
 	},
 
@@ -237,6 +225,11 @@ export default {
 		return (await this.fetch(
 			`/instances/${this.instanceId}/sessions/${sessionId}/messages`,
 		)) as Array<Message>;
+	},
+
+	// Mock polling route
+	async getMessage(messageId: string) {
+		return await $fetch(`/api/stream-message/`);
 	},
 
 	/**

@@ -50,5 +50,12 @@ namespace FoundationaLLM.Common.Models.Orchestration
         /// </summary>
         [JsonPropertyName("ttl")]
         public int TTL { get; set; } = 604800;
+
+        /// <summary>
+        /// The result of the operation.
+        /// </summary>
+        [Newtonsoft.Json.JsonIgnore]
+        [JsonPropertyName("result")]
+        public object? Result { get; set; }
     }
 }

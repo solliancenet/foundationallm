@@ -207,7 +207,19 @@ export const useAppStore = defineStore('app', {
 				...message,
 				content: message.content ? message.content.map(this.initializeMessageContent) : [],
 			}));
-			await nextTick();
+		},
+
+		async getMessage(messageId: string) {
+			const data = await api.getMessage(messageId);
+			const existingMessageIndex = this.currentMessages.findIndex((message) => message.id === messageId);
+
+			if (existingMessageIndex !== -1) {
+				this.currentMessages[existingMessageIndex] = data;
+				return data;
+			}
+
+			this.currentMessages.push(data);
+			return data;
 		},
 
 		updateSessionAgentFromMessages(session: Session) {
@@ -297,9 +309,9 @@ export const useAppStore = defineStore('app', {
 			};
 			this.currentMessages.push(tempAssistantMessage);
 
-			if (agent.long_running) {
+			//if (agent.long_running) {
 				// Handle long-running operations
-				const operationId = await api.startLongRunningProcess('/completions', {
+				const operationId = await api.startLongRunningProcess({
 					session_id: this.currentSession!.id,
 					user_prompt: text,
 					agent_name: agent.name,
@@ -309,19 +321,19 @@ export const useAppStore = defineStore('app', {
 
 				this.longRunningOperations.set(this.currentSession!.id, operationId);
 				this.pollForCompletion(this.currentSession!.id, operationId);
-			} else {
-				await api.sendMessage(
-					this.currentSession!.id,
-					text,
-					agent,
-					relevantAttachments.map((attachment) => String(attachment.id)),
-				);
-				await this.getMessages();
-				// Get rid of the attachments that were just sent.
-				this.attachments = this.attachments.filter((attachment) => {
-					return !relevantAttachments.includes(attachment);
-				});
-			}
+			// } else {
+			// 	await api.sendMessage(
+			// 		this.currentSession!.id,
+			// 		text,
+			// 		agent,
+			// 		relevantAttachments.map((attachment) => String(attachment.id)),
+			// 	);
+			// 	await this.getMessages();
+			// 	// Get rid of the attachments that were just sent.
+			// 	this.attachments = this.attachments.filter((attachment) => {
+			// 		return !relevantAttachments.includes(attachment);
+			// 	});
+			// }
 		},
 
 		/**

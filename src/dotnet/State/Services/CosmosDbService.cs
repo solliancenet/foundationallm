@@ -59,9 +59,9 @@ namespace FoundationaLLM.State.Services
                 throw new ArgumentException("Unable to connect to existing Azure Cosmos DB database.");
             }
 
-            _state = database?.GetContainer(CosmosDbContainers.State) ??
+            _state = database?.GetContainer(AzureCosmosDBContainers.State) ??
                  throw new ArgumentException(
-                     $"Unable to connect to existing Azure Cosmos DB container ({CosmosDbContainers.State}).");
+                     $"Unable to connect to existing Azure Cosmos DB container ({AzureCosmosDBContainers.State}).");
 
             _logger.LogInformation("Cosmos DB service initialized.");
         }
@@ -92,7 +92,10 @@ namespace FoundationaLLM.State.Services
                 id: id,
                 partitionKey: new PartitionKey(id),
                 cancellationToken: cancellationToken);
-            
+
+            var result = await GetLongRunningOperationResult(id, cancellationToken);
+            record.Resource.Result = result;
+
             return record;
         }
 
@@ -106,7 +109,7 @@ namespace FoundationaLLM.State.Services
 
             var results = _state.GetItemQueryIterator<LongRunningOperationLogEntry>(query);
 
-            List<LongRunningOperationLogEntry> output = new();
+            List<LongRunningOperationLogEntry> output = [];
             while (results.HasMoreResults)
             {
                 var response = await results.ReadNextAsync(cancellationToken);
@@ -145,7 +148,7 @@ namespace FoundationaLLM.State.Services
                 operation
             );
             batch.CreateItem<LongRunningOperationLogEntry>(
-                new LongRunningOperationLogEntry(operation.OperationId, operation.Status, operation.StatusMessage)
+                new LongRunningOperationLogEntry(operation.OperationId!, operation.Status, operation.StatusMessage)
             );
 
             var result = await batch.ExecuteAsync(cancellationToken);

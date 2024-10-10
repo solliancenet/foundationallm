@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, Extra
+from pydantic import BaseModel, Field
 from typing import Optional
 from .message_content_item_types import MessageContentItemTypes
 from foundationallm.models.constants import AgentCapabilityCategories
@@ -12,4 +12,4 @@ class MessageContentItemBase(BaseModel):
     class Config:
         use_enum_values = True
         populate_by_name = True
-        extra = Extra.forbid
+        extra = "forbid"

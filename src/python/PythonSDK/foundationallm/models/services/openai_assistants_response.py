@@ -15,6 +15,7 @@ class OpenAIAssistantsAPIResponse(BaseModel):
     Encapsulates properties after parsing the output of the OpenAI Assistants API.
        
     """
+    document_id: Optional[str]
     content: Optional[
         List[
             Union[

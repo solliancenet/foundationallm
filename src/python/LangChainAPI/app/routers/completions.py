@@ -15,7 +15,9 @@ from fastapi import (
     Response,
     status
 )
+from foundationallm.models.constants import AgentCapabilityCategories
 from foundationallm.config import Configuration, UserIdentity
+from foundationallm.models.constants import AgentCapabilityCategories
 from foundationallm.models.operations import (
     LongRunningOperation,
     LongRunningOperationLogEntry,
@@ -23,7 +25,8 @@ from foundationallm.models.operations import (
 )
 from foundationallm.models.orchestration import (
     CompletionRequestBase,
-    CompletionResponse
+    CompletionResponse,
+    OpenAITextMessageContentItem
 )
 from foundationallm.models.agents import KnowledgeManagementCompletionRequest
 from foundationallm.operations import OperationsManager
@@ -106,6 +109,7 @@ async def submit_completion_request(
                 instance_id,
                 completion_request,
                 raw_request.app.extra['config'],
+                operations_manager,
                 x_user_identity
             )
 
@@ -120,15 +124,13 @@ async def create_completion_response(
     instance_id: str,
     completion_request: KnowledgeManagementCompletionRequest,
     configuration: Configuration,
+    operations_manager: OperationsManager,
     x_user_identity: Optional[str] = Header(None)
 ):
     """
     Generates the completion response for the specified completion request.
     """
     with tracer.start_as_current_span(f'create_completion_response') as span:
-        # Create an operations manager to update the operation status.
-        operations_manager = OperationsManager(configuration)
-
         try:
             span.set_attribute('operation_id', operation_id)
             span.set_attribute('instance_id', instance_id)
@@ -149,42 +151,48 @@ async def create_completion_response(
             # Create an orchestration manager to process the completion request.
             orchestration_manager = OrchestrationManager(
                 completion_request = completion_request,
+                configuration = configuration,
+                operations_manager = operations_manager,
                 instance_id = instance_id,
-                user_identity = user_identity,
-                configuration = configuration
+                user_identity = user_identity
             )
             # Await the completion response from the orchestration manager.
-            completion = await orchestration_manager.ainvoke(completion_request)
+            completion_response = await orchestration_manager.ainvoke(completion_request)
 
             # Send the completion response to the State API and mark the operation as completed.
             await asyncio.gather(
                 operations_manager.set_operation_result(
-                    operation_id=operation_id,
-                    instance_id=instance_id,
-                    completion_response=completion),
+                    operation_id = operation_id,
+                    instance_id = instance_id,
+                    completion_response = completion_response),
                 operations_manager.update_operation(
-                    operation_id=operation_id,
-                    instance_id=instance_id,
-                    status=OperationStatus.COMPLETED,
-                    status_message=f'Operation {operation_id} completed successfully.'
+                    operation_id = operation_id,
+                    instance_id = instance_id,
+                    status = OperationStatus.COMPLETED,
+                    status_message = f'Operation {operation_id} completed successfully.'
                 )
             )
         except Exception as e:
             # Send the completion response to the State API and mark the operation as failed.
-            print(f'Operation {operation_id} failed with error: {e}')
-            completion = CompletionResponse(
+            error_message = f'Operation {operation_id} failed with error: {e}'
+            print(error_message)
+            error_content = OpenAITextMessageContentItem(
+                value = error_message,
+                agent_capability_category = AgentCapabilityCategories.OPENAI_ASSISTANTS if AgentCapabilityCategories.OPENAI_ASSISTANTS in completion_request.agent.capabilities else AgentCapabilityCategories.FOUNDATIONALLM_KNOWLEDGE_MANAGEMENT
+            )
+            completion_response = CompletionResponse(
                 operation_id = operation_id,
-                user_prompt=completion_request.user_prompt,
-                completion=f'Operation failed with error: {e}'
+                user_prompt = completion_request.user_prompt,
+                content = [error_content]
             )
             await asyncio.gather(
                 operations_manager.set_operation_result(
-                    operation_id=operation_id,
-                    instance_id=instance_id,
-                    completion_response=completion),
+                    operation_id = operation_id,
+                    instance_id = instance_id,
+                    completion_response = completion_response),
                 operations_manager.update_operation(
-                    operation_id=operation_id,
-                    instance_id=instance_id,
+                    operation_id = operation_id,
+                    instance_id = instance_id,
                     status = OperationStatus.FAILED,
                     status_message = f'Operation failed with error: {e}'
                 )
@@ -264,7 +272,7 @@ async def get_operation_result(
         404: {'description': 'The specified operation or its log was not found.'}
     }
 )
-async def get_operation_log(
+async def get_operation_logs(
     raw_request: Request,
     instance_id: str,
     operation_id: str
@@ -277,7 +285,7 @@ async def get_operation_log(
             span.set_attribute('operation_id', operation_id)
             span.set_attribute('instance_id', instance_id)
 
-            log = await operations_manager.get_operation_log(
+            log = await operations_manager.get_operation_logs(
                 operation_id,
                 instance_id
             )
