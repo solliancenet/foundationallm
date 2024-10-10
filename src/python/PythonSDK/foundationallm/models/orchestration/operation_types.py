@@ -5,4 +5,4 @@ class OperationTypes(str, Enum):
    ASSISTANTS_API = "assistants_api"
    CHAT = "chat"
    COMPLETIONS = "completions"
-   IMAGE_ANALYSIS = "image_analysis"
+   IMAGE_SERVICES = "image_services"

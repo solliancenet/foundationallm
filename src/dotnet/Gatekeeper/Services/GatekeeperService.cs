@@ -16,6 +16,7 @@ namespace FoundationaLLM.Gatekeeper.Core.Services
     /// Constructor for the Gatekeeper service.
     /// </remarks>
     /// <param name="orchestrationAPIService">The Orchestration API client.</param>
+    /// <param name="cosmosDBService">The Azure Cosmos DB service.</param>
     /// <param name="contentSafetyService">The user prompt Content Safety service.</param>
     /// <param name="lakeraGuardService">The Lakera Guard service.</param>
     /// <param name="enkryptGuardrailsService">The Enkrypt Guardrails service.</param>
@@ -23,6 +24,7 @@ namespace FoundationaLLM.Gatekeeper.Core.Services
     /// <param name="gatekeeperServiceSettings">The configuration options for the Gatekeeper service.</param>
     public class GatekeeperService(
         IDownstreamAPIService orchestrationAPIService,
+        IAzureCosmosDBService cosmosDBService,
         IContentSafetyService contentSafetyService,
         ILakeraGuardService lakeraGuardService,
         IEnkryptGuardrailsService enkryptGuardrailsService,
@@ -30,6 +32,7 @@ namespace FoundationaLLM.Gatekeeper.Core.Services
         IOptions<GatekeeperServiceSettings> gatekeeperServiceSettings) : IGatekeeperService
     {
         private readonly IDownstreamAPIService _orchestrationAPIService = orchestrationAPIService;
+        private readonly IAzureCosmosDBService _cosmosDBService = cosmosDBService;
         private readonly IContentSafetyService _contentSafetyService = contentSafetyService;
         private readonly ILakeraGuardService _lakeraGuardService = lakeraGuardService;
         private readonly IEnkryptGuardrailsService _enkryptGuardrailsService = enkryptGuardrailsService;
@@ -98,8 +101,14 @@ namespace FoundationaLLM.Gatekeeper.Core.Services
         {
             if (completionRequest.GatekeeperOptions != null && completionRequest.GatekeeperOptions.Length > 0)
             {
+                await _cosmosDBService.UpdateLongRunningOperationContextPropertiesAsync(
+                    completionRequest.OperationId!,
+                    new Dictionary<string, object>
+                    {
+                        { "/gatekeeperOptions", completionRequest.GatekeeperOptions }
+                    });
+
                 _gatekeeperServiceSettings.EnableAzureContentSafety = completionRequest.GatekeeperOptions.Any(x => x == GatekeeperOptionNames.AzureContentSafety);
-                _gatekeeperServiceSettings.EnableMicrosoftPresidio = completionRequest.GatekeeperOptions.Any(x => x == GatekeeperOptionNames.MicrosoftPresidio);
                 _gatekeeperServiceSettings.EnableLakeraGuard = completionRequest.GatekeeperOptions.Any(x => x == GatekeeperOptionNames.LakeraGuard);
                 _gatekeeperServiceSettings.EnableEnkryptGuardrails = completionRequest.GatekeeperOptions.Any(x => x == GatekeeperOptionNames.EnkryptGuardrails);
                 _gatekeeperServiceSettings.EnableAzureContentSafetyPromptShield = completionRequest.GatekeeperOptions.Any(x => x == GatekeeperOptionNames.AzureContentSafetyPromptShield);
@@ -143,18 +152,24 @@ namespace FoundationaLLM.Gatekeeper.Core.Services
         }
 
         /// <inheritdoc/>
-        public async Task<LongRunningOperation> GetCompletionOperationStatus(string instanceId, string operationId) =>
-            await _orchestrationAPIService.GetCompletionOperationStatus(instanceId, operationId);
-
-        /// <inheritdoc/>
-        public async Task<CompletionResponse> GetCompletionOperationResult(string instanceId, string operationId)
+        public async Task<LongRunningOperation> GetCompletionOperationStatus(string instanceId, string operationId)
         {
-            var completionResponse = await _orchestrationAPIService.GetCompletionOperationResult(instanceId, operationId);
+            var operationStatus = await _orchestrationAPIService.GetCompletionOperationStatus(instanceId, operationId);
 
-            if (_gatekeeperServiceSettings.EnableMicrosoftPresidio)
+            var operationContext = await _cosmosDBService.GetLongRunningOperationContextAsync(operationId);
+
+            _gatekeeperServiceSettings.EnableMicrosoftPresidio = operationContext.GatekeeperOptions.Any(x => x == GatekeeperOptionNames.MicrosoftPresidio);
+
+            if (operationStatus.Status == OperationStatus.Completed
+                && operationStatus.Result != null
+                && operationStatus.Result is CompletionResponse completionResponse
+                && _gatekeeperServiceSettings.EnableMicrosoftPresidio)
+            {
                 completionResponse.Completion = await _gatekeeperIntegrationAPIService.AnonymizeText(completionResponse.Completion);
+                operationStatus.Result = completionResponse;
+            }
 
-            return completionResponse;
+            return operationStatus;
         }
     }
 }

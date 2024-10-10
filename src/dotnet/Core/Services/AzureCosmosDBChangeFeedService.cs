@@ -1,6 +1,5 @@
 ﻿using Azure.Identity;
 using FoundationaLLM.Common.Constants;
-using FoundationaLLM.Common.Constants.ResourceProviders;
 using FoundationaLLM.Common.Interfaces;
 using FoundationaLLM.Common.Models.Configuration.CosmosDB;
 using FoundationaLLM.Common.Models.Conversation;
@@ -15,7 +14,7 @@ using Polly.Retry;
 namespace FoundationaLLM.Core.Services
 {
     /// <inheritdoc/>
-    public class CosmosDbChangeFeedService : ICosmosDbChangeFeedService
+    public class AzureCosmosDBChangeFeedService : ICosmosDbChangeFeedService
     {
         private readonly Database _database;
         private readonly Container _sessions;
@@ -23,7 +22,7 @@ namespace FoundationaLLM.Core.Services
 
         private ChangeFeedProcessor? _changeFeedProcessorProcessUserSessions;
 
-        private readonly ILogger<CosmosDbChangeFeedService> _logger;
+        private readonly ILogger<AzureCosmosDBChangeFeedService> _logger;
         private readonly IAzureCosmosDBService _cosmosDBService;
         private readonly ResiliencePipeline _resiliencePipeline;
 
@@ -35,21 +34,21 @@ namespace FoundationaLLM.Core.Services
         public bool IsInitialized => _changeFeedsInitialized;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CosmosDbChangeFeedService"/> class.
+        /// Initializes a new instance of the <see cref="AzureCosmosDBChangeFeedService"/> class.
         /// </summary>
         /// <param name="logger">The logging interface used to log under the
-        /// <see cref="CosmosDbChangeFeedService"/> type name.</param>
-        /// <param name="cosmosDbService">Contains standard methods for managing data stored
+        /// <see cref="AzureCosmosDBChangeFeedService"/> type name.</param>
+        /// <param name="cosmosDBService">Contains standard methods for managing data stored
         /// within the Azure Cosmos DB workspace.</param>
         /// <param name="settings">The <see cref="CosmosDbSettings"/> settings retrieved
         /// by the injected <see cref="IOptions{TOptions}"/>.</param>
         /// <exception cref="ArgumentException">Thrown if any of the required settings
         /// are null or empty.</exception>
-        public CosmosDbChangeFeedService(ILogger<CosmosDbChangeFeedService> logger,
-            IAzureCosmosDBService cosmosDbService,
+        public AzureCosmosDBChangeFeedService(ILogger<AzureCosmosDBChangeFeedService> logger,
+            IAzureCosmosDBService cosmosDBService,
             IOptions<CosmosDbSettings> settings)
         {
-            _cosmosDBService = cosmosDbService;
+            _cosmosDBService = cosmosDBService;
             _logger = logger;
 
             CosmosSerializationOptions options = new()
@@ -65,10 +64,10 @@ namespace FoundationaLLM.Core.Services
 
             _database = database ??
                         throw new ArgumentException($"Unable to connect to existing Azure Cosmos DB database ({settings.Value.Database}).");
-            _sessions = database?.GetContainer(CosmosDbContainers.Sessions) ??
-                        throw new ArgumentException($"Unable to connect to existing Azure Cosmos DB container ({CosmosDbContainers.Sessions}).");
-            _leases = database?.GetContainer(CosmosDbContainers.Leases) ??
-                      throw new ArgumentException($"Unable to connect to existing Azure Cosmos DB container ({CosmosDbContainers.Leases}).");
+            _sessions = database?.GetContainer(AzureCosmosDBContainers.Sessions) ??
+                        throw new ArgumentException($"Unable to connect to existing Azure Cosmos DB container ({AzureCosmosDBContainers.Sessions}).");
+            _leases = database?.GetContainer(AzureCosmosDBContainers.Leases) ??
+                      throw new ArgumentException($"Unable to connect to existing Azure Cosmos DB container ({AzureCosmosDBContainers.Leases}).");
 
             _resiliencePipeline = new ResiliencePipelineBuilder().AddRetry(new RetryStrategyOptions
             {
@@ -127,7 +126,7 @@ namespace FoundationaLLM.Core.Services
         {
             using var logScope = _logger.BeginScope("Cosmos DB Change Feed Processor: ProcessUserSessionsChangeFeedHandler");
 
-            var sessions = input.Where(i => i.Type == ConversationTypes.Session).ToArray();
+            var sessions = input.Where(i => i.Type == nameof(Conversation)).ToArray();
 
             _logger.LogInformation("Cosmos DB Change Feed Processor: Processing {count} changes...", sessions.Count());
 

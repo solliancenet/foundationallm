@@ -100,14 +100,6 @@ public interface ICoreService
     Task<LongRunningOperation> GetCompletionOperationStatus(string instanceId, string operationId);
 
     /// <summary>
-    /// Gets a completion operation from the downstream API.
-    /// </summary>
-    /// <param name="instanceId">The FoundationaLLM instance id.</param>
-    /// <param name="operationId">The ID of the operation to retrieve.</param>
-    /// <returns>Returns a <see cref="CompletionResponse" /> object.</returns>
-    Task<CompletionResponse> GetCompletionOperationResult(string instanceId, string operationId);
-
-    /// <summary>
     /// Uploads an attachment.
     /// </summary>
     /// <param name="instanceId">The FoundationaLLM instance id.</param>

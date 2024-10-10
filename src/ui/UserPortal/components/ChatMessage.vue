@@ -72,7 +72,12 @@
 					</template>
 
 					<!-- Render the html content and any vue components within -->
-					<component :is="compiledMarkdownComponent" v-else />
+					<!-- <component :is="compiledMarkdownComponent" v-else /> -->
+
+					<div v-for="content in processedContent">
+						<ChatMessageTextBlock v-if="content.type === 'text'" :value="content.value" />
+						<ChatMessageContentBlock v-else :value="content" />
+					</div>
 
 					<!-- Analysis button -->
 					<Button
@@ -132,6 +137,9 @@
 						</span>
 					</span>
 
+					<!-- Avg MS Per Word: {{ averageTimePerWordMS }} -->
+					<div v-if="isRenderingMessage" class="loading-shimmer" style="font-weight: 600">Generating</div>
+
 					<!-- Right side buttons -->
 					<span>
 						<!-- Copy message button -->
@@ -169,9 +177,9 @@
 							<template #footer>
 								<Button
 									:style="{
-										backgroundColor: primaryButtonBg,
-										borderColor: primaryButtonBg,
-										color: primaryButtonText,
+										backgroundColor: $appConfigStore.primaryButtonBg,
+										borderColor: $appConfigStore.primaryButtonBg,
+										color: $appConfigStore.primaryButtonText,
 									}"
 									label="Close"
 									@click="viewPrompt = false"
@@ -231,31 +239,6 @@ function processLatex(content) {
 	return content;
 }
 
-function addCodeHeaderComponents(htmlString) {
-	const parser = new DOMParser();
-	const doc = parser.parseFromString(htmlString, 'text/html');
-
-	doc.querySelectorAll('pre code').forEach((element) => {
-		const languageClass = element.getAttribute('class');
-		const encodedCode = element.getAttribute('data-code');
-		// const autoDetectLanguage = element.getAttribute('data-language');
-		const languageMatch = languageClass.match(/language-(\w+)/);
-		const language = languageMatch ? languageMatch[1] : 'plaintext';
-
-		const header = document.createElement('div');
-		header.innerHTML = `<code-block-header language="${language}" codecontent="${encodedCode}"></code-block-header>`;
-
-		element.parentNode.insertBefore(header.firstChild, element);
-	});
-
-	const html = doc.body.innerHTML;
-	const withVueCurlyBracesSanitized = html
-		.replace(/{{/g, '&#123;&#123;')
-		.replace(/}}/g, '&#125;&#125;');
-
-	return withVueCurlyBracesSanitized;
-}
-
 export default {
 	name: 'ChatMessage',
 
@@ -277,73 +260,131 @@ export default {
 		return {
 			prompt: {} as CompletionPrompt,
 			viewPrompt: false,
-			compiledVueTemplate: '',
 			currentWordIndex: 0,
-			primaryButtonBg: this.$appConfigStore.primaryButtonBg,
-			primaryButtonText: this.$appConfigStore.primaryButtonText,
 			messageContent: this.message.content
 				? (JSON.parse(JSON.stringify(this.message.content)) as MessageContent[])
 				: null,
 			isAnalysisModalVisible: false,
 			isMobile: window.screen.width < 950,
 			markedRenderer: null,
+			pollingInterval: null,
+			pollingIteration: 0,
+			totalTimeElapsed: 0,
+			totalWordsGenerated: 0,
+			averageTimePerWordMS: 50,
+			processedContent: [],
+			completed: false,
+			isRenderingMessage: false,
 		};
 	},
 
-	computed: {
-		compiledMarkdown() {
-			const processContentBlock = (contentToProcess) => {
-				let htmlContent = processLatex(contentToProcess ?? '');
-				htmlContent = marked(htmlContent, { renderer: this.markedRenderer });
-				return DOMPurify.sanitize(htmlContent);
-			};
-
-			let content = '';
-			if (this.messageContent && this.messageContent?.length > 0) {
-				this.messageContent.forEach((contentBlock) => {
-					switch (contentBlock.type) {
-						case 'text': {
-							content += processContentBlock(contentBlock.value);
-							break;
-						}
-						default: {
-							// Maybe just pass invidual values directly as primitives instead of full object
-							const contentBlockEncoded = encodeURIComponent(JSON.stringify(contentBlock));
-							content += `<chat-message-content-block contentencoded="${contentBlockEncoded}"></chat-message-content-block>`;
-							break;
-						}
-					}
-				});
-			} else {
-				content = processContentBlock(this.message.text);
-			}
-
-			return content;
-		},
-
-		compiledMarkdownComponent() {
-			return {
-				template: `<div>${this.compiledVueTemplate}</div>`,
-				components: {
-					CodeBlockHeader,
-					ChatMessageContentBlock,
-				},
-			};
-		},
-	},
-
-	created() {
-		this.markSkippableContent();
+	async created() {
 		this.createMarkedRenderer();
 
 		if (this.showWordAnimation) {
-			this.displayWordByWord();
+			if (this.message.status === 'InProgress') {
+				// Copy initial contents (message might be partially generated already)
+				const message = await this.$appStore.getMessage();
+				this.processedContent = this.message.content.map(content => {
+					return {
+						type: content.type,
+						value: this.processContentBlock(content.value),
+					};
+				});
+
+				this.startPolling();
+				this.displayWordByWord();
+			}
 		} else {
-			this.compiledVueTemplate = addCodeHeaderComponents(this.compiledMarkdown);
+			if (this.message.text) {
+				this.processedContent = [
+					{
+						type: 'text',
+						value: this.processContentBlock(this.message.text),
+					},
+				];
+			} else {
+				this.processedContent = this.message.content.map(content => {
+					return {
+						type: content.type,
+						value: this.processContentBlock(content.value),
+					};
+				});
+			}
 		}
 	},
 
 	methods: {
+		processContentBlock(contentToProcess) {
+			let htmlContent = processLatex(contentToProcess ?? '');
+			htmlContent = marked(htmlContent, { renderer: this.markedRenderer });
+			return DOMPurify.sanitize(htmlContent);
+		},
+
+		startPolling() {
+			this.pollingInterval = setInterval(async () => {
+				try {
+					await this.fetchInProgressMessage();
+				} catch(error) {
+					console.error(error);
+					this.stopPolling();
+				}
+			}, 500);
+		},
+
+		stopPolling() {
+			clearInterval(this.pollingInterval);
+		},
+
+		async fetchInProgressMessage() {
+			const message = this.$appStore.getMessage();
+			this.pollingIteration += 1;
+
+			// Calculate the number of words in the previous message content
+			let amountOfOldWords = 0;
+			if (this.messageContent) {
+				amountOfOldWords = this.messageContent.reduce((acc, content) => {
+				  return acc + ((content.value?.match(/[\w'-]+/g) || []).length);
+				}, 0);
+			}
+
+			// Calculate the number of words in the new message content
+			let amountOfNewWords = message.content.reduce((acc, content) => {
+			  return acc + ((content.value?.match(/[\w'-]+/g) || []).length);
+			}, 0);
+
+			// Calculate the number of new words generated since the last request
+			const newWordsGenerated = amountOfNewWords - amountOfOldWords;
+
+			if (newWordsGenerated > 0) {
+				this.totalWordsGenerated += newWordsGenerated;
+				this.totalTimeElapsed += 500;
+			}
+
+			// Calculate the average time per word
+			if (this.pollingIteration === 1) {
+				this.averageTimePerWordMS = 50;
+			} else {
+				this.averageTimePerWordMS = this.totalWordsGenerated > 0 ? Number((this.totalTimeElapsed / this.totalWordsGenerated).toFixed(2)) : 0;
+			}
+
+			this.messageContent = message.content;
+
+			if (message.status === 'Completed') {
+				this.stopPolling();
+				this.averageTimePerWordMS = 50;
+				this.completed = true;
+
+				// Just to make sure the message renders fully in the case the animation fails
+				this.processedContent = message.content.map(content => {
+					return {
+						type: content.type,
+						value: this.processContentBlock(content.value),
+					};
+				});
+			}
+		},
+
 		createMarkedRenderer() {
 			this.markedRenderer = new marked.Renderer();
 
@@ -403,27 +444,56 @@ export default {
 		},
 
 		displayWordByWord() {
-			const words = this.compiledMarkdown.split(/\s+/);
-			if (this.currentWordIndex >= words.length) {
-				this.compiledVueTemplate = addCodeHeaderComponents(this.compiledMarkdown);
-				return;
+			this.isRenderingMessage = true;
+
+			let currentContentIndex = Math.max(this.processedContent.length - 1, 0);
+			let content = this.messageContent[currentContentIndex]?.value;
+			let processedContent = this.processedContent[currentContentIndex]?.content;
+
+			// If the processed content block is the same as the current content block,
+			// and there is a new one, then we know to move to the next block
+			if (this.messageContent[currentContentIndex+1] && content === processedContent) {
+				currentContentIndex += 1;
+				this.currentWordIndex = 0;
+
+				content = this.messageContent[currentContentIndex]?.value;
+				processedContent = this.processedContent[currentContentIndex]?.content;
 			}
 
-			this.currentWordIndex += 1;
+			if (content !== processedContent) {
+			 this.currentWordIndex += 1;
 
-			const htmlString = truncate(this.compiledMarkdown, this.currentWordIndex, {
-				byWords: true,
-				stripTags: false,
-				ellipsis: '',
-				decodeEntities: false,
-				excludes: ['code-block-header', 'chat-message-content-block'],
-				reserveLastWord: false,
-				keepWhitespaces: true,
-			});
+				if (this.messageContent[currentContentIndex]?.type === 'text') {
+					const htmlString = truncate(content, this.currentWordIndex, {
+						byWords: true,
+						stripTags: false,
+						ellipsis: '',
+						decodeEntities: false,
+						excludes: ['code-block-header', 'chat-message-content-block'],
+						reserveLastWord: false,
+						keepWhitespaces: true,
+					});
 
-			this.compiledVueTemplate = addCodeHeaderComponents(htmlString);
+					this.processedContent[currentContentIndex] = {
+						type: this.messageContent[currentContentIndex]?.type,
+						content: htmlString,
+						value: this.processContentBlock(htmlString),
+					};
+				} else {
+					this.processedContent[currentContentIndex] = {
+						type: this.messageContent[currentContentIndex]?.type,
+						content: content,
+						value: content,
+					};
+				}
+			}
 
-			setTimeout(() => this.displayWordByWord(), 10);
+			// If the current block is still rendering, or there is another block, or the message is still processing
+			if (content !== processedContent || this.messageContent[currentContentIndex+1] || !this.completed) {
+				return setTimeout(() => this.displayWordByWord(), this.averageTimePerWordMS);
+			}
+
+			this.isRenderingMessage = false;
 		},
 
 		formatTimeStamp(timeStamp: string) {
@@ -510,6 +580,49 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+[dir=ltr] .loading-shimmer {
+    background-position: -100% top
+}
+
+[dir=rtl] .loading-shimmer {
+    background-position: 200% top
+}
+
+// .loading-shimmer:hover {
+//     -webkit-text-fill-color: var(--primary-color);
+//     animation: none;
+//     background: transparent
+// }
+
+@keyframes loading-shimmer {
+    0% {
+        background-position: -100% top
+    }
+
+    to {
+        background-position: 250% top
+    }
+}
+
+$shimmerColor: white;
+$textColor: var(--accent-text);
+.loading-shimmer {
+    text-fill-color: transparent;
+    -webkit-text-fill-color: transparent;
+    animation-delay: .3s;
+    animation-duration: 3s;
+    animation-iteration-count: infinite;
+    animation-name: loading-shimmer;
+    background: $textColor gradient(linear,100% 0,0 0,from($textColor),color-stop(.5, $shimmerColor),to($textColor));
+    background: $textColor -webkit-gradient(linear,100% 0,0 0,from($textColor),color-stop(.5, $shimmerColor),to($textColor));
+    background-clip: text;
+    -webkit-background-clip: text;
+    background-repeat: no-repeat;
+    background-size: 50% 200%;
+    display: inline-block
+}
+
+
 .message-row {
 	display: flex;
 	align-items: flex-end;

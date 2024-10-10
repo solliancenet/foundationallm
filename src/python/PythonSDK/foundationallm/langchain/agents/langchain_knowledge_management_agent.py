@@ -1,4 +1,5 @@
-﻿from langchain_community.callbacks import get_openai_callback
+﻿import uuid
+from langchain_community.callbacks import get_openai_callback
 from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnablePassthrough, RunnableLambda
 from langchain_core.output_parsers import StrOutputParser
@@ -8,7 +9,9 @@ from foundationallm.langchain.retrievers import RetrieverFactory, CitationRetrie
 from foundationallm.models.constants import AgentCapabilityCategories
 from foundationallm.models.orchestration import (
     CompletionRequestObjectKeys,
-    CompletionResponse
+    CompletionResponse,
+    OpenAITextMessageContentItem,
+    OperationTypes
 )
 from foundationallm.models.resource_providers.configuration import APIEndpointConfiguration
 from foundationallm.models.agents import (
@@ -20,10 +23,6 @@ from foundationallm.models.agents import (
 from foundationallm.models.attachments import AttachmentProviders
 from foundationallm.models.authentication import AuthenticationTypes
 from foundationallm.models.language_models import LanguageModelProvider
-from foundationallm.models.orchestration import (
-    OpenAITextMessageContentItem,
-    OperationTypes
-)
 from foundationallm.models.resource_providers.vectorization import (
     EmbeddingProfileSettingsKeys,
     AzureAISearchIndexingProfile,
@@ -32,7 +31,7 @@ from foundationallm.models.resource_providers.vectorization import (
 from foundationallm.models.services import OpenAIAssistantsAPIRequest
 from foundationallm.services import (
     AudioAnalysisService,
-    ImageAnalysisService,
+    ImageService,
     OpenAIAssistantsApiService
 )
 from foundationallm.services.gateway_text_embedding import GatewayTextEmbeddingService
@@ -230,7 +229,6 @@ class LangChainKnowledgeManagementAgent(LangChainAgentBase):
 
                 self.has_indexing_profiles = True
 
-
         # if the OpenAI.Assistants capability is present, validate the following required fields:
         #   AssistantId, AssistantThreadId
 
@@ -266,9 +264,9 @@ class LangChainKnowledgeManagementAgent(LangChainAgentBase):
         image_analysis_results = None
         image_attachments = [attachment for attachment in request.attachments if (attachment.provider == AttachmentProviders.FOUNDATIONALLM_ATTACHMENT and attachment.content_type.startswith('image/'))] if request.attachments is not None else []
         if len(image_attachments) > 0:
-            image_analysis_client = self._get_language_model(override_operation_type=OperationTypes.IMAGE_ANALYSIS, is_async=False)
-            image_analysis_svc = ImageAnalysisService(config=self.config, client=image_analysis_client, deployment_model=self.ai_model.deployment_name)
-            image_analysis_results, usage = image_analysis_svc.analyze_images(image_attachments)
+            image_client = self._get_language_model(override_operation_type=OperationTypes.IMAGE_SERVICES, is_async=False)
+            image_svc = ImageService(config=self.config, client=image_client, deployment_model=self.ai_model.deployment_name)
+            image_analysis_results, usage = image_svc.analyze_images(image_attachments)
             image_analysis_token_usage.prompt_tokens += usage.prompt_tokens
             image_analysis_token_usage.completion_tokens += usage.completion_tokens
             image_analysis_token_usage.total_tokens += usage.total_tokens
@@ -280,13 +278,19 @@ class LangChainKnowledgeManagementAgent(LangChainAgentBase):
             audio_analysis_results = audio_service.classify(request, audio_attachments)
 
         # Check for Assistants API capability
-        if "OpenAI.Assistants" in agent.capabilities:
+        if AgentCapabilityCategories.OPENAI_ASSISTANTS in agent.capabilities:
             operation_type_override = OperationTypes.ASSISTANTS_API
             # create the service
-            assistant_svc = OpenAIAssistantsApiService(azure_openai_client=self._get_language_model(override_operation_type=operation_type_override, is_async=False))
+            assistant_svc = OpenAIAssistantsApiService(
+                azure_openai_client=self._get_language_model(override_operation_type=operation_type_override, is_async=False),
+                operations_manager=self.operations_manager
+            )
 
             # populate service request object
             assistant_req = OpenAIAssistantsAPIRequest(
+                document_id=str(uuid.uuid4()),
+                operation_id=request.operation_id,
+                instance_id=self.config.get_value("FoundationaLLM:Instance:Id"),
                 assistant_id=request.objects["OpenAI.AssistantId"],
                 thread_id=request.objects["OpenAI.AssistantThreadId"],
                 attachments=[attachment.provider_file_name for attachment in request.attachments if attachment.provider == AttachmentProviders.FOUNDATIONALLM_AZURE_OPENAI],
@@ -306,7 +310,7 @@ class LangChainKnowledgeManagementAgent(LangChainAgentBase):
                 assistant_svc.add_thread_message(
                     thread_id = assistant_req.thread_id,
                     role = "assistant",
-                    content = image_analysis_svc.format_results(image_analysis_results),
+                    content = image_svc.format_results(image_analysis_results),
                     attachments = []
                 )
 
@@ -341,6 +345,7 @@ class LangChainKnowledgeManagementAgent(LangChainAgentBase):
 
             # create the CompletionResponse object
             return CompletionResponse(
+                id = assistant_response.document_id,
                 operation_id = request.operation_id,
                 full_prompt = self.prompt.prefix,
                 content = assistant_response.content,
@@ -357,6 +362,7 @@ class LangChainKnowledgeManagementAgent(LangChainAgentBase):
                 retriever = self._get_document_retriever(request, agent)
                 if retriever is not None:
                     self.has_retriever = True
+
                 # Get the prompt template.
                 prompt_template = self._get_prompt_template(
                     request,
@@ -368,7 +374,7 @@ class LangChainKnowledgeManagementAgent(LangChainAgentBase):
                 elif image_analysis_results is not None or audio_analysis_results is not None:
                     external_analysis_context = ''
                     if image_analysis_results is not None:
-                        external_analysis_context += image_analysis_svc.format_results(image_analysis_results)
+                        external_analysis_context += image_svc.format_results(image_analysis_results)
                     if audio_analysis_results is not None:
                         for key, value in audio_analysis_results.items():
                             filename = key
@@ -441,9 +447,9 @@ class LangChainKnowledgeManagementAgent(LangChainAgentBase):
         # Get image attachments that are images with URL file paths.
         image_attachments = [attachment for attachment in request.attachments if (attachment.provider == AttachmentProviders.FOUNDATIONALLM_ATTACHMENT and attachment.content_type.startswith('image/'))] if request.attachments is not None else []
         if len(image_attachments) > 0:
-            image_analysis_client = self._get_language_model(override_operation_type=OperationTypes.IMAGE_ANALYSIS, is_async=True)
-            image_analysis_svc = ImageAnalysisService(config=self.config, client=image_analysis_client, deployment_model=self.ai_model.deployment_name)
-            image_analysis_results, usage = await image_analysis_svc.aanalyze_images(image_attachments)
+            image_client = self._get_language_model(override_operation_type=OperationTypes.IMAGE_SERVICES, is_async=True)
+            image_svc = ImageService(config=self.config, client=image_client, deployment_model=self.ai_model.deployment_name)
+            image_analysis_results, usage = await image_svc.aanalyze_images(image_attachments)
             image_analysis_token_usage.prompt_tokens += usage.prompt_tokens
             image_analysis_token_usage.completion_tokens += usage.completion_tokens
             image_analysis_token_usage.total_tokens += usage.total_tokens
@@ -455,13 +461,19 @@ class LangChainKnowledgeManagementAgent(LangChainAgentBase):
             audio_analysis_results = audio_service.classify(request, audio_attachments)
 
         # Check for Assistants API capability
-        if "OpenAI.Assistants" in agent.capabilities:
+        if AgentCapabilityCategories.OPENAI_ASSISTANTS in agent.capabilities:
             operation_type_override = OperationTypes.ASSISTANTS_API
             # create the service
-            assistant_svc = OpenAIAssistantsApiService(azure_openai_client=self._get_language_model(override_operation_type=operation_type_override, is_async=True))
+            assistant_svc = OpenAIAssistantsApiService(
+                azure_openai_client=self._get_language_model(override_operation_type=operation_type_override, is_async=True),
+                operations_manager=self.operations_manager
+            )
 
             # populate service request object
             assistant_req = OpenAIAssistantsAPIRequest(
+                document_id=str(uuid.uuid4()),
+                operation_id=request.operation_id,
+                instance_id=self.config.get_value("FoundationaLLM:Instance:Id"),
                 assistant_id=request.objects["OpenAI.AssistantId"],
                 thread_id=request.objects["OpenAI.AssistantThreadId"],
                 attachments=[attachment.provider_file_name for attachment in request.attachments if attachment.provider == AttachmentProviders.FOUNDATIONALLM_AZURE_OPENAI],
@@ -481,7 +493,7 @@ class LangChainKnowledgeManagementAgent(LangChainAgentBase):
                 await assistant_svc.aadd_thread_message(
                     thread_id = assistant_req.thread_id,
                     role = "assistant",
-                    content = image_analysis_svc.format_results(image_analysis_results),
+                    content = image_svc.format_results(image_analysis_results),
                     attachments = []
                 )
 
@@ -512,14 +524,18 @@ class LangChainKnowledgeManagementAgent(LangChainAgentBase):
                 )
 
             # invoke/run the service
-            assistant_response = await assistant_svc.arun(assistant_req)
+            assistant_response = await assistant_svc.arun(
+                assistant_req,
+                # TODO: deployment_model should pull from the incoming request.
+                image_service=ImageService(config=self.config, client=assistant_svc.client, deployment_model='dall-e-3'))
 
             # create the CompletionResponse object
             return CompletionResponse(
+                id = assistant_response.document_id,
                 operation_id = request.operation_id,
                 full_prompt = self.prompt.prefix,
-                analysis_results = assistant_response.analysis_results,
                 content = assistant_response.content,
+                analysis_results = assistant_response.analysis_results,
                 completion_tokens = assistant_response.completion_tokens + image_analysis_token_usage.completion_tokens,
                 prompt_tokens = assistant_response.prompt_tokens + image_analysis_token_usage.prompt_tokens,
                 total_tokens = assistant_response.total_tokens + image_analysis_token_usage.total_tokens,
@@ -532,6 +548,7 @@ class LangChainKnowledgeManagementAgent(LangChainAgentBase):
                 retriever = self._get_document_retriever(request, agent)
                 if retriever is not None:
                     self.has_retriever = True
+
                 # Get the prompt template.
                 prompt_template = self._get_prompt_template(
                     request,
@@ -543,7 +560,7 @@ class LangChainKnowledgeManagementAgent(LangChainAgentBase):
                 elif image_analysis_results is not None or audio_analysis_results is not None:
                     external_analysis_context = ''
                     if image_analysis_results is not None:
-                        external_analysis_context += image_analysis_svc.format_results(image_analysis_results)
+                        external_analysis_context += image_svc.format_results(image_analysis_results)
                     if audio_analysis_results is not None:
                         for key, value in audio_analysis_results.items():
                             filename = key

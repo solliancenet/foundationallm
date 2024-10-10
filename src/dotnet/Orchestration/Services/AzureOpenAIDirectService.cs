@@ -3,6 +3,7 @@ using FoundationaLLM.Common.Constants.Agents;
 using FoundationaLLM.Common.Extensions;
 using FoundationaLLM.Common.Interfaces;
 using FoundationaLLM.Common.Models.Infrastructure;
+using FoundationaLLM.Common.Models.Orchestration;
 using FoundationaLLM.Common.Models.Orchestration.Direct;
 using FoundationaLLM.Common.Models.Orchestration.Request;
 using FoundationaLLM.Common.Models.Orchestration.Response;
@@ -145,5 +146,11 @@ namespace FoundationaLLM.Orchestration.Core.Services
                 CompletionTokens = 0
             };
         }
+
+        /// <inheritdoc/>
+        public Task<LongRunningOperation> StartCompletionOperation(string instanceId, LLMCompletionRequest completionRequest) => throw new NotImplementedException();
+
+        /// <inheritdoc/>
+        public Task<LongRunningOperation> GetCompletionOperationStatus(string instanceId, string operationId) => throw new NotImplementedException();
     }
 }

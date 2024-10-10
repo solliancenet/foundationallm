@@ -10,6 +10,7 @@ class CompletionResponse(BaseModel):
     """
     Response from a language model.
     """
+    id: Optional[str] = None
     operation_id: str
     user_prompt: str
     full_prompt: Optional[str] = None

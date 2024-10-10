@@ -5,7 +5,7 @@ from foundationallm.models.resource_providers.configuration import (
     ConfigurationTypes,
     UrlException
 )
-from foundationallm.models.utils import ObjectUtils
+from foundationallm.utils import ObjectUtils
 from foundationallm.langchain.exceptions import LangChainException
 
 class APIEndpointConfiguration(ResourceBase):

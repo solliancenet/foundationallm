@@ -1,7 +1,7 @@
 from pydantic import Field
 from typing import Any, Self, Optional
 from foundationallm.models.resource_providers import ResourceBase
-from foundationallm.models.utils import ObjectUtils
+from foundationallm.utils import ObjectUtils
 from foundationallm.langchain.exceptions import LangChainException
 
 class AIModelBase(ResourceBase):

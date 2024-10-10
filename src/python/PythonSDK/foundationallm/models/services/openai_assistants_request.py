@@ -1,9 +1,8 @@
 """
 Encapsulates properties useful for calling the OpenAI Assistants API.
 """
-from typing import List, Optional
 from pydantic import BaseModel
-from foundationallm.models.attachments import AttachmentProperties
+from typing import List, Optional
 
 class OpenAIAssistantsAPIRequest(BaseModel):
     """
@@ -13,6 +12,9 @@ class OpenAIAssistantsAPIRequest(BaseModel):
         attachments: Optional[List[AttachmentProperties]] - The list of OpenAI file attachments to include in the request.
         user_prompt: str - The user prompt/message to send to the assistants API.
     """
+    document_id: Optional[str] = None
+    operation_id: str
+    instance_id: str
     assistant_id: str
     thread_id: str
     attachments: Optional[List[str]] = []

@@ -53,17 +53,7 @@ namespace FoundationaLLM.Gatekeeper.API.Controllers
         /// <returns>Returns an <see cref="LongRunningOperation"/> object containing the OperationId and Status.</returns>
         [HttpGet("async-completions/{operationId}/status")]
         public async Task<LongRunningOperation> GetCompletionOperationStatus(string instanceId, string operationId) =>
-            await _gatekeeperService.GetCompletionOperationStatus(instanceId, operationId);
-
-        /// <summary>
-        /// Gets a completion operation from the Gatekeeper service.
-        /// </summary>
-        /// <param name="instanceId">The FoundationaLLM instance id.</param>
-        /// <param name="operationId">The ID of the operation to retrieve.</param>
-        /// <returns>Returns a completion response</returns>
-        [HttpGet("async-completions/{operationId}/result")]
-        public async Task<CompletionResponse> GetCompletionOperationResult(string instanceId, string operationId) =>
-            await _gatekeeperService.GetCompletionOperationResult(instanceId, operationId);        
+            await _gatekeeperService.GetCompletionOperationStatus(instanceId, operationId);    
            
     }
 }

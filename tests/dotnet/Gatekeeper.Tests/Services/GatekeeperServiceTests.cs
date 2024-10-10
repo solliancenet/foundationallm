@@ -16,6 +16,7 @@ namespace Gatekeeper.Tests.Services
         private readonly GatekeeperService _testedService;
 
         private readonly IContentSafetyService _contentSafetyService = Substitute.For<IContentSafetyService>();
+        private readonly IAzureCosmosDBService _azureCosmosDBService = Substitute.For<IAzureCosmosDBService>();
         private readonly ILakeraGuardService _lakeraGuardService = Substitute.For<ILakeraGuardService>();
         private readonly IEnkryptGuardrailsService _enkryptGuardrailsService = Substitute.For<IEnkryptGuardrailsService>();
         private readonly IDownstreamAPIService _orchestrationAPIService = Substitute.For<IDownstreamAPIService>();
@@ -35,6 +36,7 @@ namespace Gatekeeper.Tests.Services
 
             _testedService = new GatekeeperService(
                 _orchestrationAPIService,
+                _azureCosmosDBService,
                 _contentSafetyService,
                 _lakeraGuardService,
                 _enkryptGuardrailsService,

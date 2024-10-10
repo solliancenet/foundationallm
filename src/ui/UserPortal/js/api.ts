@@ -239,6 +239,11 @@ export default {
 		)) as Array<Message>;
 	},
 
+	// Mock polling route
+	async getMessage(messageId: string) {
+		return await $fetch(`/api/stream-message/`);
+	},
+
 	/**
 	 * Retrieves a specific prompt for a given session.
 	 * @param sessionId The ID of the session.
