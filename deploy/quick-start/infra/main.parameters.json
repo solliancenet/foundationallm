@@ -67,6 +67,9 @@
           "subscriptionId": "${OPENAI_SUBSCRIPTION_ID}"
         }
       },
+      "oneDriveBaseUrl": {
+        "value": "${ONEDRIVE_BASE_URL}"
+      },
       "authServiceExists": {
         "value": "${SERVICE_AUTHAPI_RESOURCE_EXISTS=false}"
       },

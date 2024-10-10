@@ -37,6 +37,12 @@
 			"Deleted": false
 		},
 		{
+			"Name": "OneDriveFileStoreConnector",
+			"Filename": "/FoundationaLLM.Configuration/OneDriveFileStoreConnector.json",
+			"Type": "api-endpoint",
+			"Deleted": false
+		},
+		{
 			"Name": "OrchestrationAPI",
 			"Filename": "/FoundationaLLM.Configuration/OrchestrationAPI.json",
 			"Type": "api-endpoint",

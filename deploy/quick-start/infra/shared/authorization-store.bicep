@@ -1,6 +1,7 @@
 param adminGroupObjectId string
 param containers array = [
   'role-assignments'
+  'policy-assignments'
 ]
 
 param location string = resourceGroup().location
