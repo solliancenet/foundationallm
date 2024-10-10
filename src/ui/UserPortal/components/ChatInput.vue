@@ -29,7 +29,10 @@
 					@click="toggle"
 					@keydown.esc="hideAllPoppers"
 				/>
-				<OverlayPanel ref="menu" style="max-width: 98%">
+				<OverlayPanel
+					ref="menu"
+					:dismissable="false"
+					style="max-width: 98%">
 					<div class="file-upload-header">
 						<Button
 							:icon="!isMobile ? 'pi pi-times' : undefined"
@@ -358,14 +361,14 @@ export default {
 					mode: 'multiple',
 				},
 			},
-			oneDriveFiles: [],
-			localFiles: [],
+			oneDriveFiles: [] as any[],
+			localFiles: [] as any[],
 			oneDriveBaseURL: null as string | null,
 			disconnectingOneDrive: false,
-			connectingOneDrive: false,
 			fileToDelete: null as any,
 			deleteFileProcessing: false,
 			connectingOneDrive: true,
+			maxFiles: 10,
 		};
 	},
 
@@ -405,7 +408,7 @@ export default {
 			this.connectingOneDrive = false;
 		}
 
-		await this.$appStore.getFileStoreConnectors();
+		await this.$appStore.getFileStoreConfiguration();
 		await this.$appStore.getAgents();
 
 		this.agents = this.$appStore.agents.map((agent) => ({
@@ -413,9 +416,13 @@ export default {
 			value: agent.resource.name,
 		}));
 
-		this.oneDriveBaseURL = this.$appStore.fileStoreConnectors.find(
+		this.oneDriveBaseURL = this.$appStore.fileStoreConfiguration.fileStoreConnectors?.find(
 			(connector) => connector.subcategory === 'OneDriveWorkSchool',
 		)?.url;
+
+		if (this.$appStore.fileStoreConfiguration.maxUploadsPerMessage) {
+			this.maxFiles = this.$appStore.fileStoreConfiguration.maxUploadsPerMessage;
+		}
 	},
 
 	mounted() {
@@ -443,7 +450,9 @@ export default {
 			console.log('resize');
 			this.isMobile = window.screen.width < 950;
 			this.$nextTick(() => {
-				this.$refs.menu.alignOverlay();
+				if (this.$refs.menu) {
+					this.$refs.menu.alignOverlay();
+				}
 			});
 		},
 
@@ -607,14 +616,18 @@ export default {
 			return `${formattedSize} ${sizes[i]}`;
 		},
 
-		fileSelected(event: any) {
+		validateUploadedFiles(files: any) {
 			const allowedFileTypes = this.$appConfigStore.allowedUploadFileExtensions;
 			const filteredFiles: any[] = [];
 
-			event.files.forEach((file: any) => {
-				const fileAlreadyExists = this.localFiles.some(
+			files.forEach((file: any) => {
+				const localFileAlreadyExists = this.localFiles.some(
 					(existingFile: any) => existingFile.name === file.name && existingFile.size === file.size,
 				);
+				const oneDriveFileAlreadyExists = this.oneDriveFiles.some(
+					(existingFile: any) => existingFile.name === file.name && existingFile.size === file.size,
+				);
+				const fileAlreadyExists = localFileAlreadyExists || oneDriveFileAlreadyExists;
 
 				if (fileAlreadyExists) return;
 
@@ -646,6 +659,23 @@ export default {
 					filteredFiles.push(file);
 				}
 			});
+
+			if (this.localFiles.length + this.oneDriveFiles.length + filteredFiles.length > this.maxFiles) {
+				this.$toast.add({
+					severity: 'error',
+					summary: 'Error',
+					detail: `You can only upload a maximum of ${this.maxFiles} files at a time.`,
+					life: 5000,
+				});
+				filteredFiles.splice((this.maxFiles - (this.localFiles.length + this.oneDriveFiles.length)));
+			}
+
+			return filteredFiles;
+		},
+
+		fileSelected(event: any) {
+			const filteredFiles: any[] = [];
+			filteredFiles.push(...this.validateUploadedFiles(event.files));
 
 			this.localFiles = [...this.localFiles, ...filteredFiles];
 
@@ -743,7 +773,7 @@ export default {
 
 			form.submit();
 
-			window.addEventListener('message', (event) => {
+			const handleWindowMessage = (event) => {
 				const message = event.data;
 
 				if (
@@ -757,7 +787,10 @@ export default {
 						type: 'activate',
 					});
 				}
-			});
+			};
+
+			window.removeEventListener('message', handleWindowMessage);
+			window.addEventListener('message', handleWindowMessage);
 		},
 
 		async messageListener(event) {
@@ -807,13 +840,10 @@ export default {
 							break;
 
 						case 'pick':
-							console.log(command.items);
-							command.items.forEach((item) => {
-								console.log(`Picked: ${JSON.stringify(item)}`);
-								this.oneDriveFiles.push(item);
-							});
+							const filteredFiles: any[] = [];
+							filteredFiles.push(...this.validateUploadedFiles(command.items));
 
-							// this.oneDriveFiles.push(...command.items);
+							this.oneDriveFiles.push(...filteredFiles);
 
 							this.$nextTick(() => {
 								this.$refs.menu.alignOverlay();

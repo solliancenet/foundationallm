@@ -30,7 +30,7 @@ export const useAuthStore = defineStore('auth', {
 
 		oneDriveWorkSchoolScopes() {
 			const appStore = useAppStore();
-			return appStore.fileStoreConnectors.find(
+			return appStore.fileStoreConfiguration?.fileStoreConnectors?.find(
 				(connector) => connector.subcategory === 'OneDriveWorkSchool',
 			)?.authentication_parameters['scope'];
 		},
@@ -133,7 +133,7 @@ export const useAuthStore = defineStore('auth', {
 
 		async getOneDriveWorkSchoolToken(): string | null {
 			const appStore = useAppStore();
-			const oneDriveBaseURL = appStore.fileStoreConnectors.find(
+			const oneDriveBaseURL = appStore.fileStoreConfiguration?.fileStoreConnectors?.find(
 				(connector) => connector.subcategory === 'OneDriveWorkSchool',
 			)?.url;
 			const oneDriveToken = await this.msalInstance.acquireTokenSilent({

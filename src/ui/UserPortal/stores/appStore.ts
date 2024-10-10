@@ -7,11 +7,10 @@ import type {
 	Message,
 	UserProfile,
 	Agent,
-	FileStoreConnector,
+	FileStoreConfiguration,
 	OneDriveWorkSchool,
 	ResourceProviderGetResult,
 	ResourceProviderUpsertResult,
-	// ResourceProviderDeleteResult,
 	ResourceProviderDeleteResults,
 	Attachment,
 	MessageContent,
@@ -32,7 +31,7 @@ export const useAppStore = defineStore('app', {
 		lastSelectedAgent: null as ResourceProviderGetResult<Agent> | null,
 		attachments: [] as Attachment[],
 		longRunningOperations: new Map<string, string>(), // sessionId -> operationId
-		fileStoreConnectors: [] as FileStoreConnector[],
+		fileStoreConfiguration: null as FileStoreConfiguration | null,
 		oneDriveWorkSchool: null as boolean | null,
 		userProfiles: null as UserProfile | null,
 	}),
@@ -384,9 +383,9 @@ export const useAppStore = defineStore('app', {
 			return this.agents;
 		},
 
-		async getFileStoreConnectors() {
-			this.fileStoreConnectors = await api.getFileStoreConnectors();
-			return this.fileStoreConnectors;
+		async getFileStoreConfiguration() {
+			this.fileStoreConfiguration = await api.getFileStoreConfiguration();
+			return this.fileStoreConfiguration;
 		},
 
 		async oneDriveWorkSchoolConnect() {

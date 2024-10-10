@@ -118,12 +118,12 @@ namespace FoundationaLLM.Core.API.Controllers
 
 
         /// <summary>
-        /// Returns a list of file store connectors.
+        /// Returns the file store configuration.
         /// </summary>
         /// <param name="instanceId">The instance ID.</param>
         /// <returns></returns>
-        [HttpGet("file-store-connectors")]
+        [HttpGet("file-store-configuration")]
         public async Task<IActionResult> GetFileStoreConnectors(string instanceId) =>
-            new OkObjectResult(await _coreService.GetFileStoreConnectors(instanceId, _callContext.CurrentUserIdentity!));
+            new OkObjectResult(await _coreService.GetFileStoreConfiguration(instanceId, _callContext.CurrentUserIdentity!));
     }
 }

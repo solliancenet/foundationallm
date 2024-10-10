@@ -2,7 +2,7 @@ import type {
 	Message,
 	Session,
 	UserProfile,
-	FileStoreConnector,
+	FileStoreConfiguration,
 	OneDriveWorkSchool,
 	ChatSessionProperties,
 	CompletionPrompt,
@@ -10,7 +10,6 @@ import type {
 	CompletionRequest,
 	ResourceProviderGetResult,
 	ResourceProviderUpsertResult,
-	// ResourceProviderDeleteResult,
 	ResourceProviderDeleteResults,
 } from '@/js/types';
 
@@ -374,10 +373,15 @@ export default {
 		})) as ResourceProviderDeleteResults;
 	},
 
-	async getFileStoreConnectors() {
+	/**
+	 * Retrieves the file store configuration for the current instance.
+	 *
+	 * @returns {Promise<FileStoreConfiguration>} A promise that resolves to the file store configuration.
+	 */
+	async getFileStoreConfiguration() {
 		return (await this.fetch(
-			`/instances/${this.instanceId}/files/file-store-connectors`,
-		)) as FileStoreConnector[];
+			`/instances/${this.instanceId}/files/file-store-configuration`,
+		)) as FileStoreConfiguration;
 	},
 
 	/**

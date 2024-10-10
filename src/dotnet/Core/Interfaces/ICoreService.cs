@@ -6,6 +6,7 @@ using FoundationaLLM.Common.Models.Orchestration.Response;
 using FoundationaLLM.Common.Models.ResourceProviders;
 using FoundationaLLM.Common.Models.ResourceProviders.Attachment;
 using FoundationaLLM.Common.Models.ResourceProviders.Configuration;
+using FoundationaLLM.Common.Settings;
 
 namespace FoundationaLLM.Core.Interfaces;
 
@@ -155,4 +156,12 @@ public interface ICoreService
     /// <returns>A list of API endpoint configurations for file store connectors.</returns>
     Task<IEnumerable<APIEndpointConfiguration>> GetFileStoreConnectors(string instanceId,
         UnifiedUserIdentity userIdentity);
+
+    /// <summary>
+    /// Gets the file store configuration for the given instance.
+    /// </summary>
+    /// <param name="instanceId">The FoundationaLLM instance id.</param>
+    /// <param name="userIdentity">The <see cref="UnifiedUserIdentity"/> providing information about the calling user identity.</param>
+    /// <returns>The file store configuration.</returns>
+    Task<FileStoreConfiguration> GetFileStoreConfiguration(string instanceId, UnifiedUserIdentity userIdentity);
 }
