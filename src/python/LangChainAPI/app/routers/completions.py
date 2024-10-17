@@ -172,10 +172,9 @@ async def create_completion_response(
             )
         except Exception as e:
             # Send the completion response to the State API and mark the operation as failed.
-            error_message = f'Operation {operation_id} failed with error: {e}'
-            print(error_message)
+            print(f'Operation {operation_id} failed with error: {e}')
             error_content = OpenAITextMessageContentItem(
-                value = error_message,
+                value = f'{e}',
                 agent_capability_category = AgentCapabilityCategories.OPENAI_ASSISTANTS if AgentCapabilityCategories.OPENAI_ASSISTANTS in completion_request.agent.capabilities else AgentCapabilityCategories.FOUNDATIONALLM_KNOWLEDGE_MANAGEMENT
             )
             completion_response = CompletionResponse(
