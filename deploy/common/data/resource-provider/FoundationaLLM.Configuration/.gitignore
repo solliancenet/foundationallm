@@ -15,3 +15,4 @@ GatewayAdapterAPI.json
 AzureOpenAI.json
 AzureAISearch.json
 AzureEventGrid.json
+OneDriveFileStoreConnector.json

@@ -77,6 +77,33 @@ var containers = [
     }
     defaultTtl: null
   }
+  {
+    name: 'Attachments'
+    partitionKey: {
+      paths: [
+        '/upn'
+      ]
+    }
+    defaultTtl: null
+  }
+  {
+    name: 'Operations'
+    partitionKey: {
+      paths: [
+        '/id'
+      ]
+    }
+    defaultTtl: null
+  }
+  {
+    name: 'UserProfiles'
+    partitionKey: {
+      paths: [
+        '/upn'
+      ]
+    }
+    defaultTtl: null
+  }
 ]
 
 @description('The Resource logs to enable')
@@ -147,7 +174,7 @@ resource main 'Microsoft.DocumentDB/databaseAccounts@2023-09-15' = {
     }
 
     capacity: {
-      totalThroughputLimit: 5000
+      totalThroughputLimit: 10000
     }
 
     consistencyPolicy: {
@@ -184,10 +211,12 @@ resource diagnostics 'Microsoft.Insights/diagnosticSettings@2017-05-01-preview' 
   name: 'diag-${serviceType}'
   properties: {
     workspaceId: logAnalyticWorkspaceId
-    logs: [for log in logs: {
-      category: log
-      enabled: true
-    }]
+    logs: [
+      for log in logs: {
+        category: log
+        enabled: true
+      }
+    ]
     metrics: [
       {
         category: 'AllMetrics'

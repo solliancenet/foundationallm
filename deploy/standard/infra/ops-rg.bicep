@@ -61,7 +61,7 @@ var zonesAmpls = filter(
 output actionGroupId string = actionGroup.outputs.id
 output keyVaultName string = keyVault.outputs.name
 output logAnalyticsWorkspaceId string = logAnalytics.outputs.id
-output monitorId string = logAnalytics.outputs.monitorId
+output monitorWorkspaceName string = logAnalytics.outputs.monitorWorkspaceName
 
 /** Resources **/
 @description('User Assigned Identity for App Configuration')

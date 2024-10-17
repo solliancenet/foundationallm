@@ -24,12 +24,15 @@
 .PARAMETER mgmtClientAppName
     The display name of the Management Portal application to be deleted. Default is "FoundationaLLM-Management-Portal".
 
+.PARAMETER mgmtClientAppName
+    The display name of the Reader application to be deleted. Default is "FoundationaLLM-Reader".
+
 .PARAMETER interactiveMode
     Boolean flag to determine if the script should run in interactive mode, prompting for user confirmation before deletion. 
     Default is $true.
 
 .EXAMPLE
-    ./Remove-EntraIdMApps.ps1
+    ./Remove-FllmEntraIdApps.ps1
     This example runs the script to delete the default Entra applications prompting for confirmation.
 
 .NOTES
@@ -44,6 +47,7 @@ Param(
     [parameter(Mandatory = $false)][string]$coreClientAppName="FoundationaLLM-Core-Portal",
     [parameter(Mandatory = $false)][string]$mgmtAppName="FoundationaLLM-Management-API",
     [parameter(Mandatory = $false)][string]$mgmtClientAppName="FoundationaLLM-Management-Portal",
+	[parameter(Mandatory = $false)][string]$mgmtReaderAppName = "FoundationaLLM-Reader",
 	[parameter(Mandatory=$false)][bool]$interactiveMode = $true
 )
 
@@ -58,7 +62,8 @@ $AppNames = @(
 	$coreAppName, 
 	$coreClientAppName,
 	$mgmtAppName, 
-	$mgmtClientAppName
+	$mgmtClientAppName,
+	$mgmtReaderAppName
 )
 
 # Function to filter and delete Azure AD applications based on display name

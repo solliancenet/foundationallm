@@ -32,7 +32,7 @@
 param (
     [Parameter(Mandatory = $true)][string[]]$aksClusterNames,
     [Parameter(Mandatory = $true)][string]$resourceGroupName,
-    [Parameter(Mandatory = $true)][string[]]$namespaces = @("gateway-system", "fllm")
+    [Parameter(Mandatory = $false)][string[]]$namespaces = @("gateway-system", "fllm")
 )
 
 # Set Debugging and Error Handling

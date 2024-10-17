@@ -121,6 +121,7 @@ module authStore 'modules/storageAccount.bicep' = {
     tags: tags
     containers: [
       'role-assignments'
+      'policy-assignments'
     ]
   }
 }

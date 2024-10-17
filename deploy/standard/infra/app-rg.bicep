@@ -28,7 +28,7 @@ param logAnalyticsWorkspaceId string
 @description('Log Analytics Workspace Resource Id to use for diagnostics')
 param logAnalyticsWorkspaceResourceId string
 
-param monitorId string
+param monitorWorkspaceName string
 
 @description('Networking Resource Group Name')
 param networkingResourceGroupName string
@@ -148,7 +148,7 @@ module aksBackend 'modules/aks.bicep' = {
     location: location
     logAnalyticWorkspaceId: logAnalyticsWorkspaceId
     logAnalyticWorkspaceResourceId: logAnalyticsWorkspaceResourceId
-    monitorId: monitorId
+    monitorWorkspaceName: monitorWorkspaceName
     networkingResourceGroupName: networkingResourceGroupName
     opsResourceGroupName: opsResourceGroupName
     privateDnsZones: filter(dnsZones.outputs.ids, (zone) => contains([ 'aks' ], zone.key))
@@ -171,7 +171,7 @@ module aksFrontend 'modules/aks.bicep' = {
     location: location
     logAnalyticWorkspaceId: logAnalyticsWorkspaceId
     logAnalyticWorkspaceResourceId: logAnalyticsWorkspaceResourceId
-    monitorId: monitorId
+    monitorWorkspaceName: monitorWorkspaceName
     networkingResourceGroupName: networkingResourceGroupName
     opsResourceGroupName: opsResourceGroupName
     privateDnsZones: filter(dnsZones.outputs.ids, (zone) => contains([ 'aks' ], zone.key))
@@ -390,6 +390,7 @@ module coreApiosmosRoles './modules/sqlRoleAssignments.bicep' = {
       'Cosmos DB Built-in Data Contributor': '00000000-0000-0000-0000-000000000002'
     }
   }
+  dependsOn: [srCoreApi]
 }
 
 module cosmosRoles './modules/sqlRoleAssignments.bicep' = {
@@ -402,6 +403,46 @@ module cosmosRoles './modules/sqlRoleAssignments.bicep' = {
       'Cosmos DB Built-in Data Contributor': '00000000-0000-0000-0000-000000000002'
     }
   }
+  dependsOn: [srBackend]
+}
+
+module gatewayApiCosmosRoles './modules/sqlRoleAssignments.bicep' = {
+  scope: resourceGroup(storageResourceGroupName)
+  name: 'gateway-api-cosmos-role'
+  params: {
+    accountName: cosmosDb.name
+    principalId: srBackend[indexOf(backendServiceNames, 'gateway-api')].outputs.servicePrincipalId
+    roleDefinitionIds: {
+      'Cosmos DB Built-in Data Contributor': '00000000-0000-0000-0000-000000000002'
+    }
+  }
+  dependsOn: [srBackend]
+}
+
+module managementApiCosmosRoles './modules/sqlRoleAssignments.bicep' = {
+  scope: resourceGroup(storageResourceGroupName)
+  name: 'management-api-cosmos-role'
+  params: {
+    accountName: cosmosDb.name
+    principalId: srManagementApi[0].outputs.servicePrincipalId
+    roleDefinitionIds: {
+      'Cosmos DB Built-in Data Contributor': '00000000-0000-0000-0000-000000000002'
+    }
+  }
+  dependsOn: [srManagementApi]
+}
+
+module orchestrationApiCosmosRoles './modules/sqlRoleAssignments.bicep' = {
+  scope: resourceGroup(storageResourceGroupName)
+  name: 'orchestration-api-cosmos-role'
+  params: {
+    accountName: cosmosDb.name
+    principalId: srBackend[indexOf(backendServiceNames, 'orchestration-api')].outputs.servicePrincipalId
+    roleDefinitionIds: {
+      'Cosmos DB Built-in Data Contributor': '00000000-0000-0000-0000-000000000002'
+    }
+  }
+  dependsOn: [srBackend]
 }
 
 module stateApiCosmosRoles './modules/sqlRoleAssignments.bicep' = {
@@ -414,6 +455,7 @@ module stateApiCosmosRoles './modules/sqlRoleAssignments.bicep' = {
       'Cosmos DB Built-in Data Contributor': '00000000-0000-0000-0000-000000000002'
     }
   }
+  dependsOn: [srBackend]
 }
 
 module searchIndexDataReaderRole 'modules/utility/roleAssignments.bicep' = {

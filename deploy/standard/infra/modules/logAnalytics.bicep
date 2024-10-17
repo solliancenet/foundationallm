@@ -10,7 +10,7 @@ param resourceSuffix string
 var name = 'la-${resourceSuffix}'
 
 output id string = main.id
-output monitorId string = monitor.id
+output monitorWorkspaceName string = monitor.name
 
 var alerts = [
   {

@@ -9,7 +9,7 @@
     "enabled": false,
     "max_history": 5
   },
-  "gatekeeper": {
+  "gatekeeper_settings": {
     "use_system_setting": true,
     "options": []
   },
@@ -17,6 +17,18 @@
     "orchestrator": "LangChain",
     "agent_parameters": null
   },
+  "capabilities": [
+    "OpenAI.Assistants"
+  ],
+	"tools": {
+		"dalle-image-generation": {
+			"name": "dalle-image-generation",
+			"description": "Generates an image based on a prompt.",
+			"ai_model_object_ids": {
+				"main_model": "/instances/{{instanceId}}/providers/FoundationaLLM.AIModel/aiModels/DALLE3Model"
+			}
+		}
+	},
   "ai_model_object_id": "/instances/{{instanceId}}/providers/FoundationaLLM.AIModel/aiModels/DefaultCompletionAIModel",
   "prompt_object_id": "/instances/{{instanceId}}/providers/FoundationaLLM.Prompt/prompts/FoundationaLLM"
 }

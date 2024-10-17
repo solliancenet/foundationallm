@@ -12,8 +12,21 @@
     - FoundationaLLM-Core-Portal
     - FoundationaLLM-Management-API
     - FoundationaLLM-Management-Portal
+    - FoundationaLLM-Reader
     
-    The script will also assign the required permissions to the client apps and the required API permissions to the API apps.
+    The script will also assign the required permissions to the client apps and the required API permissions to the API apps. 
+
+    Users can be added as Owners of the app registrations by creating an `admins.json` file in the `deploy/common/config` folder
+    with the following JSON array content
+
+    ```json
+    [
+        "user1@example.com",
+        "user2@example.com"
+    ]
+    ```
+    > Note: Only members of the resident tenant will be able to be imported in this manner.  Accounts outside of the tenant will
+      be ignored.
 
 .REQUIREMENTS
     - The user must be a Global Administrator in the Entra ID tenant or have RBAC rights to create App Registrations and Service Principals.
@@ -24,6 +37,7 @@
         - foundationallm-core-portal.template.json
         - foundationallm-management-api.template.json
         - foundationallm-management-portal.template.json
+        - foundationallm-reader.template.json
 
 .PARAMETER appPermissionsId
 The GUID of the permission to assign to the client app.
@@ -169,7 +183,7 @@ function New-FllmEntraIdApps {
                 ## Updates the Client App Registration
                 Write-Host -ForegroundColor Yellow "Preparing updates for the Client App Registration $($fllmAppRegMetaData.Client.Name)"
                 $($fllmAppRegMetaData.Client).Uri = @("api://$($fllmAppRegMetaData.Client.Name)")
-                $apiPermissions = @(@{"resourceAppId" = $($fllmAppRegMetaData.Client.AppId); "resourceAccess" = @(@{"id" = "$($appPermissionsId)"; "type" = "Scope" }) }, @{"resourceAppId" = "00000003-0000-0000-c000-000000000000"; "resourceAccess" = @(@{"id" = "e1fe6dd8-ba31-4d61-89e7-88639da4683d"; "type" = "Scope" }) })
+                $apiPermissions = @(@{"resourceAppId" = $($fllmAppRegMetaData.Api.AppId); "resourceAccess" = @(@{"id" = "$($appPermissionsId)"; "type" = "Scope" }) }, @{"resourceAppId" = "00000003-0000-0000-c000-000000000000"; "resourceAccess" = @(@{"id" = "e1fe6dd8-ba31-4d61-89e7-88639da4683d"; "type" = "Scope" }) })
                 $appConfig = Get-content $fllmClientConfigPath | ConvertFrom-Json -Depth 20
                 $appConfig.identifierUris = @($($fllmAppRegMetaData.Client.Uri))
                 $appConfig.requiredResourceAccess = $apiPermissions

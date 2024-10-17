@@ -13,6 +13,12 @@
 			"Deleted": false
 		},
 		{
+			"Name": "AzureOpenAIDALLE",
+			"Filename": "/FoundationaLLM.Configuration/AzureOpenAIDALLE.json",
+			"Type": "api-endpoint",
+			"Deleted": false
+		},
+		{
 			"Name": "GatekeeperAPI",
 			"Filename": "/FoundationaLLM.Configuration/GatekeeperAPI.json",
 			"Type": "api-endpoint",
@@ -39,6 +45,12 @@
 		{
 			"Name": "OrchestrationAPI",
 			"Filename": "/FoundationaLLM.Configuration/OrchestrationAPI.json",
+			"Type": "api-endpoint",
+			"Deleted": false
+		},
+		{
+			"Name": "OneDriveFileStoreConnector",
+			"Filename": "/FoundationaLLM.Configuration/OneDriveFileStoreConnector.json",
 			"Type": "api-endpoint",
 			"Deleted": false
 		},

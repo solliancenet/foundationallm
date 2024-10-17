@@ -67,7 +67,7 @@ param logAnalyticWorkspaceId string
 @description('Log Analytic Workspace Resource Id to use for diagnostics')
 param logAnalyticWorkspaceResourceId string
 
-param monitorId string
+param monitorWorkspaceName string
 
 @description('Networking resource group name')
 param networkingResourceGroupName string
@@ -353,14 +353,9 @@ resource diagnostics 'Microsoft.Insights/diagnosticSettings@2017-05-01-preview' 
   }
 }
 
-resource aksDce 'Microsoft.Insights/dataCollectionEndpoints@2023-03-11' = {
-  name: 'dce-${resourceSuffix}'
-  location: location
-  properties: {
-    networkAcls: {
-      publicNetworkAccess: 'Disabled'
-    }
-  }
+resource dce 'Microsoft.Insights/dataCollectionEndpoints@2023-03-11' existing = {
+  name: monitorWorkspaceName
+  scope: resourceGroup('MA_${monitorWorkspaceName}_${location}_managed')
 }
 
 resource aksDcr 'Microsoft.Insights/dataCollectionRules@2023-03-11' = {
@@ -376,7 +371,7 @@ resource aksDcr 'Microsoft.Insights/dataCollectionRules@2023-03-11' = {
       ]
     }
 
-    dataCollectionEndpointId: aksDce.id
+    dataCollectionEndpointId: dce.id
 
     dataFlows: [
       {
@@ -450,12 +445,21 @@ resource aksDcr 'Microsoft.Insights/dataCollectionRules@2023-03-11' = {
 
 #disable-next-line BCP174
 resource aksDcra 'Microsoft.ContainerService/managedClusters/providers/dataCollectionRuleAssociations@2022-06-01' = {
-  name: '${name}/microsoft.insights/ContainerInsightsExtension'
+  name: '${name}/microsoft.insights/ContainerInsights'
+  dependsOn: [ main ]
+  properties: {
+    description: 'Association of data collection endpoint. Deleting this association will break the data collection for this AKS Cluster.'
+    dataCollectionRuleId: aksDcr.id
+  }
+}
+
+#disable-next-line BCP174
+resource aksDcera 'Microsoft.ContainerService/managedClusters/providers/dataCollectionRuleAssociations@2022-06-01' = {
+  name: '${name}/microsoft.insights/configurationAccessEndpoint'
   dependsOn: [ main ]
   properties: {
     description: 'Association of data collection rule. Deleting this association will break the data collection for this AKS Cluster.'
-    dataCollectionRuleId: aksDcr.id
-    dataCollectionEndpointId: aksDce.id
+    dataCollectionEndpointId: dce.id
   }
 }
 
