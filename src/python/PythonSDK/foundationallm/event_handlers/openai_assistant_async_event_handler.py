@@ -56,6 +56,13 @@ class OpenAIAssistantAsyncEventHandler(AsyncAssistantEventHandler):
         elif event.event == "thread.message.completed":
             self.messages[event.data.id] = event.data # Overwrite the message with the final version.
             await self.update_state_api_content()
+        elif "failed" in event.event:
+            print(f'{event.event} ({event.data.id}): {event.data.last_error.message}')
+            if event.event == "thread.run.failed":
+                raise Exception(event.data.last_error.message)
+            elif event.event == "thread.run.step.failed":
+                pass
+                # Don't end the run, but print out the error for the logs.
 
     @override
     async def on_text_delta(self, delta: TextDelta, snapshot: Text) -> None:
