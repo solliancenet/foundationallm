@@ -20,6 +20,8 @@ param location string
 
 param existingOpenAiInstance object
 
+param oneDriveBaseUrl string
+
 @description('Id of the user or app to assign application roles')
 param principalId string
 
@@ -225,6 +227,18 @@ module cosmosDb './shared/cosmosdb.bicep' = {
       }
       {
         name: 'leases'
+        partitionKeyPath: '/id'
+        maxThroughput: 1000
+        defaultTtl: null
+      }
+      {
+        name: 'Attachments'
+        partitionKeyPath: '/upn'
+        maxThroughput: 1000
+        defaultTtl: null
+      }
+      {
+        name: 'Operations'
         partitionKeyPath: '/id'
         maxThroughput: 1000
         defaultTtl: null
@@ -597,6 +611,9 @@ var cosmosRoleTargets = [
   'core-api'
   'core-job'
   'state-api'
+  'gateway-api'
+  'orchestration-api'
+  'management-api'
 ]
 
 module cosmosRoles './shared/sqlRoleAssignments.bicep' = [
@@ -698,6 +715,8 @@ output ENTRA_READER_CLIENT_ID string = appRegistrations[indexOf(appRegNames, 're
 output ENTRA_READER_TENANT_ID string = tenant().tenantId
 
 output FOUNDATIONALLM_INSTANCE_ID string = instanceId
+
+output ONEDRIVE_BASE_URL string = oneDriveBaseUrl
 
 var serviceNames = [for service in services: service.name]
 

@@ -83,7 +83,7 @@
           "version": "2024-05-13"
         },
         "sku": {
-          "capacity": 8,
+          "capacity": 100,
           "name": "Standard"
         }
       },

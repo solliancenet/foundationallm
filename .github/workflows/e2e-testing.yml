@@ -28,7 +28,7 @@ on:
           - EastUS
           - EastUS2
           - SwedenCentral
-        default: EastUS2
+        default: EastUS
       notificationsEnabled:
         description: Enable Slack Notifications
         type: boolean
@@ -229,7 +229,7 @@ jobs:
       - name: Install azd
         uses: Azure/setup-azd@v1.0.0
         with:
-          version: "1.9.3"
+          version: "1.10.2"
 
       - name: Log in with Azure (Client Credentials)
         run: |
@@ -354,16 +354,17 @@ jobs:
 
           Write-Host "Update AZD Environment with App Registration Metadata"
           Push-Location ./deploy/quick-start
-          ../../tests/scripts/Set-AzdEnv.ps1 `
-            -tenantId $($info.tenantId) `
-            -principalType ServicePrincipal `
-            -instanceId 6fa496ce-d5c0-4e02-9223-06a98c9c0176 `
-            -fllmApiName FoundationaLLM-Core-API `
-            -fllmClientName FoundationaLLM-Core-Portal `
-            -fllmMgmtApiName FoundationaLLM-Management-API `
-            -fllmMgmtClientName FoundationaLLM-Management-Portal `
-            -fllmAuthApiName FoundationaLLM-Authorization-API `
-            -fllmAdminGroupName FLLM-E2E-Admins-${{ needs.generate_matrix.outputs.unique_id }}
+          ../common/scripts/Set-AzdEnvEntra.ps1 `
+            -tenantID $($info.tenantId) `
+            -coreAppName FoundationaLLM-Core-API `
+            -coreClientAppName FoundationaLLM-Core-Portal `
+            -mgmtAppName FoundationaLLM-Management-API `
+            -mgmtClientAppName FoundationaLLM-Management-Portal `
+            -authAppName FoundationaLLM-Authorization-API `
+            -adminGroupName FLLM-E2E-Admins-${{ needs.generate_matrix.outputs.unique_id }}
+
+          azd env set FOUNDATIONALLM_INSTANCE_ID 6fa496ce-d5c0-4e02-9223-06a98c9c0176
+          azd env set AZURE_PRINCIPAL_TYPE ServicePrincipal
           Pop-Location
         shell: pwsh
 
@@ -373,6 +374,9 @@ jobs:
           Write-Host "::add-mask::$($info.clientSecret)"
 
           $env:AZURE_SUBSCRIPTION_ID=$($info.subscriptionId)
+
+          ls ./deploy/quick-start
+          ls ./deploy/quick-start/.azure
 
           Push-Location ./deploy/quick-start
           azd provision --no-prompt
@@ -393,9 +397,10 @@ jobs:
 
       - name: Publish AZD Environment
         uses: actions/upload-artifact@v4
+        if: ${{ (cancelled() && inputs.bypassAndTeardown) || inputs.enableTeardown }}
         with:
           name: azd-env
-          path: ./deploy/quick-start/.azure
+          path: ./deploy/quick-start/.azure/
 
       - name: Update App Registration OAuth Callbacks
         id: update-app-reg-oauth
@@ -413,7 +418,8 @@ jobs:
         run: |
           Write-Host "Apply MS Graph API Role Assignments"
           Push-Location ./deploy/quick-start
-          pwsh -File ../../tests/scripts/Apply-MSGraphAPIRoles.ps1
+          pwsh -File ../common/scripts/Set-FllmGraphRoles.ps1 `
+            -resourceGroupName rg-$($env:AZURE_ENV_NAME)
           Pop-Location
         shell: pwsh
 
@@ -502,7 +508,7 @@ jobs:
       - name: Install azd
         uses: Azure/setup-azd@v1.0.0
         with:
-          version: "1.9.3"
+          version: "1.10.2"
 
       - name: Log in with Azure (Client Credentials)
         shell: pwsh
@@ -676,7 +682,7 @@ jobs:
       - name: Install azd
         uses: Azure/setup-azd@v1.0.0
         with:
-          version: "1.9.3"
+          version: "1.10.2"
 
       - name: Log in with Azure (Client Credentials)
         run: |
@@ -831,7 +837,7 @@ jobs:
       - name: Install azd
         uses: Azure/setup-azd@v1.0.0
         with:
-          version: "1.9.3"
+          version: "1.10.2"
 
       - name: Log in with Azure (Client Credentials)
         run: |
