@@ -260,6 +260,7 @@
 			<Dialog
 				v-model:visible="showOneDriveIframeDialog"
 				modal
+				:closable="false"
 				aria-label="OneDrive File Picker Dialog"
 				style="max-width: 98%; min-width: 50%; max-height: 98%"
 				class="onedrive-iframe-dialog"
@@ -1198,6 +1199,10 @@ export default {
 </style>
 
 <style lang="scss">
+.onedrive-iframe-dialog .p-dialog-header {
+	padding: 5px;
+}
+
 @media only screen and (max-width: 545px) {
 	.submit .p-button-label {
 		display: none;
