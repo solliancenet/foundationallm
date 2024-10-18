@@ -1,0 +1,34 @@
+{
+    "instance_id": "${env:FOUNDATIONALLM_INSTANCE_ID}",
+    "policy_assignments": [
+          {
+              "name": "${env:POLICYGUID01}",
+              "type": "FoundationaLLM.Authorization/policyAssignments",
+              "object_id": "/providers/FoundationaLLM.Authorization/policyAssignments/${env:POLICYGUID01}",
+              "description": "Ownership on conversation resources managed by the FoundationaLLM.Conversation resource provider.",
+              "policy_definition_id": "/providers/FoundationaLLM.Authorization/policyDefinitions/00000000-0000-0000-0001-000000000001",
+              "principal_id": "${env:ADMIN_GROUP_OBJECT_ID}",
+              "principal_type": "Group",
+              "scope": "/instances/${env:FOUNDATIONALLM_INSTANCE_ID}/providers/FoundationaLLM.Conversation/conversations",
+              "created_on": "${env:DEPLOY_TIME}",
+              "updated_on": "${env:DEPLOY_TIME}",
+              "created_by": "SYSTEM",
+              "updated_by": "SYSTEM"
+          },
+          {
+              "name": "${env:POLICYGUID02}",
+              "type": "FoundationaLLM.Authorization/policyAssignments",
+              "object_id": "/providers/FoundationaLLM.Authorization/policyAssignments/${env:POLICYGUID02}",
+              "description": "Ownership on attachment resources managed by the FoundationaLLM.Attachment resource provider.",
+              "policy_definition_id": "/providers/FoundationaLLM.Authorization/policyDefinitions/00000000-0000-0000-0001-000000000001",
+              "principal_id": "${env:ADMIN_GROUP_OBJECT_ID}",
+              "principal_type": "Group",
+              "scope": "/instances/${env:FOUNDATIONALLM_INSTANCE_ID}/providers/FoundationaLLM.Attachment/attachments",
+              "created_on": "${env:DEPLOY_TIME}",
+              "updated_on": "${env:DEPLOY_TIME}",
+              "created_by": "SYSTEM",
+              "updated_by": "SYSTEM"
+          }
+    ]
+  }
+  

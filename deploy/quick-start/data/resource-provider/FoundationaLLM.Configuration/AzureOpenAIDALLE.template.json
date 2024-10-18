@@ -1,0 +1,21 @@
+{
+    "type": "api-endpoint",
+    "name": "AzureOpenAIDALLE",
+    "object_id": "/instances/${env:FOUNDATIONALLM_INSTANCE_ID}/providers/FoundationaLLM.Configuration/apiEndpointConfigurations/AzureOpenAIDALLE",
+    "display_name": null,
+    "description": null,
+    "cost_center": null,
+    "category": "General",
+    "authentication_type": "APIKey",
+    "api_version": "2024-07-01-preview",
+    "authentication_parameters": {
+        "api_key_configuration_name": "FoundationaLLM:APIEndpoints:AzureOpenAI:Essentials:APIKey",
+        "api_key_header_name": "api-key"
+    },
+    "operation_type": "chat",
+    "url": "${env:AZURE_OPENAI_ENDPOINT}",
+    "url_exceptions": [],
+    "timeout_seconds": 60,
+    "retry_strategy_name": "ExponentialBackoff",
+    "provider": "microsoft"
+}

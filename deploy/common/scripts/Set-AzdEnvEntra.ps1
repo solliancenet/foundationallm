@@ -80,76 +80,82 @@ $ScriptDirectory = Split-Path -Path $MyInvocation.MyCommand.Path
 # Set the environment values
 Write-Host -ForegroundColor Blue "Please wait while gathering azd environment values for the ${tenantID} EntraID Tenant."
 
-$adminGroupId = $null
-Invoke-CliCommand "Get Admin Group ID" {
-   $script:adminGroupId = az ad group list `
-      --filter "displayName eq '$adminGroupName'" `
-      --query "[0].id" `
-      --output tsv
-}
+try {
 
-$appIds = @{}
-$appNames = @{
-   auth             = $authAppName
-   coreapi          = $coreAppName
-   coreclient       = $coreClientAppName
-   managmentapi     = $mgmtAppName
-   managementclient = $mgmtClientAppName
-   reader           = $readerAppName
-}
-
-$appData = @{}
-foreach ($app in $appNames.GetEnumerator()) {
-   $data = $null
-   Invoke-CliCommand "Get App ID for $($app.Value)" {
-      $script:data = $(az ad app list `
-         --display-name "$($app.Value)" `
-         --query '[].{appId:appId,objectId:id}' `
-         --output json | ConvertFrom-Json)
+   $adminGroupId = $null
+   Invoke-CliCommand "Get Admin Group ID" {
+      $script:adminGroupId = az ad group list `
+         --filter "displayName eq '$adminGroupName'" `
+         --query "[0].id" `
+         --output tsv
    }
-   $appData[$app.Key] = $script:data
-}
 
-$values = @{
-   "ADMIN_GROUP_OBJECT_ID"          = $adminGroupId
-   "ENTRA_AUTH_API_CLIENT_ID"       = $appData["auth"].appId
-   "ENTRA_AUTH_API_INSTANCE"        = "https://login.microsoftonline.com/"
-   "ENTRA_AUTH_API_SCOPES"          = "api://FoundationaLLM-Authorization"
-   "ENTRA_AUTH_API_TENANT_ID"       = $tenantID
-   "ENTRA_CHAT_UI_CLIENT_ID"        = $appData["coreclient"].appId
-   "ENTRA_CHAT_UI_SCOPES"           = "api://FoundationaLLM-Core/Data.Read"
-   "ENTRA_CORE_API_CLIENT_ID"       = $appData["coreapi"].appId
-   "ENTRA_CORE_API_SCOPES"          = "Data.Read"
-   "ENTRA_MANAGEMENT_API_CLIENT_ID" = $appData["managmentapi"].appId
-   "ENTRA_MANAGEMENT_API_SCOPES"    = "Data.Manage"
-   "ENTRA_MANAGEMENT_UI_CLIENT_ID"  = $appData["managementclient"].appId
-   "ENTRA_MANAGEMENT_UI_SCOPES"     = "api://FoundationaLLM-Management/Data.Manage"
-   "ENTRA_READER_CLIENT_ID"         = $appData["reader"].appId
-}
+   $appIds = @{}
+   $appNames = @{
+      auth             = $authAppName
+      coreapi          = $coreAppName
+      coreclient       = $coreClientAppName
+      managmentapi     = $mgmtAppName
+      managementclient = $mgmtClientAppName
+      reader           = $readerAppName
+   }
 
-# Show azd environments
-$message = @"
+   $appData = @{}
+   foreach ($app in $appNames.GetEnumerator()) {
+      $data = $null
+      Invoke-CliCommand "Get App ID for $($app.Value)" {
+         $script:data = $(az ad app list `
+            --display-name "$($app.Value)" `
+            --query '[].{appId:appId,objectId:id}' `
+            --output json | ConvertFrom-Json)
+      }
+      $appData[$app.Key] = $script:data
+   }
+
+   $values = @{
+      "ADMIN_GROUP_OBJECT_ID"          = $adminGroupId
+      "ENTRA_AUTH_API_CLIENT_ID"       = $appData["auth"].appId
+      "ENTRA_AUTH_API_INSTANCE"        = "https://login.microsoftonline.com/"
+      "ENTRA_AUTH_API_SCOPES"          = "api://FoundationaLLM-Authorization"
+      "ENTRA_AUTH_API_TENANT_ID"       = $tenantID
+      "ENTRA_CHAT_UI_CLIENT_ID"        = $appData["coreclient"].appId
+      "ENTRA_CHAT_UI_SCOPES"           = "api://FoundationaLLM-Core/Data.Read"
+      "ENTRA_CORE_API_CLIENT_ID"       = $appData["coreapi"].appId
+      "ENTRA_CORE_API_SCOPES"          = "Data.Read"
+      "ENTRA_MANAGEMENT_API_CLIENT_ID" = $appData["managmentapi"].appId
+      "ENTRA_MANAGEMENT_API_SCOPES"    = "Data.Manage"
+      "ENTRA_MANAGEMENT_UI_CLIENT_ID"  = $appData["managementclient"].appId
+      "ENTRA_MANAGEMENT_UI_SCOPES"     = "api://FoundationaLLM-Management/Data.Manage"
+      "ENTRA_READER_CLIENT_ID"         = $appData["reader"].appId
+   }
+
+   # Show azd environments
+   $message = @"
 Your azd environments are listed. Environment values updated for the default
 environment file located in the .azure directory.
 "@
-Write-Host -ForegroundColor Blue $message
-Invoke-CliCommand "azd env list" {
-   azd env list
-}
+   Write-Host -ForegroundColor Blue $message
+   Invoke-CliCommand "azd env list" {
+      azd env list
+   }
 
-# Write AZD environment values
-Write-Host -ForegroundColor Yellow "Setting azd environment values for the ${tenantID} EntraID Tenant."
-foreach ($value in $values.GetEnumerator()) {
-   Write-Host -ForegroundColor Yellow  "Setting $($value.Name) to $($value.Value)"
-   azd env set $value.Name $value.Value
-}
+   # Write AZD environment values
+   Write-Host -ForegroundColor Yellow "Setting azd environment values for the ${tenantID} EntraID Tenant."
+   foreach ($value in $values.GetEnumerator()) {
+      Write-Host -ForegroundColor Yellow  "Setting $($value.Name) to $($value.Value)"
+      azd env set $value.Name $value.Value
+   }
 
-$message = @"
+   $message = @"
 Environment values updated for the default environment file located in the
 .azure directory.
 Here are your current environment values:
 "@
-Write-Host -ForegroundColor Blue $message
-Invoke-CliCommand "azd env get-values" {
-   azd env get-values
+   Write-Host -ForegroundColor Blue $message
+   Invoke-CliCommand "azd env get-values" {
+      azd env get-values
+   }
+}
+finally {
+   Stop-Transcript
 }

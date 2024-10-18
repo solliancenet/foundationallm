@@ -13,7 +13,7 @@ jobs:
       deployOpenAi: true
       openAiName: fllm-01
       openAiResourceGroup: fllm-shared-01
-      location: EastUS2
+      location: EastUS
       notificationsEnabled: true
       enableTeardown: true
       bypassAndTeardown: false
