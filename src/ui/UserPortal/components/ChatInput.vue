@@ -381,6 +381,17 @@ export default {
 				selection: {
 					mode: 'multiple',
 				},
+				// pivots: {
+				// 	oneDrive: true,
+				// 	recent: false,
+				// 	shared: false,
+				// 	sharedLibraries: false,
+				// 	myOrganization: false,
+				// 	favorites: false,
+				// },
+				leftNav: {
+					enabled: false,
+				},
 			},
 			sessionFiles: {
 				sessionId: {
