@@ -395,8 +395,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: azd-env
+          include-hidden-files: true
           path: ./deploy/quick-start/.azure
-
       - name: Update App Registration OAuth Callbacks
         id: update-app-reg-oauth
         run: |
