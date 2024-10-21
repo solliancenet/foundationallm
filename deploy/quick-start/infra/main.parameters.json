@@ -5,6 +5,9 @@
       "adminGroupObjectId": {
         "value": "${ADMIN_GROUP_OBJECT_ID}"
       },
+      "adminGroupName": {
+        "value": "${FOUNDATIONALLM_ADMIN_GROUP_NAME=FLLM-Admins}"
+      },
       "authAppRegistration": {
         "value": {
           "instance": "${ENTRA_AUTH_API_INSTANCE=https://login.microsoftonline.com}",
@@ -66,6 +69,9 @@
           "resourceGroup": "${OPENAI_RESOURCE_GROUP}",
           "subscriptionId": "${OPENAI_SUBSCRIPTION_ID}"
         }
+      },
+      "oneDriveBaseUrl": {
+        "value": "${ONEDRIVE_BASE_URL}"
       },
       "authServiceExists": {
         "value": "${SERVICE_AUTHAPI_RESOURCE_EXISTS=false}"

@@ -17,6 +17,18 @@
     "orchestrator": "LangChain",
     "agent_parameters": null
   },
+	"capabilities": [
+    "OpenAI.Assistants"
+  ],
+  "tools": {
+		"dalle-image-generation": {
+			"name": "dalle-image-generation",
+			"description": "Generates an image based on a prompt.",
+			"ai_model_object_ids": {
+				"main_model": "/instances/${env:FOUNDATIONALLM_INSTANCE_ID}/providers/FoundationaLLM.AIModel/aiModels/DALLE3Model"
+			}
+		}
+	},
   "ai_model_object_id": "/instances/${env:FOUNDATIONALLM_INSTANCE_ID}/providers/FoundationaLLM.AIModel/aiModels/DefaultCompletionAIModel",
   "prompt_object_id": "/instances/${env:FOUNDATIONALLM_INSTANCE_ID}/providers/FoundationaLLM.Prompt/prompts/FoundationaLLM"
 }

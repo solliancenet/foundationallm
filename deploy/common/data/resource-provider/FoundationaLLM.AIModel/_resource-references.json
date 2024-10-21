@@ -13,6 +13,12 @@
             "Deleted": false
         },
         {
+            "Name": "DALLE3Model",
+            "Filename": "/FoundationaLLM.AIModel/dall-e-3-model.json",
+            "Type": "completion",
+            "Deleted": false
+        },
+        {
             "Name": "GPT4CompletionAIModel",
             "Filename": "/FoundationaLLM.AIModel/completion-4-model.json",
             "Type": "completion",

@@ -60,6 +60,9 @@ $env:GUID07 = $($(New-Guid).Guid)
 $env:GUID08 = $($(New-Guid).Guid)
 $env:GUID09 = $($(New-Guid).Guid)
 
+$env:POLICYGUID01 = $($(New-Guid).Guid)
+$env:POLICYGUID02 = $($(New-Guid).Guid)
+
 $envConfiguraitons = @{
     "core-api-event-profile"             = @{
         template     = './config/core-api-event-profile.template.json'
@@ -131,6 +134,10 @@ $configurations = @{
         template = './data/role-assignments/DefaultRoleAssignments.template.json'
         render   = "./data/role-assignments/${env:FOUNDATIONALLM_INSTANCE_ID}.json"
     }
+    "policy-assignments" = @{
+        template = './data/policy-assignments/DefaultPolicyAssignments.template.json'
+        render   = "./data/policy-assignments/${env:FOUNDATIONALLM_INSTANCE_ID}-policy.json"
+    }
     "completion-4-model" = @{
         template = './data/resource-provider/FoundationaLLM.AIModel/completion-4-model.template.json'
         render   = '../common/data/resource-provider/FoundationaLLM.AIModel/completion-4-model.json'
@@ -142,6 +149,10 @@ $configurations = @{
     "completion-model" = @{
         template = './data/resource-provider/FoundationaLLM.AIModel/completion-model.template.json'
         render   = '../common/data/resource-provider/FoundationaLLM.AIModel/completion-model.json'
+    }
+    "dall-e-3" = @{
+        template = './data/resource-provider/FoundationaLLM.AIModel/dall-e-3-model.template.json'
+        render   = '../common/data/resource-provider/FoundationaLLM.AIModel/dall-e-3-model.json'
     }
     "embedding-model"  = @{
         template = './data/resource-provider/FoundationaLLM.AIModel/embedding-model.template.json'
@@ -223,6 +234,10 @@ azcopy cp '../common/data/resource-provider/*' $target --exclude-pattern .git* -
 $target = "https://$env:AZURE_AUTHORIZATION_STORAGE_ACCOUNT_NAME.blob.core.windows.net/role-assignments/"
 
 azcopy cp ./data/role-assignments/$($env:FOUNDATIONALLM_INSTANCE_ID).json $target --recursive=True
+
+$target = "https://$env:AZURE_AUTHORIZATION_STORAGE_ACCOUNT_NAME.blob.core.windows.net/policy-assignments/"
+
+azcopy cp ./data/policy-assignments/$($env:FOUNDATIONALLM_INSTANCE_ID)-policy.json $target --recursive=True
 
 Invoke-AndRequireSuccess "Restarting Container Apps" {
 

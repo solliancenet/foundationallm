@@ -1,0 +1,14 @@
+{
+    "type": "image-generation",
+    "name": "DALLE3Model",
+    "object_id": "/instances/${env:FOUNDATIONALLM_INSTANCE_ID}/providers/FoundationaLLM.AIModel/aiModels/DALLE3Model",
+    "display_name": null,
+    "description": null,
+    "cost_center": null,
+    "endpoint_object_id": "/instances/${env:FOUNDATIONALLM_INSTANCE_ID}/providers/FoundationaLLM.Configuration/apiEndpointConfigurations/AzureOpenAIDALLE",
+    "version": "0.0",
+    "deployment_name": "dall-e-3",
+    "model_parameters": {
+        "temperature": 0
+    }
+}
