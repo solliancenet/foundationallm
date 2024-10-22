@@ -73,7 +73,7 @@ namespace FoundationaLLM.Agent.ResourceProviders
             ResourcePathAuthorizationResult authorizationResult,
             UnifiedUserIdentity userIdentity,
             ResourceProviderLoadOptions? options = null) =>
-            resourcePath.MainResourceTypeName switch
+            resourcePath.ResourceTypeName switch
             {
                 AgentResourceTypeNames.Agents => await LoadResources<AgentBase>(
                     resourcePath.ResourceTypeInstances[0],
@@ -82,16 +82,19 @@ namespace FoundationaLLM.Agent.ResourceProviders
                     {
                         IncludeRoles = resourcePath.IsResourceTypePath,
                     }),
-                _ => throw new ResourceProviderException($"The resource type {resourcePath.MainResourceTypeName} is not supported by the {_name} resource provider.",
+                AgentResourceTypeNames.Files => ((await LoadAgentFiles(
+                    resourcePath.MainResourceId!)))!,
+                _ => throw new ResourceProviderException($"The resource type {resourcePath.ResourceTypeName} is not supported by the {_name} resource provider.",
                     StatusCodes.Status400BadRequest)
             };
 
         /// <inheritdoc/>
         protected override async Task<object> UpsertResourceAsync(ResourcePath resourcePath, string serializedResource, UnifiedUserIdentity userIdentity) =>
-            resourcePath.MainResourceTypeName switch
+            resourcePath.ResourceTypeName switch
             {
                 AgentResourceTypeNames.Agents => await UpdateAgent(resourcePath, serializedResource, userIdentity),
-                _ => throw new ResourceProviderException($"The resource type {resourcePath.MainResourceTypeName} is not supported by the {_name} resource provider.",
+                AgentResourceTypeNames.Files => await UpdateAgentFile(resourcePath.MainResourceId!, resourcePath.ResourceId!, serializedResource),
+                _ => throw new ResourceProviderException($"The resource type {resourcePath.ResourceTypeName} is not supported by the {_name} resource provider.",
                     StatusCodes.Status400BadRequest)
             };
 
@@ -121,6 +124,9 @@ namespace FoundationaLLM.Agent.ResourceProviders
             {
                 case AgentResourceTypeNames.Agents:
                     await DeleteResource<AgentBase>(resourcePath);
+                    break;
+                case AgentResourceTypeNames.Files:
+                    await DeleteAgentFile(resourcePath.MainResourceId!, resourcePath.ResourceId!);
                     break;
                 default:
                     throw new ResourceProviderException(
@@ -274,6 +280,36 @@ namespace FoundationaLLM.Agent.ResourceProviders
                 ResourceExists = existingAgentReference != null
             };
         }
+
+        private async Task<List<ResourceBase>> LoadAgentFiles(string agentName)
+        {
+            var files = await _storageService.GetFilePathsAsync(_storageContainerName, $"{_name}/{agentName}/");
+
+            var fileNames = files.Select(filePath => filePath.Split("/").Last()).ToList();
+
+            return fileNames.Select(fileName => new ResourceBase()
+            {
+                Name = fileName,
+                DisplayName = fileName,
+                ObjectId = ResourcePath.GetObjectId(_instanceSettings.Id, _name, AgentResourceTypeNames.Agents, agentName, AgentResourceTypeNames.Files, fileName)
+            }).ToList();
+        }
+
+        private async Task<ResourceProviderUpsertResult> UpdateAgentFile(string agentName, string fileName, string fileContent)
+        {
+            var resourceExists = await _storageService.FileExistsAsync(_storageContainerName, $"{_name}/{agentName}/{fileName}", CancellationToken.None);
+
+            await _storageService.WriteFileAsync(_storageContainerName, $"{_name}/{agentName}/{fileName}", fileContent, null, CancellationToken.None);
+
+            return new ResourceProviderUpsertResult
+            {
+                ResourceExists = resourceExists,
+                ObjectId = ResourcePath.GetObjectId(_instanceSettings.Id, _name, AgentResourceTypeNames.Agents, agentName, AgentResourceTypeNames.Files, fileName)
+            };
+        }
+
+        private async Task DeleteAgentFile(string agentName, string fileName) =>
+            await _storageService.DeleteFileAsync(_storageContainerName, $"{_name}/{agentName}/{fileName}");
 
         #endregion
     }
