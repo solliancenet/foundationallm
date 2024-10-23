@@ -283,7 +283,9 @@ namespace FoundationaLLM.Agent.ResourceProviders
 
         private async Task<List<ResourceBase>> LoadAgentFiles(string agentName)
         {
-            var files = await _storageService.GetFilePathsAsync(_storageContainerName, $"{_name}/{agentName}/");
+            var directoryPath = $"{_name}/{agentName}/";
+
+            var files = await _storageService.GetFilePathsAsync(_storageContainerName, directoryPath);
 
             var fileNames = files.Select(filePath => filePath.Split("/").Last()).ToList();
 
@@ -295,11 +297,17 @@ namespace FoundationaLLM.Agent.ResourceProviders
             }).ToList();
         }
 
-        private async Task<ResourceProviderUpsertResult> UpdateAgentFile(string agentName, string fileName, string fileContent)
+        private async Task<ResourceProviderUpsertResult> UpdateAgentFile(string agentName, string fileName, string serializedAgentFile)
         {
-            var resourceExists = await _storageService.FileExistsAsync(_storageContainerName, $"{_name}/{agentName}/{fileName}", CancellationToken.None);
+            var agentFile = JsonSerializer.Deserialize<AgentFile>(serializedAgentFile)
+                ?? throw new ResourceProviderException("The object definition is invalid.",
+                    StatusCodes.Status400BadRequest);
 
-            await _storageService.WriteFileAsync(_storageContainerName, $"{_name}/{agentName}/{fileName}", fileContent, null, CancellationToken.None);
+            var filePath = $"{_name}/{agentName}/{fileName}";
+
+            var resourceExists = await _storageService.FileExistsAsync(_storageContainerName, filePath, CancellationToken.None);
+
+            await _storageService.WriteFileAsync(_storageContainerName, filePath, new MemoryStream(agentFile.Content!), agentFile.ContentType, CancellationToken.None);
 
             return new ResourceProviderUpsertResult
             {
@@ -308,8 +316,11 @@ namespace FoundationaLLM.Agent.ResourceProviders
             };
         }
 
-        private async Task DeleteAgentFile(string agentName, string fileName) =>
-            await _storageService.DeleteFileAsync(_storageContainerName, $"{_name}/{agentName}/{fileName}");
+        private async Task DeleteAgentFile(string agentName, string fileName)
+        {
+            var filePath = $"{_name}/{agentName}/{fileName}";
+            await _storageService.DeleteFileAsync(_storageContainerName, filePath);
+        }
 
         #endregion
     }
