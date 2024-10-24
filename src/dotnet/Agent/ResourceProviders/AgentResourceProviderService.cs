@@ -283,7 +283,7 @@ namespace FoundationaLLM.Agent.ResourceProviders
 
         private async Task<List<ResourceBase>> LoadAgentFiles(string agentName)
         {
-            var directoryPath = $"{_name}/{agentName}/";
+            var directoryPath = $"{_name}/{_instanceSettings.Id}/{agentName}/";
 
             var files = await _storageService.GetFilePathsAsync(_storageContainerName, directoryPath);
 
@@ -303,7 +303,7 @@ namespace FoundationaLLM.Agent.ResourceProviders
                 ?? throw new ResourceProviderException("The object definition is invalid.",
                     StatusCodes.Status400BadRequest);
 
-            var filePath = $"{_name}/{agentName}/{fileName}";
+            var filePath = $"{_name}/{_instanceSettings.Id}/{agentName}/{fileName}";
 
             var resourceExists = await _storageService.FileExistsAsync(_storageContainerName, filePath, CancellationToken.None);
 
@@ -318,7 +318,7 @@ namespace FoundationaLLM.Agent.ResourceProviders
 
         private async Task DeleteAgentFile(string agentName, string fileName)
         {
-            var filePath = $"{_name}/{agentName}/{fileName}";
+            var filePath = $"{_name}/{_instanceSettings.Id}/{agentName}/{fileName}";
             await _storageService.DeleteFileAsync(_storageContainerName, filePath);
         }
 
