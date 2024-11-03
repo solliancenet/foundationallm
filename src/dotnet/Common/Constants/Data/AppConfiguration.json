@@ -408,7 +408,7 @@
 				"name": "AllowedUploadFileExtensions",
 				"description": "The comma-separated list file extensions that users are allowed to upload to a conversation.",
 				"secret": "",
-				"value": "c, cpp, cs, css, csv, doc, docx, gif, html, java, jpeg, jpg, js, json, md, pdf, php, png, pptx, py, rb, sh, tar, tex, ts, txt, xlsx, xml, zip",
+				"value": "c, cpp, cs, css, csv, doc, docx, gif, html, java, jpeg, jpg, js, json, md, mp3, pdf, php, png, pptx, py, rb, sh, tar, tex, ts, txt, wav, xlsx, xml, zip",
 				"content_type": "",
 				"first_version": "0.8.0"
 			},

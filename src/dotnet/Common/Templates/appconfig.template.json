@@ -191,7 +191,7 @@
         },
         {
             "key": "FoundationaLLM:APIEndpoints:CoreAPI:Configuration:AllowedUploadFileExtensions",
-            "value": "c, cpp, cs, css, csv, doc, docx, gif, html, java, jpeg, jpg, js, json, md, pdf, php, png, pptx, py, rb, sh, tar, tex, ts, txt, xlsx, xml, zip",
+            "value": "c, cpp, cs, css, csv, doc, docx, gif, html, java, jpeg, jpg, js, json, md, mp3, pdf, php, png, pptx, py, rb, sh, tar, tex, ts, txt, wav, xlsx, xml, zip",
             "label": null,
             "content_type": "",
             "tags": {}
