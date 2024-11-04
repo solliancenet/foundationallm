@@ -9,6 +9,7 @@ from openai.types.beta.threads import Message
 from openai.types.beta.threads.message import Attachment
 from openai.types.beta.threads.runs import RunStep
 from foundationallm.event_handlers import OpenAIAssistantAsyncEventHandler
+from foundationallm.models.orchestration import OpenAITextMessageContentItem
 from foundationallm.operations import OperationsManager
 from foundationallm.models.services import OpenAIAssistantsAPIRequest, OpenAIAssistantsAPIResponse
 from foundationallm.services import ImageService
@@ -70,9 +71,13 @@ class OpenAIAssistantsApiService:
             )
         except Exception as e:
             error_message = f"Error adding user prompt message to thread: {e}"
-            print(error_message)
             return OpenAIAssistantsAPIResponse(
                 document_id = request.document_id,
+                content = [
+                    OpenAITextMessageContentItem(
+                        text = "A problem on my side prevented me from responding."
+                    )
+                ],
                 errors = [error_message]
             )
         
@@ -109,6 +114,11 @@ class OpenAIAssistantsApiService:
         if run.status == "failed":
             return OpenAIAssistantsAPIResponse(
                 document_id = request.document_id,
+                content = [
+                    OpenAITextMessageContentItem(
+                        text = "A problem on my side prevented me from responding."
+                    )
+                ],
                 errors = [
                     run.last_error.message
                 ]
@@ -120,7 +130,7 @@ class OpenAIAssistantsApiService:
           run_id = run.id
         )
 
-        analysis_results = await self._parse_run_steps_async(run_steps.data)
+        analysis_results, function_results = await self._parse_run_steps_async(run_steps.data)
 
         # Retrieve the messages in the thread after the prompt message was appended.
         messages = await self.client.beta.threads.messages.list(
@@ -133,6 +143,7 @@ class OpenAIAssistantsApiService:
             document_id = request.document_id,
             content = content,
             analysis_results = analysis_results,
+            function_results = function_results,
             completion_tokens = run.usage.completion_tokens,
             prompt_tokens = run.usage.prompt_tokens,
             total_tokens = run.usage.total_tokens
@@ -220,8 +231,9 @@ class OpenAIAssistantsApiService:
             The analysis results from the run steps.
         """
         analysis_results = []
+        function_results = []
         for rs in run_steps:
-            analysis_result = OpenAIAssistantsHelpers.parse_run_step(rs)
-            if analysis_result is not None:
-                analysis_results.append(analysis_result)
-        return analysis_results
+            a_results, f_results = OpenAIAssistantsHelpers.parse_run_step(rs)
+            analysis_results.extend(a_results)
+            function_results.extend(f_results)
+        return analysis_results, function_results

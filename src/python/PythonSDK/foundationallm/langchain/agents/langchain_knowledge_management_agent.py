@@ -367,6 +367,7 @@ class LangChainKnowledgeManagementAgent(LangChainAgentBase):
                 full_prompt = self.prompt.prefix,
                 content = assistant_response.content,
                 analysis_results = assistant_response.analysis_results,
+                function_results = assistant_response.function_results,
                 completion_tokens = assistant_response.completion_tokens + image_analysis_token_usage.completion_tokens,
                 prompt_tokens = assistant_response.prompt_tokens + image_analysis_token_usage.prompt_tokens,
                 total_tokens = assistant_response.total_tokens + image_analysis_token_usage.total_tokens,

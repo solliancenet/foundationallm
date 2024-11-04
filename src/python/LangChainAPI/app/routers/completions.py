@@ -23,7 +23,8 @@ from foundationallm.models.operations import (
 )
 from foundationallm.models.orchestration import (
     CompletionRequestBase,
-    CompletionResponse
+    CompletionResponse,
+    OpenAITextMessageContentItem
 )
 from foundationallm.models.agents import KnowledgeManagementCompletionRequest
 from foundationallm.operations import OperationsManager
@@ -172,7 +173,11 @@ async def create_completion_response(
             completion_response = CompletionResponse(
                 operation_id = operation_id,
                 user_prompt = completion_request.user_prompt,
-                content = [],
+                content = [
+                    OpenAITextMessageContentItem(
+                        text = "A problem on my side prevented me from responding."
+                    )
+                ],
                 errors=[f'{e}']
             )
             await asyncio.gather(

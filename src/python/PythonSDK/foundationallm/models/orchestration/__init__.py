@@ -1,6 +1,7 @@
 """FoundationaLLM orchestration models module"""
 from .analysis_result import AnalysisResult
 from .citation import Citation
+from .function_result import FunctionResult
 
 from .message_content_item_types import MessageContentItemTypes
 from .message_content_item_base import MessageContentItemBase

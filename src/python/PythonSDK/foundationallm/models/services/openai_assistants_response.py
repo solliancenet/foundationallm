@@ -5,6 +5,7 @@ from typing import List, Optional, Union
 from pydantic import BaseModel
 from foundationallm.models.orchestration import (
     AnalysisResult,
+    FunctionResult,
     OpenAIFilePathMessageContentItem,
     OpenAIImageFileMessageContentItem,
     OpenAITextMessageContentItem
@@ -26,6 +27,7 @@ class OpenAIAssistantsAPIResponse(BaseModel):
         ]
     ] = []
     analysis_results: Optional[List[AnalysisResult]] = []
+    function_results: Optional[List[FunctionResult]] = []
     completion_tokens: Optional[int] = 0
     prompt_tokens: Optional[int] = 0
     total_tokens: Optional[int] = 0

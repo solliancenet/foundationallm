@@ -3,6 +3,7 @@ from pydantic import BaseModel
 
 from foundationallm.models.orchestration import (
     AnalysisResult,
+    FunctionResult,
     Citation,
     OpenAIImageFileMessageContentItem,
     OpenAITextMessageContentItem
@@ -25,6 +26,7 @@ class CompletionResponse(BaseModel):
         ]
     ] = None
     analysis_results: Optional[List[AnalysisResult]] = []
+    function_results: Optional[List[FunctionResult]] = []
     citations: Optional[List[Citation]] = []
     user_prompt_embedding: Optional[List[float]] = []
     prompt_tokens: int = 0

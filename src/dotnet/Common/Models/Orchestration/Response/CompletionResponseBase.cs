@@ -32,6 +32,12 @@ namespace FoundationaLLM.Common.Models.Orchestration.Response
         public List<AnalysisResult>? AnalysisResults { get; set; }
 
         /// <summary>
+        /// A list of results from function calls.
+        /// </summary>
+        [JsonPropertyName("function_results")]
+        public List<FunctionResult>? FunctionResults { get; set; }
+
+        /// <summary>
         /// The citations used in building the completion response.
         /// </summary>
         [JsonPropertyName("citations")]

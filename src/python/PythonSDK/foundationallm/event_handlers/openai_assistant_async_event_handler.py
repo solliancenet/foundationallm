@@ -29,7 +29,8 @@ class OpenAIAssistantAsyncEventHandler(AsyncAssistantEventHandler):
             operation_id = request.operation_id,
             user_prompt = request.user_prompt,
             content = [],
-            analysis_results = []
+            analysis_results = [],
+            function_results = []
         )
         self.image_service = image_service
         self.client = client
@@ -49,10 +50,7 @@ class OpenAIAssistantAsyncEventHandler(AsyncAssistantEventHandler):
                 for tool in details.tool_calls or []:
                     if tool.type == "code_interpreter" and tool.code_interpreter and tool.code_interpreter.input and tool.code_interpreter.input.endswith(tuple(self.stop_tokens)):
                         self.run_steps[event.data.id] = event.data # Overwrite the run step with the final version.    
-                        await self.update_state_api_analysis_results_async()
-                    if tool.type ==  "function":
-                        self.run_steps[event.data.id] = event.data
-                        await self.update_state_api_analysis_results_async()
+                        await self.update_state_api_tool_results_async()
         elif event.event == "thread.message.created":
             self.messages[event.data.id] = event.data
         elif event.event == "thread.message.completed":
@@ -76,7 +74,7 @@ class OpenAIAssistantAsyncEventHandler(AsyncAssistantEventHandler):
             for tool in details.tool_calls or []:
                 if tool.type == "code_interpreter" and tool.code_interpreter and tool.code_interpreter.input and tool.code_interpreter.input.endswith(tuple(self.stop_tokens)):
                     self.run_steps[snapshot.id] = snapshot
-                    await self.update_state_api_analysis_results_async()
+                    await self.update_state_api_tool_results_async()
 
     async def on_requires_action(self, run_id: str):
         max_steps = 15
@@ -121,14 +119,17 @@ class OpenAIAssistantAsyncEventHandler(AsyncAssistantEventHandler):
                 break
             time.sleep(2)
 
-    async def update_state_api_analysis_results_async(self):
+    async def update_state_api_tool_results_async(self):
         self.interim_result.analysis_results = [] # Clear the analysis results list before adding new results.
+        self.interim_result.function_results = []
         for k, v in self.run_steps.items():
             if not v:
                 continue
-            analysis_result = OpenAIAssistantsHelpers.parse_run_step(v)
-            if analysis_result:
-                self.interim_result.analysis_results.append(analysis_result)
+            analysis_results, function_results = OpenAIAssistantsHelpers.parse_run_step(v)
+            if analysis_results:
+                self.interim_result.analysis_results.extend(analysis_results)
+            if function_results:
+                self.interim_result.function_results.extend(analysis_results)
         await self.operations_manager.set_operation_result_async(self.request.operation_id, self.request.instance_id, self.interim_result)
         
     async def update_state_api_content_async(self):

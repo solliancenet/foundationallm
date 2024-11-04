@@ -17,13 +17,14 @@ from foundationallm.models.orchestration import (
     OpenAIFilePathMessageContentItem,
     OpenAIImageFileMessageContentItem,
     OpenAITextMessageContentItem,
-    AnalysisResult
+    AnalysisResult,
+    FunctionResult
 )
 
 class OpenAIAssistantsHelpers:
 
     @staticmethod
-    def parse_run_step(run_step: RunStep) -> AnalysisResult:
+    def parse_run_step(run_step: RunStep) -> tuple:
         """
         Parses a run step from the OpenAI Assistants API.
 
@@ -34,45 +35,45 @@ class OpenAIAssistantsHelpers:
 
         Returns
         -------
-        AnalysisResult
-            The analysis result from the run step.
-        OR None
-            If the run step does not contain a tool call
-            to the code interpreter tool.
+        tuple
+            Returns a tuple containing lists of analysis results and function call results.
         """
+        analysis_results = []
+        function_results = []
         step_details = run_step.step_details
         if step_details and step_details.type == "tool_calls":
-            tool_call_detail = step_details.tool_calls
-            for details in tool_call_detail:
-                if isinstance(details, CodeInterpreterToolCall):
-                    result = AnalysisResult(
-                        tool_name = details.type,
-                        agent_capability_category = AgentCapabilityCategories.OPENAI_ASSISTANTS
+            for call in step_details.tool_calls:
+                if isinstance(call, CodeInterpreterToolCall):
+                    analysis_result = AnalysisResult(
+                        agent_capability_category = AgentCapabilityCategories.OPENAI_ASSISTANTS,
+                        tool_name = call.type,
+                        tool_input = call.code_interpreter.input  # Source code
                     )
-                    result.tool_input += details.code_interpreter.input  # Source code
-                    for output in details.code_interpreter.outputs:  # Tool execution output
+                    for output in call.code_interpreter.outputs:  # Tool execution output
                         if hasattr(output, 'image') and output.image:
-                            result.tool_output += "# Generated image file: " + output.image.file_id
+                            analysis_result.tool_output += "# Generated image file: " + output.image.file_id
                         elif hasattr(output, 'logs') and output.logs:
-                            result.tool_output += output.logs
-                    return result
-                elif isinstance(details, FunctionToolCall):
-                    result = AnalysisResult(
-                        tool_name = details.function.name,
-                        agent_capability_category = AgentCapabilityCategories.OPENAI_ASSISTANTS
+                            analysis_result.tool_output += output.logs
+                    analysis_results.append(analysis_result)
+                elif isinstance(call, FunctionToolCall):
+                    function_result = FunctionResult(
+                        agent_capability_category = AgentCapabilityCategories.OPENAI_ASSISTANTS,
+                        function_name = call.function.name,
+                        function_input = json.loads(call.function.arguments)
                     )
-                    result.tool_input += details.function.arguments
-                    if details.function.output:
-                        fn_output = json.loads(details.function.output)
+                    if call.function.output:
+                        fn_output = json.loads(call.function.output)
+                        # TODO: On the function tool, provide a property to specify the response content (e.g., "data"),
+                        # so the if statement below can be more dynamic and based on the expected response from the function
                         if 'data' in fn_output:
-                            output_data = json.loads(details.function.output)['data'][0]
-                            result.tool_output += json.dumps({"url": output_data['url'], "description": output_data['revised_prompt']})
+                            output_data = json.loads(call.function.output)['data'][0]
+                            function_result.function_output = output_data #json.dumps({"url": output_data['url'], "description": output_data['revised_prompt']})
                         else:
-                            # indicative of a failure during the function call, append error message to output
-                            print("Error in function call: " + fn_output)
-                            result.tool_output += json.dumps(fn_output)                            
-                                
-        return None
+                            # Indicative of a failure during the function call, append error message to output
+                            function_result.function_output = fn_output #json.dumps(fn_output)
+                    function_results.append(function_result)
+
+        return analysis_results, function_results
 
     @staticmethod
     def parse_message(message: Message):
