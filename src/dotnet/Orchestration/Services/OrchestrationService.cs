@@ -2,7 +2,9 @@
 using FoundationaLLM.Common.Constants.Configuration;
 using FoundationaLLM.Common.Constants.ResourceProviders;
 using FoundationaLLM.Common.Exceptions;
+using FoundationaLLM.Common.Extensions;
 using FoundationaLLM.Common.Interfaces;
+using FoundationaLLM.Common.Logging;
 using FoundationaLLM.Common.Models.Infrastructure;
 using FoundationaLLM.Common.Models.Orchestration;
 using FoundationaLLM.Common.Models.Orchestration.Request;
@@ -14,6 +16,7 @@ using FoundationaLLM.Orchestration.Core.Models;
 using FoundationaLLM.Orchestration.Core.Orchestration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using System.Diagnostics;
 using System.Text;
 
 namespace FoundationaLLM.Orchestration.Core.Services;
@@ -130,7 +133,9 @@ public class OrchestrationService : IOrchestrationService
     {
         try
         {
-            var orchestration = await OrchestrationBuilder.Build(
+            using (var activity = ActivitySources.OrchestrationAPIActivitySource.StartActivity("Orchestration.Build", ActivityKind.Consumer, parentContext: default, tags: new Dictionary<string, object> { { "Operationid", completionRequest.OperationId } }))
+            {
+                var orchestration = await OrchestrationBuilder.Build(
                 instanceId,
                 completionRequest.AgentName!,
                 completionRequest,
@@ -143,9 +148,10 @@ public class OrchestrationService : IOrchestrationService
                 _loggerFactory)
                 ?? throw new OrchestrationException($"The orchestration builder was not able to create an orchestration for agent [{completionRequest.AgentName ?? string.Empty}].");
 
-            var operationResponse = await orchestration.StartCompletionOperation(completionRequest);
+                var operationResponse = await orchestration.StartCompletionOperation(completionRequest);
 
-            return operationResponse;
+                return operationResponse;
+            }
 
         }
         catch (Exception ex)
@@ -263,7 +269,7 @@ public class OrchestrationService : IOrchestrationService
         var currentPrompt = new StringBuilder();
         var result = new List<AgentConversationStep>();
         var currentAgentName = agentName;
-        
+
         using (StringReader sr = new StringReader(userPrompt))
         {
             string? line;

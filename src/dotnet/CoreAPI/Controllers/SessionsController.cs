@@ -3,6 +3,8 @@ using FoundationaLLM.Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using FoundationaLLM.Common.Models.Conversation;
+using FoundationaLLM.Common.Logging;
+using System.Diagnostics;
 
 namespace FoundationaLLM.Core.API.Controllers
 {
@@ -71,8 +73,13 @@ namespace FoundationaLLM.Core.API.Controllers
         /// <param name="instanceId">The id of the instance.</param>
         /// <param name="chatSessionProperties">The session properties.</param>
         [HttpPost(Name = "CreateNewChatSession")]
-        public async Task<ConversationModels.Conversation> CreateNewChatSession(string instanceId, [FromBody] ChatSessionProperties chatSessionProperties) =>
-            await _coreService.CreateConversationAsync(instanceId, chatSessionProperties);
+        public async Task<ConversationModels.Conversation> CreateNewChatSession(string instanceId, [FromBody] ChatSessionProperties chatSessionProperties)
+        {
+            using (var activity = ActivitySources.CoreAPIActivitySource.StartActivity("CreateNewChatSession", ActivityKind.Consumer, parentContext: default, tags: new Dictionary<string, object> { }))
+            {
+                return await _coreService.CreateConversationAsync(instanceId, chatSessionProperties);
+            }
+        }
 
         /// <summary>
         /// Rename the chat session.

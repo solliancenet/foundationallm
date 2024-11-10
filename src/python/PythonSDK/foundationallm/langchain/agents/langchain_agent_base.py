@@ -2,6 +2,7 @@ from abc import abstractmethod
 from typing import List
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 
+from langchain.callbacks.tracers import ConsoleCallbackHandler
 from langchain_core.language_models import BaseLanguageModel
 from langchain_openai import AzureChatOpenAI, ChatOpenAI, OpenAI
 from openai import AsyncAzureOpenAI as async_aoi
@@ -20,11 +21,16 @@ from foundationallm.models.resource_providers.ai_models import AIModelBase
 from foundationallm.models.resource_providers.attachments import Attachment
 from foundationallm.models.resource_providers.configuration import APIEndpointConfiguration
 from foundationallm.models.resource_providers.prompts import MultipartPrompt
+from foundationallm.telemetry import Telemetry
 
 class LangChainAgentBase():
     """
     Implements the base functionality for a LangChain agent.
     """
+    # Initialize telemetry logging
+    logger = Telemetry.get_logger(__name__)
+    tracer = Telemetry.get_tracer(__name__)
+
     def __init__(self, instance_id: str, user_identity: UserIdentity, config: Configuration, operations_manager: OperationsManager):
         """
         Initializes a knowledge management agent.
@@ -45,11 +51,18 @@ class LangChainAgentBase():
         self.has_retriever = False
         self.operations_manager = operations_manager
 
+        #get log level
+        self.log_level = self.config.get_value('Logging:LogLevel:Default')
+        self.lcel_callbacks = []
+
+        if self.log_level == 'Debug':
+            self.lcel_callbacks = [ConsoleCallbackHandler()]
+
     @abstractmethod
     async def invoke_async(self, request: CompletionRequestBase) -> CompletionResponse:
         """
         Gets the completion for the request using an async request.
-        
+
         Parameters
         ----------
         request : CompletionRequestBase
@@ -82,12 +95,12 @@ class LangChainAgentBase():
 
         if prompt_object_id is None or prompt_object_id == '':
             raise LangChainException("Invalid prompt object id.", 400)
-        
+
         try:
             prompt = MultipartPrompt(**objects.get(prompt_object_id))
         except Exception as e:
             raise LangChainException(f"The prompt object provided in the request.objects dictionary is invalid. {str(e)}", 400)
-        
+
         if prompt is None:
             raise LangChainException("The prompt object is missing in the request.objects dictionary.", 400)
 
@@ -101,12 +114,12 @@ class LangChainAgentBase():
 
         if ai_model_object_id is None or ai_model_object_id == '':
             raise LangChainException("Invalid AI model object id.", 400)
-        
+
         try:
             ai_model = AIModelBase(**objects.get(ai_model_object_id))
         except Exception as e:
             raise LangChainException(f"The AI model object provided in the request.objects dictionary is invalid. {str(e)}", 400)
-        
+
         if ai_model is None:
             raise LangChainException("The AI model object is missing in the request.objects dictionary.", 400)
 
@@ -120,12 +133,12 @@ class LangChainAgentBase():
 
         if api_endpoint_object_id is None or api_endpoint_object_id == '':
             raise LangChainException("Invalid API endpoint object id.", 400)
-        
+
         try:
             api_endpoint = APIEndpointConfiguration(**objects.get(api_endpoint_object_id))
         except Exception as e:
             raise LangChainException(f"The API endpoint object provided in the request.objects dictionary is invalid. {str(e)}", 400)
-        
+
         if api_endpoint is None:
             raise LangChainException("The API endpoint object is missing in the request.objects dictionary.", 400)
 
@@ -139,16 +152,16 @@ class LangChainAgentBase():
 
         if attachment_object_id is None or attachment_object_id == '':
             return None
-        
+
         try:
             attachment = Attachment(**agent_parameters.get(attachment_object_id))
         except Exception as e:
             raise LangChainException(f"The attachment object provided in the agent parameters is invalid. {str(e)}", 400)
-        
+
         if attachment is None:
             raise LangChainException("The attachment object is missing in the agent parameters.", 400)
 
-        return attachment        
+        return attachment
 
     def _build_conversation_history(self, messages:List[MessageHistoryItem]=None, message_count:int=None) -> str:
         """
@@ -180,7 +193,7 @@ class LangChainAgentBase():
         ----------
         prompt : str
             The prompt that is populated with context.
-        
+
         Returns
         -------
         str
@@ -215,7 +228,7 @@ class LangChainAgentBase():
         -------
         BaseLanguageModel
             Returns an API connector for a chat completion model.
-        """                
+        """
         language_model:BaseLanguageModel = None
         api_key = None
 
@@ -236,7 +249,7 @@ class LangChainAgentBase():
                         DefaultAzureCredential(exclude_environment_credential=True),
                         scope
                     )
-                    
+
                     if op_type == OperationTypes.CHAT:
                         language_model = AzureChatOpenAI(
                             azure_endpoint=self.api_endpoint.url,
@@ -266,7 +279,7 @@ class LangChainAgentBase():
 
                 if api_key is None:
                     raise LangChainException("API key is missing from the configuration settings.", 400)
-                        
+
                 if op_type == OperationTypes.CHAT:
                     language_model = AzureChatOpenAI(
                         azure_endpoint=self.api_endpoint.url,
@@ -291,7 +304,7 @@ class LangChainAgentBase():
 
             if api_key is None:
                 raise LangChainException("API key is missing from the configuration settings.", 400)
-                
+
             language_model = (
                 ChatOpenAI(base_url=self.api_endpoint.url, api_key=api_key)
                 if self.api_endpoint.operation_type == OperationTypes.CHAT

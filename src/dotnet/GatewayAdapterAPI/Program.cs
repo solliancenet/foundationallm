@@ -24,6 +24,7 @@ builder.Configuration.AddAzureAppConfiguration(options =>
     {
         options.SetCredential(DefaultAuthentication.AzureCredential);
     });
+    options.Select(AppConfigurationKeyFilters.FoundationaLLM_Logging);
     options.Select(AppConfigurationKeyFilters.FoundationaLLM_APIEndpoints_GatewayAdapterAPI_Essentials);
 });
 if (builder.Environment.IsDevelopment())

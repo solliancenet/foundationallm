@@ -2,6 +2,7 @@ using FoundationaLLM.Common.Constants.ResourceProviders;
 using FoundationaLLM.Common.Exceptions;
 using FoundationaLLM.Common.Extensions;
 using FoundationaLLM.Common.Interfaces;
+using FoundationaLLM.Common.Logging;
 using FoundationaLLM.Common.Models.Conversation;
 using FoundationaLLM.Common.Models.Orchestration;
 using FoundationaLLM.Common.Models.Orchestration.Request;
@@ -11,6 +12,7 @@ using FoundationaLLM.Common.Models.ResourceProviders.Agent;
 using FoundationaLLM.Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
 namespace FoundationaLLM.Core.API.Controllers
 {
@@ -63,10 +65,15 @@ namespace FoundationaLLM.Core.API.Controllers
         /// <param name="instanceId">The instance ID of the current request.</param>
         /// <param name="completionRequest">The user prompt for which to generate a completion.</param>
         [HttpPost("completions", Name = "GetCompletion")]
-        public async Task<IActionResult> GetCompletion(string instanceId, [FromBody] CompletionRequest completionRequest) =>
-            !string.IsNullOrWhiteSpace(completionRequest.SessionId)
+        public async Task<IActionResult> GetCompletion(string instanceId, [FromBody] CompletionRequest completionRequest)
+        {
+            using (var activity = ActivitySources.CoreAPIActivitySource.StartActivity("GetCompletion", ActivityKind.Consumer, parentContext: default, tags: new Dictionary<string, object> { { "UPN", _callContext.CurrentUserIdentity?.UPN }, { "RequestId", completionRequest.SessionId }, { "UserId", _callContext.CurrentUserIdentity?.UserId } }))
+            {
+                return !string.IsNullOrWhiteSpace(completionRequest.SessionId)
                 ? Ok(await _coreService.GetChatCompletionAsync(instanceId, completionRequest))
                 : Ok(await _coreService.GetCompletionAsync(instanceId, completionRequest));
+            }
+        }
 
         /// <summary>
         /// Begins a completion operation.
@@ -77,8 +84,11 @@ namespace FoundationaLLM.Core.API.Controllers
         [HttpPost("async-completions")]
         public async Task<ActionResult<LongRunningOperation>> StartCompletionOperation(string instanceId, CompletionRequest completionRequest)
         {
-            var state = await _coreService.StartCompletionOperation(instanceId, completionRequest);
-            return Accepted(state);
+            using (var activity = ActivitySources.CoreAPIActivitySource.StartActivity("StartCompletionOperation", ActivityKind.Consumer, parentContext: default, tags: new Dictionary<string, object> { { "UPN", _callContext.CurrentUserIdentity?.UPN }, { "RequestId", completionRequest.SessionId }, { "UserId", _callContext.CurrentUserIdentity?.UserId } }))
+            {
+                var state = await _coreService.StartCompletionOperation(instanceId, completionRequest);
+                return Accepted(state);
+            }
         }
 
         /// <summary>
@@ -88,8 +98,13 @@ namespace FoundationaLLM.Core.API.Controllers
         /// <param name="operationId">The OperationId for which to retrieve the status.</param>
         /// <returns>Returns a <see cref="LongRunningOperation"/> object containing the OperationId, Status, and result.</returns>
         [HttpGet("async-completions/{operationId}/status")]
-        public async Task<LongRunningOperation> GetCompletionOperationStatus(string instanceId, string operationId) =>
-            await _coreService.GetCompletionOperationStatus(instanceId, operationId);
+        public async Task<LongRunningOperation> GetCompletionOperationStatus(string instanceId, string operationId)
+        {
+            using (var activity = ActivitySources.CoreAPIActivitySource.StartActivity("GetCompletionOperationStatus", ActivityKind.Consumer, parentContext: default, tags: new Dictionary<string, object> { { "UPN", _callContext.CurrentUserIdentity?.UPN }, { "Operationid", operationId }, { "UserId", _callContext.CurrentUserIdentity?.UserId } }))
+            {
+                return await _coreService.GetCompletionOperationStatus(instanceId, operationId);
+            }
+        }
 
         /// <summary>
         /// Retrieves a list of global and private agents.

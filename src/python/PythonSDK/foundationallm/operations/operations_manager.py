@@ -1,7 +1,6 @@
 import json
 import os
 import requests
-import urllib3
 from typing import List
 from foundationallm.config import Configuration
 from foundationallm.models.operations import (
@@ -10,6 +9,11 @@ from foundationallm.models.operations import (
     OperationStatus
 )
 from foundationallm.models.orchestration import CompletionResponse
+from foundationallm.telemetry import Telemetry
+
+# Initialize telemetry logging
+logger = Telemetry.get_logger(__name__)
+tracer = Telemetry.get_tracer(__name__)
 
 class OperationsManager():
     """
@@ -18,16 +22,14 @@ class OperationsManager():
     def __init__(self, config: Configuration):
         self.config = config
         # Retrieve the State API configuration settings.
-        env = os.environ.get('FOUNDATIONALLM_ENV', 'prod')
-
         self.state_api_url = config.get_value('FoundationaLLM:APIEndpoints:StateAPI:Essentials:APIUrl').rstrip('/')
         self.state_api_key = config.get_value('FoundationaLLM:APIEndpoints:StateAPI:Essentials:APIKey')
-        if env == 'dev':
+        if env == 'dev' or 'localhost' in self.state_api_url:
             self.verify_certs = False
             urllib3.disable_warnings(category=urllib3.exceptions.InsecureRequestWarning)
         else:
             self.verify_certs = True
-        
+
     async def create_operation_async(
         self,
         operation_id: str,
@@ -37,7 +39,7 @@ class OperationsManager():
         Creates a background operation by settings its initial state through the State API.
 
         POST {state_api_url}/instances/{instanceId}/operations/{operationId} -> LongRunningOperation
-        
+
         Parameters
         ----------
         operation_id : str
@@ -46,12 +48,12 @@ class OperationsManager():
             The unique identifier for the FLLM instance.
         user_identity : str
             The user identity object containing the user principal name of the user who initiated the operation.
-        
+
         Returns
         -------
         LongRunningOperation
             Object representing the operation.
-        """               
+        """
         try:
             headers = {
                 "x-api-key": self.state_api_key,
@@ -91,7 +93,7 @@ class OperationsManager():
         Updates the state of a background operation through the State API.
 
         PUT {state_api_url}/instances/{instanceId}/operations/{operationId} -> LongRunningOperation
-        
+
         Parameters
         ----------
         operation : LongRunningOperation
@@ -104,7 +106,7 @@ class OperationsManager():
             The message to associate with the new status.
         user_identity : str
             The user identity object containing the user principal name of the user who initiated the operation.
-        
+
         Returns
         -------
         LongRunningOperation
@@ -118,7 +120,7 @@ class OperationsManager():
             status_message=status_message,
             upn=user_identity_dict['upn']
         )
-        
+
         try:
             # Call the State API to create a new operation.
             headers = {
@@ -152,14 +154,14 @@ class OperationsManager():
         Retrieves the state of a background operation through the State API.
 
         GET {state_api_url}/instances/{instanceId}/operations/{operationId} -> LongRunningOperation
-        
+
         Parameters
         ----------
         operation_id : str
             The unique identifier for the operation.
         instance_id : str
             The unique identifier for the FLLM instance.
-        
+
         Returns
         -------
         LongRunningOperation
@@ -198,7 +200,7 @@ class OperationsManager():
         Sets the result of a completion operation through the State API.
 
         PUT {state_api_url}/instances/{instanceId}/operations/{operationId}/result -> CompletionResponse
-        
+
         Parameters
         ----------
         operation_id : str
@@ -240,14 +242,14 @@ class OperationsManager():
         Retrieves the result of an async completion operation through the State API.
 
         GET {state_api_url}/instances/{instanceId}/operations/{operationId}/result -> CompletionResponse
-        
+
         Parameters
         ----------
         operation_id : str
             The unique identifier for the operation.
         instance_id : str
             The unique identifier for the FLLM instance.
-        
+
         Returns
         -------
         CompletionResponse
@@ -285,14 +287,14 @@ class OperationsManager():
         Retrieves a list of log entries for an async operation through the State API.
 
         GET {state_api_url}/instances/{instanceId}/operations/{operationId}/log -> List[LongRunningOperationLogEntry]
-        
+
         Parameters
         ----------
         operation_id : str
             The unique identifier for the operation.
         instance_id : str
             The unique identifier for the FLLM instance.
-        
+
         Returns
         -------
         List[LongRunningOperationLogEntry]

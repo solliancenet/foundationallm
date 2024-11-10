@@ -1,9 +1,11 @@
 ﻿using FoundationaLLM.Common.Authentication;
 using FoundationaLLM.Common.Constants.OpenAI;
 using FoundationaLLM.Common.Interfaces;
+using FoundationaLLM.Common.Logging;
 using FoundationaLLM.Common.Models.Gateway;
 using FoundationaLLM.Gateway.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
 namespace FoundationaLLM.Gateway.API.Controllers
 {
@@ -39,12 +41,17 @@ namespace FoundationaLLM.Gateway.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateAgentCapability(
             string instanceId,
-            [FromBody] AgentCapabilityRequest agentCapabilityRequest) =>
-            new OkObjectResult(await _gatewayCore.CreateAgentCapability(
+            [FromBody] AgentCapabilityRequest agentCapabilityRequest)
+        {
+            using (var activity = ActivitySources.GatewayAPIActivitySource.StartActivity("CreateAgentCapability", ActivityKind.Consumer, parentContext: default, tags: new Dictionary<string, object> { { "UPN", _callContext.CurrentUserIdentity?.UPN }, { "UserId", _callContext.CurrentUserIdentity?.UserId } }))
+            {
+                return new OkObjectResult(await _gatewayCore.CreateAgentCapability(
                 instanceId,
                 agentCapabilityRequest.CapabilityCategory,
                 agentCapabilityRequest.CapabilityName,
                 _callContext.CurrentUserIdentity!,
                 agentCapabilityRequest.Parameters));
+            }
+        }
     }
 }

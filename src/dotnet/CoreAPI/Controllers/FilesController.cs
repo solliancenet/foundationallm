@@ -1,12 +1,17 @@
 ﻿using FoundationaLLM.Common.Exceptions;
 using FoundationaLLM.Common.Interfaces;
+using FoundationaLLM.Common.Logging;
 using FoundationaLLM.Common.Models.Configuration.Instance;
+using FoundationaLLM.Common.Models.Orchestration.Request;
+using FoundationaLLM.Common.Models.ResourceProviders.Agent;
 using FoundationaLLM.Common.Models.ResourceProviders.Attachment;
 using FoundationaLLM.Common.Utils;
 using FoundationaLLM.Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection;
+using System.Diagnostics;
 
 namespace FoundationaLLM.Core.API.Controllers
 {
@@ -66,7 +71,9 @@ namespace FoundationaLLM.Core.API.Controllers
             await stream.CopyToAsync(memoryStream);
             var content = memoryStream.ToArray();
 
-            return new OkObjectResult(
+            using (var activity = ActivitySources.CoreAPIActivitySource.StartActivity("Upload", ActivityKind.Consumer, parentContext: default, tags: new Dictionary<string, object> { { "UPN", _callContext.CurrentUserIdentity?.UPN }, { "AgentName", agentName }, { "RequestId", sessionId }, { "UserId", _callContext.CurrentUserIdentity?.UserId } }))
+            {
+                return new OkObjectResult(
                 await _coreService.UploadAttachment(
                     instanceId,
                     sessionId,
@@ -80,6 +87,7 @@ namespace FoundationaLLM.Core.API.Controllers
                     },
                     agentName,
                     _callContext.CurrentUserIdentity!));
+            }
         }
 
         /// <summary>
@@ -100,10 +108,12 @@ namespace FoundationaLLM.Core.API.Controllers
         public async Task<IActionResult> Download(string instanceId, string fileProvider, string fileId)
         {
             var attachment = await _coreService.DownloadAttachment(instanceId, fileProvider, fileId, _callContext.CurrentUserIdentity!);
-
-            return attachment == null
+            using (var activity = ActivitySources.CoreAPIActivitySource.StartActivity("Download", ActivityKind.Consumer, parentContext: default, tags: new Dictionary<string, object> { { "UPN", _callContext.CurrentUserIdentity?.UPN }, { "UserId", _callContext.CurrentUserIdentity?.UserId } }))
+            {
+                return attachment == null
                 ? NotFound()
                 : File(attachment.Content!, FileMethods.GetMimeType(attachment.Content!), attachment.OriginalFileName);
+            }
         }
 
         /// <summary>

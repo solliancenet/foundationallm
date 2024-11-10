@@ -5,6 +5,10 @@
 
 ## Starting with 0.8.4
 
+### Logging
+
+You will not get console logging across container services unless the `Logging:LogLevel:Default` value is set to `Verbose` or `Trace`, anything higher will disable console logging. Althought the values are not put into the console, the logs will be sent to LogAnalytics and AppInsights as the preferred area for performing debuging and logging searching activities.
+
 ### Configuration changes
 
 The following new App Configuration settings are required:
@@ -14,6 +18,7 @@ Name | Default value
 `FoundationaLLM:APIEndpoints:ManagementAPI:Configuration:AllowedUploadFileExtensions` | `c, cpp, cs, css, csv, doc, docx, gif, html, java, jpeg, jpg, js, json, md, pdf, php, png, pptx, py, rb, sh, tar, tex, ts, txt, xlsx, xml, zip`
 `FoundationaLLM:Branding:NoAgentsMessage` | `No agents available. Please check with your system administrator for assistance.`
 `FoundationaLLM:Branding:DefaultAgentWelcomeMessage` | `Start the conversation using the text box below.`
+`Logging:LogLevel:Default` | `Information`
 
 The following new App Configuration feature flags are required:
 

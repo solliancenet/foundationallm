@@ -1,3 +1,4 @@
+using FoundationaLLM;
 using FoundationaLLM.Common.Authentication;
 using FoundationaLLM.Common.Constants;
 using FoundationaLLM.Common.Constants.Configuration;
@@ -28,11 +29,16 @@ builder.Configuration.AddAzureAppConfiguration(options =>
     {
         options.SetCredential(DefaultAuthentication.AzureCredential);
     });
+    options.Select(AppConfigurationKeyFilters.FoundationaLLM_Logging);
     options.Select(AppConfigurationKeyFilters.FoundationaLLM_APIEndpoints_CoreWorker_Essentials);
     options.Select(AppConfigurationKeyFilters.FoundationaLLM_APIEndpoints_CoreAPI_Configuration_CosmosDB);
 });
 if (builder.Environment.IsDevelopment())
     builder.Configuration.AddJsonFile("appsettings.development.json", true, true);
+
+builder.AddOpenTelemetry(
+    AppConfigurationKeys.FoundationaLLM_APIEndpoints_CoreWorker_Essentials_AppInsightsConnectionString,
+    ServiceNames.CoreWorker);
 
 builder.Services.AddOptions<CosmosDbSettings>()
     .Bind(builder.Configuration.GetSection(AppConfigurationKeySections.FoundationaLLM_APIEndpoints_CoreAPI_Configuration_CosmosDB));
@@ -52,10 +58,6 @@ builder.Services.AddSingleton<CosmosClient>(serviceProvider =>
 builder.Services.AddSingleton<IAzureCosmosDBService, AzureCosmosDBService>();
 builder.Services.AddSingleton<ICosmosDbChangeFeedService, AzureCosmosDBChangeFeedService>();
 builder.Services.AddHostedService<ChangeFeedWorker>();
-builder.Services.AddApplicationInsightsTelemetryWorkerService(options =>
-{
-    options.ConnectionString = builder.Configuration[AppConfigurationKeys.FoundationaLLM_APIEndpoints_CoreWorker_Essentials_AppInsightsConnectionString];
-});
 
 var host = builder.Build();
 

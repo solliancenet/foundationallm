@@ -1,5 +1,4 @@
-﻿import uuid
-from langchain_community.callbacks import get_openai_callback
+﻿from langchain_community.callbacks import get_openai_callback
 from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnablePassthrough, RunnableLambda
 from langchain_core.output_parsers import StrOutputParser
@@ -42,6 +41,10 @@ class LangChainKnowledgeManagementAgent(LangChainAgentBase):
     The LangChain Knowledge Management agent.
     """
 
+     # Initialize telemetry logging
+    logger = Telemetry.get_logger(__name__)
+    tracer = Telemetry.get_tracer(__name__)
+
     def _get_document_retriever(
         self,
         request: KnowledgeManagementCompletionRequest,
@@ -55,15 +58,15 @@ class LangChainKnowledgeManagementAgent(LangChainAgentBase):
             text_embedding_profile = AzureOpenAIEmbeddingProfile.from_object(
                 request.objects[agent.vectorization.text_embedding_profile_object_id]
             )
-            
+
             # text_embedding_profile has the embedding model name in Settings.
             text_embedding_model_name = text_embedding_profile.settings.get(EmbeddingProfileSettingsKeys.MODEL_NAME)
-            
+
             # objects dictionary has the gateway API endpoint configuration.
             gateway_endpoint_configuration = APIEndpointConfiguration.from_object(
                 request.objects[CompletionRequestObjectKeys.GATEWAY_API_ENDPOINT_CONFIGURATION]
             )
-            
+
             gateway_embedding_service = GatewayTextEmbeddingService(
                 instance_id= self.instance_id,
                 user_identity=self.user_identity,
@@ -71,7 +74,7 @@ class LangChainKnowledgeManagementAgent(LangChainAgentBase):
                 model_name = text_embedding_model_name,
                 config=self.config
                 )
-            
+
             # array of objects containing the indexing profile and associated endpoint configuration
             index_configurations = []
 
@@ -81,17 +84,17 @@ class LangChainKnowledgeManagementAgent(LangChainAgentBase):
                     indexing_profile = AzureAISearchIndexingProfile.from_object(
                             request.objects[profile_id]
                         )
-                    # indexing profile has indexing_api_endpoint_configuration_object_id in Settings.                    
+                    # indexing profile has indexing_api_endpoint_configuration_object_id in Settings.
                     indexing_api_endpoint_configuration = APIEndpointConfiguration.from_object(
                         request.objects[indexing_profile.settings.api_endpoint_configuration_object_id]
                     )
-      
+
                     index_configurations.append(
                         KnowledgeManagementIndexConfiguration(
                             indexing_profile = indexing_profile,
                             api_endpoint_configuration = indexing_api_endpoint_configuration
                         )
-                    )                
+                    )
 
                 retriever_factory = RetrieverFactory(
                                 index_configurations=index_configurations,
@@ -233,6 +236,7 @@ class LangChainKnowledgeManagementAgent(LangChainAgentBase):
         #   AssistantId, AssistantThreadId
 
         if "OpenAI.Assistants" in request.agent.capabilities:
+            self.logger.info("OpenAI.Assistants capability detected.")
             required_fields = [CompletionRequestObjectKeys.OPENAI_ASSISTANT_ID, CompletionRequestObjectKeys.OPENAI_THREAD_ID]
             for field in required_fields:
                 if not request.objects.get(field):

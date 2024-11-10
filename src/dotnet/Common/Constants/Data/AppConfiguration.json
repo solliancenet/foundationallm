@@ -41,6 +41,15 @@
 		]
 	},
 	{
+		"namespace": "Logging",
+		"dependency_injection_key": null,
+		"configuration_section": {
+			"description": "Logging section used to set platform log levels."
+		},
+		"configuration_keys": [
+		]
+	},
+	{
 		"namespace": "Configuration",
 		"dependency_injection_key": null,
 		"configuration_section": {

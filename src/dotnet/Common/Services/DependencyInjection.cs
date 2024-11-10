@@ -1,4 +1,5 @@
 ﻿using Azure.Monitor.OpenTelemetry.AspNetCore;
+using Azure.Monitor.OpenTelemetry.Exporter;
 using FoundationaLLM.Common.Authentication;
 using FoundationaLLM.Common.Constants;
 using FoundationaLLM.Common.Constants.Configuration;
@@ -13,14 +14,22 @@ using Microsoft.Azure.Cosmos.Fluent;
 using Microsoft.Azure.Cosmos;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Azure;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Identity.Web;
+using OpenTelemetry;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.ResourceDetectors.Azure;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using System.Diagnostics;
 using Microsoft.Extensions.Configuration;
+using FoundationaLLM.Common.Constants.Configuration;
 
 namespace FoundationaLLM
 {
@@ -30,7 +39,63 @@ namespace FoundationaLLM
     public static partial class DependencyInjection
     {
         /// <summary>
-        /// Adds CORS policies the the dependency injection container.
+        /// Configures logging defaults.
+        /// </summary>
+        /// <param name="builder">The host application builder.</param>
+        public static void AddLogging(this IHostApplicationBuilder builder) =>
+            builder.Services.AddLogging(config =>
+            {
+                // clear out default configuration
+                config.ClearProviders();
+
+                config.AddConfiguration(builder.Configuration.GetSection("Logging"));
+                config.AddDebug();
+                config.AddEventSourceLogger();
+
+                //get the log level
+                string logLevel = builder.Configuration["Logging:LogLevel:Default"];
+
+                //enable console for debug or trace
+                switch (logLevel)
+                {
+                    case "Trace":
+                    case "Debug":
+                        config.AddConsole();
+                        break;
+                }
+            });
+
+        /// <summary>
+        /// Configures logging defaults.
+        /// </summary>
+        /// <param name="services">The <see cref="IServiceCollection"/> dependency injection container service collection.</param>
+        /// <param name="configuration">The <see cref="IConfigurationManager"/> application configuration manager.</param>
+        public static void AddLogging(this IServiceCollection services, IConfigurationManager configuration) =>
+            services.AddLogging(config =>
+            {
+                // clear out default configuration
+                config.ClearProviders();
+
+                config.AddConfiguration(configuration.GetSection("Logging"));
+                config.AddDebug();
+                config.AddEventSourceLogger();
+
+                //get the log level
+                string logLevel = configuration["Logging:LogLevel:Default"];
+
+                //enable console for debug or trace
+                switch (logLevel)
+                {
+                    case "Trace":
+                    case "Debug":
+                        config.AddConsole();
+                        break;
+                }
+            });
+
+
+        /// <summary>
+        /// Add CORS policies the the dependency injection container.
         /// </summary>
         /// <param name="builder">The <see cref="IHostApplicationBuilder"/> application builder managing the dependency injection container.</param>
         public static void AddCorsPolicies(this IHostApplicationBuilder builder) =>
@@ -57,23 +122,166 @@ namespace FoundationaLLM
             string connectionStringConfigurationKey,
             string serviceName)
         {
-            // Add the OpenTelemetry telemetry service and send telemetry data to Azure Monitor.
-            builder.Services.AddOpenTelemetry().UseAzureMonitor(options =>
-            {
-                options.ConnectionString = builder.Configuration[connectionStringConfigurationKey];
-            });
+            AzureMonitorOptions options = new AzureMonitorOptions { ConnectionString = builder.Configuration[connectionStringConfigurationKey] };
+
+            var resourceBuilder = ResourceBuilder.CreateDefault();
 
             // Create a dictionary of resource attributes.
             var resourceAttributes = new Dictionary<string, object> {
-                { "service.name", serviceName },
-                { "service.namespace", "FoundationaLLM" },
-                { "service.instance.id", ValidatedEnvironment.MachineName }
-            };
+                     { "service.name", serviceName },
+                     { "service.namespace", "FoundationaLLM" },
+                     { "service.version", builder.Configuration[EnvironmentVariables.FoundationaLLM_Version] },
+                     { "service.instance.id", ValidatedEnvironment.MachineName }
+                 };
+
+            resourceBuilder.AddAttributes(resourceAttributes);
+
+            builder.Services.AddOpenTelemetry()
+             .WithTracing(b =>
+             {
+                 b
+                 .SetResourceBuilder(resourceBuilder)
+                 .AddSource("Azure.*")
+                 .AddSource(serviceName)
+                 //.AddConsoleExporter()
+                 .AddAspNetCoreInstrumentation()
+                 .AddHttpClientInstrumentation(o => o.FilterHttpRequestMessage = (_) =>
+                 {
+                     // Azure SDKs create their own client span before calling the service using HttpClient
+                     // In this case, we would see two spans corresponding to the same operation
+                     // 1) created by Azure SDK 2) created by HttpClient
+                     // To prevent this duplication we are filtering the span from HttpClient
+                     // as span from Azure SDK contains all relevant information needed.
+                     var parentActivity = Activity.Current?.Parent;
+                     if (parentActivity != null && parentActivity.Source.Name.Equals("Azure.Core.Http"))
+                     {
+                         return false;
+                     }
+                     return true;
+                 })
+                 .AddAzureMonitorTraceExporter(options => { options.ConnectionString = builder.Configuration[connectionStringConfigurationKey]; });
+             });
+
+            builder.Services.AddLogging(logging =>
+            {
+                // clear out default configuration
+                logging.ClearProviders();
+
+                logging.AddConfiguration(builder.Configuration.GetSection("Logging"));
+                logging.AddDebug();
+                logging.AddEventSourceLogger();
+
+                //get the log level
+                string logLevel = builder.Configuration["Logging:LogLevel:Default"];
+
+                //enable console for debug or trace
+                switch (logLevel)
+                {
+                    case "Trace":
+                    case "Debug":
+                        logging.AddConsole();
+                        break;
+                }
+
+                logging.AddOpenTelemetry(builderOptions =>
+                {
+                    builderOptions.SetResourceBuilder(resourceBuilder);
+                    builderOptions.IncludeFormattedMessage = true;
+                    builderOptions.IncludeScopes = false;
+                    builderOptions.AddAzureMonitorLogExporter(options => { options.ConnectionString = builder.Configuration[connectionStringConfigurationKey]; });
+                })
+                .AddConfiguration(builder.Configuration);
+
+                });
+        }
+
+        /// <summary>
+        /// Adds OpenTelemetry the the dependency injection container.
+        /// </summary>
+        /// <param name="builder">The <see cref="IHostApplicationBuilder"/> application builder managing the dependency injection container.</param>
+        /// <param name="connectionStringConfigurationKey">The configuration key for the OpenTelemetry connection string.</param>
+        /// <param name="serviceName">The name of the service.</param>
+        public static void AddOpenTelemetry(this IServiceCollection services, IConfigurationManager configuration,
+            string connectionStringConfigurationKey,
+            string serviceName)
+        {
+            AzureMonitorOptions options = new AzureMonitorOptions { ConnectionString = configuration[connectionStringConfigurationKey] };
+
+            var resourceBuilder = ResourceBuilder.CreateDefault();
+
+            // Create a dictionary of resource attributes.
+            var resourceAttributes = new Dictionary<string, object> {
+                     { "service.name", serviceName },
+                     { "service.namespace", "FoundationaLLM" },
+                     { "service.version", configuration[EnvironmentVariables.FoundationaLLM_Version] },
+                     { "service.instance.id", ValidatedEnvironment.MachineName }
+                 };
+
+            resourceBuilder.AddAttributes(resourceAttributes);
+
+            services.AddOpenTelemetry()
+             .WithTracing(b =>
+             {
+
+
+                 b
+                 .SetResourceBuilder(resourceBuilder)
+                 .AddSource("Azure.*")
+                 .AddSource(serviceName)
+                 //.AddConsoleExporter()
+                 .AddAspNetCoreInstrumentation()
+                 .AddHttpClientInstrumentation(o => o.FilterHttpRequestMessage = (_) =>
+                 {
+                     // Azure SDKs create their own client span before calling the service using HttpClient
+                     // In this case, we would see two spans corresponding to the same operation
+                     // 1) created by Azure SDK 2) created by HttpClient
+                     // To prevent this duplication we are filtering the span from HttpClient
+                     // as span from Azure SDK contains all relevant information needed.
+                     var parentActivity = Activity.Current?.Parent;
+                     if (parentActivity != null && parentActivity.Source.Name.Equals("Azure.Core.Http"))
+                     {
+                         return false;
+                     }
+                     return true;
+                 })
+                 .AddAzureMonitorTraceExporter(options => { options.ConnectionString = configuration[connectionStringConfigurationKey]; });
+             });
+
+            services.AddLogging(logging =>
+            {
+                // clear out default configuration
+                logging.ClearProviders();
+
+                logging.AddConfiguration(configuration.GetSection("Logging"));
+                logging.AddDebug();
+                logging.AddEventSourceLogger();
+
+                //get the log level
+                string logLevel = configuration["Logging:LogLevel:Default"];
+
+                //enable console for debug or trace
+                switch (logLevel)
+                {
+                    case "Trace":
+                    case "Debug":
+                        logging.AddConsole();
+                        break;
+                }
+
+                logging.AddOpenTelemetry(builderOptions =>
+                {
+                    builderOptions.SetResourceBuilder(resourceBuilder);
+                    builderOptions.IncludeFormattedMessage = true;
+                    builderOptions.IncludeScopes = false;
+                    builderOptions.AddAzureMonitorLogExporter(options => { options.ConnectionString = configuration[connectionStringConfigurationKey]; });
+                });
+            });
 
             // Configure the OpenTelemetry tracer provider to add the resource attributes to all traces.
-            builder.Services.ConfigureOpenTelemetryTracerProvider((sp, builder) =>
+            services.ConfigureOpenTelemetryTracerProvider((sp, builder) =>
                 builder.ConfigureResource(resourceBuilder =>
-                    resourceBuilder.AddAttributes(resourceAttributes)));
+                    resourceBuilder.AddAttributes(resourceAttributes)).AddSource(serviceName)
+            );
         }
 
         /// <summary>
