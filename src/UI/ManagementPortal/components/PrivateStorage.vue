@@ -289,8 +289,18 @@ export default {
 		},
 
 		async getPrivateAgentFiles() {
-			this.agentFiles.localFiles = [];
-			this.agentFiles.uploadedFiles = (await api.getPrivateStorageFiles(this.agentName)).map(r => r.resource);
+			try {
+				this.agentFiles.localFiles = [];
+				this.agentFiles.uploadedFiles = (await api.getPrivateStorageFiles(this.agentName)).map(r => r.resource);
+			} catch (error) {
+				this.modalLoading = false;
+				this.$toast.add({
+					severity: 'error',
+					summary: 'Error',
+					detail: error.data ?? 'Failed to retrieve private storage files.',
+					life: 5000,
+				});
+			}
 		},
 
 		async handleUpload() {
@@ -325,7 +335,7 @@ export default {
 					this.$toast.add({
 						severity: 'error',
 						summary: 'Error',
-						detail: `File upload failed for "${file.name}". ${error.message || error.title || ''}`,
+						detail: `File upload failed for "${file.name}". ${error.data || error.message || error.title || ''}`,
 						life: 5000,
 					});
 				} finally {

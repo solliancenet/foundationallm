@@ -42,6 +42,7 @@ namespace FoundationaLLM.Common.Constants.Configuration
         public const string FoundationaLLM_Instance_IdentitySubstitutionUserPrincipalNamePattern =
             "FoundationaLLM:Instance:IdentitySubstitutionUserPrincipalNamePattern";
 
+
         #endregion
 
         #region FoundationaLLM:Configuration
@@ -53,9 +54,11 @@ namespace FoundationaLLM.Common.Constants.Configuration
         public const string FoundationaLLM_Configuration_KeyVaultURI =
             "FoundationaLLM:Configuration:KeyVaultURI";
 
+
         #endregion
 
         #region FoundationaLLM:ResourceProviders:AIModel
+
 
         #endregion
 
@@ -75,9 +78,11 @@ namespace FoundationaLLM.Common.Constants.Configuration
         public const string FoundationaLLM_ResourceProviders_AIModel_Storage_AccountName =
             "FoundationaLLM:ResourceProviders:AIModel:Storage:AccountName";
 
+
         #endregion
 
         #region FoundationaLLM:ResourceProviders:Agent
+
 
         #endregion
 
@@ -97,9 +102,11 @@ namespace FoundationaLLM.Common.Constants.Configuration
         public const string FoundationaLLM_ResourceProviders_Agent_Storage_AccountName =
             "FoundationaLLM:ResourceProviders:Agent:Storage:AccountName";
 
+
         #endregion
 
         #region FoundationaLLM:ResourceProviders:Attachment
+
 
         #endregion
 
@@ -119,9 +126,11 @@ namespace FoundationaLLM.Common.Constants.Configuration
         public const string FoundationaLLM_ResourceProviders_Attachment_Storage_AccountName =
             "FoundationaLLM:ResourceProviders:Attachment:Storage:AccountName";
 
+
         #endregion
 
         #region FoundationaLLM:ResourceProviders:AzureOpenAI
+
 
         #endregion
 
@@ -141,9 +150,11 @@ namespace FoundationaLLM.Common.Constants.Configuration
         public const string FoundationaLLM_ResourceProviders_AzureOpenAI_Storage_AccountName =
             "FoundationaLLM:ResourceProviders:AzureOpenAI:Storage:AccountName";
 
+
         #endregion
 
         #region FoundationaLLM:ResourceProviders:Configuration
+
 
         #endregion
 
@@ -163,9 +174,11 @@ namespace FoundationaLLM.Common.Constants.Configuration
         public const string FoundationaLLM_ResourceProviders_Configuration_Storage_AccountName =
             "FoundationaLLM:ResourceProviders:Configuration:Storage:AccountName";
 
+
         #endregion
 
         #region FoundationaLLM:ResourceProviders:DataSource
+
 
         #endregion
 
@@ -185,9 +198,11 @@ namespace FoundationaLLM.Common.Constants.Configuration
         public const string FoundationaLLM_ResourceProviders_DataSource_Storage_AccountName =
             "FoundationaLLM:ResourceProviders:DataSource:Storage:AccountName";
 
+
         #endregion
 
         #region FoundationaLLM:ResourceProviders:Prompt
+
 
         #endregion
 
@@ -207,9 +222,11 @@ namespace FoundationaLLM.Common.Constants.Configuration
         public const string FoundationaLLM_ResourceProviders_Prompt_Storage_AccountName =
             "FoundationaLLM:ResourceProviders:Prompt:Storage:AccountName";
 
+
         #endregion
 
         #region FoundationaLLM:ResourceProviders:Vectorization
+
 
         #endregion
 
@@ -229,9 +246,11 @@ namespace FoundationaLLM.Common.Constants.Configuration
         public const string FoundationaLLM_ResourceProviders_Vectorization_Storage_AccountName =
             "FoundationaLLM:ResourceProviders:Vectorization:Storage:AccountName";
 
+
         #endregion
 
         #region FoundationaLLM:APIEndpoints
+
 
         #endregion
 
@@ -251,6 +270,7 @@ namespace FoundationaLLM.Common.Constants.Configuration
         public const string FoundationaLLM_APIEndpoints_AuthorizationAPI_Essentials_APIScope =
             "FoundationaLLM:APIEndpoints:AuthorizationAPI:Essentials:APIScope";
 
+
         #endregion
 
         #region FoundationaLLM:APIEndpoints:CoreAPI:Essentials
@@ -268,6 +288,7 @@ namespace FoundationaLLM.Common.Constants.Configuration
         /// </summary>
         public const string FoundationaLLM_APIEndpoints_CoreAPI_Essentials_AppInsightsConnectionString =
             "FoundationaLLM:APIEndpoints:CoreAPI:Essentials:AppInsightsConnectionString";
+
 
         #endregion
 
@@ -308,6 +329,7 @@ namespace FoundationaLLM.Common.Constants.Configuration
         public const string FoundationaLLM_APIEndpoints_CoreAPI_Configuration_CompletionResponsePollingIntervalSeconds =
             "FoundationaLLM:APIEndpoints:CoreAPI:Configuration:CompletionResponsePollingIntervalSeconds";
 
+
         #endregion
 
         #region FoundationaLLM:APIEndpoints:CoreAPI:Configuration:Entra
@@ -346,6 +368,7 @@ namespace FoundationaLLM.Common.Constants.Configuration
         /// </summary>
         public const string FoundationaLLM_APIEndpoints_CoreAPI_Configuration_Entra_ClientId =
             "FoundationaLLM:APIEndpoints:CoreAPI:Configuration:Entra:ClientId";
+
 
         #endregion
 
@@ -386,6 +409,7 @@ namespace FoundationaLLM.Common.Constants.Configuration
         public const string FoundationaLLM_APIEndpoints_CoreAPI_Configuration_CosmosDB_ChangeFeedLeaseContainer =
             "FoundationaLLM:APIEndpoints:CoreAPI:Configuration:CosmosDB:ChangeFeedLeaseContainer";
 
+
         #endregion
 
         #region FoundationaLLM:APIEndpoints:CoreWorker:Essentials
@@ -404,6 +428,7 @@ namespace FoundationaLLM.Common.Constants.Configuration
         public const string FoundationaLLM_APIEndpoints_CoreWorker_Essentials_AppInsightsConnectionString =
             "FoundationaLLM:APIEndpoints:CoreWorker:Essentials:AppInsightsConnectionString";
 
+
         #endregion
 
         #region FoundationaLLM:APIEndpoints:GatekeeperAPI:Essentials
@@ -421,6 +446,7 @@ namespace FoundationaLLM.Common.Constants.Configuration
         /// </summary>
         public const string FoundationaLLM_APIEndpoints_GatekeeperAPI_Essentials_AppInsightsConnectionString =
             "FoundationaLLM:APIEndpoints:GatekeeperAPI:Essentials:AppInsightsConnectionString";
+
 
         #endregion
 
@@ -461,6 +487,7 @@ namespace FoundationaLLM.Common.Constants.Configuration
         public const string FoundationaLLM_APIEndpoints_GatekeeperAPI_Configuration_EnableMicrosoftPresidio =
             "FoundationaLLM:APIEndpoints:GatekeeperAPI:Configuration:EnableMicrosoftPresidio";
 
+
         #endregion
 
         #region FoundationaLLM:APIEndpoints:GatekeeperIntegrationAPI:Essentials
@@ -478,6 +505,7 @@ namespace FoundationaLLM.Common.Constants.Configuration
         /// </summary>
         public const string FoundationaLLM_APIEndpoints_GatekeeperIntegrationAPI_Essentials_AppInsightsConnectionString =
             "FoundationaLLM:APIEndpoints:GatekeeperIntegrationAPI:Essentials:AppInsightsConnectionString";
+
 
         #endregion
 
@@ -497,6 +525,7 @@ namespace FoundationaLLM.Common.Constants.Configuration
         public const string FoundationaLLM_APIEndpoints_OrchestrationAPI_Essentials_AppInsightsConnectionString =
             "FoundationaLLM:APIEndpoints:OrchestrationAPI:Essentials:AppInsightsConnectionString";
 
+
         #endregion
 
         #region FoundationaLLM:APIEndpoints:LangChainAPI:Essentials
@@ -515,9 +544,11 @@ namespace FoundationaLLM.Common.Constants.Configuration
         public const string FoundationaLLM_APIEndpoints_LangChainAPI_Essentials_AppInsightsConnectionString =
             "FoundationaLLM:APIEndpoints:LangChainAPI:Essentials:AppInsightsConnectionString";
 
+
         #endregion
 
         #region FoundationaLLM:APIEndpoints:LangChainAPI:Configuration
+
 
         #endregion
 
@@ -537,6 +568,7 @@ namespace FoundationaLLM.Common.Constants.Configuration
         public const string FoundationaLLM_APIEndpoints_SemanticKernelAPI_Essentials_AppInsightsConnectionString =
             "FoundationaLLM:APIEndpoints:SemanticKernelAPI:Essentials:AppInsightsConnectionString";
 
+
         #endregion
 
         #region FoundationaLLM:APIEndpoints:SemanticKernelAPI:Configuration
@@ -547,6 +579,7 @@ namespace FoundationaLLM.Common.Constants.Configuration
         /// </summary>
         public const string FoundationaLLM_APIEndpoints_SemanticKernelAPI_Configuration_MaxConcurrentCompletions =
             "FoundationaLLM:APIEndpoints:SemanticKernelAPI:Configuration:MaxConcurrentCompletions";
+
 
         #endregion
 
@@ -565,6 +598,7 @@ namespace FoundationaLLM.Common.Constants.Configuration
         /// </summary>
         public const string FoundationaLLM_APIEndpoints_ManagementAPI_Essentials_AppInsightsConnectionString =
             "FoundationaLLM:APIEndpoints:ManagementAPI:Essentials:AppInsightsConnectionString";
+
 
         #endregion
 
@@ -605,6 +639,7 @@ namespace FoundationaLLM.Common.Constants.Configuration
         public const string FoundationaLLM_APIEndpoints_ManagementAPI_Configuration_Entra_ClientId =
             "FoundationaLLM:APIEndpoints:ManagementAPI:Configuration:Entra:ClientId";
 
+
         #endregion
 
         #region FoundationaLLM:APIEndpoints:ManagementAPI:Configuration
@@ -615,6 +650,7 @@ namespace FoundationaLLM.Common.Constants.Configuration
         /// </summary>
         public const string FoundationaLLM_APIEndpoints_ManagementAPI_Configuration_AllowedUploadFileExtensions =
             "FoundationaLLM:APIEndpoints:ManagementAPI:Configuration:AllowedUploadFileExtensions";
+
 
         #endregion
 
@@ -634,6 +670,7 @@ namespace FoundationaLLM.Common.Constants.Configuration
         public const string FoundationaLLM_APIEndpoints_VectorizationAPI_Essentials_AppInsightsConnectionString =
             "FoundationaLLM:APIEndpoints:VectorizationAPI:Essentials:AppInsightsConnectionString";
 
+
         #endregion
 
         #region FoundationaLLM:APIEndpoints:VectorizationWorker:Essentials
@@ -651,6 +688,7 @@ namespace FoundationaLLM.Common.Constants.Configuration
         /// </summary>
         public const string FoundationaLLM_APIEndpoints_VectorizationWorker_Essentials_AppInsightsConnectionString =
             "FoundationaLLM:APIEndpoints:VectorizationWorker:Essentials:AppInsightsConnectionString";
+
 
         #endregion
 
@@ -670,6 +708,7 @@ namespace FoundationaLLM.Common.Constants.Configuration
         public const string FoundationaLLM_APIEndpoints_GatewayAPI_Essentials_AppInsightsConnectionString =
             "FoundationaLLM:APIEndpoints:GatewayAPI:Essentials:AppInsightsConnectionString";
 
+
         #endregion
 
         #region FoundationaLLM:APIEndpoints:GatewayAPI:Configuration
@@ -688,6 +727,7 @@ namespace FoundationaLLM.Common.Constants.Configuration
         public const string FoundationaLLM_APIEndpoints_GatewayAPI_Configuration_AzureOpenAIAssistantsMaxVectorizationTimeSeconds =
             "FoundationaLLM:APIEndpoints:GatewayAPI:Configuration:AzureOpenAIAssistantsMaxVectorizationTimeSeconds";
 
+
         #endregion
 
         #region FoundationaLLM:APIEndpoints:GatewayAdapterAPI:Essentials
@@ -705,6 +745,7 @@ namespace FoundationaLLM.Common.Constants.Configuration
         /// </summary>
         public const string FoundationaLLM_APIEndpoints_GatewayAdapterAPI_Essentials_AppInsightsConnectionString =
             "FoundationaLLM:APIEndpoints:GatewayAdapterAPI:Essentials:AppInsightsConnectionString";
+
 
         #endregion
 
@@ -731,6 +772,7 @@ namespace FoundationaLLM.Common.Constants.Configuration
         public const string FoundationaLLM_APIEndpoints_StateAPI_Essentials_AppInsightsConnectionString =
             "FoundationaLLM:APIEndpoints:StateAPI:Essentials:AppInsightsConnectionString";
 
+
         #endregion
 
         #region FoundationaLLM:APIEndpoints:StateAPI:Configuration:CosmosDB
@@ -756,6 +798,7 @@ namespace FoundationaLLM.Common.Constants.Configuration
         public const string FoundationaLLM_APIEndpoints_StateAPI_Configuration_CosmosDB_Containers =
             "FoundationaLLM:APIEndpoints:StateAPI:Configuration:CosmosDB:Containers";
 
+
         #endregion
 
         #region FoundationaLLM:APIEndpoints:AzureOpenAI:Essentials
@@ -767,13 +810,16 @@ namespace FoundationaLLM.Common.Constants.Configuration
         public const string FoundationaLLM_APIEndpoints_AzureOpenAI_Essentials_APIKey =
             "FoundationaLLM:APIEndpoints:AzureOpenAI:Essentials:APIKey";
 
+
         #endregion
 
         #region FoundationaLLM:APIEndpoints:AzureCosmosDBNoSQLVectorStore:Configuration
 
+
         #endregion
 
         #region FoundationaLLM:APIEndpoints:AzurePostgreSQLVectorStore:Configuration
+
 
         #endregion
 
@@ -786,6 +832,7 @@ namespace FoundationaLLM.Common.Constants.Configuration
         public const string FoundationaLLM_APIEndpoints_AzureEventGrid_Essentials_APIKey =
             "FoundationaLLM:APIEndpoints:AzureEventGrid:Essentials:APIKey";
 
+
         #endregion
 
         #region FoundationaLLM:APIEndpoints:AzureEventGrid:Configuration
@@ -797,13 +844,16 @@ namespace FoundationaLLM.Common.Constants.Configuration
         public const string FoundationaLLM_APIEndpoints_AzureEventGrid_Configuration_NamespaceId =
             "FoundationaLLM:APIEndpoints:AzureEventGrid:Configuration:NamespaceId";
 
+
         #endregion
 
         #region FoundationaLLM:APIEndpoints:AzureAIStudio:Configuration
 
+
         #endregion
 
         #region FoundationaLLM:APIEndpoints:AzureAIStudio:Configuration:Storage
+
 
         #endregion
 
@@ -815,6 +865,7 @@ namespace FoundationaLLM.Common.Constants.Configuration
         /// </summary>
         public const string FoundationaLLM_APIEndpoints_AzureContentSafety_Essentials_APIKey =
             "FoundationaLLM:APIEndpoints:AzureContentSafety:Essentials:APIKey";
+
 
         #endregion
 
@@ -848,13 +899,16 @@ namespace FoundationaLLM.Common.Constants.Configuration
         public const string FoundationaLLM_APIEndpoints_AzureContentSafety_Configuration_ViolenceSeverity =
             "FoundationaLLM:APIEndpoints:AzureContentSafety:Configuration:ViolenceSeverity";
 
+
         #endregion
 
         #region FoundationaLLM:APIEndpoints:LakeraGuard:Configuration
 
+
         #endregion
 
         #region FoundationaLLM:APIEndpoints:EnkryptGuardrails:Configuration
+
 
         #endregion
 
@@ -1007,6 +1061,7 @@ namespace FoundationaLLM.Common.Constants.Configuration
         public const string FoundationaLLM_Branding_DefaultAgentWelcomeMessage =
             "FoundationaLLM:Branding:DefaultAgentWelcomeMessage";
 
+
         #endregion
 
         #region FoundationaLLM:UserPortal:Authentication:Entra
@@ -1045,6 +1100,7 @@ namespace FoundationaLLM.Common.Constants.Configuration
         /// </summary>
         public const string FoundationaLLM_UserPortal_Authentication_Entra_ClientId =
             "FoundationaLLM:UserPortal:Authentication:Entra:ClientId";
+
 
         #endregion
 
@@ -1085,6 +1141,7 @@ namespace FoundationaLLM.Common.Constants.Configuration
         public const string FoundationaLLM_ManagementPortal_Authentication_Entra_ClientId =
             "FoundationaLLM:ManagementPortal:Authentication:Entra:ClientId";
 
+
         #endregion
 
         #region FoundationaLLM:Vectorization
@@ -1096,9 +1153,11 @@ namespace FoundationaLLM.Common.Constants.Configuration
         public const string FoundationaLLM_Vectorization_Worker =
             "FoundationaLLM:Vectorization:Worker";
 
+
         #endregion
 
         #region FoundationaLLM:Vectorization:Steps
+
 
         #endregion
 
@@ -1132,6 +1191,7 @@ namespace FoundationaLLM.Common.Constants.Configuration
         public const string FoundationaLLM_Vectorization_Queues_Index_AccountName =
             "FoundationaLLM:Vectorization:Queues:Index:AccountName";
 
+
         #endregion
 
         #region FoundationaLLM:Vectorization:StateService:Storage
@@ -1150,13 +1210,16 @@ namespace FoundationaLLM.Common.Constants.Configuration
         public const string FoundationaLLM_Vectorization_StateService_Storage_AccountName =
             "FoundationaLLM:Vectorization:StateService:Storage:AccountName";
 
+
         #endregion
 
         #region FoundationaLLM:Vectorization:TextEmbedding:Gateway
 
+
         #endregion
 
         #region FoundationaLLM:DataSources
+
 
         #endregion
 
@@ -1211,33 +1274,53 @@ namespace FoundationaLLM.Common.Constants.Configuration
         public const string FoundationaLLM_Events_Profiles_GatewayAPI =
             "FoundationaLLM:Events:Profiles:GatewayAPI";
 
+
         #endregion
 
         #region FoundationaLLM:Events:Profiles:CoreAPI
+
 
         #endregion
 
         #region FoundationaLLM:Events:Profiles:OrchestrationAPI
 
+
         #endregion
 
         #region FoundationaLLM:Events:Profiles:ManagementAPI
+
 
         #endregion
 
         #region FoundationaLLM:Events:Profiles:VectorizationAPI
 
+
         #endregion
 
         #region FoundationaLLM:Events:Profiles:VectorizationWorker
+
 
         #endregion
 
         #region FoundationaLLM:Events:Profiles:GatekeeperAPI
 
+
         #endregion
 
         #region FoundationaLLM:Events:Profiles:GatewayAPI
+
+
+        #endregion
+
+        #region FoundationaLLM:Agent
+
+        
+        /// <summary>
+        /// The app configuration key for the FoundationaLLM.Agent.PrivateStore feature.
+        /// <para>Feature description:<br/>Indicates whether to enable Agent private stores.</para>
+        /// </summary>
+        public const string FoundationaLLM_Agent_PrivateStore_Feature =
+            "FoundationaLLM.Agent.PrivateStore";
 
         #endregion
     }

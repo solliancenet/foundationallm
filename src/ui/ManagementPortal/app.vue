@@ -163,4 +163,8 @@ main {
 	border-color: var(--secondary-button-bg) !important;
 	color: var(--secondary-button-text) !important;
 }
+
+.p-toast {
+	z-index: 99999!important;
+}
 </style>

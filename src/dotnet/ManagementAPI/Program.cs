@@ -39,7 +39,7 @@ namespace FoundationaLLM.Management.API
             builder.Configuration.AddAzureAppConfiguration((Action<Microsoft.Extensions.Configuration.AzureAppConfiguration.AzureAppConfigurationOptions>)(options =>
             {
                 options.Connect(builder.Configuration[EnvironmentVariables.FoundationaLLM_AppConfig_ConnectionString]);
-                options.ConfigureKeyVault(options => { options.SetCredential(DefaultAuthentication.AzureCredential); });
+                options.ConfigureKeyVault(keyVaultOptions => { keyVaultOptions.SetCredential(DefaultAuthentication.AzureCredential); });
 
                 options.Select(AppConfigurationKeyFilters.FoundationaLLM_Instance);
                 options.Select(AppConfigurationKeyFilters.FoundationaLLM_Configuration);
@@ -50,10 +50,10 @@ namespace FoundationaLLM.Management.API
                 options.Select(AppConfigurationKeyFilters.FoundationaLLM_APIEndpoints_AuthorizationAPI_Essentials);
                 options.Select(AppConfigurationKeyFilters.FoundationaLLM_APIEndpoints_VectorizationAPI_Essentials);
                 options.Select(AppConfigurationKeyFilters.FoundationaLLM_APIEndpoints_GatewayAPI_Essentials);
-                options.Select(AppConfigurationKeyFilters.FoundationaLLM_ResourceProviders_Vectorization_Storage);  
+                options.Select(AppConfigurationKeyFilters.FoundationaLLM_ResourceProviders_Vectorization_Storage);
                 options.Select(AppConfigurationKeyFilters.FoundationaLLM_ResourceProviders_Agent_Storage);
                 options.Select(AppConfigurationKeyFilters.FoundationaLLM_ResourceProviders_Prompt_Storage);
-                options.Select(AppConfigurationKeyFilters.FoundationaLLM_ResourceProviders_DataSource_Storage);                
+                options.Select(AppConfigurationKeyFilters.FoundationaLLM_ResourceProviders_DataSource_Storage);
                 options.Select(AppConfigurationKeyFilters.FoundationaLLM_ResourceProviders_Attachment_Storage);
                 options.Select(AppConfigurationKeyFilters.FoundationaLLM_ResourceProviders_AIModel_Storage);
                 options.Select(AppConfigurationKeyFilters.FoundationaLLM_ResourceProviders_Configuration_Storage);

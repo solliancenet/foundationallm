@@ -47,6 +47,21 @@ namespace FoundationaLLM.Common.Constants.Configuration
         }
 #>
 
+<#
+        foreach (var key in jsonObject["features"].AsArray())
+        {
+#>
+        
+        /// <summary>
+        /// The app configuration key for the FoundationaLLM.<#=jsonObject["namespace"]#>.<#=key["id"]#> feature.
+        /// <para>Feature description:<br/><#=key["description"]#></para>
+        /// </summary>
+        public const string FoundationaLLM_<#=getName(jsonObject["namespace"])#>_<#=getName(key["id"])#>_Feature =
+            "FoundationaLLM.<#=jsonObject["namespace"]#>.<#=key["id"]#>";
+<#
+        }
+#>
+
         #endregion
 <#
     }

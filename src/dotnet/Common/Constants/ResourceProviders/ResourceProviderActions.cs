@@ -24,5 +24,10 @@
         /// Load the content of a file.
         /// </summary>
         public const string LoadFileContent = "load-file-content";
+
+        /// <summary>
+        /// Gets the value of a feature flag.
+        /// </summary>
+        public const string GetFeatureFlag = "get-feature-flag";
     }
 }

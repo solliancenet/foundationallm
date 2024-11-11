@@ -372,6 +372,10 @@ export default {
 	}
 }
 
+.p-toast {
+	z-index: 99999!important;
+}
+
 @media only screen and (max-width: 620px) {
 	.navbar__header {
 		width: 95px;

@@ -18,7 +18,7 @@ namespace FoundationaLLM
     public static partial class DependencyInjection
     {
         /// <summary>
-        /// Add the Agent resource provider and its related services the the dependency injection container.
+        /// Add the Agent resource provider and its related services to the dependency injection container.
         /// </summary>
         /// <param name="builder">The application builder.</param>
         public static void AddAgentResourceProvider(this IHostApplicationBuilder builder)

@@ -89,7 +89,7 @@ namespace FoundationaLLM.Agent.ResourceProviders
                         IncludeRoles = resourcePath.IsResourceTypePath,
                     }),
                 AgentResourceTypeNames.Files => await LoadAgentFiles(
-                    resourcePath.MainResourceId!)!,
+                    resourcePath.MainResourceId!, userIdentity)!,
                 _ => throw new ResourceProviderException($"The resource type {resourcePath.ResourceTypeName} is not supported by the {_name} resource provider.",
                     StatusCodes.Status400BadRequest)
             };
@@ -132,7 +132,7 @@ namespace FoundationaLLM.Agent.ResourceProviders
                     await DeleteResource<AgentBase>(resourcePath);
                     break;
                 case AgentResourceTypeNames.Files:
-                    await DeleteAgentFile(resourcePath);
+                    await DeleteAgentFile(resourcePath, userIdentity);
                     break;
                 default:
                     throw new ResourceProviderException(
@@ -331,7 +331,7 @@ namespace FoundationaLLM.Agent.ResourceProviders
                 }
             }
 
-                var validator = _resourceValidatorFactory.GetValidator(agentReference.ResourceType);
+            var validator = _resourceValidatorFactory.GetValidator(agentReference.ResourceType);
             if (validator is IValidator agentValidator)
             {
                 var context = new ValidationContext<object>(agent);
@@ -356,8 +356,10 @@ namespace FoundationaLLM.Agent.ResourceProviders
             };
         }
 
-        private async Task<List<ResourceProviderGetResult<AgentFile>>> LoadAgentFiles(string agentName) =>
-             (await _resourceReferenceStore!.GetAllResourceReferences<AgentFile>())
+        private async Task<List<ResourceProviderGetResult<AgentFile>>> LoadAgentFiles(string agentName, UnifiedUserIdentity userIdentity)
+        {
+            await ValidateAgentPrivateFileStoreEnabled(userIdentity);
+            return (await _resourceReferenceStore!.GetAllResourceReferences<AgentFile>())
                 .Where(r => r.Name.StartsWith(agentName))
                 .Select(r => (r, r.Name.Split("|").Last()))
                 .Select(x => new ResourceProviderGetResult<AgentFile>()
@@ -368,12 +370,15 @@ namespace FoundationaLLM.Agent.ResourceProviders
                     {
                         Name = x.Item2,
                         DisplayName = x.Item2,
-                        ObjectId = ResourcePath.GetObjectId(_instanceSettings.Id, _name, AgentResourceTypeNames.Agents, agentName, AgentResourceTypeNames.Files, x.Item2)
+                        ObjectId = ResourcePath.GetObjectId(_instanceSettings.Id, _name, AgentResourceTypeNames.Agents,
+                            agentName, AgentResourceTypeNames.Files, x.Item2)
                     }
                 }).ToList();
+        }
 
         private async Task<ResourceProviderUpsertResult> UpdateAgentFile(ResourcePath resourcePath, ResourceProviderFormFile formFile, UnifiedUserIdentity userIdentity)
         {
+            await ValidateAgentPrivateFileStoreEnabled(userIdentity);
             if (formFile.BinaryContent.Length == 0)
                 throw new ResourceProviderException("The attached file is not valid.",
                     StatusCodes.Status400BadRequest);
@@ -409,8 +414,9 @@ namespace FoundationaLLM.Agent.ResourceProviders
             };
         }
 
-        private async Task DeleteAgentFile(ResourcePath resourcePath)
+        private async Task DeleteAgentFile(ResourcePath resourcePath, UnifiedUserIdentity userIdentity)
         {
+            await ValidateAgentPrivateFileStoreEnabled(userIdentity);
             var resourceName = $"{resourcePath.MainResourceId!}|{resourcePath.ResourceId}";
 
             var result = await _resourceReferenceStore!.TryGetResourceReference(resourceName);
@@ -427,6 +433,28 @@ namespace FoundationaLLM.Agent.ResourceProviders
             {
                 throw new ResourceProviderException($"The resource {resourceName} cannot be deleted because it was either already deleted or does not exist.",
                     StatusCodes.Status404NotFound);
+            }
+        }
+
+        private async Task ValidateAgentPrivateFileStoreEnabled(UnifiedUserIdentity userIdentity)
+        {
+            var agentPrivateStoreFeatureFlag =
+                await GetResourceProviderServiceByName(ResourceProviderNames.FoundationaLLM_Configuration)
+                    .HandlePostAsync(
+                        $"/instances/{_instanceSettings.Id}/providers/{ResourceProviderNames.FoundationaLLM_Configuration}/{ConfigurationResourceTypeNames.AppConfigurations}/{ResourceProviderActions.GetFeatureFlag}",
+                        JsonSerializer.Serialize(new ResourceName { Name = AppConfigurationKeys.FoundationaLLM_Agent_PrivateStore_Feature }),
+                        null,
+                        userIdentity);
+            var featureEnabled = false;
+            if (agentPrivateStoreFeatureFlag is FeatureFlag flag)
+            {
+                featureEnabled = flag.Enabled;
+            }
+
+            if (!featureEnabled)
+            {
+                throw new ResourceProviderException("The Agent private file store feature is not enabled.",
+                    StatusCodes.Status400BadRequest);
             }
         }
 

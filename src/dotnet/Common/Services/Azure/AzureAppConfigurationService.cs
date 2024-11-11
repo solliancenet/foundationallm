@@ -60,18 +60,18 @@ namespace FoundationaLLM.Common.Services.Azure
         /// <inheritdoc/>
         public async Task<bool> GetFeatureFlagAsync(string key)
         {
-            var allowAgentSelection = false;
+            var enabled = false;
             try
             {
                 if (!key.StartsWith(FeatureFlagConfigurationSetting.KeyPrefix))
                 {
                     key = FeatureFlagConfigurationSetting.KeyPrefix + key;
                 }
-                var allowAgentSelectionSetting = await _configurationClient
+                var featureFlagSetting = await _configurationClient
                     .GetConfigurationSettingAsync(key);
-                if (allowAgentSelectionSetting.HasValue && allowAgentSelectionSetting.Value is FeatureFlagConfigurationSetting featureFlag)
+                if (featureFlagSetting.HasValue && featureFlagSetting.Value is FeatureFlagConfigurationSetting featureFlag)
                 {
-                    allowAgentSelection = featureFlag.IsEnabled;
+                    enabled = featureFlag.IsEnabled;
                 }
             }
             catch (Exception e)
@@ -79,7 +79,7 @@ namespace FoundationaLLM.Common.Services.Azure
                 _logger.LogError(e, "Error getting feature flag ({Key}) from app configuration.", key);
             }
 
-            return allowAgentSelection;
+            return enabled;
         }
 
         /// <inheritdoc/>
@@ -87,10 +87,9 @@ namespace FoundationaLLM.Common.Services.Azure
         {
             try
             {
-                var allowAgentSelectionSetting = new FeatureFlagConfigurationSetting(
+                var featureFlagSetting = new FeatureFlagConfigurationSetting(
                     key, isEnabled: flagEnabled);
-                await _configurationClient.SetConfigurationSettingAsync(allowAgentSelectionSetting);
-                // TODO: Restart the Core API and Agent API services to apply the new feature flag.
+                await _configurationClient.SetConfigurationSettingAsync(featureFlagSetting);
             }
             catch (Exception e)
             {

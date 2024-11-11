@@ -38,7 +38,8 @@
 				"content_type": "",
 				"first_version": "0.8.0"
 			}
-		]
+		],
+		"features": []
 	},
 	{
 		"namespace": "Configuration",
@@ -55,7 +56,8 @@
 				"content_type": "",
 				"first_version": "0.8.0"
 			}
-		]
+		],
+		"features": []
 	},
 	{
 		"namespace": "ResourceProviders:AIModel",
@@ -63,7 +65,8 @@
 			"description": "Dependency injection key used by the FoundationaLLM.AIModel resource provider."
 		},
 		"configuration_section": null,
-		"configuration_keys": []
+		"configuration_keys": [],
+		"features": []
 	},
 	{
 		"namespace": "ResourceProviders:AIModel:Storage",
@@ -88,7 +91,8 @@
 				"content_type": "",
 				"first_version": "0.8.0"
 			}
-		]
+		],
+		"features": []
 	},
 	{
 		"namespace": "ResourceProviders:Agent",
@@ -96,7 +100,8 @@
 			"description": "Dependency injection key used by the FoundationaLLM.Agent resource provider."
 		},
 		"configuration_section": null,
-		"configuration_keys": []
+		"configuration_keys": [],
+		"features": []
 	},
 	{
 		"namespace": "ResourceProviders:Agent:Storage",
@@ -121,7 +126,8 @@
 				"content_type": "",
 				"first_version": "0.8.0"
 			}
-		]
+		],
+		"features": []
 	},
 	{
 		"namespace": "ResourceProviders:Attachment",
@@ -129,7 +135,8 @@
 			"description": "Dependency injection key used by the FoundationaLLM.Attachment resource provider."
 		},
 		"configuration_section": null,
-		"configuration_keys": []
+		"configuration_keys": [],
+		"features": []
 	},
 	{
 		"namespace": "ResourceProviders:Attachment:Storage",
@@ -154,7 +161,8 @@
 				"content_type": "",
 				"first_version": "0.8.0"
 			}
-		]
+		],
+		"features": []
 	},
 	{
 		"namespace": "ResourceProviders:AzureOpenAI",
@@ -162,7 +170,8 @@
 			"description": "Dependency injection key used by the FoundationaLLM.AzureOpenAI resource provider."
 		},
 		"configuration_section": null,
-		"configuration_keys": []
+		"configuration_keys": [],
+		"features": []
 	},
 	{
 		"namespace": "ResourceProviders:AzureOpenAI:Storage",
@@ -187,7 +196,8 @@
 				"content_type": "",
 				"first_version": "0.8.0"
 			}
-		]
+		],
+		"features": []
 	},
 	{
 		"namespace": "ResourceProviders:Configuration",
@@ -195,7 +205,8 @@
 			"description": "Dependency injection key used by the FoundationaLLM.Configuration resource provider."
 		},
 		"configuration_section": null,
-		"configuration_keys": []
+		"configuration_keys": [],
+		"features": []
 	},
 	{
 		"namespace": "ResourceProviders:Configuration:Storage",
@@ -220,7 +231,8 @@
 				"content_type": "",
 				"first_version": "0.8.0"
 			}
-		]
+		],
+		"features": []
 	},
 	{
 		"namespace": "ResourceProviders:DataSource",
@@ -228,7 +240,8 @@
 			"description": "Dependency injection key used by the FoundationaLLM.DataSource resource provider."
 		},
 		"configuration_section": null,
-		"configuration_keys": []
+		"configuration_keys": [],
+		"features": []
 	},
 	{
 		"namespace": "ResourceProviders:DataSource:Storage",
@@ -253,7 +266,8 @@
 				"content_type": "",
 				"first_version": "0.8.0"
 			}
-		]
+		],
+		"features": []
 	},
 	{
 		"namespace": "ResourceProviders:Prompt",
@@ -261,7 +275,8 @@
 			"description": "Dependency injection key used by the FoundationaLLM.Prompt resource provider."
 		},
 		"configuration_section": null,
-		"configuration_keys": []
+		"configuration_keys": [],
+		"features": []
 	},
 	{
 		"namespace": "ResourceProviders:Prompt:Storage",
@@ -286,7 +301,8 @@
 				"content_type": "",
 				"first_version": "0.8.0"
 			}
-		]
+		],
+		"features": []
 	},
 	{
 		"namespace": "ResourceProviders:Vectorization",
@@ -294,7 +310,8 @@
 			"description": "Dependency injection key used by the FoundationaLLM.Vectorization resource provider."
 		},
 		"configuration_section": null,
-		"configuration_keys": []
+		"configuration_keys": [],
+		"features": []
 	},
 	{
 		"namespace": "ResourceProviders:Vectorization:Storage",
@@ -321,7 +338,8 @@
 				"content_type": "",
 				"first_version": "0.8.0"
 			}
-		]
+		],
+		"features": []
 	},
 	{
 		"namespace": "APIEndpoints",
@@ -329,7 +347,8 @@
 		"configuration_section": {
 			"description": "Configuration section used to identify the settings for all API endpoints."
 		},
-		"configuration_keys": []
+		"configuration_keys": [],
+		"features": []
 	},
 	{
 		"namespace": "APIEndpoints:AuthorizationAPI:Essentials",
@@ -354,7 +373,8 @@
 				"content_type": "",
 				"first_version": "0.8.0"
 			}
-		]
+		],
+		"features": []
 	},
 	{
 		"namespace": "APIEndpoints:CoreAPI:Essentials",
@@ -379,7 +399,8 @@
 				"content_type": "",
 				"first_version": "0.8.0"
 			}
-		]
+		],
+		"features": []
 	},
 	{
 		"namespace": "APIEndpoints:CoreAPI:Configuration",
@@ -428,7 +449,8 @@
 				"content_type": "application/json",
 				"first_version": "0.8.2"
 			}
-		]
+		],
+		"features": []
 	},
 	{
 		"namespace": "APIEndpoints:CoreAPI:Configuration:Entra",
@@ -477,7 +499,8 @@
 				"content_type": "",
 				"first_version": "0.8.0"
 			}
-		]
+		],
+		"features": []
 	},
 	{
 		"namespace": "APIEndpoints:CoreAPI:Configuration:CosmosDB",
@@ -526,7 +549,8 @@
 				"content_type": "",
 				"first_version": "0.8.0"
 			}
-		]
+		],
+		"features": []
 	},
 	{
 		"namespace": "APIEndpoints:CoreWorker:Essentials",
@@ -551,7 +575,8 @@
 				"content_type": "",
 				"first_version": "0.8.0"
 			}
-		]
+		],
+		"features": []
 	},
 	{
 		"namespace": "APIEndpoints:GatekeeperAPI:Essentials",
@@ -576,7 +601,8 @@
 				"content_type": "",
 				"first_version": "0.8.0"
 			}
-		]
+		],
+		"features": []
 	},
 	{
 		"namespace": "APIEndpoints:GatekeeperAPI:Configuration",
@@ -625,7 +651,8 @@
 				"content_type": "",
 				"first_version": "0.8.0"
 			}
-		]
+		],
+		"features": []
 	},
 	{
 		"namespace": "APIEndpoints:GatekeeperIntegrationAPI:Essentials",
@@ -650,7 +677,8 @@
 				"content_type": "",
 				"first_version": "0.8.0"
 			}
-		]
+		],
+		"features": []
 	},
 	{
 		"namespace": "APIEndpoints:OrchestrationAPI:Essentials",
@@ -675,7 +703,8 @@
 				"content_type": "",
 				"first_version": "0.8.0"
 			}
-		]
+		],
+		"features": []
 	},
 	{
 		"namespace": "APIEndpoints:LangChainAPI:Essentials",
@@ -700,7 +729,8 @@
 				"content_type": "",
 				"first_version": "0.8.0"
 			}
-		]
+		],
+		"features": []
 	},
 	{
 		"namespace": "APIEndpoints:LangChainAPI:Configuration",
@@ -708,7 +738,8 @@
 		"configuration_section": {
 			"description": "Configuration section used to identify the main LangChain API settings."
 		},
-		"configuration_keys": []
+		"configuration_keys": [],
+		"features": []
 	},
 	{
 		"namespace": "APIEndpoints:SemanticKernelAPI:Essentials",
@@ -733,7 +764,8 @@
 				"content_type": "",
 				"first_version": "0.8.0"
 			}
-		]
+		],
+		"features": []
 	},
 	{
 		"namespace": "APIEndpoints:SemanticKernelAPI:Configuration",
@@ -750,7 +782,8 @@
 				"content_type": "",
 				"first_version": "0.8.0"
 			}
-		]
+		],
+		"features": []
 	},
 	{
 		"namespace": "APIEndpoints:ManagementAPI:Essentials",
@@ -775,7 +808,8 @@
 				"content_type": "",
 				"first_version": "0.8.0"
 			}
-		]
+		],
+		"features": []
 	},
 	{
 		"namespace": "APIEndpoints:ManagementAPI:Configuration:Entra",
@@ -824,7 +858,8 @@
 				"content_type": "",
 				"first_version": "0.8.0"
 			}
-		]
+		],
+		"features": []
 	},
 	{
 		"namespace": "APIEndpoints:ManagementAPI:Configuration",
@@ -841,7 +876,8 @@
 				"content_type": "",
 				"first_version": "0.8.4"
 			}
-		]
+		],
+		"features": []
 	},
 	{
 		"namespace": "APIEndpoints:VectorizationAPI:Essentials",
@@ -866,7 +902,8 @@
 				"content_type": "",
 				"first_version": "0.8.0"
 			}
-		]
+		],
+		"features": []
 	},
 	{
 		"namespace": "APIEndpoints:VectorizationWorker:Essentials",
@@ -891,7 +928,8 @@
 				"content_type": "",
 				"first_version": "0.8.0"
 			}
-		]
+		],
+		"features": []
 	},
 	{
 		"namespace": "APIEndpoints:GatewayAPI:Essentials",
@@ -916,7 +954,8 @@
 				"content_type": "",
 				"first_version": "0.8.0"
 			}
-		]
+		],
+		"features": []
 	},
 	{
 		"namespace": "APIEndpoints:GatewayAPI:Configuration",
@@ -941,7 +980,8 @@
 				"content_type": "",
 				"first_version": "0.8.3"
 			}
-		]
+		],
+		"features": []
 	},
 	{
 		"namespace": "APIEndpoints:GatewayAdapterAPI:Essentials",
@@ -966,7 +1006,8 @@
 				"content_type": "",
 				"first_version": "0.8.0"
 			}
-		]
+		],
+		"features": []
 	},
 	{
 		"namespace": "APIEndpoints:StateAPI:Essentials",
@@ -999,7 +1040,8 @@
 				"content_type": "",
 				"first_version": "0.8.0"
 			}
-		]
+		],
+		"features": []
 	},
 	{
 		"namespace": "APIEndpoints:StateAPI:Configuration:CosmosDB",
@@ -1032,7 +1074,8 @@
 				"content_type": "",
 				"first_version": "0.8.0"
 			}
-		]
+		],
+		"features": []
 	},
 	{
 		"namespace": "APIEndpoints:AzureOpenAI:Essentials",
@@ -1049,7 +1092,8 @@
 				"content_type": "",
 				"first_version": "0.8.0"
 			}
-		]
+		],
+		"features": []
 	},
 	{
 		"namespace": "APIEndpoints:AzureCosmosDBNoSQLVectorStore:Configuration",
@@ -1059,7 +1103,8 @@
 		"configuration_section": {
 			"description": "Configuration section used to identify the settings for the Azure Cosmos DB NoSQL vector store service."
 		},
-		"configuration_keys": []
+		"configuration_keys": [],
+		"features": []
 	},
 	{
 		"namespace": "APIEndpoints:AzurePostgreSQLVectorStore:Configuration",
@@ -1069,7 +1114,8 @@
 		"configuration_section": {
 			"description": "Configuration section used to identify the settings for the Azure PostgreSQL vector store service."
 		},
-		"configuration_keys": []
+		"configuration_keys": [],
+		"features": []
 	},
 	{
 		"namespace": "APIEndpoints:AzureEventGrid:Essentials",
@@ -1086,7 +1132,8 @@
 				"content_type": "",
 				"first_version": "0.8.0"
 			}
-		]
+		],
+		"features": []
 	},
 	{
 		"namespace": "APIEndpoints:AzureEventGrid:Configuration",
@@ -1103,7 +1150,8 @@
 				"content_type": "",
 				"first_version": "0.8.0"
 			}
-		]
+		],
+		"features": []
 	},
 	{
 		"namespace": "APIEndpoints:AzureAIStudio:Configuration",
@@ -1111,7 +1159,8 @@
 		"configuration_section": {
 			"description": "Configuration section used to identify the settings for the Azure AI Studio service."
 		},
-		"configuration_keys": []
+		"configuration_keys": [],
+		"features": []
 	},
 	{
 		"namespace": "APIEndpoints:AzureAIStudio:Configuration:Storage",
@@ -1119,7 +1168,8 @@
 		"configuration_section": {
 			"description": "Configuration section used to identify the settings for storage account used by the Azure AI Studio service."
 		},
-		"configuration_keys": []
+		"configuration_keys": [],
+		"features": []
 	},
 	{
 		"namespace": "APIEndpoints:AzureContentSafety:Essentials",
@@ -1134,7 +1184,8 @@
 				"content_type": "",
 				"first_version": "0.8.0"
 			}
-		]
+		],
+		"features": []
 	},
 	{
 		"namespace": "APIEndpoints:AzureContentSafety:Configuration",
@@ -1175,7 +1226,8 @@
 				"content_type": "",
 				"first_version": "0.8.0"
 			}
-		]
+		],
+		"features": []
 	},
 	{
 		"namespace": "APIEndpoints:LakeraGuard:Configuration",
@@ -1183,7 +1235,8 @@
 		"configuration_section": {
 			"description": "Configuration section used to identify the settings for the Lakera Guard service."
 		},
-		"configuration_keys": []
+		"configuration_keys": [],
+		"features": []
 	},
 	{
 		"namespace": "APIEndpoints:EnkryptGuardrails:Configuration",
@@ -1191,7 +1244,8 @@
 		"configuration_section": {
 			"description": "Configuration section used to identify the settings for the Encrypt Guardrails service."
 		},
-		"configuration_keys": []
+		"configuration_keys": [],
+		"features": []
 	},
 	{
 		"namespace": "Branding",
@@ -1368,7 +1422,8 @@
 				"content_type": "",
 				"first_version": "0.8.4"
 			}
-		]
+		],
+		"features": []
 	},
 	{
 		"namespace": "UserPortal:Authentication:Entra",
@@ -1415,7 +1470,8 @@
 				"content_type": "",
 				"first_version": "0.8.0"
 			}
-		]
+		],
+		"features": []
 	},
 	{
 		"namespace": "ManagementPortal:Authentication:Entra",
@@ -1462,7 +1518,8 @@
 				"content_type": "",
 				"first_version": "0.8.0"
 			}
-		]
+		],
+		"features": []
 	},
 	{
 		"namespace": "Vectorization",
@@ -1477,7 +1534,8 @@
 				"content_type": "application/json",
 				"first_version": "0.8.0"
 			}
-		]
+		],
+		"features": []
 	},
 	{
 		"namespace": "Vectorization:Steps",
@@ -1487,7 +1545,8 @@
 		"configuration_section": {
 			"description": "Configuration section used to identify the settings for vectorization steps."
 		},
-		"configuration_keys": []
+		"configuration_keys": [],
+		"features": []
 	},
 	{
 		"namespace": "Vectorization:Queues",
@@ -1530,7 +1589,8 @@
 				"content_type": "",
 				"first_version": "0.8.0"
 			}
-		]
+		],
+		"features": []
 	},
 	{
 		"namespace": "Vectorization:StateService:Storage",
@@ -1557,7 +1617,8 @@
 				"content_type": "",
 				"first_version": "0.8.0"
 			}
-		]
+		],
+		"features": []
 	},
 	{
 		"namespace": "Vectorization:TextEmbedding:Gateway",
@@ -1565,7 +1626,8 @@
 			"description": "Dependency injection key used to inject the ITextEmbeddingService implementation that uses the FoundationaLLM Gateway for embedding."
 		},
 		"configuration_section": null,
-		"configuration_keys": []
+		"configuration_keys": [],
+		"features": []
 	},
 	{
 		"namespace": "DataSources",
@@ -1573,7 +1635,8 @@
 		"configuration_section": {
 			"description": "Configuration section used to identify the settings for data sources resources managed by the FoundationaLLM.DataSource resource provider."
 		},
-		"configuration_keys": []
+		"configuration_keys": [],
+		"features": []
 	},
 	{
 		"namespace": "Events:Profiles",
@@ -1636,7 +1699,8 @@
 				"content_type": "application/json",
 				"first_version": "0.8.0"
 			}
-		]
+		],
+		"features": []
 	},
 	{
 		"namespace": "Events:Profiles:CoreAPI",
@@ -1644,7 +1708,8 @@
 		"configuration_section": {
 			"description": "Configuration section used to identify the settings for the events infrastructure used by the Core API."
 		},
-		"configuration_keys": []
+		"configuration_keys": [],
+		"features": []
 	},
 	{
 		"namespace": "Events:Profiles:OrchestrationAPI",
@@ -1652,7 +1717,8 @@
 		"configuration_section": {
 			"description": "Configuration section used to identify the settings for the events infrastructure used by the Orchestration API."
 		},
-		"configuration_keys": []
+		"configuration_keys": [],
+		"features": []
 	},
 	{
 		"namespace": "Events:Profiles:ManagementAPI",
@@ -1660,7 +1726,8 @@
 		"configuration_section": {
 			"description": "Configuration section used to identify the settings for the events infrastructure used by the Management API."
 		},
-		"configuration_keys": []
+		"configuration_keys": [],
+		"features": []
 	},
 	{
 		"namespace": "Events:Profiles:VectorizationAPI",
@@ -1668,7 +1735,8 @@
 		"configuration_section": {
 			"description": "Configuration section used to identify the settings for the events infrastructure used by the Vectorization API."
 		},
-		"configuration_keys": []
+		"configuration_keys": [],
+		"features": []
 	},
 	{
 		"namespace": "Events:Profiles:VectorizationWorker",
@@ -1676,7 +1744,8 @@
 		"configuration_section": {
 			"description": "Configuration section used to identify the settings for the events infrastructure used by the Vectorization Worker service."
 		},
-		"configuration_keys": []
+		"configuration_keys": [],
+		"features": []
 	},
 	{
 		"namespace": "Events:Profiles:GatekeeperAPI",
@@ -1684,7 +1753,8 @@
 		"configuration_section": {
 			"description": "Configuration section used to identify the settings for the events infrastructure used by the Gatekeeper API."
 		},
-		"configuration_keys": []
+		"configuration_keys": [],
+		"features": []
 	},
 	{
 		"namespace": "Events:Profiles:GatewayAPI",
@@ -1692,6 +1762,21 @@
 		"configuration_section": {
 			"description": "Configuration section used to identify the settings for the events infrastructure used by the Gateway API."
 		},
-		"configuration_keys": []
+		"configuration_keys": [],
+		"features": []
+	},
+	{
+		"namespace": "Agent",
+		"dependency_injection_key": null,
+		"configuration_section": null,
+		"configuration_keys": [],
+		"features": [
+			{
+				"id": "PrivateStore",
+				"description": "Indicates whether to enable Agent private stores.",
+				"enabled": false,
+				"first_version": "0.8.4"
+			}
+		]
 	}
 ]

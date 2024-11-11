@@ -19,8 +19,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Collections.Concurrent;
-using System.Text;
 using System.Text.Json;
 
 namespace FoundationaLLM.Configuration.Services
@@ -128,6 +126,24 @@ namespace FoundationaLLM.Configuration.Services
                         StatusCodes.Status400BadRequest);
             };
         }
+
+        /// <inheritdoc/>
+        protected override async Task<object> ExecuteActionAsync(
+            ResourcePath resourcePath,
+            ResourcePathAuthorizationResult authorizationResult,
+            string serializedAction,
+            UnifiedUserIdentity userIdentity) =>
+            resourcePath.ResourceTypeName switch
+            {
+                ConfigurationResourceTypeNames.AppConfigurations => resourcePath.Action switch
+                {
+                    ResourceProviderActions.GetFeatureFlag => await GetAppConfigurationFeatureFlag(
+                        JsonSerializer.Deserialize<ResourceName>(serializedAction)!),
+                    _ => throw new ResourceProviderException($"The action {resourcePath.Action} is not supported by the {_name} resource provider.",
+                        StatusCodes.Status400BadRequest)
+                },
+                _ => throw new ResourceProviderException()
+            };
 
         #endregion
 
@@ -240,7 +256,7 @@ namespace FoundationaLLM.Configuration.Services
 
                 if (string.IsNullOrEmpty(setting.Value))
                 {
-                    result.Add(new ResourceProviderGetResult<AppConfigurationKeyBase>() { Resource = appConfig, Roles = [], Actions = [] });
+                    result.Add(new ResourceProviderGetResult<AppConfigurationKeyBase> { Resource = appConfig, Roles = [], Actions = [] });
                     continue;
                 }
 
@@ -252,10 +268,21 @@ namespace FoundationaLLM.Configuration.Services
                         appConfig = kvAppConfig;
                 }
 
-                result.Add(new ResourceProviderGetResult<AppConfigurationKeyBase>() { Resource = appConfig, Roles = [], Actions = [] });
+                result.Add(new ResourceProviderGetResult<AppConfigurationKeyBase>
+                    { Resource = appConfig, Roles = [], Actions = [] });
             }
 
             return result;
+        }
+
+        private async Task<FeatureFlag> GetAppConfigurationFeatureFlag(ResourceName featureFlagName)
+        {
+            var result = await _appConfigurationService.GetFeatureFlagAsync(featureFlagName.Name);
+            var featureFlag = new FeatureFlag
+            {
+                Enabled = result
+            };
+            return featureFlag;
         }
 
         private async Task<ResourceProviderUpsertResult> UpdateAppConfigurationKey(ResourcePath resourcePath, string serializedAppConfig)

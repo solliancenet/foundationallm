@@ -5,18 +5,14 @@ using FoundationaLLM.Common.Constants.Configuration;
 using FoundationaLLM.Common.Interfaces;
 using FoundationaLLM.Common.Middleware;
 using FoundationaLLM.Common.Models.Configuration.Branding;
-using FoundationaLLM.Common.Models.Configuration.CosmosDB;
 using FoundationaLLM.Common.Models.Context;
 using FoundationaLLM.Common.OpenAPI;
-using FoundationaLLM.Common.Services;
 using FoundationaLLM.Common.Validation;
 using FoundationaLLM.Core.Interfaces;
 using FoundationaLLM.Core.Models.Configuration;
 using FoundationaLLM.Core.Services;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.Azure.Cosmos;
-using Microsoft.Azure.Cosmos.Fluent;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -45,10 +41,7 @@ namespace FoundationaLLM.Core.API
             builder.Configuration.AddAzureAppConfiguration((Action<Microsoft.Extensions.Configuration.AzureAppConfiguration.AzureAppConfigurationOptions>)(options =>
             {
                 options.Connect(builder.Configuration[EnvironmentVariables.FoundationaLLM_AppConfig_ConnectionString]);
-                options.ConfigureKeyVault(options =>
-                {
-                    options.SetCredential(DefaultAuthentication.AzureCredential);
-                });
+                options.ConfigureKeyVault(keyVaultOptions => { keyVaultOptions.SetCredential(DefaultAuthentication.AzureCredential); });
                 options.Select(AppConfigurationKeyFilters.FoundationaLLM_Instance);
                 options.Select(AppConfigurationKeyFilters.FoundationaLLM_Configuration);
                 options.Select(AppConfigurationKeyFilters.FoundationaLLM_Branding);

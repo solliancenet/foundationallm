@@ -29,11 +29,13 @@ namespace FoundationaLLM.Common.Constants.ResourceProviders
                     Actions = [
                             new ResourceTypeAction(ResourceProviderActions.CheckName, false, true, [
                                 new ResourceTypeAllowedTypes(HttpMethod.Post.Method, AuthorizableOperations.Read, [], [typeof(ResourceName)], [typeof(ResourceNameCheckResult)])
+                            ]),
+                            new ResourceTypeAction(ResourceProviderActions.GetFeatureFlag, false, true, [
+                                new ResourceTypeAllowedTypes(HttpMethod.Post.Method, AuthorizableOperations.Read, [], [typeof(ResourceName)], [typeof(FeatureFlag)])
                             ])
-                        ]
+                    ]
                 }
-            }
-            ,
+            },
             {
                 ConfigurationResourceTypeNames.APIEndpointConfigurations,
                 new ResourceTypeDescriptor(

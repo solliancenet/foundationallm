@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using Azure.Messaging;
+﻿using Azure.Messaging;
 using FluentValidation;
 using FoundationaLLM.Common.Constants;
 using FoundationaLLM.Common.Constants.Configuration;
