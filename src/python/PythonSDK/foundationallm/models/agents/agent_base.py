@@ -6,7 +6,8 @@ from typing import List, Optional
 from foundationallm.models.agents import (
     AgentConversationHistorySettings,
     AgentGatekeeperSettings,
-    AgentOrchestrationSettings
+    AgentOrchestrationSettings,
+    AgentTool
 )
 from foundationallm.models.resource_providers import ResourceBase
 
@@ -19,4 +20,4 @@ class AgentBase(ResourceBase):
     prompt_object_id: Optional[str] = Field(default=None, description="The object identifier of the Prompt object providing the prompt for the agent.")
     ai_model_object_id: Optional[str] = Field(default=None, description="The object identifier of the AIModelBase object providing the AI model for the agent.")
     capabilities:Optional[List[str]] = Field(default=[], description="The capabilities of the agent.")
-    tools: Optional[dict] = Field(default=[], description="A dictionary object with assigned agent tools.")
+    tools: Optional[dict[str, AgentTool]] = Field(default=[], description="A dictionary object with assigned agent tools.")

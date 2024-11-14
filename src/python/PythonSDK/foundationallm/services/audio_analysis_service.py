@@ -60,9 +60,9 @@ class AudioAnalysisService:
             print(f'Error getting image as base64: {e}')
             return None
 
-    def _get_audio_classifcation_endpoint_configuration(self, request: KnowledgeManagementCompletionRequest) -> APIEndpointConfiguration:
+    def _get_tool_endpoint_configuration(self, request: KnowledgeManagementCompletionRequest) -> APIEndpointConfiguration:
         """
-        Gets the audio classification API endpoint configuration.
+        Gets the API endpoint configuration for the tool.
 
         Parameters
         ----------
@@ -72,17 +72,17 @@ class AudioAnalysisService:
         Returns
         -------
         APIEndpointConfiguration
-            The audio classification API endpoint configuration.
+            The API endpoint configuration for the tool.
         """
-        api_configuration_object_id = request.agent.api_endpoint_configuration_object_ids['AudioClassificationAPI']
+        api_configuration_object_id = request.agent.tools['audio-classification'].api_endpoint_configuration_object_ids['default']
         api_configuration = request.objects.get(api_configuration_object_id, None)
+
         if api_configuration is None:
             raise Exception('Audio classification API endpoint configuration not found.')
         return APIEndpointConfiguration.from_object(api_configuration)
 
     def classify(self, request: KnowledgeManagementCompletionRequest, audio_attachments: AttachmentProperties):
-        print('in audio classification service: classify')
-        api_configuration = self._get_audio_classifcation_endpoint_configuration(request)
+        api_configuration = self._get_tool_endpoint_configuration(request)
         api_key = self.config.get_value(api_configuration.authentication_parameters.get('api_key_configuration_name'))
         api_key_header_name = api_configuration.authentication_parameters.get('api_key_header_name', 'x-api-key')
         base_url = api_configuration.url.rstrip('/')
