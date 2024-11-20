@@ -83,14 +83,26 @@
       "userPortalHostname": {
         "value": "${FLLM_USER_PORTAL_HOSTNAME=082-www.internal.foundationallm.ai}"
       },
+      "userPortalCertPassword": {
+        "value": "${FLLM_USER_PORTAL_CERT_PASSWORD=}"
+      },
       "managementPortalHostname": {
         "value": "${FLLM_MGMT_PORTAL_HOSTNAME=082-management.internal.foundationallm.ai}"
+      },
+      "managementPortalCertPassword": {
+        "value": "${FLLM_MGMT_PORTAL_CERT_PASSWORD=}"
       },
       "coreApiHostname": {
         "value": "${FLLM_CORE_API_HOSTNAME=082-api.internal.foundationallm.ai}"
       },
+      "coreApiCertPassword": {
+        "value": "${FLLM_CORE_API_CERT_PASSWORD=}"
+      },
       "managementApiHostname": {
         "value": "${FLLM_MGMT_API_HOSTNAME=082-management-api.internal.foundationallm.ai}"
+      },
+      "managementApiCertPassword": {
+        "value": "${FLLM_MGMT_API_CERT_PASSWORD=}"
       },
       "authService": {
         "value": {

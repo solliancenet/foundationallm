@@ -25,9 +25,13 @@ param registry string
 param services array
 param timestamp string = utcNow()
 param userPortalHostname string
+param userPortalCertPassword string
 param managementPortalHostname string
+param managementPortalCertPassword string
 param coreApiHostname string
+param coreApiCertPassword string
 param managementApiHostname string
+param managementApiCertPassword string
 
 param hubResourceGroup string
 param hubSubscriptionId string = subscription().subscriptionId
@@ -256,9 +260,13 @@ output FLLM_VEC_RG     string = resourceGroups.vec
 output FLLM_OPS_KV string = ops.outputs.keyVaultName
 
 output FLLM_USER_PORTAL_HOSTNAME string = userPortalHostname
+output FLLM_USER_PORTAL_CERT_PASSWORD string = userPortalCertPassword
 output FLLM_MGMT_PORTAL_HOSTNAME string = managementPortalHostname
+output FLLM_MGMT_PORTAL_CERT_PASSWORD string = managementPortalCertPassword
 output FLLM_CORE_API_HOSTNAME string = coreApiHostname
+output FLLM_CORE_API_CERT_PASSWORD string = coreApiCertPassword
 output FLLM_MGMT_API_HOSTNAME string = managementApiHostname
+output FLLM_MGMT_API_CERT_PASSWORD string = managementApiCertPassword
 
 output FOUNDATIONALLM_VNET_NAME string = networking.outputs.vnetName
 output FOUNDATIONALLM_VNET_ID string = networking.outputs.vnetId
