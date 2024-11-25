@@ -5,10 +5,12 @@ azure-monitor-opentelemetry==1.6.2
 azure-monitor-opentelemetry-exporter==1.0.0b28
 azure-search-documents==11.5.1
 azure-storage-blob==12.21.0
-langchain==0.2.12
-langchain-experimental==0.0.64
-langchain-openai==0.1.20
-openai==1.40.2
+boto3==1.35.67
+langchain==0.3.7
+langchain-aws==0.2.7
+langchain-experimental==0.3.3
+langchain-openai==0.2.9
+openai==1.55.0
 opentelemetry-api==1.27.0
 opentelemetry-sdk==1.27.0
 pandas==2.2.2
