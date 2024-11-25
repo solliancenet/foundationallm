@@ -1,4 +1,5 @@
 from io import BytesIO
+import base64
 import fnmatch
 from azure.storage.blob import BlobServiceClient
 from foundationallm.storage import StorageManagerBase
@@ -127,6 +128,23 @@ class BlobStorageManager(StorageManagerBase):
         else:
             return None
 
+    def read_file_content_as_base64(self, path) -> str:
+        """
+        Retrieves the contents of a specified file as a base64 string.
+        Parameters
+        ----------
+        path : str
+            The path to the blob being retrieved.
+        Returns
+        -------
+        str
+            Returns the content of the specified file as a base64 string.
+        """       
+        content = self.read_file_content(path)
+        if content is None:
+            return None
+        return base64.b64encode(content).decode('utf-8')
+    
     def write_file_content(self, path, content, overwrite=True, lease=None):
         """
         Writes data to a specified file.

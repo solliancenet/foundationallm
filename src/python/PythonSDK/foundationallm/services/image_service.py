@@ -64,15 +64,13 @@ class ImageService:
             except Exception as e:
                 raise Exception(f'Error connecting to the {storage_account_name} blob storage account and the container named {container_name}: {e}')
 
-            if (storage_manager.file_exists(file_name)):
-                try:
-                    # Get the image file from blob storage.
-                   image_blob = storage_manager.read_file_content(file_name)
-                   return base64.b64encode(image_blob).decode('utf-8')
-                except Exception as e:
-                    raise Exception(f'The specified image {storage_account_name}/{file_path} does not exist.')
+            # Get the image file from blob storage.
+            image_blob_base64 = storage_manager.read_file_content_as_base64(file_name)
+            if image_blob_base64 is not None:
+                   return image_blob_base64
             else:
                 raise Exception(f'The specified image {storage_account_name}/{file_path} does not exist.')
+      
         except Exception as e:
             print(f'Error getting image as base64: {e}')
             return None

@@ -38,6 +38,7 @@ from foundationallm.services import (
     OpenAIAssistantsApiService
 )
 from foundationallm.services.gateway_text_embedding import GatewayTextEmbeddingService
+from foundationallm.storage import BlobStorageManager
 from openai.types import CompletionUsage
 
 class LangChainKnowledgeManagementAgent(LangChainAgentBase):
@@ -509,3 +510,48 @@ class LangChainKnowledgeManagementAgent(LangChainAgentBase):
 
         return retvalue
         # End LangChain Expression Language (LCEL) implementation
+
+    def _get_attachment_as_base64(self, mime_type: str, storage_account_name, file_path: str) -> str:
+        """
+        Retrieves a file from its URL and converts it to a base64 string.
+
+        Parameters
+        ----------
+        mime_type : str
+            The mime type of the image.
+        storage_account_name : str
+            The name of the attachment storage account.
+        file_path : str
+            The path to the file.
+            
+        Returns
+        -------
+        str
+            The file as a base64 string.
+        """
+        try:
+            # Remove any leading slashes from the file path.
+            file_path = file_path.lstrip('/')
+            # Attempt to retrieve the image from blob storage.
+            container_name = file_path.split('/')[0]
+            # Get the file path without the container name.
+            file_name = file_path.removeprefix(container_name)
+
+            try:
+                storage_manager = BlobStorageManager(
+                    account_name=storage_account_name,
+                    container_name=container_name,
+                    authentication_type=self.config.get_value('FoundationaLLM:ResourceProviders:Attachment:Storage:AuthenticationType')
+                )
+            except Exception as e:
+                raise Exception(f'Error connecting to the {storage_account_name} blob storage account and the container named {container_name}: {e}')
+
+            # Get the image file from blob storage.
+            file_base64 = storage_manager.read_file_content_as_base64(file_name)
+            if file_base64 is not None:
+                   return file_base64
+            else:
+                raise Exception(f'The specified image {storage_account_name}/{file_path} does not exist.')        
+        except Exception as e:
+            print(f'Error getting image as base64: {e}')
+            return None
