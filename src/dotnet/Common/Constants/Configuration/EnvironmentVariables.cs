@@ -31,5 +31,21 @@
         /// Indicates whether the application is running in an end-to-end test environment. The string value should be either "true" or "false".
         /// </summary>
         public const string FoundationaLLM_Environment = "FOUNDATIONALLM_ENVIRONMENT";
+
+        /// <summary>
+        /// The name of the Azure Container Apps (AKS) replica.
+        /// </summary>
+        /// <remarks>
+        /// This environment variable is available only in the Azure Container Apps environment.
+        /// </remarks>
+        public const string ACA_Container_App_Replica_Name = "CONTAINER_APP_REPLICA_NAME";
+
+        /// <summary>
+        /// The name of the Azure Kubernetes Service (AKS) pod.
+        /// </summary>
+        /// <remarks>
+        /// This environment variable is available only in the Azure Kubernetes Service environment.
+        /// </remarks>
+        public const string AKS_Pod_Name = "POD_NAME";
     }
 }

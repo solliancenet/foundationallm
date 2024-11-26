@@ -24,7 +24,12 @@ namespace FoundationaLLM.Common.Services.Azure
         private readonly ILogger<AzureResourceManagerService> _logger = logger;
 
         /// <inheritdoc/>
-        public async Task<bool> CreateEventGridNamespaceTopicSubscription(string namespaceResourceId, string topicName, string topicSubscriptionName, CancellationToken cancellationToken)
+        public async Task<bool> CreateEventGridNamespaceTopicSubscription(
+            string namespaceResourceId,
+            string topicName,
+            string topicSubscriptionName,
+            List<string> includedEventTypes,
+            CancellationToken cancellationToken)
         {
             var namespaceTopicId = ResourceIdentifier.Parse($"{namespaceResourceId}/topics/{topicName}");
             var namespaceTopicResource = _armClient.GetNamespaceTopicResource(namespaceTopicId);
@@ -44,7 +49,11 @@ namespace FoundationaLLM.Common.Services.Azure
                     },
                 },
                 EventDeliverySchema = DeliverySchema.CloudEventSchemaV10,
+                FiltersConfiguration = new FiltersConfiguration()
             };
+
+            foreach (var eventType in includedEventTypes)
+                eventSubscription.FiltersConfiguration.IncludedEventTypes.Add(eventType);
 
             var newNamespaceTopicSubscription = await namespaceTopicSubscriptions.CreateOrUpdateAsync(
                 WaitUntil.Completed,

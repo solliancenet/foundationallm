@@ -1,8 +1,11 @@
 ﻿using Azure;
+using Azure.Messaging;
 using Azure.Messaging.EventGrid.Namespaces;
 using FoundationaLLM.Common.Authentication;
 using FoundationaLLM.Common.Constants;
 using FoundationaLLM.Common.Constants.Authentication;
+using FoundationaLLM.Common.Constants.Configuration;
+using FoundationaLLM.Common.Constants.Events;
 using FoundationaLLM.Common.Exceptions;
 using FoundationaLLM.Common.Interfaces;
 using FoundationaLLM.Common.Models.Configuration.Events;
@@ -22,45 +25,24 @@ namespace FoundationaLLM.Common.Services.Events
         private readonly AzureEventGridEventServiceProfile _profile;
         private readonly IAzureResourceManagerService _azureResourceManager;
         private readonly IHttpClientFactoryService _httpClientFactory;
-        private EventGridClient? _eventGridClient;
+        private EventGridSenderClient? _eventGridSenderClient;
+        private EventGridReceiverClient? _eventGridReceiverClient;
 
         private readonly TimeSpan _eventProcessingCycle;
+        private readonly string _serviceInstanceName;
+        private bool _active = false;
 
-        private readonly Dictionary<string, EventSetEventDelegate?> _eventSetEventDelegates = new()
-        {
-            {
-                EventSetEventNamespaces.FoundationaLLM_ResourceProvider_Agent,
-                null
-            },
-            {
-                EventSetEventNamespaces.FoundationaLLM_ResourceProvider_Vectorization,
-                null
-            },
-            {
-                EventSetEventNamespaces.FoundationaLLM_ResourceProvider_Configuration,
-                null
-            },
-            {
-                EventSetEventNamespaces.FoundationaLLM_ResourceProvider_DataSource,
-                null
-            },
-            {
-                EventSetEventNamespaces.FoundationaLLM_ResourceProvider_Attachment,
-                null
-            },
-            {
-                EventSetEventNamespaces.FoundationaLLM_ResourceProvider_AIModel,
-                null
-            },
-            {
-                EventSetEventNamespaces.FoundationaLLM_ResourceProvider_AzureOpenAI,
-                null
-            },
-            {
-                EventSetEventNamespaces.FoundationaLLM_ResourceProvider_Conversation,
-                null
-            }
-        };
+        private readonly Dictionary<string, EventGridSenderClient> _senderClients = [];
+        private readonly Dictionary<string, EventGridReceiverClient> _receiverClients = [];
+
+        private readonly Dictionary<string, EventTypeEventDelegate?> _eventTypeDelegates =
+            EventTypes.All.ToDictionary(ns => ns, ns => (EventTypeEventDelegate?)null);
+
+        /// <inheritdoc/>
+        public string ServiceInstanceName => _serviceInstanceName;
+
+        /// <inheritdoc/>
+        public bool Active => _active;
 
         /// <summary>
         /// Creates a new instance of the <see cref="AzureEventGridEventService"/> event service.
@@ -77,6 +59,11 @@ namespace FoundationaLLM.Common.Services.Events
             IHttpClientFactoryService httpClientFactory,
             ILogger<AzureEventGridEventService> logger)
         {
+            _serviceInstanceName =
+                Environment.GetEnvironmentVariable(EnvironmentVariables.AKS_Pod_Name)
+                ?? Environment.GetEnvironmentVariable(EnvironmentVariables.ACA_Container_App_Replica_Name)
+                ?? Guid.NewGuid().ToString();
+
             _settings = settingsOptions.Value;
             _profile = profileOptions.Value;
             _azureResourceManager = azureResourceManager;
@@ -91,16 +78,21 @@ namespace FoundationaLLM.Common.Services.Events
         {
             try
             {
-                _eventGridClient = await GetClient();
-                if (_eventGridClient == null)
-                    throw new EventException("Cound not create Azure Event Grid client.");
-                else
+                // Create the topic subscriptions according to the service profile.
+                if (!await CreateTopicSubscriptions(cancellationToken))
                 {
-                    // Create the topic subscriptions according to the service profile.
-                    await CreateTopicSubscriptions(cancellationToken);
+                    _logger.LogError("The Azure Event Grid event service was not able to create the necessary topic subscriptions and/or sender/receiver clients and will not listen for any events.");
 
-                    _logger.LogInformation("The Azure Event Grid event service was successfully initialized.");
+                    // Attempt to delete the topic subscriptions that were successfully created.
+                    // No need to keep them around since we're not listening for events anyway.
+                    await DeleteTopicSubscriptions(cancellationToken);
+
+                    return;
                 }
+
+                _logger.LogInformation("The Azure Event Grid event service was successfully initialized.");
+
+                _active = true;
             }
             catch (Exception ex)
             {
@@ -115,15 +107,15 @@ namespace FoundationaLLM.Common.Services.Events
         /// <inheritdoc/>
         public async Task ExecuteAsync(CancellationToken cancellationToken)
         {
-            if (_eventGridClient == null)
+            if (!_active)
             {
-                _logger.LogCritical("The Azure Event Grid events service is not properly initialized and will not execute.");
+                _logger.LogCritical("The Azure Event Grid events service is not properly initialized and will not listen for any events.");
                 return;
             }
 
             if (_profile.Topics.Count == 0)
             {
-                _logger.LogInformation("The Azure Event Grid event service stopped running because it is not configured to listen to any events.");
+                _logger.LogWarning("The Azure Event Grid events service is not configured to listen to any events.");
                 return;
             }
 
@@ -137,24 +129,25 @@ namespace FoundationaLLM.Common.Services.Events
                 {
                     if (cancellationToken.IsCancellationRequested) break;
 
-                    if (!topic.SubscriptionAvailable) continue;
+                    if (!_receiverClients.TryGetValue(topic.Name, out var receiverClient))
+                    {
+                        _logger.LogError("The Azure Event Grid event service does not have a receiver client for topic {TopicName}.",
+                            topic.Name);
+                        continue;
+                    }
 
                     try
                     {
-                        var response = await _eventGridClient.ReceiveCloudEventsAsync(
-                            topic.Name,
-                            topic.SubscriptionName,
+                        var receiveResult = await receiverClient.ReceiveAsync(
+                            maxEvents: 10,
                             maxWaitTime: TimeSpan.FromSeconds(10),
                             cancellationToken: cancellationToken);
 
-                        if (response != null
-                            && response.Value.Value != null
-                            && response.Value.Value.Count > 0)
+                        if (receiveResult?.Value?.Details != null
+                            && receiveResult.Value.Details.Count > 0)
                         await ProcessTopicSubscriptionEvents(
-                            topic.Name,
-                            topic.SubscriptionName!,
-                            topic.EventTypeProfiles,
-                            response.Value.Value);
+                            receiverClient,
+                            receiveResult.Value.Details);
                     }
                     catch (Exception ex)
                     {
@@ -168,36 +161,64 @@ namespace FoundationaLLM.Common.Services.Events
         }
 
         /// <inheritdoc/>
-        public void SubscribeToEventSetEvent(string eventNamespace, EventSetEventDelegate eventHandler)
+        public void SubscribeToEventTypeEvent(string eventType, EventTypeEventDelegate eventHandler)
         {
             ArgumentNullException.ThrowIfNull(eventHandler);
 
-            if (!_eventSetEventDelegates.TryGetValue(eventNamespace, out var eventDelegate))
-                throw new EventException($"The namespace {eventNamespace} is invalid.");
+            if (!_eventTypeDelegates.TryGetValue(eventType, out var eventDelegate))
+                throw new EventException($"The namespace {eventType} is invalid.");
 
             if (eventDelegate == null)
-                _eventSetEventDelegates[eventNamespace] = eventHandler!;
+                _eventTypeDelegates[eventType] = eventHandler!;
             else
                 eventDelegate += eventHandler;
         }
 
         /// <inheritdoc/>
-        public void UnsubscribeFromEventSetEvent(string eventNamespace, EventSetEventDelegate eventHandler)
+        public void UnsubscribeFromEventTypeEvent(string eventType, EventTypeEventDelegate eventHandler)
         {
-            if (!_eventSetEventDelegates.TryGetValue(eventNamespace, out var eventDelegate))
-                throw new EventException($"The namespace {eventNamespace} is invalid.");
+            if (!_eventTypeDelegates.TryGetValue(eventType, out var eventDelegate))
+                throw new EventException($"The namespace {eventType} is invalid.");
 
             eventDelegate -= eventHandler;
         }
 
-        private async Task CreateTopicSubscriptions(CancellationToken cancellationToken)
+        /// <inheritdoc/>
+        public async Task SendEvent(string eventCategory, CloudEvent cloudEvent)
+        {
+            if (!_active)
+            {
+                _logger.LogError("Could not send event {EventId} of type {EventType} from source {EventSource}. The Azure Event Grid event service is not active and cannot send events.",
+                    cloudEvent.Id, cloudEvent.Type, cloudEvent.Source);
+                return;
+            }
+
+            if (!_senderClients.TryGetValue(eventCategory, out var senderClient))
+            {
+                _logger.LogError("Could not send event {EventId} of type {EventType} from source {EventSource}. The Azure Event Grid event service does not have a sender client for the event category {EventCategory}.",
+                    cloudEvent.Id, cloudEvent.Type, cloudEvent.Source, eventCategory);
+                return;
+            }
+
+            try
+            {
+                await senderClient.SendAsync(cloudEvent);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occured while trying to send event {EventId} of type {EventType} from source {EventSource}.",
+                    cloudEvent.Id, cloudEvent.Type, cloudEvent.Source);
+            }
+        }
+
+        private async Task<bool> CreateTopicSubscriptions(CancellationToken cancellationToken)
         {
             foreach (var topic in _profile.Topics)
             {
                 if (cancellationToken.IsCancellationRequested)
-                    return;
+                    return false;
 
-                topic.SubscriptionName = $"{topic.SubscriptionPrefix}-{Guid.NewGuid().ToString().ToLower()}";
+                topic.SubscriptionName = $"{topic.SubscriptionPrefix}-{Guid.NewGuid().ToString("N").ToLower()}";
                 _logger.LogInformation("The Azure Event Grid event service will create a subscription named {SubscriptionName} in topic {TopicName}.",
                     topic.SubscriptionName, topic.Name);
 
@@ -207,18 +228,28 @@ namespace FoundationaLLM.Common.Services.Events
                         _settings.NamespaceId,
                         topic.Name,
                         topic.SubscriptionName,
+                        EventTypes.All,
                         cancellationToken);
 
                     if (topic.SubscriptionAvailable)
                         _logger.LogInformation("The Azure Event Grid event service successfully created a subscription named {SubscriptionName} in topic {TopicName}.",
                             topic.SubscriptionName, topic.Name);
+
+                    _senderClients.Add(topic.Name, await GetSenderClient(topic.Name)
+                        ?? throw new EventException($"Failed to create the Azure Event Grid sender client for topic {topic.Name}."));
+                    _receiverClients.Add(topic.Name, await GetReceiverClient(topic.Name, topic.SubscriptionName)
+                        ?? throw new EventException($"Failed to create the Azure Event Grid receiver client for topic {topic.Name} and subscription {topic.SubscriptionName}."));
                 }
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "An error occured while creating a subscription named {SubscriptionName} in topic {TopicName}.",
                         topic.SubscriptionName, topic.Name);
+
+                    return false;
                 }
             }
+
+            return true;
         }
 
         private async Task DeleteTopicSubscriptions(CancellationToken cancellationToken)
@@ -259,63 +290,66 @@ namespace FoundationaLLM.Common.Services.Events
         }
 
         private async Task ProcessTopicSubscriptionEvents(
-            string topicName,
-            string subscriptionName,
-            List<EventGridEventTypeProfile> eventTypeProfiles, IReadOnlyList<ReceiveDetails> eventDetails)
+            EventGridReceiverClient receiverClient,
+            IReadOnlyList<ReceiveDetails> eventDetails)
         {
+            Dictionary<string, List<CloudEvent>> eventsToProcess = EventTypes.All
+                .ToDictionary(ns => ns, ns => new List<CloudEvent>());
 
-            foreach (var eventTypeProfile in eventTypeProfiles)
-            foreach (var eventSet in eventTypeProfile.EventSets)
+            foreach (var receiveDetails in eventDetails)
             {
-                var events = eventDetails
-                    .Select(ed => ed.Event)
-                    .Where(e =>
-                        e.Type == eventTypeProfile.EventType
-                        && string.Equals(e.Source, eventSet.Source, StringComparison.OrdinalIgnoreCase)
-                        && !string.IsNullOrWhiteSpace(e.Subject)
-                        && (string.IsNullOrWhiteSpace(eventSet.SubjectPrefix) || e.Subject.StartsWith(eventSet.SubjectPrefix)))
-                    .ToList();
+                if (String.CompareOrdinal(receiveDetails.Event.Source, _serviceInstanceName) == 0)
+                    // Ignore events that were sent by this service instance.
+                    continue;
 
-                if (events.Count > 0
-                    && _eventSetEventDelegates.TryGetValue(eventSet.Namespace, out EventSetEventDelegate? eventSetDelegate)
-                    && eventSetDelegate != null)
+                eventsToProcess[receiveDetails.Event.Type].Add(receiveDetails.Event);
+            }
+
+            foreach (var eventTypeEventsToProcess in eventsToProcess)
+            {
+                if (eventTypeEventsToProcess.Value.Count > 0)
                 {
-                    try
+                    if (!_eventTypeDelegates.TryGetValue(eventTypeEventsToProcess.Key, out var eventTypeDelegate))
                     {
-                        // We have new events and we have at least one event handler attached to the delegate associated with this namespace.
-                        // Fire up the event and call all registered delegates.
-                        eventSetDelegate(this, new EventSetEventArgs
-                        {
-                            Namespace = eventSet.Namespace,
-                            Events = events
-                        });
+                        _logger.LogWarning("The Azure Event Grid event service does not have any event handlers for the event type {EventType}.",
+                            eventTypeEventsToProcess.Key);
+                        continue;
                     }
-                    catch (Exception ex)
+
+                    if (eventTypeDelegate != null)
                     {
-                        _logger.LogError(ex, "Error invoking registered delegates.");
+                        try
+                        {
+                            // We have new events and we have at least one event handler attached to the delegate associated with this namespace.
+                            // Fire up the event and call all registered delegates.
+                            eventTypeDelegate(this, new EventTypeEventArgs
+                            {
+                                EventType = eventTypeEventsToProcess.Key,
+                                Events = eventTypeEventsToProcess.Value
+                            });
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(ex, "Error invoking registered delegates for event types {EventType}.",
+                                eventTypeEventsToProcess.Key);
+                        }
                     }
                 }
             }
 
-            // We are releasing messages instead of acknowledging them.
-            // This will allow other subscribers to process them as well.
-            // The typical scenario for this is when the event service is run by multiple, identical instances of the same host (e.g., a FoundationaLLM service like Core API).
-            // When this happens, all running instances of the host must get the chance to process the messages.
-            await AcknowledgeMessages(topicName, subscriptionName, eventDetails);
+            // Messages have been handled if needed.
+            // Acknowledge the messages to remove them from the Azure Event Grid topic subscription.
+            await AcknowledgeMessages(receiverClient, eventDetails);
         }
 
         private async Task AcknowledgeMessages(
-            string topicName,
-            string subscriptionName,
+            EventGridReceiverClient receiverClient,
             IReadOnlyList<ReceiveDetails> eventDetails)
         {
-            var result = await _eventGridClient!.AcknowledgeCloudEventsAsync(
-                topicName,
-                subscriptionName,
-                new AcknowledgeOptions(
-                    eventDetails.Select(ed => ed.BrokerProperties.LockToken)));
+            var acknowledgeResult = await receiverClient.AcknowledgeAsync(
+                eventDetails.Select(ed => ed.BrokerProperties.LockToken));
 
-            foreach (var ackFailure in result.Value.FailedLockTokens)
+            foreach (var ackFailure in acknowledgeResult.Value.FailedLockTokens)
             {
                 _logger.LogError("Failed to acknowledge Event Grid message. Lock token: {LockToken}. Error code: {ErrorCode}. Error description: {ErrorDescription}.",
                     ackFailure.LockToken, ackFailure.Error, ackFailure.ToString());
@@ -324,27 +358,73 @@ namespace FoundationaLLM.Common.Services.Events
 
         #region Create Event Grid client
 
-        private async Task<EventGridClient?> GetClient() =>
-            await _httpClientFactory.CreateClient<EventGridClient?>(
+        private async Task<EventGridSenderClient?> GetSenderClient(string topicName) =>
+            await _httpClientFactory.CreateClient<EventGridSenderClient?>(
                 HttpClientNames.AzureEventGrid,
                 DefaultAuthentication.ServiceIdentity!,
-                BuildClient);
+                BuildSenderClient,
+                new Dictionary<string, object>()
+                {
+                    { HttpClientFactoryServiceKeyNames.AzureEventGridTopicName, topicName }
+                });
 
-        private EventGridClient? BuildClient(Dictionary<string, object> parameters)
+        private EventGridSenderClient? BuildSenderClient(Dictionary<string, object> parameters)
         {
-            EventGridClient? client = null;
+            EventGridSenderClient? client = null;
             try
             {
+                var topicName = parameters[HttpClientFactoryServiceKeyNames.AzureEventGridTopicName].ToString();
                 var endpoint = parameters[HttpClientFactoryServiceKeyNames.Endpoint].ToString();
                 var authenticationType = (AuthenticationTypes)parameters[HttpClientFactoryServiceKeyNames.AuthenticationType];
                 switch (authenticationType)
                 {
                     case AuthenticationTypes.AzureIdentity:
-                        client = new EventGridClient(new Uri(endpoint!), DefaultAuthentication.AzureCredential);
+                        client = new EventGridSenderClient(new Uri(endpoint!), topicName, DefaultAuthentication.AzureCredential);
                         break;
                     case AuthenticationTypes.APIKey:
                         var apiKey = parameters[HttpClientFactoryServiceKeyNames.APIKey].ToString();
-                        client = new EventGridClient(new Uri(endpoint!), new AzureKeyCredential(apiKey!));
+                        client = new EventGridSenderClient(new Uri(endpoint!), topicName, new AzureKeyCredential(apiKey!));
+                        break;
+                    default:
+                        throw new ConfigurationValueException($"The {authenticationType} authentication type is not supported by the Azure Event Grid events service.");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "There was an error creating the Azure Event Grid client.");
+            }
+
+            return client;
+        }
+
+        private async Task<EventGridReceiverClient?> GetReceiverClient(string topicName, string subscriptionName) =>
+            await _httpClientFactory.CreateClient<EventGridReceiverClient?>(
+                HttpClientNames.AzureEventGrid,
+                DefaultAuthentication.ServiceIdentity!,
+                BuildReceiverClient,
+                new Dictionary<string, object>()
+                {
+                    { HttpClientFactoryServiceKeyNames.AzureEventGridTopicName, topicName },
+                    { HttpClientFactoryServiceKeyNames.AzureEventGridTopicSubscriptionName, subscriptionName }
+                });
+
+        private EventGridReceiverClient? BuildReceiverClient(Dictionary<string, object> parameters)
+        {
+            EventGridReceiverClient? client = null;
+            try
+            {
+                var topicName = parameters[HttpClientFactoryServiceKeyNames.AzureEventGridTopicName].ToString();
+                var subscriptionName = parameters[HttpClientFactoryServiceKeyNames.AzureEventGridTopicSubscriptionName].ToString();
+                var endpoint = parameters[HttpClientFactoryServiceKeyNames.Endpoint].ToString();
+                var authenticationType = (AuthenticationTypes)parameters[HttpClientFactoryServiceKeyNames.AuthenticationType];
+                switch (authenticationType)
+                {
+                    case AuthenticationTypes.AzureIdentity:
+                        client = new EventGridReceiverClient(new Uri(endpoint!), topicName, subscriptionName, DefaultAuthentication.AzureCredential);
+                        break;
+                    case AuthenticationTypes.APIKey:
+                        var apiKey = parameters[HttpClientFactoryServiceKeyNames.APIKey].ToString();
+                        client = new EventGridReceiverClient(new Uri(endpoint!), topicName, subscriptionName, new AzureKeyCredential(apiKey!));
                         break;
                     default:
                         throw new ConfigurationValueException($"The {authenticationType} authentication type is not supported by the Azure Event Grid events service.");

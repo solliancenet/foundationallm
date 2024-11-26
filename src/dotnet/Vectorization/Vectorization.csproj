@@ -12,13 +12,10 @@
 
   <ItemGroup>
     <PackageReference Include="Azure.Security.KeyVault.Certificates" Version="4.6.0" />
-    <PackageReference Include="Azure.Security.KeyVault.Secrets" Version="4.6.0" />
-    <PackageReference Include="Azure.Storage.Blobs" Version="12.19.1" />
     <PackageReference Include="Azure.Storage.Queues" Version="12.17.1" />
     <PackageReference Include="ClosedXML" Version="0.102.2" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.60" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1" />
     <PackageReference Include="Parquet.Net" Version="4.23.5" />
     <PackageReference Include="PdfPig" Version="0.1.8" />
     <PackageReference Include="PnP.Core" Version="1.12.0" />
