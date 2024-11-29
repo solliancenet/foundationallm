@@ -649,7 +649,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .steps {
 	display: grid;
 	grid-template-columns: minmax(auto, 50%) minmax(auto, 50%);
