@@ -97,335 +97,316 @@
 			<!-- Knowledge source -->
 			<div class="step-section-header span-2">Knowledge Source</div>
 
-			<div id="aria-inline-context" class="step-header span-2">
-				Does this agent have an inline context?
+			<div id="aria-dedicated-pipeline" class="step-header span-2">
+				Do you want this agent to have a dedicated pipeline?
 			</div>
 			<div class="span-2">
 				<div class="d-flex align-center mt-2">
 					<span>
 						<ToggleButton
-							v-model="inline_context"
+							v-model="dedicated_pipeline"
 							on-label="Yes"
 							on-icon="pi pi-check-circle"
 							off-label="No"
 							off-icon="pi pi-times-circle"
-							aria-labelledby="aria-inline-context"
+							aria-labelledby="aria-dedicated-pipeline"
 						/>
 					</span>
 				</div>
 			</div>
 
-			<template v-if="!inline_context">
-				<div id="aria-dedicated-pipeline" class="step-header span-2">
-					Do you want this agent to have a dedicated pipeline?
-				</div>
-				<div class="span-2">
-					<div class="d-flex align-center mt-2">
-						<span>
-							<ToggleButton
-								v-model="dedicated_pipeline"
-								on-label="Yes"
-								on-icon="pi pi-check-circle"
-								off-label="No"
-								off-icon="pi pi-times-circle"
-								aria-labelledby="aria-dedicated-pipeline"
-							/>
-						</span>
-					</div>
-				</div>
+			<template v-if="dedicated_pipeline">
+				<div class="step-header">Where is the data?</div>
+			</template>
+			<template v-if="dedicated_pipeline">
+				<div class="step-header">Where should the data be indexed?</div>
+			</template>
+			<template v-else>
+				<div class="step-header">Select your index</div>
+				<div class="step-header">Select the text embedding profile</div>
+			</template>
 
-				<template v-if="dedicated_pipeline">
-					<div class="step-header">Where is the data?</div>
-				</template>
-				<template v-if="dedicated_pipeline">
-					<div class="step-header">Where should the data be indexed?</div>
-				</template>
-				<template v-else>
-					<div class="step-header">Select your index</div>
-					<div class="step-header">Select the text embedding profile</div>
-				</template>
-
-				<!-- Data source -->
-				<div v-if="dedicated_pipeline">
-					<CreateAgentStepItem v-model="editDataSource">
-						<template v-if="selectedDataSource">
-							<div class="step-container__header">{{ selectedDataSource.type }}</div>
-							<div>
-								<div v-if="selectedDataSource.object_id !== ''">
-									<span class="step-option__header">Name:</span>
-								</div>
-								<span>{{ selectedDataSource.name }}</span>
+			<!-- Data source -->
+			<div v-if="dedicated_pipeline">
+				<CreateAgentStepItem v-model="editDataSource">
+					<template v-if="selectedDataSource">
+						<div class="step-container__header">{{ selectedDataSource.type }}</div>
+						<div>
+							<div v-if="selectedDataSource.object_id !== ''">
+								<span class="step-option__header">Name:</span>
 							</div>
-							<!-- <div>
-								<span class="step-option__header">Container name:</span>
-								<span>{{ selectedDataSource.Container.Name }}</span>
-							</div> -->
-
-							<!-- <div>
-								<span class="step-option__header">Data Format(s):</span>
-								<span v-for="format in selectedDataSource.Formats" :key="format" class="mr-1">
-									{{ format }}
-								</span>
-							</div> -->
-						</template>
-						<template v-else>Please select a data source.</template>
-
-						<template #edit>
-							<div class="step-container__edit__header">Please select a data source.</div>
-
-							<div v-for="(group, type) in groupedDataSources" :key="type">
-								<div class="step-container__edit__group-header">{{ type }}</div>
-
-								<div
-									v-for="dataSource in group"
-									:key="dataSource.name"
-									class="step-container__edit__option"
-									:class="{
-										'step-container__edit__option--selected':
-											dataSource.name === selectedDataSource?.name,
-									}"
-									@click.stop="handleDataSourceSelected(dataSource)"
-								>
-									<div>
-										<div v-if="dataSource.object_id !== ''">
-											<span class="step-option__header">Name:</span>
-										</div>
-										<span>{{ dataSource.name }}</span>
-									</div>
-									<!-- <div>
-										<span class="step-option__header">Container name:</span>
-										<span>{{ dataSource.Container.Name }}</span>
-									</div> -->
-
-									<!-- <div>
-										<span class="step-option__header">Data Format(s):</span>
-										<span v-for="format in dataSource.Formats" :key="format" class="mr-1">
-											{{ format }}
-										</span>
-									</div> -->
-								</div>
-							</div>
-						</template>
-					</CreateAgentStepItem>
-				</div>
-
-				<!-- Index source -->
-				<CreateAgentStepItem v-model="editIndexSource">
-					<template v-if="selectedIndexSource">
-						<div v-if="selectedIndexSource.object_id !== ''">
-							<div class="step-container__header">{{ selectedIndexSource.name }}</div>
-							<div>
-								<span class="step-option__header">URL:</span>
-								<span>{{ selectedIndexSource.resolved_configuration_references.Endpoint }}</span>
-							</div>
-							<div>
-								<span class="step-option__header">Index Name:</span>
-								<span>{{ selectedIndexSource.settings.IndexName }}</span>
-							</div>
+							<span>{{ selectedDataSource.name }}</span>
 						</div>
-						<div v-else>
-							<div class="step-container__header">DEFAULT</div>
-							{{ selectedIndexSource.name }}
-						</div>
+						<!-- <div>
+							<span class="step-option__header">Container name:</span>
+							<span>{{ selectedDataSource.Container.Name }}</span>
+						</div> -->
+
+						<!-- <div>
+							<span class="step-option__header">Data Format(s):</span>
+							<span v-for="format in selectedDataSource.Formats" :key="format" class="mr-1">
+								{{ format }}
+							</span>
+						</div> -->
 					</template>
-					<template v-else>Please select an index source.</template>
+					<template v-else>Please select a data source.</template>
 
 					<template #edit>
-						<div class="step-container__edit__header">Please select an index source.</div>
-						<div
-							v-for="indexSource in indexSources"
-							:key="indexSource.name"
-							class="step-container__edit__option"
-							:class="{
-								'step-container__edit__option--selected':
-									indexSource.name === selectedIndexSource?.name,
-							}"
-							@click.stop="handleIndexSourceSelected(indexSource)"
-						>
-							<div v-if="indexSource.object_id !== ''">
-								<div class="step-container__header">{{ indexSource.name }}</div>
-								<div v-if="indexSource.resolved_configuration_references.Endpoint">
-									<span class="step-option__header">URL:</span>
-									<span>{{ indexSource.resolved_configuration_references.Endpoint }}</span>
+						<div class="step-container__edit__header">Please select a data source.</div>
+
+						<div v-for="(group, type) in groupedDataSources" :key="type">
+							<div class="step-container__edit__group-header">{{ type }}</div>
+
+							<div
+								v-for="dataSource in group"
+								:key="dataSource.name"
+								class="step-container__edit__option"
+								:class="{
+									'step-container__edit__option--selected':
+										dataSource.name === selectedDataSource?.name,
+								}"
+								@click.stop="handleDataSourceSelected(dataSource)"
+							>
+								<div>
+									<div v-if="dataSource.object_id !== ''">
+										<span class="step-option__header">Name:</span>
+									</div>
+									<span>{{ dataSource.name }}</span>
 								</div>
-								<div v-if="indexSource.settings.IndexName">
-									<span class="step-option__header">Index Name:</span>
-									<span>{{ indexSource.settings.IndexName }}</span>
-								</div>
-							</div>
-							<div v-else>
-								<div class="step-container__header">DEFAULT</div>
-								{{ indexSource.name }}
+								<!-- <div>
+									<span class="step-option__header">Container name:</span>
+									<span>{{ dataSource.Container.Name }}</span>
+								</div> -->
+
+								<!-- <div>
+									<span class="step-option__header">Data Format(s):</span>
+									<span v-for="format in dataSource.Formats" :key="format" class="mr-1">
+										{{ format }}
+									</span>
+								</div> -->
 							</div>
 						</div>
 					</template>
 				</CreateAgentStepItem>
+			</div>
 
-				<template v-if="dedicated_pipeline">
-					<div class="step-header">Select the text embedding profile</div>
-					<div class="step-header"></div>
+			<!-- Index source -->
+			<CreateAgentStepItem v-model="editIndexSource">
+				<template v-if="selectedIndexSource">
+					<div v-if="selectedIndexSource.object_id !== ''">
+						<div class="step-container__header">{{ selectedIndexSource.name }}</div>
+						<div>
+							<span class="step-option__header">URL:</span>
+							<span>{{ selectedIndexSource.resolved_configuration_references.Endpoint }}</span>
+						</div>
+						<div>
+							<span class="step-option__header">Index Name:</span>
+							<span>{{ selectedIndexSource.settings.IndexName }}</span>
+						</div>
+					</div>
+					<div v-else>
+						<div class="step-container__header">DEFAULT</div>
+						{{ selectedIndexSource.name }}
+					</div>
 				</template>
+				<template v-else>Please select an index source.</template>
 
-				<!-- Text embedding profiles -->
-				<CreateAgentStepItem v-model="editTextEmbeddingProfile">
-					<template v-if="selectedTextEmbeddingProfile">
-						<div v-if="selectedTextEmbeddingProfile.object_id !== ''">
-							<div class="step-container__header">{{ selectedTextEmbeddingProfile.name }}</div>
-							<div v-if="selectedTextEmbeddingProfile.resolved_configuration_references?.Endpoint">
+				<template #edit>
+					<div class="step-container__edit__header">Please select an index source.</div>
+					<div
+						v-for="indexSource in indexSources"
+						:key="indexSource.name"
+						class="step-container__edit__option"
+						:class="{
+							'step-container__edit__option--selected':
+								indexSource.name === selectedIndexSource?.name,
+						}"
+						@click.stop="handleIndexSourceSelected(indexSource)"
+					>
+						<div v-if="indexSource.object_id !== ''">
+							<div class="step-container__header">{{ indexSource.name }}</div>
+							<div v-if="indexSource.resolved_configuration_references.Endpoint">
 								<span class="step-option__header">URL:</span>
-								<span>{{
-									selectedTextEmbeddingProfile.resolved_configuration_references.Endpoint
-								}}</span
+								<span>{{ indexSource.resolved_configuration_references.Endpoint }}</span>
+							</div>
+							<div v-if="indexSource.settings.IndexName">
+								<span class="step-option__header">Index Name:</span>
+								<span>{{ indexSource.settings.IndexName }}</span>
+							</div>
+						</div>
+						<div v-else>
+							<div class="step-container__header">DEFAULT</div>
+							{{ indexSource.name }}
+						</div>
+					</div>
+				</template>
+			</CreateAgentStepItem>
+
+			<template v-if="dedicated_pipeline">
+				<div class="step-header">Select the text embedding profile</div>
+				<div class="step-header"></div>
+			</template>
+
+			<!-- Text embedding profiles -->
+			<CreateAgentStepItem v-model="editTextEmbeddingProfile">
+				<template v-if="selectedTextEmbeddingProfile">
+					<div v-if="selectedTextEmbeddingProfile.object_id !== ''">
+						<div class="step-container__header">{{ selectedTextEmbeddingProfile.name }}</div>
+						<div v-if="selectedTextEmbeddingProfile.resolved_configuration_references?.Endpoint">
+							<span class="step-option__header">URL:</span>
+							<span>{{
+								selectedTextEmbeddingProfile.resolved_configuration_references.Endpoint
+							}}</span
+							><br />
+							<span class="step-option__header">Deployment:</span>
+							<span>{{
+								selectedTextEmbeddingProfile.resolved_configuration_references.DeploymentName
+							}}</span>
+						</div>
+						<div v-if="selectedTextEmbeddingProfile.settings?.model_name">
+							<span class="step-option__header">Model Name:</span>
+							<span>{{ selectedTextEmbeddingProfile.settings.model_name }}</span>
+						</div>
+					</div>
+					<div v-else>
+						<div class="step-container__header">DEFAULT</div>
+						{{ selectedTextEmbeddingProfile.name }}
+					</div>
+				</template>
+				<template v-else>Please select text embedding profile.</template>
+
+				<template #edit>
+					<div class="step-container__edit__header">Please select text embedding profile.</div>
+					<div
+						v-for="textEmbeddingProfile in textEmbeddingProfileSources"
+						:key="textEmbeddingProfile.name"
+						class="step-container__edit__option"
+						:class="{
+							'step-container__edit__option--selected':
+								textEmbeddingProfile.name === selectedTextEmbeddingProfile?.name,
+						}"
+						@click.stop="handleTextEmbeddingProfileSelected(textEmbeddingProfile)"
+					>
+						<div v-if="textEmbeddingProfile.object_id !== ''">
+							<div class="step-container__header">{{ textEmbeddingProfile.name }}</div>
+							<div v-if="textEmbeddingProfile.resolved_configuration_references?.Endpoint">
+								<span class="step-option__header">URL:</span>
+								<span>{{ textEmbeddingProfile.resolved_configuration_references.Endpoint }}</span
 								><br />
 								<span class="step-option__header">Deployment:</span>
 								<span>{{
-									selectedTextEmbeddingProfile.resolved_configuration_references.DeploymentName
+									textEmbeddingProfile.resolved_configuration_references.DeploymentName
 								}}</span>
 							</div>
-							<div v-if="selectedTextEmbeddingProfile.settings?.model_name">
+							<div v-if="textEmbeddingProfile.settings?.model_name">
 								<span class="step-option__header">Model Name:</span>
-								<span>{{ selectedTextEmbeddingProfile.settings.model_name }}</span>
+								<span>{{ textEmbeddingProfile.settings.model_name }}</span>
 							</div>
 						</div>
 						<div v-else>
 							<div class="step-container__header">DEFAULT</div>
-							{{ selectedTextEmbeddingProfile.name }}
+							{{ textEmbeddingProfile.name }}
 						</div>
-					</template>
-					<template v-else>Please select text embedding profile.</template>
+					</div>
+				</template>
+			</CreateAgentStepItem>
+			<div></div>
+
+			<template v-if="dedicated_pipeline">
+				<div class="step-header">How should the data be processed for indexing?</div>
+				<div class="step-header">When should the data be indexed?</div>
+
+				<!-- Process indexing -->
+
+				<CreateAgentStepItem>
+					<div class="step-container__header">Splitting & Chunking</div>
+
+					<div>
+						<span class="step-option__header">Chunk size:</span>
+						<span>{{ chunkSize }}</span>
+					</div>
+
+					<div>
+						<span class="step-option__header">Overlap size:</span>
+						<span>{{ overlapSize == 0 ? 'No Overlap' : overlapSize }}</span>
+					</div>
 
 					<template #edit>
-						<div class="step-container__edit__header">Please select text embedding profile.</div>
-						<div
-							v-for="textEmbeddingProfile in textEmbeddingProfileSources"
-							:key="textEmbeddingProfile.name"
-							class="step-container__edit__option"
-							:class="{
-								'step-container__edit__option--selected':
-									textEmbeddingProfile.name === selectedTextEmbeddingProfile?.name,
-							}"
-							@click.stop="handleTextEmbeddingProfileSelected(textEmbeddingProfile)"
-						>
-							<div v-if="textEmbeddingProfile.object_id !== ''">
-								<div class="step-container__header">{{ textEmbeddingProfile.name }}</div>
-								<div v-if="textEmbeddingProfile.resolved_configuration_references?.Endpoint">
-									<span class="step-option__header">URL:</span>
-									<span>{{ textEmbeddingProfile.resolved_configuration_references.Endpoint }}</span
-									><br />
-									<span class="step-option__header">Deployment:</span>
-									<span>{{
-										textEmbeddingProfile.resolved_configuration_references.DeploymentName
-									}}</span>
-								</div>
-								<div v-if="textEmbeddingProfile.settings?.model_name">
-									<span class="step-option__header">Model Name:</span>
-									<span>{{ textEmbeddingProfile.settings.model_name }}</span>
-								</div>
-							</div>
-							<div v-else>
-								<div class="step-container__header">DEFAULT</div>
-								{{ textEmbeddingProfile.name }}
-							</div>
-						</div>
-					</template>
-				</CreateAgentStepItem>
-				<div></div>
-
-				<template v-if="dedicated_pipeline">
-					<div class="step-header">How should the data be processed for indexing?</div>
-					<div class="step-header">When should the data be indexed?</div>
-
-					<!-- Process indexing -->
-
-					<CreateAgentStepItem>
 						<div class="step-container__header">Splitting & Chunking</div>
 
 						<div>
-							<span class="step-option__header">Chunk size:</span>
-							<span>{{ chunkSize }}</span>
+							<span id="aria-chunk-size" class="step-option__header">Chunk size:</span>
+							<InputText
+								v-model="chunkSize"
+								type="number"
+								class="mt-2"
+								aria-label="aria-chunk-size"
+							/>
 						</div>
 
 						<div>
-							<span class="step-option__header">Overlap size:</span>
-							<span>{{ overlapSize == 0 ? 'No Overlap' : overlapSize }}</span>
+							<span id="aria-overlap-size" class="step-option__header">Overlap size:</span>
+							<InputText
+								v-model="overlapSize"
+								type="number"
+								class="mt-2"
+								aria-label="aria-overlap-size"
+							/>
 						</div>
+					</template>
+				</CreateAgentStepItem>
 
-						<template #edit>
-							<div class="step-container__header">Splitting & Chunking</div>
+				<!-- Trigger -->
+				<CreateAgentStepItem>
+					<div class="step-container__header">Trigger</div>
+					<div>Runs every time a new item is added to the data source.</div>
 
-							<div>
-								<span id="aria-chunk-size" class="step-option__header">Chunk size:</span>
-								<InputText
-									v-model="chunkSize"
-									type="number"
-									class="mt-2"
-									aria-label="aria-chunk-size"
-								/>
-							</div>
+					<div class="mt-2">
+						<span class="step-option__header">Frequency:</span>
+						<span>{{ triggerFrequency }}</span>
+					</div>
 
-							<div>
-								<span id="aria-overlap-size" class="step-option__header">Overlap size:</span>
-								<InputText
-									v-model="overlapSize"
-									type="number"
-									class="mt-2"
-									aria-label="aria-overlap-size"
-								/>
-							</div>
-						</template>
-					</CreateAgentStepItem>
+					<div v-if="triggerFrequency === 'Schedule' && triggerFrequencyScheduled">
+						<span class="step-option__header">Schedule:</span>
+						<span>{{ triggerFrequencyScheduled }}</span>
+					</div>
 
-					<!-- Trigger -->
-					<CreateAgentStepItem>
+					<template #edit>
 						<div class="step-container__header">Trigger</div>
 						<div>Runs every time a new item is added to the data source.</div>
 
 						<div class="mt-2">
-							<span class="step-option__header">Frequency:</span>
-							<span>{{ triggerFrequency }}</span>
+							<span id="aria-frequency" class="step-option__header">Frequency:</span>
+							<Dropdown
+								v-model="triggerFrequency"
+								class="dropdown--agent"
+								:options="triggerFrequencyOptions"
+								placeholder="--Select--"
+								aria-label="aria-frequency"
+							/>
 						</div>
 
-						<div v-if="triggerFrequency === 'Schedule' && triggerFrequencyScheduled">
-							<span class="step-option__header">Schedule:</span>
-							<span>{{ triggerFrequencyScheduled }}</span>
+						<div v-if="triggerFrequency === 'Schedule'" class="mt-2">
+							<CronLight
+								v-model="triggerFrequencyScheduled"
+								format="quartz"
+								@error="error = $event"
+							/>
+							<!-- editable cron expression -->
+							<InputText
+								class="mt-4"
+								label="cron expression"
+								:model-value="triggerFrequencyScheduled"
+								:error-messages="error"
+								aria-label="cron expression"
+								@update:model-value="triggerFrequencyNextScheduled = $event"
+								@blur="triggerFrequencyScheduled = triggerFrequencyNextScheduled"
+							/>
 						</div>
-
-						<template #edit>
-							<div class="step-container__header">Trigger</div>
-							<div>Runs every time a new item is added to the data source.</div>
-
-							<div class="mt-2">
-								<span id="aria-frequency" class="step-option__header">Frequency:</span>
-								<Dropdown
-									v-model="triggerFrequency"
-									class="dropdown--agent"
-									:options="triggerFrequencyOptions"
-									placeholder="--Select--"
-									aria-label="aria-frequency"
-								/>
-							</div>
-
-							<div v-if="triggerFrequency === 'Schedule'" class="mt-2">
-								<CronLight
-									v-model="triggerFrequencyScheduled"
-									format="quartz"
-									@error="error = $event"
-								/>
-								<!-- editable cron expression -->
-								<InputText
-									class="mt-4"
-									label="cron expression"
-									:model-value="triggerFrequencyScheduled"
-									:error-messages="error"
-									aria-label="cron expression"
-									@update:model-value="triggerFrequencyNextScheduled = $event"
-									@blur="triggerFrequencyScheduled = triggerFrequencyNextScheduled"
-								/>
-							</div>
-						</template>
-					</CreateAgentStepItem>
-				</template>
+					</template>
+				</CreateAgentStepItem>
 			</template>
+
 			<!-- End of Knowledge Source -->
 
 			<!-- Agent configuration -->
@@ -759,7 +740,6 @@ const getDefaultFormValues = () => {
 		vectorization_data_pipeline_object_id: '',
 		prompt_object_id: '',
 		dedicated_pipeline: true,
-		inline_context: false,
 		agentType: 'knowledge-management' as CreateAgentRequest['type'],
 
 		cost_center: '',
@@ -1015,7 +995,6 @@ export default {
 			this.agentWelcomeMessage = agent.properties?.welcome_message || this.agentWelcomeMessage;
 			this.agentType = agent.type || this.agentType;
 			this.object_id = agent.object_id || this.object_id;
-			this.inline_context = agent.inline_context || this.inline_context;
 			this.cost_center = agent.cost_center || this.cost_center;
 			this.hasOpenAIAssistantCapability = agent.capabilities?.includes('OpenAI.Assistants');
 			this.expirationDate = agent.expiration_date
@@ -1173,7 +1152,7 @@ export default {
 				errors.push(this.validationMessage);
 			}
 
-			if (!this.inline_context && !this.selectedTextEmbeddingProfile) {
+			if (!this.selectedTextEmbeddingProfile) {
 				errors.push('Please select a text embedding profile.');
 			} else {
 				this.text_embedding_profile_object_id = this.selectedTextEmbeddingProfile?.object_id ?? '';
@@ -1245,30 +1224,28 @@ export default {
 				let dataSourceObjectId = '';
 				let indexingProfileObjectId = [''];
 
-				if (!this.inline_context) {
-					// Handle TextPartitioningProfile creation/update.
-					const tokenTextPartitionResponse = await api.createOrUpdateTextPartitioningProfile(
-						this.agentName,
-						tokenTextPartitionRequest,
-					);
-					textPartitioningProfileObjectId = tokenTextPartitionResponse.objectId;
+				// Handle TextPartitioningProfile creation/update.
+				const tokenTextPartitionResponse = await api.createOrUpdateTextPartitioningProfile(
+					this.agentName,
+					tokenTextPartitionRequest,
+				);
+				textPartitioningProfileObjectId = tokenTextPartitionResponse.objectId;
 
-					// Select the default data source, if any.
-					dataSourceObjectId = this.selectedDataSource?.object_id ?? '';
-					if (dataSourceObjectId === '' && this.dedicated_pipeline) {
-						const defaultDataSource = await api.getDefaultDataSource();
-						if (defaultDataSource !== null) {
-							dataSourceObjectId = defaultDataSource.object_id;
-						}
+				// Select the default data source, if any.
+				dataSourceObjectId = this.selectedDataSource?.object_id ?? '';
+				if (dataSourceObjectId === '' && this.dedicated_pipeline) {
+					const defaultDataSource = await api.getDefaultDataSource();
+					if (defaultDataSource !== null) {
+						dataSourceObjectId = defaultDataSource.object_id;
 					}
+				}
 
-					// Select the default indexing profile, if any.
-					indexingProfileObjectId = [this.selectedIndexSource?.object_id ?? ''];
-					if (indexingProfileObjectId.length === 0) {
-						const defaultAgentIndex = await api.getDefaultAgentIndex();
-						if (defaultAgentIndex !== null) {
-							indexingProfileObjectId = [defaultAgentIndex.object_id];
-						}
+				// Select the default indexing profile, if any.
+				indexingProfileObjectId = [this.selectedIndexSource?.object_id ?? ''];
+				if (indexingProfileObjectId.length === 0) {
+					const defaultAgentIndex = await api.getDefaultAgentIndex();
+					if (defaultAgentIndex !== null) {
+						indexingProfileObjectId = [defaultAgentIndex.object_id];
 					}
 				}
 
@@ -1278,7 +1255,6 @@ export default {
 					description: this.agentDescription,
 					properties: { welcome_message: this.agentWelcomeMessage },
 					object_id: this.object_id,
-					inline_context: this.inline_context,
 					cost_center: this.cost_center,
 					expiration_date: this.expirationDate?.toISOString(),
 

@@ -6,14 +6,14 @@ using Xunit.Abstractions;
 namespace FoundationaLLM.Core.Examples
 {
     /// <summary>
-    /// Example class for sending user queries to a Knowledge Management with inline context agent using the SemanticKernel orchestrator.
+    /// Example class for sending user queries to a Knowledge Management agent using the SemanticKernel orchestrator.
     /// </summary>
-    public class Example0002_KnowledgeManagementInlineContextAgentWithSemanticKernel : BaseTest, IClassFixture<TestFixture>
+    public class Example0002_GenericKnowledgeManagementAgentWithSemanticKernel : BaseTest, IClassFixture<TestFixture>
     {
         private readonly IAgentConversationTestService _agentConversationTestService;
         private readonly IManagementAPITestManager _managementAPITestManager;
 
-        public Example0002_KnowledgeManagementInlineContextAgentWithSemanticKernel(ITestOutputHelper output, TestFixture fixture)
+        public Example0002_GenericKnowledgeManagementAgentWithSemanticKernel(ITestOutputHelper output, TestFixture fixture)
             : base(output, [fixture.ServiceProvider])
         {
             _agentConversationTestService = GetService<IAgentConversationTestService>();
@@ -23,13 +23,13 @@ namespace FoundationaLLM.Core.Examples
         [Fact]
         public async Task RunAsync()
         {
-            WriteLine("============ Knowledge Management with inline context agent using SemanticKernel ============");
+            WriteLine("============ Knowledge Management with agent using SemanticKernel ============");
             await RunExampleAsync();
         }
 
         private async Task RunExampleAsync()
         {
-            var agentName = Constants.TestAgentNames.SemanticKernelInlineContextAgentName;
+            var agentName = Constants.TestAgentNames.SemanticKernelAgentName;
             try
             {
                 var userPrompts = new List<string>

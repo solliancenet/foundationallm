@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using FoundationaLLM.Common.Models.ResourceProviders.Agent;
+using Microsoft.IdentityModel.Tokens;
 
 namespace FoundationaLLM.Agent.Validation.Metadata
 {
@@ -15,12 +16,12 @@ namespace FoundationaLLM.Agent.Validation.Metadata
         {
             Include(new AgentBaseValidator());
 
-            When(x => x.InlineContext == false, () =>
+
+            When(x => x.Vectorization != null && x.Vectorization.IndexingProfileObjectIds != null &&
+            x.Vectorization.IndexingProfileObjectIds.Any(ipoi => !string.IsNullOrWhiteSpace(ipoi)),
+            () =>
             {
-                RuleFor(x => x.Vectorization.IndexingProfileObjectIds).NotEmpty()
-                    .WithMessage("Indexing profiles are required for Knowledge Management Agents.");
-                RuleFor(x => x.Vectorization.IndexingProfileObjectIds[0]).NotEmpty()
-                    .WithMessage("One indexing profile is required.");
+
                 RuleFor(x => x.Vectorization.TextEmbeddingProfileObjectId).NotEmpty()
                     .WithMessage("Embedding profile is required for Knowledge Management Agents.");
 

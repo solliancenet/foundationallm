@@ -9,7 +9,7 @@ using Xunit.Abstractions;
 namespace FoundationaLLM.Core.Examples
 {
     /// <summary>
-    /// Example class for sending user queries to a Knowledge Management with inline context agent using the LangChain orchestrator.
+    /// Example class for sending user queries to a Knowledge Management agent using the LangChain orchestrator.
     /// </summary>
     public class Example0020_GenerateConversationsAboutProducts : BaseTest, IClassFixture<TestFixture>
 	{

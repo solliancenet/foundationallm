@@ -6,14 +6,14 @@ using Xunit.Abstractions;
 namespace FoundationaLLM.Core.Examples
 {
     /// <summary>
-    /// Example class for sending user queries to a Knowledge Management with inline context agent using the LangChain orchestrator.
+    /// Example class for sending user queries to a Knowledge Management with agent using the LangChain orchestrator.
     /// </summary>
-    public class Example0003_KnowledgeManagementInlineContextAgentWithLangChain : BaseTest, IClassFixture<TestFixture>
+    public class Example0003_GenericKnowledgeManagementAgentWithLangChain : BaseTest, IClassFixture<TestFixture>
 	{
 		private readonly IAgentConversationTestService _agentConversationTestService;
         private readonly IManagementAPITestManager _managementAPITestManager;
 
-		public Example0003_KnowledgeManagementInlineContextAgentWithLangChain(ITestOutputHelper output, TestFixture fixture)
+		public Example0003_GenericKnowledgeManagementAgentWithLangChain(ITestOutputHelper output, TestFixture fixture)
 			: base(output, [fixture.ServiceProvider])
 		{
             _agentConversationTestService = GetService<IAgentConversationTestService>();
@@ -23,13 +23,13 @@ namespace FoundationaLLM.Core.Examples
 		[Fact]
 		public async Task RunAsync()
 		{
-			WriteLine("============ Knowledge Management with inline context agent using LangChain ============");
+			WriteLine("============ Knowledge Management with agent using LangChain ============");
 			await RunExampleAsync();
 		}
 
 		private async Task RunExampleAsync()
         {
-            var agentName = Constants.TestAgentNames.GenericInlineContextAgentName;
+            var agentName = Constants.TestAgentNames.GenericAgentName;
             try
             {
                 var userPrompts = new List<string>

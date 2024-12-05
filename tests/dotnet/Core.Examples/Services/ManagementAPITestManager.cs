@@ -129,7 +129,7 @@ namespace FoundationaLLM.Core.Examples.Services
             apiEndpointProfile.Url = apiEndpointUrl;
             var response = await managementClient.Configuration.UpsertAPIEndpointConfiguration(apiEndpointProfile);
 
-            return GetObjectId(response); 
+            return GetObjectId(response);
         }
 
         public async Task<string> CreateAIModel(string aiModelName, string endpointObjectId)
@@ -162,7 +162,7 @@ namespace FoundationaLLM.Core.Examples.Services
         {
             var response = await managementRestClient.Resources.UpsertResourceAsync(
                 ResourceProviderNames.FoundationaLLM_Vectorization,
-                vectorizationRequest.ObjectId!, 
+                vectorizationRequest.ObjectId!,
                 vectorizationRequest);
             return GetObjectId(response);
         }
@@ -173,7 +173,7 @@ namespace FoundationaLLM.Core.Examples.Services
             var resourceId = vectorizationRequest.ObjectId!.Split("/").Last();
             var fullPath = $"instances/{instanceSettings.Value.Id}/providers/{ResourceProviderNames.FoundationaLLM_Vectorization}/{VectorizationResourceTypeNames.VectorizationRequests}/{resourceId}/process";
 
-            var managementClient = await httpClientManager.GetHttpClientAsync(HttpClientNames.ManagementAPI);            
+            var managementClient = await httpClientManager.GetHttpClientAsync(HttpClientNames.ManagementAPI);
             var response = await managementClient.PostAsync(fullPath, new StringContent("{}", Encoding.UTF8, "application/json"));
             if (response.IsSuccessStatusCode)
             {
@@ -188,7 +188,7 @@ namespace FoundationaLLM.Core.Examples.Services
         {
             await managementClient.Configuration.DeleteAppConfigurationAsync(key);
         }
-        
+
         public async Task DeleteVectorizationRequest(VectorizationRequest vectorizationRequest)
         {
             await DeleteResourceAsync(instanceSettings.Value.Id, ResourceProviderNames.FoundationaLLM_Vectorization, $"vectorizationRequests/{vectorizationRequest.ObjectId}");
@@ -247,14 +247,14 @@ namespace FoundationaLLM.Core.Examples.Services
         }
 
         /// <inheritdoc/>
-        public async Task<AgentBase> CreateAgent(string agentName, string? indexingProfileName, 
+        public async Task<AgentBase> CreateAgent(string agentName, string? indexingProfileName,
                 string? textEmbeddingProfileName, string? textPartitioningProfileName,
                 string? apiEndpointName, string? apiEndpointUrl, string? aiModelName)
         {
             // All test agents should have a corresponding prompt in the catalog.
             // Retrieve the agent and prompt from the test catalog.
             var agent = AgentCatalog.GetAllAgents().FirstOrDefault(a => a.Name == agentName);
-            
+
             if (agent == null)
             {
                 throw new InvalidOperationException($"The agent {agentName} was not found.");
@@ -290,7 +290,7 @@ namespace FoundationaLLM.Core.Examples.Services
             {
                 // Attempt to lookup the AIModel to retrieve its ObjectId.
                 var aiModel = await managementClient.AIModels.GetAIModelAsync(agent.AIModelObjectId!);
-                if (aiModel is {Resource: not null})
+                if (aiModel is { Resource: not null })
                 {
                     agent.AIModelObjectId = aiModel.Resource.ObjectId;
                 }
@@ -298,18 +298,14 @@ namespace FoundationaLLM.Core.Examples.Services
 
             // TODO: Create any other dependencies for the agent here.
 
-            bool inlineContext = ((KnowledgeManagementAgent)agent).InlineContext;
-            if (!inlineContext)
-            {
-                if(!string.IsNullOrEmpty(indexingProfileName))
-                    ((KnowledgeManagementAgent)agent).Vectorization.IndexingProfileObjectIds = [(await GetIndexingProfile(indexingProfileName)).ObjectId];
+            if (!string.IsNullOrEmpty(indexingProfileName))
+                ((KnowledgeManagementAgent)agent).Vectorization.IndexingProfileObjectIds = [(await GetIndexingProfile(indexingProfileName)).ObjectId];
 
-                if (!string.IsNullOrEmpty(textEmbeddingProfileName))
-                    ((KnowledgeManagementAgent)agent).Vectorization.TextEmbeddingProfileObjectId = (await GetTextEmbeddingProfile(textEmbeddingProfileName)).ObjectId;
+            if (!string.IsNullOrEmpty(textEmbeddingProfileName))
+                ((KnowledgeManagementAgent)agent).Vectorization.TextEmbeddingProfileObjectId = (await GetTextEmbeddingProfile(textEmbeddingProfileName)).ObjectId;
 
-                if (!string.IsNullOrEmpty(textPartitioningProfileName))
-                    ((KnowledgeManagementAgent)agent).Vectorization.TextPartitioningProfileObjectId = (await GetTextPartitioningProfile(textPartitioningProfileName)).ObjectId;
-            }
+            if (!string.IsNullOrEmpty(textPartitioningProfileName))
+                ((KnowledgeManagementAgent)agent).Vectorization.TextPartitioningProfileObjectId = (await GetTextPartitioningProfile(textPartitioningProfileName)).ObjectId;
 
             // Create the agent.
             var response = await managementClient.Agents.UpsertAgentAsync(agent);
@@ -327,7 +323,7 @@ namespace FoundationaLLM.Core.Examples.Services
             {
                 throw new InvalidOperationException($"The prompt {promptName} was not found.");
             }
-            
+
             var response = await managementClient.Prompts.UpsertPromptAsync(prompt);
             prompt.ObjectId = GetObjectId(response);
 
@@ -338,7 +334,7 @@ namespace FoundationaLLM.Core.Examples.Services
         {
             return result.ObjectId ?? throw new InvalidOperationException("The returned object ID is invalid.");
         }
-      
+
         /// <inheritdoc/>
         public async Task DeleteResourceAsync(string instanceId, string resourceProvider, string resourcePath)
         {

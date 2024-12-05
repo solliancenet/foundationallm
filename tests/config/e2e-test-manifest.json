@@ -144,13 +144,13 @@
         },
         {
             "name": "0002",
-            "task_name": "Example0002_KnowledgeManagementInlineContextAgentWithSemanticKernel.RunAsync",
+            "task_name": "Example0002_KnowledgeManagementAgentWithSemanticKernel.RunAsync",
             "namespace": "FoundationaLLM.Core.Examples",
             "target": "./tests/dotnet/Core.Examples/Core.Examples.csproj"
         },
         {
             "name": "0003",
-            "task_name": "Example0003_KnowledgeManagementInlineContextAgentWithLangChain.RunAsync",
+            "task_name": "Example0003_KnowledgeManagementAgentWithLangChain.RunAsync",
             "namespace": "FoundationaLLM.Core.Examples",
             "target": "./tests/dotnet/Core.Examples/Core.Examples.csproj"
         },

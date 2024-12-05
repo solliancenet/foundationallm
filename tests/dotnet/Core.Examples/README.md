@@ -31,13 +31,13 @@ You will see an output similar to the following after the test is completed:
 
 ![The completed test is displayed.](media/example-1-completed-test.png)
 
-### Example 3: Knowledge Management inline context agent with a LangChain orchestrator
+### Example 3: Knowledge Management agent with a LangChain orchestrator
 
-**Purpose**: Create and use a Knowledge Management agent with an inline context that uses LangChain as the LLM orchestrator.
+**Purpose**: Create and use a Knowledge Management agent that uses LangChain as the LLM orchestrator.
 
 **File**: [Example0003_KnowledgeManagementInlineContextAgentWithLangChain.cs](Example0003_KnowledgeManagementInlineContextAgentWithLangChain.cs)
 
-This example demonstrates creating a Knowledge Management agent with an inline context that uses LangChain as the LLM orchestrator. The agent's Prompt contains the data context about the Rosetta Stone, which the orchestrator sends to LangChain as part of the composed system prompt that provides the context the LLM uses to provide appropriate reponses to the user. The example sends questions about the Rosetta Stone to the agent and receives responses.
+This example demonstrates creating a Knowledge Management agent with that uses LangChain as the LLM orchestrator. The agent's Prompt contains the data context about the Rosetta Stone, which the orchestrator sends to LangChain as part of the composed system prompt that provides the context the LLM uses to provide appropriate reponses to the user. The example sends questions about the Rosetta Stone to the agent and receives responses.
 
 #### Setup
 
@@ -54,7 +54,7 @@ Run the example by running a test on the `Example0003_KnowledgeManagementInlineC
 You will see an output similar to the following after the test is completed:
 
 ```text
-============ Knowledge Management with inline context agent using LangChain ============
+============ Knowledge Management agent using LangChain ============
 Send Rosetta Stone questions to the FLLMGenericInlineContextTest agent.
 Agent conversation history:
 - User: Who are you?
@@ -441,7 +441,7 @@ Agent conversation history:
 
 **File**: [Example0013_KnowledgeManagementSemanticKernelWithLargeIndex.cs](Example0013_KnowledgeManagementSemanticKernelWithLargeIndex.cs)
 
-This example demonstrates how to use the Management API to create a Knowledge Management agent without an Inline Context and how to use the Core API to send user prompts to the agent and receive completions.
+This example demonstrates how to use the Management API to create a Knowledge Management agent and how to use the Core API to send user prompts to the agent and receive completions.
 
 #### Setup
 
@@ -473,7 +473,7 @@ Agent conversation history:
 
 **File**: [Example0014_KnowledgeManagementLangChainWithLargeIndex.cs](Example0014_KnowledgeManagementLangChainWithLargeIndex.cs)
 
-This example demonstrates how to use the Management API to create a Knowledge Management agent without an Inline Context and how to use the Core API to send user prompts to the agent and receive completions.
+This example demonstrates how to use the Management API to create a Knowledge Management agent and how to use the Core API to send user prompts to the agent and receive completions.
 
 #### Setup
 

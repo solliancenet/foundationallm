@@ -18,8 +18,8 @@ namespace FoundationaLLM.Core.Examples.Catalogs
         [
             new MultipartPrompt
             {
-                Name = TestAgentNames.GenericInlineContextAgentName,
-                Description = $"Prompt template for the {TestAgentNames.GenericInlineContextAgentName} agent.",
+                Name = TestAgentNames.GenericAgentName,
+                Description = $"Prompt template for the {TestAgentNames.GenericAgentName} agent.",
                 Prefix = @"You are an analytic agent named Omar that helps people understand the history of the Rosetta Stone.
                     Provide concise answers that are polite and professional.
 
@@ -30,8 +30,8 @@ namespace FoundationaLLM.Core.Examples.Catalogs
             },
             new MultipartPrompt
             {
-                Name = TestAgentNames.SemanticKernelInlineContextAgentName,
-                Description = $"Prompt template for the {TestAgentNames.SemanticKernelInlineContextAgentName} agent.",
+                Name = TestAgentNames.SemanticKernelAgentName,
+                Description = $"Prompt template for the {TestAgentNames.SemanticKernelAgentName} agent.",
                 Prefix = @"You are an analytic agent named Omar that helps people understand the history of the Rosetta Stone.
                     Provide concise answers that are polite and professional.
                     Context:
@@ -43,13 +43,6 @@ namespace FoundationaLLM.Core.Examples.Catalogs
             {
                 Name = TestAgentNames.LangChainAgentName,
                 Description = $"Prompt template for the {TestAgentNames.LangChainAgentName} agent.",
-                Prefix = @"You are an analytic agent named Omar that helps people understand the history of the Rosetta Stone.
-                    Provide concise answers that are polite and professional."
-            },
-            new MultipartPrompt
-            {
-                Name = TestAgentNames.SemanticKernelAgentName,
-                Description = $"Prompt template for the {TestAgentNames.SemanticKernelAgentName} agent.",
                 Prefix = @"You are an analytic agent named Omar that helps people understand the history of the Rosetta Stone.
                     Provide concise answers that are polite and professional."
             },

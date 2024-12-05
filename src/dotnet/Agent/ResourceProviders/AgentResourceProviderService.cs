@@ -254,7 +254,7 @@ namespace FoundationaLLM.Agent.ResourceProviders
 
             agent.ObjectId = resourcePath.GetObjectId(_instanceSettings.Id, _name);
 
-            if ((agent is KnowledgeManagementAgent { Vectorization.DedicatedPipeline: true, InlineContext: false } kmAgent))
+            if ((agent is KnowledgeManagementAgent { Vectorization.DedicatedPipeline: true } kmAgent))
             {
                 var result = await GetResourceProviderServiceByName(ResourceProviderNames.FoundationaLLM_Vectorization)
                     .HandlePostAsync(

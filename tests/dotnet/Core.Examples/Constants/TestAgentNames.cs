@@ -12,23 +12,15 @@
         /// <summary>
         /// The name of the generic inline context agent.
         /// </summary>
-        public const string GenericInlineContextAgentName = "FLLMGenericInlineContextTest";
+        public const string GenericAgentName = "FLLMGenericTest";
         /// <summary>
         /// The name of the lang chain inline context agent.
         /// </summary>
-        public const string LangChainInlineContextAgentName = "KMAgentWithLangChainInlineContext";
+        public const string LangChainAgentName = "KMAgentWithLangChain";
         /// <summary>
         /// The name of the semantic kernel inline context agent.
         /// </summary>
-        public const string SemanticKernelInlineContextAgentName = "KMAgentWithSemanticKernelInlineContext";
-        /// <summary>
-        /// The name of the semantic kernel agent.
-        /// </summary>
         public const string SemanticKernelAgentName = "KMAgentWithSemanticKernel";
-        /// <summary>
-        /// The name of the lang chain agent.
-        /// </summary>
-        public const string LangChainAgentName = "KMAgentWithLangChain";
         /// <summary>
         /// The name of the SDZWA semantic kernel agent.
         /// </summary>
