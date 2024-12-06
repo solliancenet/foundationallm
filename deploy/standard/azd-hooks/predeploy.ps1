@@ -29,12 +29,12 @@ finally {
 Push-Location $($MyInvocation.InvocationName | Split-Path)
 try {
     # Map TLS certifiates to secret names
-    $certificates = @(
-        "chatui",
-        "coreapi",
-        "managementui",
-        "managementapi"
-    )
+    $certificates = @{
+        "chatui" = $env:FLLM_USER_PORTAL_CERT_PASSWORD,
+        "coreapi" = $env:FLLM_CORE_API_CERT_PASSWORD,
+        "managementui" = $env:FLLM_MGMT_PORTAL_CERT_PASSWORD,
+        "managementapi" = $env:FLLM_MGMT_API_CERT_PASSWORD
+    }
 
     Invoke-AndRequireSuccess "Load Certificates" {
         ./utility/Load-Certificates.ps1 `
