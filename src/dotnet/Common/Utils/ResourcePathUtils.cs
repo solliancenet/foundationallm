@@ -83,52 +83,12 @@ namespace FoundationaLLM.Common.Utils
                 || !allowedInstanceIds.Contains(instanceId!))
                 throw new AuthorizationException("The resource path does not contain a valid FoundationaLLM instance identifier.");
 
-            var parsedResourcePath = GetResourcePath(resourcePath);
+            var parsedResourcePath = ResourcePath.GetResourcePath(resourcePath);
 
             if (!allowRootPath && parsedResourcePath.IsRootPath)
                 throw new AuthorizationException("A root resource path is not allowed in this context.");
 
             return parsedResourcePath;
         }
-
-        private static ResourcePath GetResourcePath(string resourcePath)
-        {
-            ResourcePath.TryParseResourceProvider(resourcePath, out var resourceProvider);
-
-            var allowedResourceProviders = ImmutableList<string>.Empty;
-            var allowedResourceTypes = new Dictionary<string, ResourceTypeDescriptor>();
-
-            if (resourceProvider != null)
-            {
-                allowedResourceProviders = allowedResourceProviders.Add(resourceProvider);
-                allowedResourceTypes = GetAllowedResourceTypes(resourceProvider);
-            }
-
-            if (!ResourcePath.TryParse(
-                resourcePath,
-                allowedResourceProviders,
-                allowedResourceTypes,
-                false,
-                out ResourcePath? parsedResourcePath))
-                throw new AuthorizationException($"The resource path [{resourcePath}] is invalid.");
-
-            return parsedResourcePath!;
-        }
-
-        private static Dictionary<string, ResourceTypeDescriptor> GetAllowedResourceTypes(string resourceProvider) =>
-            resourceProvider switch
-            {
-                ResourceProviderNames.FoundationaLLM_Agent => AgentResourceProviderMetadata.AllowedResourceTypes,
-                ResourceProviderNames.FoundationaLLM_DataSource => DataSourceResourceProviderMetadata.AllowedResourceTypes,
-                ResourceProviderNames.FoundationaLLM_Prompt => PromptResourceProviderMetadata.AllowedResourceTypes,
-                ResourceProviderNames.FoundationaLLM_Vectorization => VectorizationResourceProviderMetadata.AllowedResourceTypes,
-                ResourceProviderNames.FoundationaLLM_Configuration => ConfigurationResourceProviderMetadata.AllowedResourceTypes,
-                ResourceProviderNames.FoundationaLLM_Attachment => AttachmentResourceProviderMetadata.AllowedResourceTypes,
-                ResourceProviderNames.FoundationaLLM_Authorization => AuthorizationResourceProviderMetadata.AllowedResourceTypes,
-                ResourceProviderNames.FoundationaLLM_AIModel => AIModelResourceProviderMetadata.AllowedResourceTypes,
-                ResourceProviderNames.FoundationaLLM_AzureOpenAI => AzureOpenAIResourceProviderMetadata.AllowedResourceTypes,
-                ResourceProviderNames.FoundationaLLM_Conversation => ConversationResourceProviderMetadata.AllowedResourceTypes,
-                _ => []
-            };
     }
 }

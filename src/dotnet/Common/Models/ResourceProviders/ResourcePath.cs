@@ -387,6 +387,55 @@ namespace FoundationaLLM.Common.Models.ResourceProviders
             return true;
         }
 
+        /// <summary>
+        /// Parses a resource path.
+        /// </summary>
+        /// <param name="resourcePath">The resource path to be parsed.</param>
+        /// <returns>A <see cref="ResourcePath"/> object containing the parsed resource path.</returns>
+        public static ResourcePath GetResourcePath(string resourcePath)
+        {
+            TryParseResourceProvider(resourcePath, out var resourceProvider);
+
+            var allowedResourceProviders = ImmutableList<string>.Empty;
+            var allowedResourceTypes = new Dictionary<string, ResourceTypeDescriptor>();
+
+            if (resourceProvider != null)
+            {
+                allowedResourceProviders = allowedResourceProviders.Add(resourceProvider);
+                allowedResourceTypes = GetAllowedResourceTypes(resourceProvider);
+            }
+
+            if (!TryParse(
+                resourcePath,
+                allowedResourceProviders,
+                allowedResourceTypes,
+                false,
+                out ResourcePath? parsedResourcePath))
+                throw new AuthorizationException($"The resource path [{resourcePath}] is invalid.");
+
+            return parsedResourcePath!;
+        }
+
+        /// <summary>
+        /// Retrieves the allowed resource types for a specified resource provider.
+        /// </summary>
+        /// <param name="resourceProvider">The name of the resource provider.</param>
+        public static Dictionary<string, ResourceTypeDescriptor> GetAllowedResourceTypes(string resourceProvider) =>
+            resourceProvider switch
+            {
+                ResourceProviderNames.FoundationaLLM_Agent => AgentResourceProviderMetadata.AllowedResourceTypes,
+                ResourceProviderNames.FoundationaLLM_DataSource => DataSourceResourceProviderMetadata.AllowedResourceTypes,
+                ResourceProviderNames.FoundationaLLM_Prompt => PromptResourceProviderMetadata.AllowedResourceTypes,
+                ResourceProviderNames.FoundationaLLM_Vectorization => VectorizationResourceProviderMetadata.AllowedResourceTypes,
+                ResourceProviderNames.FoundationaLLM_Configuration => ConfigurationResourceProviderMetadata.AllowedResourceTypes,
+                ResourceProviderNames.FoundationaLLM_Attachment => AttachmentResourceProviderMetadata.AllowedResourceTypes,
+                ResourceProviderNames.FoundationaLLM_Authorization => AuthorizationResourceProviderMetadata.AllowedResourceTypes,
+                ResourceProviderNames.FoundationaLLM_AIModel => AIModelResourceProviderMetadata.AllowedResourceTypes,
+                ResourceProviderNames.FoundationaLLM_AzureOpenAI => AzureOpenAIResourceProviderMetadata.AllowedResourceTypes,
+                ResourceProviderNames.FoundationaLLM_Conversation => ConversationResourceProviderMetadata.AllowedResourceTypes,
+                _ => []
+            };
+
         private void ParseResourcePath(
             string resourcePath,
             ImmutableList<string> allowedResourceProviders,

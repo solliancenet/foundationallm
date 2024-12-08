@@ -68,7 +68,7 @@
             "module": "uvicorn",
             "cwd" : "${workspaceFolder}/src/python/LangChainAPI/app",
             "env": {
-                "PYTHONPATH": "d:/repos/solliance-foundationallm/src/python/LangChainAPI;d:/repos/solliance-foundationallm/src/python/PythonSDK;d:/repos/fllm/foundationallm/src/python/PythonSDK;"
+                "PYTHONPATH": "${workspaceFolder}/src/python/LangChainAPI;${workspaceFolder}/src/python/PythonSDK;d:/repos/fllm/foundationallm/src/python/PythonSDK;"
             },
             "args": ["main:app","--reload", "--port", "8765"],
             "python": "${workspaceFolder}/src/python/LangChainAPI/env/Scripts/python.exe"
