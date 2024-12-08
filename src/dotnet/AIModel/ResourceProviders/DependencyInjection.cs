@@ -31,7 +31,7 @@ namespace FoundationaLLM
             builder.Services.AddSingleton<IResourceProviderService, AIModelResourceProviderService>(sp =>
                 new AIModelResourceProviderService(
                     sp.GetRequiredService<IOptions<InstanceSettings>>(),
-                    sp.GetRequiredService<IAuthorizationService>(),
+                    sp.GetRequiredService<IAuthorizationServiceClient>(),
                     sp.GetRequiredService<IEnumerable<IStorageService>>()
                         .Single(s => s.InstanceName == DependencyInjectionKeys.FoundationaLLM_ResourceProviders_AIModel),
                     sp.GetRequiredService<IEventService>(),

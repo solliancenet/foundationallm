@@ -48,9 +48,9 @@ namespace FoundationaLLM.Common.Services.ResourceProviders
         protected readonly IServiceProvider _serviceProvider;
 
         /// <summary>
-        /// The <see cref="IAuthorizationService"/> providing authorization services to the resource provider.
+        /// The <see cref="IAuthorizationServiceClient"/> providing authorization services to the resource provider.
         /// </summary>
-        protected readonly IAuthorizationService _authorizationService;
+        protected readonly IAuthorizationServiceClient _authorizationServiceClient;
 
         /// <summary>
         /// The <see cref="IStorageService"/> providing storage services to the resource provider.
@@ -114,7 +114,7 @@ namespace FoundationaLLM.Common.Services.ResourceProviders
         /// Creates a new instance of the resource provider.
         /// </summary>
         /// <param name="instanceSettings">The <see cref="InstanceSettings"/> that provides instance-wide settings.</param>
-        /// <param name="authorizationService">The <see cref="IAuthorizationService"/> providing authorization services to the resource provider.</param>
+        /// <param name="authorizationServiceClient">The <see cref="IAuthorizationServiceClient"/> providing authorization services to the resource provider.</param>
         /// <param name="storageService">The <see cref="IStorageService"/> providing storage services to the resource provider.</param>
         /// <param name="eventService">The <see cref="IEventService"/> providing event services to the resource provider.</param>
         /// <param name="resourceValidatorFactory">The <see cref="IResourceValidatorFactory"/> providing services to instantiate resource validators.</param>
@@ -124,7 +124,7 @@ namespace FoundationaLLM.Common.Services.ResourceProviders
         /// <param name="useInternalReferencesStore">Indicates whether the resource provider should use the internal resource references store or provide one of its own.</param>
         public ResourceProviderServiceBase(
             InstanceSettings instanceSettings,
-            IAuthorizationService authorizationService,
+            IAuthorizationServiceClient authorizationServiceClient,
             IStorageService storageService,
             IEventService eventService,
             IResourceValidatorFactory resourceValidatorFactory,
@@ -133,7 +133,7 @@ namespace FoundationaLLM.Common.Services.ResourceProviders
             List<string>? eventNamespacesToSubscribe = default,
             bool useInternalReferencesStore = false)
         {
-            _authorizationService = authorizationService;
+            _authorizationServiceClient = authorizationServiceClient;
             _storageService = storageService;
             _eventService = eventService;
             _resourceValidatorFactory = resourceValidatorFactory;
@@ -289,7 +289,7 @@ namespace FoundationaLLM.Common.Services.ResourceProviders
 
             var upsertResult = await UpsertResourceAsync(ParsedResourcePath, serializedResource, formFile, userIdentity);
 
-            await UpsertResourcePostProcess(ParsedResourcePath.InstanceId!, (upsertResult as ResourceProviderUpsertResult)!, authorizationResult, userIdentity);
+            await UpsertResourcePostProcess(ParsedResourcePath, (upsertResult as ResourceProviderUpsertResult)!, authorizationResult, userIdentity);
 
             return upsertResult;
         }
@@ -458,7 +458,7 @@ namespace FoundationaLLM.Common.Services.ResourceProviders
 
             var upsertResult = await UpsertResourceAsyncInternal<T, TResult>(ParsedResourcePath, authorizationResult, resource, userIdentity, options);
 
-            await UpsertResourcePostProcess(ParsedResourcePath.InstanceId!, upsertResult, authorizationResult, userIdentity);
+            await UpsertResourcePostProcess(ParsedResourcePath, upsertResult, authorizationResult, userIdentity);
 
             return upsertResult;
         }
@@ -699,7 +699,7 @@ namespace FoundationaLLM.Common.Services.ResourceProviders
                     throw new Exception("The provided user identity information cannot be used for authorization.");
 
                 var rp = resourcePath.GetObjectId(_instanceSettings.Id, _name);
-                var result = await _authorizationService.ProcessAuthorizationRequest(
+                var result = await _authorizationServiceClient.ProcessAuthorizationRequest(
                     _instanceSettings.Id,
                     $"{_name}/{resourcePath.MainResourceTypeName!}/{actionType}",
                     [rp],
@@ -1562,45 +1562,56 @@ namespace FoundationaLLM.Common.Services.ResourceProviders
                 allowAction: allowAction);
 
         private async Task UpsertResourcePostProcess(
-            string instanceId,
+            ResourcePath resourcePath,
             ResourceProviderUpsertResult upsertResult,
             ResourcePathAuthorizationResult authorizationResult,
             UnifiedUserIdentity userIdentity)
         {
-            ArgumentException.ThrowIfNullOrWhiteSpace(instanceId, nameof(instanceId));
+            ArgumentNullException.ThrowIfNull(resourcePath, nameof(resourcePath));
             ArgumentNullException.ThrowIfNull(upsertResult, nameof(upsertResult));
             ArgumentNullException.ThrowIfNull(authorizationResult, nameof(authorizationResult));
             ArgumentException.ThrowIfNullOrWhiteSpace(userIdentity.UserId, nameof(userIdentity.UserId));
             ArgumentException.ThrowIfNullOrWhiteSpace(userIdentity.Name, nameof(userIdentity.Name));
+            ArgumentException.ThrowIfNullOrWhiteSpace(resourcePath.InstanceId, nameof(resourcePath.InstanceId));
 
             if (!authorizationResult.Authorized)
                 throw new ResourceProviderException(
                     $"Upsert result post-processing can only be executed on authorized resources.");
 
-            if (!authorizationResult.MustSetOwnerRoleAssignment)
+            // Owner role assignment is already set on previously created resources.
+            if (upsertResult.ResourceExists)
                 return;
 
-            if (!upsertResult.ResourceExists && Name != ResourceProviderNames.FoundationaLLM_Authorization)
-            {
-                var roleAssignmentName = Guid.NewGuid().ToString();
-                var roleAssignmentDescription = $"Owner role for {userIdentity.Name}";
-                var roleAssignmentResult = await _authorizationService.CreateRoleAssignment(
-                    _instanceSettings.Id,
-                    new RoleAssignmentRequest()
-                    {
-                        Name = roleAssignmentName,
-                        Description = roleAssignmentDescription,
-                        ObjectId = $"/instances/{instanceId}/providers/{ResourceProviderNames.FoundationaLLM_Authorization}/{AuthorizationResourceTypeNames.RoleAssignments}/{roleAssignmentName}",
-                        PrincipalId = userIdentity.UserId,
-                        PrincipalType = PrincipalTypes.User,
-                        RoleDefinitionId = $"/providers/{ResourceProviderNames.FoundationaLLM_Authorization}/{AuthorizationResourceTypeNames.RoleDefinitions}/{RoleDefinitionNames.Owner}",
-                        Scope = upsertResult.ObjectId
-                    },
-                    userIdentity);
+            // Owner role assignment is not required on Authorization resources.
+            if (Name == ResourceProviderNames.FoundationaLLM_Authorization)
+                return;
 
-                if (!roleAssignmentResult.Success)
-                    _logger.LogError("The [{RoleAssignment}] could not be assigned to {ObjectId}.", roleAssignmentDescription, upsertResult.ObjectId);
-            }
+            // Owner role assignment is not required when at least one policy is assigned to the resource path.
+            if (authorizationResult.PolicyDefinitionIds.Count > 0)
+                return;
+
+            // Owner role assignment is not required on subordinate resources.
+            if (resourcePath.HasSubordinateResourceId)
+                return;
+
+            var roleAssignmentName = Guid.NewGuid().ToString();
+            var roleAssignmentDescription = $"Owner role for {userIdentity.Name}";
+            var roleAssignmentResult = await _authorizationServiceClient.CreateRoleAssignment(
+                _instanceSettings.Id,
+                new RoleAssignmentRequest()
+                {
+                    Name = roleAssignmentName,
+                    Description = roleAssignmentDescription,
+                    ObjectId = $"/instances/{resourcePath.InstanceId}/providers/{ResourceProviderNames.FoundationaLLM_Authorization}/{AuthorizationResourceTypeNames.RoleAssignments}/{roleAssignmentName}",
+                    PrincipalId = userIdentity.UserId,
+                    PrincipalType = PrincipalTypes.User,
+                    RoleDefinitionId = $"/providers/{ResourceProviderNames.FoundationaLLM_Authorization}/{AuthorizationResourceTypeNames.RoleDefinitions}/{RoleDefinitionNames.Owner}",
+                    Scope = upsertResult.ObjectId
+                },
+                userIdentity);
+
+            if (!roleAssignmentResult.Success)
+                _logger.LogError("The [{RoleAssignment}] could not be assigned to {ObjectId}.", roleAssignmentDescription, upsertResult.ObjectId);
         }
 
         public PolicyDefinition EnsureAndValidatePolicyDefinitions(ResourcePath resourcePath, ResourcePathAuthorizationResult authorizationResult)

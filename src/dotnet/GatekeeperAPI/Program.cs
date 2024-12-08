@@ -65,7 +65,7 @@ namespace FoundationaLLM.Gatekeeper.API
 
             // Add authorization services.
             builder.AddGroupMembership();
-            builder.AddAuthorizationService();
+            builder.AddAuthorizationServiceClient();
 
             // Add OpenTelemetry.
             builder.AddOpenTelemetry(

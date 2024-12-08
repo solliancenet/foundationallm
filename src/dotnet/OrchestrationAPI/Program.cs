@@ -115,7 +115,7 @@ namespace FoundationaLLM.Orchestration.API
 
             // Add authorization services.
             builder.AddGroupMembership();
-            builder.AddAuthorizationService();
+            builder.AddAuthorizationServiceClient();
 
             //----------------------------
             // Resource providers

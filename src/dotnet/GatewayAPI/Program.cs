@@ -73,7 +73,7 @@ builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwa
 
 // Authorization
 builder.AddGroupMembership();
-builder.AddAuthorizationService();
+builder.AddAuthorizationServiceClient();
 
 //----------------------------
 // Resource providers

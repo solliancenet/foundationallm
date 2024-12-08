@@ -35,6 +35,15 @@ namespace FoundationaLLM.Common.Models.ResourceProviders
         public List<ResourceTypeInstance> ResourceTypeInstances => _resourceTypeInstances;
 
         /// <summary>
+        /// A flag denoting if the resource path contains subordinate resources or not.
+        /// </summary>
+        public bool HasSubordinateResourceId =>
+            _resourceTypeInstances.Count > 1
+            && _resourceTypeInstances.First().ResourceId != null
+            && _resourceTypeInstances.Last().ResourceId != null
+            && _resourceTypeInstances.First().ResourceType != _resourceTypeInstances.Last().ResourceType;
+
+        /// <summary>
         /// Indicates whether the resource path is a root path ("/") or not.
         /// </summary>
         public bool IsRootPath => _isRootPath;

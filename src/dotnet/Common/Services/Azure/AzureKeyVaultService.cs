@@ -60,5 +60,11 @@ namespace FoundationaLLM.Common.Services.Azure
             return existenceMap;
         }
 
+        /// <inheritdoc/>
+        public async Task RemoveSecretAsync(string secretName)
+        {
+            var deleteOperation = await _secretClient.StartDeleteSecretAsync(secretName);
+            await deleteOperation.WaitForCompletionAsync();
+        }
     }
 }

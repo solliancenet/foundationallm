@@ -702,6 +702,17 @@
 					aria-labelledby="aria-persona"
 				/>
 			</div>
+			<template v-if="virtualSecurityGroupId">
+				<div class="step-header">Agent's Virtual Security Group ID</div>
+				<div class="span-2 virtual-security-group-id__container">
+					<p class="virtual-security-group-id">{{ virtualSecurityGroupId }}</p>
+					<Button
+						label="Copy"
+						severity="primary"
+						@click="copyVirtualSecurityGroupId"
+					/>
+				</div>
+			</template>
 			<div class="button-container column-2 justify-self-end">
 				<!-- Create agent -->
 				<Button
@@ -841,6 +852,8 @@ export default {
 			aiModelOptions: [] as AIModel[],
 			tools: [] as AgentTool[],
 
+			virtualSecurityGroupId: null as string | null,
+
 			orchestratorOptions: [
 				{
 					label: 'LangChain',
@@ -979,6 +992,8 @@ export default {
 			const agentGetResult = await api.getAgent(this.editAgent);
 			this.editable = agentGetResult.actions.includes('FoundationaLLM.Agent/agents/write');
 			const agent = agentGetResult.resource;
+			console.log(agent);
+			this.virtualSecurityGroupId = agent.virtual_security_group_id;
 			if (agent.vectorization && agent.vectorization.text_partitioning_profile_object_id) {
 				this.loadingStatusText = `Retrieving text partitioning profile...`;
 				const textPartitioningProfile = await api.getTextPartitioningProfile(
@@ -1346,6 +1361,17 @@ export default {
 				this.$router.push('/agents/public');
 			}
 		},
+
+		copyVirtualSecurityGroupId() {
+			if (this.virtualSecurityGroupId) {
+				navigator.clipboard.writeText(this.virtualSecurityGroupId);
+				this.$toast.add({
+					severity: 'success',
+					detail: 'Virtual Security Group ID copied to clipboard!',
+					life: 5000,
+				});
+			}
+		}
 	},
 };
 </script>
@@ -1558,5 +1584,16 @@ input {
 
 .invalid {
 	color: red;
+}
+
+.virtual-security-group-id__container {
+	display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.virtual-security-group-id {
+	margin: 0 1rem 0 0;
+	width: auto;
 }
 </style>

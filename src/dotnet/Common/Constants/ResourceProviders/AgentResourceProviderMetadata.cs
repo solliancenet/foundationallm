@@ -1,6 +1,7 @@
 ﻿using FoundationaLLM.Common.Constants.Authorization;
 using FoundationaLLM.Common.Models.ResourceProviders;
 using FoundationaLLM.Common.Models.ResourceProviders.Agent;
+using FoundationaLLM.Common.Models.ResourceProviders.Agent.AgentAccessTokens;
 
 namespace FoundationaLLM.Common.Constants.ResourceProviders
 {
@@ -45,6 +46,24 @@ namespace FoundationaLLM.Common.Constants.ResourceProviders
                                     new ResourceTypeAllowedTypes(HttpMethod.Get.Method, AuthorizableOperations.Write, [], [], [typeof(ResourceProviderGetResult<AgentFile>)]),
                                     new ResourceTypeAllowedTypes(HttpMethod.Post.Method, AuthorizableOperations.Write, [], [], [typeof(ResourceProviderUpsertResult)]),
                                     new ResourceTypeAllowedTypes(HttpMethod.Delete.Method, AuthorizableOperations.Delete, [], [], []),
+                                ]
+                            }
+                        },
+                        {
+                            AgentResourceTypeNames.AgentAccessTokens,
+                            new ResourceTypeDescriptor(
+                                    AgentResourceTypeNames.AgentAccessTokens,
+                                    typeof(AgentAccessToken))
+                            {
+                                AllowedTypes = [
+                                    new ResourceTypeAllowedTypes(HttpMethod.Get.Method, AuthorizableOperations.Read, [], [], [typeof(ResourceProviderGetResult<AgentAccessToken>)]),
+                                    new ResourceTypeAllowedTypes(HttpMethod.Post.Method, AuthorizableOperations.Write, [], [typeof(AgentAccessToken)], [typeof(ResourceProviderUpsertResult)]),
+                                    new ResourceTypeAllowedTypes(HttpMethod.Delete.Method, AuthorizableOperations.Delete, [], [], [])
+                                ],
+                                Actions = [
+                                    new ResourceTypeAction(ResourceProviderActions.Validate, false, true, [
+                                        new ResourceTypeAllowedTypes(HttpMethod.Post.Method, AuthorizableOperations.Read, [], [typeof(AgentAccessTokenValidationRequest)], [typeof(AgentAccessTokenValidationResult)])
+                                    ])
                                 ]
                             }
                         }

@@ -31,7 +31,7 @@ namespace FoundationaLLM
             builder.Services.AddSingleton<IResourceProviderService, AttachmentResourceProviderService>(sp =>
                 new AttachmentResourceProviderService(
                     sp.GetRequiredService<IOptions<InstanceSettings>>(),
-                    sp.GetRequiredService<IAuthorizationService>(),
+                    sp.GetRequiredService<IAuthorizationServiceClient>(),
                     sp.GetRequiredService<IEnumerable<IStorageService>>()
                         .Single(s => s.InstanceName == DependencyInjectionKeys.FoundationaLLM_ResourceProviders_Attachment),
                     sp.GetRequiredService<IEventService>(),

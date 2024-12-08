@@ -57,7 +57,7 @@
 						<i v-else class="pi pi-verified"></i>
 
 						<span>
-							<div>{{ data.principal.display_name }}</div>
+							<div>{{ data.principal?.display_name }}</div>
 							<div v-if="data.principal?.email">({{ data.principal?.email }})</div>
 						</span>
 					</div>

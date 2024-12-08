@@ -29,7 +29,7 @@ namespace FoundationaLLM.AzureOpenAI.ResourceProviders
     /// Implements the FoundationaLLM.AzureOpenAI resource provider.
     /// </summary>
     /// <param name="instanceOptions">The options providing the <see cref="InstanceSettings"/> with instance settings.</param>
-    /// <param name="authorizationService">The <see cref="IAuthorizationService"/> providing authorization services.</param>
+    /// <param name="authorizationService">The <see cref="IAuthorizationServiceClient"/> providing authorization services.</param>
     /// <param name="storageService">The <see cref="IStorageService"/> providing storage services.</param>
     /// <param name="eventService">The <see cref="IEventService"/> providing event services.</param>
     /// <param name="resourceValidatorFactory">The <see cref="IResourceValidatorFactory"/> providing the factory to create resource validators.</param>
@@ -38,7 +38,7 @@ namespace FoundationaLLM.AzureOpenAI.ResourceProviders
     /// <param name="logger">The <see cref="ILogger"/> used for logging.</param>
     public class AzureOpenAIResourceProviderService(
         IOptions<InstanceSettings> instanceOptions,
-        IAuthorizationService authorizationService,
+        IAuthorizationServiceClient authorizationService,
         [FromKeyedServices(DependencyInjectionKeys.FoundationaLLM_ResourceProviders_AzureOpenAI)] IStorageService storageService,
         IEventService eventService,
         IResourceValidatorFactory resourceValidatorFactory,

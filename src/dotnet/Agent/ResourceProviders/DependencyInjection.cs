@@ -33,7 +33,7 @@ namespace FoundationaLLM
             builder.Services.AddSingleton<IResourceProviderService, AgentResourceProviderService>(sp =>
                 new AgentResourceProviderService(
                     sp.GetRequiredService<IOptions<InstanceSettings>>(),
-                    sp.GetRequiredService<IAuthorizationService>(),
+                    sp.GetRequiredService<IAuthorizationServiceClient>(),
                     sp.GetRequiredService<IEnumerable<IStorageService>>()
                         .Single(s => s.InstanceName == DependencyInjectionKeys.FoundationaLLM_ResourceProviders_Agent),
                     sp.GetRequiredService<IEventService>(),
