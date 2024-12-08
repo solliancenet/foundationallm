@@ -1,13 +1,15 @@
 ﻿using FoundationaLLM.Authorization.Models.Configuration;
 using FoundationaLLM.Common.Authentication;
 using FoundationaLLM.Common.Interfaces;
-using FoundationaLLM.Common.Models;
 using FoundationaLLM.Common.Models.Authentication;
 using FoundationaLLM.Common.Models.Authorization;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 
 namespace FoundationaLLM.Authorization.Services
@@ -15,21 +17,23 @@ namespace FoundationaLLM.Authorization.Services
     /// <summary>
     /// Provides methods for interacting with the Authorization API.
     /// </summary>
-    public class AuthorizationService : IAuthorizationService
+    public class AuthorizationService(
+        IHttpClientFactory httpClientFactory,
+        IOptions<AuthorizationServiceSettings> options,
+        ILogger<AuthorizationService> logger)
+        : IAuthorizationService
     {
-        private readonly AuthorizationServiceSettings _settings;
-        private readonly IHttpClientFactory _httpClientFactory;
-        private readonly ILogger<AuthorizationService> _logger;
-
-        public AuthorizationService(
-            IHttpClientFactory httpClientFactory,
-            IOptions<AuthorizationServiceSettings> options,
-            ILogger<AuthorizationService> logger)
+        private readonly AuthorizationServiceSettings _settings = options.Value;
+        private readonly IMemoryCache _authorizationCache = new MemoryCache(new MemoryCacheOptions
         {
-            _settings = options.Value;
-            _httpClientFactory = httpClientFactory;
-            _logger = logger;
-        }
+            ExpirationScanFrequency = TimeSpan.FromSeconds(30), // Scan for expired items every thirty seconds.
+        });
+        private readonly MemoryCacheEntryOptions _cacheEntryOptions = new MemoryCacheEntryOptions()
+            .SetAbsoluteExpiration(TimeSpan.FromMinutes(5)) // Cache entries are valid for 5 minutes.
+            .SetSlidingExpiration(TimeSpan.FromMinutes(2)) // Reset expiration time if accessed within 2 minutes.
+            .SetSize(1); // Each cache entry is a single authorization result.
+
+        private readonly SemaphoreSlim _cacheLock = new SemaphoreSlim(1, 1);
 
         /// <inheritdoc/>
         public async Task<ActionAuthorizationResult> ProcessAuthorizationRequest(
@@ -52,38 +56,66 @@ namespace FoundationaLLM.Authorization.Services
 
             try
             {
-                var authorizationRequest = new ActionAuthorizationRequest
+                var cacheKey = GenerateCacheKey(
+                    instanceId,
+                    action,
+                    resourcePaths,
+                    expandResourceTypePaths,
+                    includeRoleAssignments,
+                    includeActions,
+                    userIdentity
+                );
+
+                await _cacheLock.WaitAsync();
+                try
                 {
-                    Action = action,
-                    ResourcePaths = resourcePaths,
-                    ExpandResourceTypePaths = expandResourceTypePaths,
-                    IncludeRoles = includeRoleAssignments,
-                    IncludeActions = includeActions,
-                    UserContext = new UserAuthorizationContext
+                    if (_authorizationCache.TryGetValue(cacheKey, out ActionAuthorizationResult? cachedResult))
                     {
-                        SecurityPrincipalId = userIdentity.UserId!,
-                        UserPrincipalName = userIdentity.UPN!,
-                        SecurityGroupIds = userIdentity.GroupIds
+                        return cachedResult!;
                     }
-                };
 
-                var httpClient = await CreateHttpClient();
-                var response = await httpClient.PostAsync(
-                    $"/instances/{instanceId}/authorize",
-                    JsonContent.Create(authorizationRequest));
+                    var authorizationRequest = new ActionAuthorizationRequest
+                    {
+                        Action = action,
+                        ResourcePaths = resourcePaths,
+                        ExpandResourceTypePaths = expandResourceTypePaths,
+                        IncludeRoles = includeRoleAssignments,
+                        IncludeActions = includeActions,
+                        UserContext = new UserAuthorizationContext
+                        {
+                            SecurityPrincipalId = userIdentity.UserId!,
+                            UserPrincipalName = userIdentity.UPN!,
+                            SecurityGroupIds = userIdentity.GroupIds
+                        }
+                    };
 
-                if (response.IsSuccessStatusCode)
-                {
-                    var responseContent = await response.Content.ReadAsStringAsync();
-                    return JsonSerializer.Deserialize<ActionAuthorizationResult>(responseContent)!;
+                    var httpClient = await CreateHttpClient();
+                    var response = await httpClient.PostAsync(
+                        $"/instances/{instanceId}/authorize",
+                        JsonContent.Create(authorizationRequest));
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var responseContentString = await response.Content.ReadAsStringAsync();
+                        var responseContent = JsonSerializer.Deserialize<ActionAuthorizationResult>(responseContentString)!;
+
+                        // Add the authorization response to the cache.
+                        _authorizationCache.Set(cacheKey, responseContent, _cacheEntryOptions);
+                        return responseContent;
+                    }
+
+                    logger.LogError("The call to the Authorization API returned an error: {StatusCode} - {ReasonPhrase}.",
+                        response.StatusCode, response.ReasonPhrase);
+                    return new ActionAuthorizationResult { AuthorizationResults = defaultResults };
                 }
-
-                _logger.LogError("The call to the Authorization API returned an error: {StatusCode} - {ReasonPhrase}.", response.StatusCode, response.ReasonPhrase);
-                return new ActionAuthorizationResult { AuthorizationResults = defaultResults };
+                finally
+                {
+                    _cacheLock.Release();
+                }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "There was an error calling the Authorization API");
+                logger.LogError(ex, "There was an error calling the Authorization API");
                 return new ActionAuthorizationResult { AuthorizationResults = defaultResults };
             }
         }
@@ -113,12 +145,12 @@ namespace FoundationaLLM.Authorization.Services
                     return result;
                 }
 
-                _logger.LogError("The call to the Authorization API returned an error: {StatusCode} - {ReasonPhrase}.", response.StatusCode, response.ReasonPhrase);
+                logger.LogError("The call to the Authorization API returned an error: {StatusCode} - {ReasonPhrase}.", response.StatusCode, response.ReasonPhrase);
                 return new RoleAssignmentOperationResult() { Success = false };
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "There was an error calling the Authorization API");
+                logger.LogError(ex, "There was an error calling the Authorization API");
                 return new RoleAssignmentOperationResult() { Success = false };
             }
         }
@@ -142,12 +174,12 @@ namespace FoundationaLLM.Authorization.Services
                     return JsonSerializer.Deserialize<List<RoleAssignment>>(responseContent)!;
                 }
 
-                _logger.LogError("The call to the Authorization API returned an error: {StatusCode} - {ReasonPhrase}.", response.StatusCode, response.ReasonPhrase);
+                logger.LogError("The call to the Authorization API returned an error: {StatusCode} - {ReasonPhrase}.", response.StatusCode, response.ReasonPhrase);
                 return [];
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "There was an error calling the Authorization API");
+                logger.LogError(ex, "There was an error calling the Authorization API");
                 return [];
             }
         }
@@ -175,12 +207,12 @@ namespace FoundationaLLM.Authorization.Services
                     return result;
                 }
 
-                _logger.LogError("The call to the Authorization API returned an error: {StatusCode} - {ReasonPhrase}.", response.StatusCode, response.ReasonPhrase);
+                logger.LogError("The call to the Authorization API returned an error: {StatusCode} - {ReasonPhrase}.", response.StatusCode, response.ReasonPhrase);
                 return new RoleAssignmentOperationResult() { Success = false };
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "There was an error calling the Authorization API");
+                logger.LogError(ex, "There was an error calling the Authorization API");
                 return new RoleAssignmentOperationResult() { Success = false };
             }
         }
@@ -191,7 +223,7 @@ namespace FoundationaLLM.Authorization.Services
         /// <returns></returns>
         private async Task<HttpClient> CreateHttpClient()
         {
-            var httpClient = _httpClientFactory.CreateClient();
+            var httpClient = httpClientFactory.CreateClient();
             httpClient.BaseAddress = new Uri(_settings.APIUrl);
 
             var credentials = DefaultAuthentication.AzureCredential;
@@ -203,6 +235,24 @@ namespace FoundationaLLM.Authorization.Services
                 new AuthenticationHeaderValue("Bearer", tokenResult.Token);
 
             return httpClient;
+        }
+
+        private string GenerateCacheKey(
+            string instanceId,
+            string action,
+            List<string> resourcePaths,
+            bool expandResourceTypePaths,
+            bool includeRoleAssignments,
+            bool includeActions,
+            UnifiedUserIdentity userIdentity)
+        {
+            var sortedResourcePaths = string.Join(",", resourcePaths.Distinct().OrderBy(rp => rp));
+
+            var keyString = $"{instanceId}:{action}:{sortedResourcePaths}:{expandResourceTypePaths}:{includeRoleAssignments}:{includeActions}:{userIdentity.UserId}:{userIdentity.UPN}:{string.Join(",", userIdentity.GroupIds)}";
+
+            using var sha256 = SHA256.Create();
+            var hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(keyString));
+            return Convert.ToBase64String(hashBytes);
         }
     }
 }
