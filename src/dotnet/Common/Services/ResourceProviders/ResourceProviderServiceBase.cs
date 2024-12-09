@@ -11,8 +11,11 @@ using FoundationaLLM.Common.Models.Events;
 using FoundationaLLM.Common.Models.ResourceProviders;
 using FoundationaLLM.Common.Services.Events;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using MimeDetective.Storage;
+using OpenTelemetry.Resources;
 using System.Collections.Immutable;
 using System.Text;
 using System.Text.Json;
@@ -36,6 +39,12 @@ namespace FoundationaLLM.Common.Services.ResourceProviders
 
         private readonly bool _useInternalReferencesStore;
         private readonly SemaphoreSlim _lock = new(1, 1);
+
+        private readonly IMemoryCache? _resourceCache;
+        private readonly MemoryCacheEntryOptions _cacheEntryOptions = new MemoryCacheEntryOptions()
+            .SetAbsoluteExpiration(TimeSpan.FromMinutes(10)) // Cache entries are valid for 10 minutes.
+            .SetSlidingExpiration(TimeSpan.FromMinutes(5)) // Reset expiration time if accessed within 5 minutes.
+            .SetSize(1); // Each cache entry is a single resource.
 
         /// <summary>
         /// The resource reference store used by the resource provider.
@@ -122,6 +131,7 @@ namespace FoundationaLLM.Common.Services.ResourceProviders
         /// <param name="serviceProvider">The <see cref="IServiceProvider"/> of the main dependency injection container.</param>
         /// <param name="eventNamespacesToSubscribe">The list of Event Service event namespaces to subscribe to for local event processing.</param>
         /// <param name="useInternalReferencesStore">Indicates whether the resource provider should use the internal resource references store or provide one of its own.</param>
+        /// <param name="cacheResources">Determines whether an in-memory cache is used for storing and retrieving resources.</param>
         public ResourceProviderServiceBase(
             InstanceSettings instanceSettings,
             IAuthorizationService authorizationService,
@@ -131,7 +141,8 @@ namespace FoundationaLLM.Common.Services.ResourceProviders
             IServiceProvider serviceProvider,
             ILogger logger,
             List<string>? eventNamespacesToSubscribe = default,
-            bool useInternalReferencesStore = false)
+            bool useInternalReferencesStore = false,
+            bool cacheResources = false)
         {
             _authorizationService = authorizationService;
             _storageService = storageService;
@@ -142,6 +153,15 @@ namespace FoundationaLLM.Common.Services.ResourceProviders
             _instanceSettings = instanceSettings;
             _eventNamespacesToSubscribe = eventNamespacesToSubscribe;
             _useInternalReferencesStore = useInternalReferencesStore;
+
+            if (cacheResources)
+            {
+                _resourceCache = new MemoryCache(new MemoryCacheOptions
+                {
+                    SizeLimit = 5000, // Limit cache size to 5000 resources.
+                    ExpirationScanFrequency = TimeSpan.FromMinutes(1) // Scan for expired items every minute.
+                });
+            }
 
             _allowedResourceProviders = [_name];
             _allowedResourceTypes = GetResourceTypes();
@@ -996,6 +1016,11 @@ namespace FoundationaLLM.Common.Services.ResourceProviders
                     $"The resource reference {resourceReference.Name} is not of the expected type {typeof(T).Name}.",
                     StatusCodes.Status400BadRequest);
 
+            if (_resourceCache != null && _resourceCache.TryGetValue(resourceReference.Name, out T? cachedResource))
+            {
+                return cachedResource;
+            }
+
             if (await _storageService.FileExistsAsync(_storageContainerName, resourceReference.Filename, default))
             {
                 var fileContent =
@@ -1008,6 +1033,8 @@ namespace FoundationaLLM.Common.Services.ResourceProviders
                         _serializerSettings)
                             ?? throw new ResourceProviderException($"Failed to load the resource {resourceReference.Name}. Its content file might be corrupt.",
                                 StatusCodes.Status500InternalServerError);
+
+                    _resourceCache?.Set(resourceReference.Name, resourceObject, _cacheEntryOptions);
 
                     return resourceObject;
                 }
@@ -1038,6 +1065,11 @@ namespace FoundationaLLM.Common.Services.ResourceProviders
                     ?? throw new ResourceProviderException($"Could not locate the {resourceName} resource.",
                         StatusCodes.Status404NotFound);
 
+                if (_resourceCache != null && _resourceCache.TryGetValue(resourceReference.Name, out T? cachedResource))
+                {
+                    return cachedResource;
+                }
+
                 if (await _storageService.FileExistsAsync(_storageContainerName, resourceReference.Filename, default))
                 {
                     var fileContent =
@@ -1047,6 +1079,8 @@ namespace FoundationaLLM.Common.Services.ResourceProviders
                         _serializerSettings)
                             ?? throw new ResourceProviderException($"Failed to load the resource {resourceReference.Name}. Its content file might be corrupt.",
                                 StatusCodes.Status400BadRequest);
+
+                    _resourceCache?.Set(resourceReference.Name, resourceObject, _cacheEntryOptions);
 
                     return resourceObject;
                 }
@@ -1086,6 +1120,9 @@ namespace FoundationaLLM.Common.Services.ResourceProviders
                 default);
 
                 await _resourceReferenceStore!.AddResourceReference(resourceReference);
+
+                // Add resource to cache if caching is enabled.
+                _resourceCache?.Set(resourceReference.Name, resource, _cacheEntryOptions);
             }
             finally
             {
@@ -1200,6 +1237,9 @@ namespace FoundationaLLM.Common.Services.ResourceProviders
                    JsonSerializer.Serialize<T>(resource, _serializerSettings),
                    default,
                    default);
+
+                // Update resource to cache if caching is enabled.
+                _resourceCache?.Set(resourceReference.Name, resource, _cacheEntryOptions);
             }
             finally
             {
