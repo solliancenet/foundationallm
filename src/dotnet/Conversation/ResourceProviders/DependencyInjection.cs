@@ -37,7 +37,7 @@ namespace FoundationaLLM
             services.AddSingleton<IResourceProviderService, ConversationResourceProviderService>(sp =>
                 new ConversationResourceProviderService(
                     sp.GetRequiredService<IOptions<InstanceSettings>>(),
-                    sp.GetRequiredService<IAuthorizationService>(),
+                    sp.GetRequiredService<IAuthorizationServiceClient>(),
                     sp.GetRequiredService<IEventService>(),
                     sp.GetRequiredService<IResourceValidatorFactory>(),
                     sp.GetRequiredService<IAzureCosmosDBService>(),

@@ -810,4 +810,32 @@ export default {
 			},
 		);
 	},
+
+	/*
+		Agent Access Tokens
+	 */
+	async getAgentAccessTokens(agentName: string) {
+		return (await this.fetch(
+			`/instances/${this.instanceId}/providers/providers/FoundationaLLM.Agent/agents/${agentName}/agentAccessTokens?api-version=${this.apiVersion}`,
+		)) as Object[];
+	},
+
+	async createAgentAccessToken(agentName: string, accessTokenId: string, body): Promise<any> {
+		return await this.fetch(
+			`/instances/${this.instanceId}/providers/FoundationaLLM.Agent/agents/${agentName}/agentAccessTokens/${accessTokenId}?api-version=${this.apiVersion}`,
+			{
+				method: 'POST',
+				body,
+			},
+		);
+	},
+
+	async deleteAgentAccessToken(agentName: string, accessTokenId: string): Promise<any> {
+		return await this.fetch(
+			`/instances/${this.instanceId}/providers/FoundationaLLM.Agent/agents/${agentName}/agentAccessTokens/${accessTokenId}?api-version=${this.apiVersion}`,
+			{
+				method: 'DELETE',
+			},
+		);
+	},
 };

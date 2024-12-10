@@ -1,7 +1,7 @@
 ﻿using FoundationaLLM.Common.Constants.Authorization;
-using FoundationaLLM.Common.Models;
 using FoundationaLLM.Common.Models.Authorization;
 using FoundationaLLM.Common.Models.ResourceProviders;
+using FoundationaLLM.Common.Models.ResourceProviders.Authorization;
 
 namespace FoundationaLLM.Common.Constants.ResourceProviders
 {

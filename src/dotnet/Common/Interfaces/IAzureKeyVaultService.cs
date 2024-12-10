@@ -45,5 +45,12 @@
         /// <param name="secretNames">The list of secret names to check.</param>
         /// <returns></returns>
         Task<Dictionary<string, bool>> CheckKeyVaultSecretsExistAsync(IEnumerable<string?> secretNames);
+
+        /// <summary>
+        /// Removes the specified secret from the Key Vault.
+        /// </summary>
+        /// <param name="secretName">The name of the secret to be removed.</param>
+        /// <returns></returns>
+        Task RemoveSecretAsync(string secretName);
     }
 }

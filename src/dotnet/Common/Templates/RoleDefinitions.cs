@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using FoundationaLLM.Common.Models.ResourceProviders.Authorization;
 
 namespace FoundationaLLM.Common.Models.Authorization
 {

@@ -67,7 +67,7 @@ namespace FoundationaLLM.Management.API
                 builder.Configuration.AddJsonFile("appsettings.development.json", true, true);
 
             builder.AddGroupMembership();
-            builder.AddAuthorizationService();
+            builder.AddAuthorizationServiceClient();
 
             // CORS policies
             builder.AddCorsPolicies();

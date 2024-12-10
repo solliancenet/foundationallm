@@ -1,7 +1,7 @@
 using Asp.Versioning;
 using FoundationaLLM;
-using FoundationaLLM.Authorization.Services;
 using FoundationaLLM.Common.Authentication;
+using FoundationaLLM.Common.Clients;
 using FoundationaLLM.Common.Constants;
 using FoundationaLLM.Common.Constants.Configuration;
 using FoundationaLLM.Common.Interfaces;
@@ -68,7 +68,7 @@ if (builder.Environment.IsDevelopment())
 
 // NOTE: This is required while the service uses API key authentication.
 // Once the service is moved over to Entra ID authentication, this must be replaced with the proper implementation.
-builder.Services.AddSingleton<IAuthorizationService, NullAuthorizationService>();
+builder.Services.AddSingleton<IAuthorizationServiceClient, NullAuthorizationServiceClient>();
 
 // Add OpenTelemetry.
 builder.AddOpenTelemetry(

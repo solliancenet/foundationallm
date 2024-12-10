@@ -16,7 +16,7 @@
 
 		<!-- Private Storage dialog -->
 		<Dialog
-			:visible="privateStorageDialogOpen"
+			v-model:visible="privateStorageDialogOpen"
 			modal
 			:header="'Private Storage'"
 			:style="{ minWidth: '70%' }"

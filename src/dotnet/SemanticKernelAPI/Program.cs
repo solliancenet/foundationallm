@@ -1,6 +1,6 @@
 using Asp.Versioning;
-using FoundationaLLM.Authorization.Services;
 using FoundationaLLM.Common.Authentication;
+using FoundationaLLM.Common.Clients;
 using FoundationaLLM.Common.Constants;
 using FoundationaLLM.Common.Constants.Configuration;
 using FoundationaLLM.Common.Extensions;
@@ -72,7 +72,7 @@ namespace FoundationaLLM.SemanticKernel.API
 
             // Add authorization services.
             builder.AddGroupMembership();
-            builder.Services.AddSingleton<IAuthorizationService, NullAuthorizationService>();
+            builder.Services.AddSingleton<IAuthorizationServiceClient, NullAuthorizationServiceClient>();
 
             // Resource validation
             builder.Services.AddSingleton<IResourceValidatorFactory, ResourceValidatorFactory>();

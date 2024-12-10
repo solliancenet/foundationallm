@@ -25,6 +25,24 @@ export type ResourceProviderGetResult<T> = {
 	roles: string[];
 };
 
+export type ResourceProviderUpsertResult = {
+    /**
+     * The id of the object that was created or updated.
+     */
+    objectId: string;
+
+    /**
+     * A flag denoting whether the upserted resource already exists.
+     */
+    resourceExists: boolean;
+
+    /**
+     * Gets or sets the resource resulting from the upsert operation.
+     * Each resource provider will decide whether to return the resource in the upsert result or not.
+     */
+    resource?: any;
+};
+
 export type AgentTool = {
 	name: string;
 	description: string;
@@ -80,6 +98,11 @@ export type Agent = ResourceBase & {
 	};
 	prompt_object_id: string;
 };
+
+export type AgentAccessToken = ResourceBase & {
+	id: string;
+	active: boolean;
+}
 
 export type Prompt = ResourceBase & {
 	type: string;

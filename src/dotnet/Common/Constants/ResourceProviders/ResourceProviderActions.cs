@@ -24,5 +24,10 @@
         /// Load the content of a file.
         /// </summary>
         public const string LoadFileContent = "load-file-content";
+
+        /// <summary>
+        /// Validate resources.
+        /// </summary>
+        public const string Validate = "validate";
     }
 }

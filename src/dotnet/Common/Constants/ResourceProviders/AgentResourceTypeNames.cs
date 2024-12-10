@@ -19,5 +19,10 @@
         /// Workflows.
         /// </summary>
         public const string Workflows = "workflows";
+
+        /// <summary>
+        /// Agent access tokens.
+        /// </summary>
+        public const string AgentAccessTokens = "agentAccessTokens";
     }
 }

@@ -25,7 +25,7 @@ namespace FoundationaLLM
             builder.Services.AddSingleton<IResourceProviderService, PromptResourceProviderService>(sp =>
                 new PromptResourceProviderService(
                     sp.GetRequiredService<IOptions<InstanceSettings>>(),
-                    sp.GetRequiredService<IAuthorizationService>(),
+                    sp.GetRequiredService<IAuthorizationServiceClient>(),
                     sp.GetRequiredService<IEnumerable<IStorageService>>()
                         .Single(s => s.InstanceName == DependencyInjectionKeys.FoundationaLLM_ResourceProviders_Prompt),
                     sp.GetRequiredService<IEventService>(),

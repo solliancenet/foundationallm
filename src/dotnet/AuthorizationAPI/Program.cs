@@ -1,5 +1,5 @@
 using FoundationaLLM;
-using FoundationaLLM.Authorization.Middleware;
+using FoundationaLLM.AuthorizationEngine.Middleware;
 using FoundationaLLM.Common.Authentication;
 using FoundationaLLM.Common.Constants;
 using FoundationaLLM.Common.Constants.Configuration;

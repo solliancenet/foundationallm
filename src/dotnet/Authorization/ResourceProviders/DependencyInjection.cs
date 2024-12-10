@@ -2,8 +2,8 @@
 using FoundationaLLM.Authorization.ResourceProviders;
 using FoundationaLLM.Authorization.Validation;
 using FoundationaLLM.Common.Interfaces;
-using FoundationaLLM.Common.Models.Authorization;
 using FoundationaLLM.Common.Models.Configuration.Instance;
+using FoundationaLLM.Common.Models.ResourceProviders.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -27,7 +27,7 @@ namespace FoundationaLLM
             builder.Services.AddSingleton<IResourceProviderService, AuthorizationResourceProviderService>(sp =>
                 new AuthorizationResourceProviderService(
                     sp.GetRequiredService<IOptions<InstanceSettings>>(),
-                    sp.GetRequiredService<IAuthorizationService>(),
+                    sp.GetRequiredService<IAuthorizationServiceClient>(),
                     sp.GetRequiredService<IResourceValidatorFactory>(),
                     sp,
                     sp.GetRequiredService<ILoggerFactory>()));
