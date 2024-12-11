@@ -414,3 +414,40 @@ export const mockRoleAssignmentsResponse = {
 		},
 	],
 };
+
+export const mockAzureOpenAIAssistantsWorkflow = {
+	type: 'azure-openai-assistants-workflow',
+	workflow_object_id: 'workflow-123',
+	workflow_name: 'Sample Workflow',
+	agent_workflow_ai_models: {
+		main_model: {
+			ai_model_object_id: 'model-456',
+			model_parameters: {
+				temperature: 0.7,
+				max_tokens: 100,
+			},
+		},
+	},
+	prompt_object_ids: {
+		main_prompt: 'prompt-789',
+	},
+	assistant_id: 'assistant-001',
+};
+
+export const mockLangChainExpressionLanguageWorkflow = {
+	type: 'langchain-expression-language-workflow',
+	workflow_object_id: 'workflow-123',
+	workflow_name: 'Sample Workflow',
+	agent_workflow_ai_models: {
+		main_model: {
+			ai_model_object_id: 'model-456',
+			model_parameters: {
+				param1: 'value1',
+				param2: 'value2',
+			},
+		},
+	},
+	prompt_object_ids: {
+		main_prompt: 'prompt-789',
+	},
+};

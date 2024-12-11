@@ -753,7 +753,7 @@
 			</template>
 			
 			
-			<div class="button-container column-2 justify-self-end">
+			<div class="span-2 d-flex justify-content-end" style="gap: 16px">
 				<!-- Create agent -->
 				<Button
 					:label="editAgent ? 'Save Changes' : 'Create Agent'"
@@ -890,6 +890,7 @@ export default {
 			externalOrchestratorOptions: [] as ExternalOrchestrationService[],
 			aiModelOptions: [] as AIModel[],
 			tools: [] as AgentTool[],
+            workflowOptions: [],
 
 			virtualSecurityGroupId: null as string | null,
 
@@ -1010,6 +1011,10 @@ export default {
 			this.aiModelOptions = aiModelsResult.map((result) => result.resource);
 			// Filter the AIModels so we only display the ones where the type is 'completion'.
 			this.aiModelOptions = this.aiModelOptions.filter((model) => model.type === 'completion');
+
+			this.loadingStatusText = 'Retrieving workflows...';
+			const workflowOptions = await api.getAgentWorkflows();
+			this.workflowOptions = workflowOptions.map((result) => result.resource);
 
 			// Update the orchestratorOptions with the externalOrchestratorOptions.
 			this.orchestratorOptions = this.orchestratorOptions.concat(
