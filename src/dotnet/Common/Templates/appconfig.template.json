@@ -176,6 +176,13 @@
             "tags": {}
         },
         {
+            "key": "FoundationaLLM:APIEndpoints:AuthorizationAPI:Essentials:EnableCache",
+            "value": "false",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
             "key": "FoundationaLLM:APIEndpoints:CoreAPI:Essentials:APIUrl",
             "value": "${env:SERVICE_CORE_API_ENDPOINT_URL}",
             "label": null,

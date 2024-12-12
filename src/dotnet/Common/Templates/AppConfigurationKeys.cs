@@ -257,6 +257,13 @@ namespace FoundationaLLM.Common.Constants.Configuration
         /// </summary>
         public const string FoundationaLLM_APIEndpoints_AuthorizationAPI_Essentials_APIScope =
             "FoundationaLLM:APIEndpoints:AuthorizationAPI:Essentials:APIScope";
+        
+        /// <summary>
+        /// The app configuration key for the FoundationaLLM:APIEndpoints:AuthorizationAPI:Essentials:EnableCache setting.
+        /// <para>Value description:<br/>Setting that indicates whether the Authorization API Client should use caching.</para>
+        /// </summary>
+        public const string FoundationaLLM_APIEndpoints_AuthorizationAPI_Essentials_EnableCache =
+            "FoundationaLLM:APIEndpoints:AuthorizationAPI:Essentials:EnableCache";
 
         #endregion
 

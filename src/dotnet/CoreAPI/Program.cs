@@ -72,8 +72,7 @@ namespace FoundationaLLM.Core.API
                 builder.Configuration.AddJsonFile("appsettings.development.json", true, true);
 
             // Add authorization services.
-            builder.AddGroupMembership();
-            builder.AddAuthorizationServiceClient();
+            builder.AddGroupMembership();            
 
             // CORS policies
             builder.AddCorsPolicies();
@@ -108,6 +107,7 @@ namespace FoundationaLLM.Core.API
             builder.AddHttpClientFactoryService();
             builder.AddDownstreamAPIService(HttpClientNames.GatekeeperAPI);
             builder.AddDownstreamAPIService(HttpClientNames.OrchestrationAPI);
+            builder.AddAuthorizationServiceClient();
 
             builder.AddAzureCosmosDBService();
             builder.Services.AddScoped<ICoreService, CoreService>();

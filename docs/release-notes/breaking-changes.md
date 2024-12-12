@@ -25,6 +25,7 @@ The following new App Configuration settings are required:
 |`FoundationaLLM:UserPortal:Configuration:ShowMessageTokens` | `true` | If `true`, the number of consumed tokens on agent and user messages will appear. |
 |`FoundationaLLM:UserPortal:Configuration:ShowViewPrompt` | `true` | If `true`, the "View Prompt" button on agent messages will appear. |
 |`FoundationaLLM:Instance:EnableResourceProvidersCache` | `false` | If `true`, the caching of resource providers will be enabled. |
+| `FoundationaLLM:APIEndpoints:AuthorizationAPI:Essentials:EnableCache` | `false` | If `true`, the caching of authorization call results will be enabled. |
 
 #### Agent Tool configuration changes
 

@@ -361,6 +361,14 @@
 				"value": "${env:ENTRA_AUTH_API_SCOPES}",
 				"content_type": "",
 				"first_version": "0.8.0"
+			},
+			{
+				"name": "EnableCache",
+				"description": "Setting that indicates whether the Authorization API Client should use caching.",
+				"secret": "",
+				"value": "false",
+				"content_type": "",
+				"first_version": "0.9.1"
 			}
 		]
 	},

@@ -2,6 +2,7 @@
 using FoundationaLLM.Common.Constants.Configuration;
 using FoundationaLLM.Common.Interfaces;
 using FoundationaLLM.Common.Models.Configuration.Authorization;
+using FoundationaLLM.Common.Services.Cache;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -23,6 +24,7 @@ namespace FoundationaLLM
         {
             builder.Services.AddOptions<AuthorizationServiceClientSettings>()
                 .Bind(builder.Configuration.GetSection(AppConfigurationKeySections.FoundationaLLM_APIEndpoints_AuthorizationAPI_Essentials));
+            builder.Services.AddSingleton<IAuthorizationServiceClientCacheService, AuthorizationServiceClientMemoryCacheService>();
             builder.Services.AddSingleton<IAuthorizationServiceClient, AuthorizationServiceClient>();
         }
 
@@ -35,6 +37,7 @@ namespace FoundationaLLM
         {
             services.AddOptions<AuthorizationServiceClientSettings>()
                 .Bind(configuration.GetSection(AppConfigurationKeySections.FoundationaLLM_APIEndpoints_AuthorizationAPI_Essentials));
+            services.AddSingleton<IAuthorizationServiceClientCacheService, AuthorizationServiceClientMemoryCacheService>();
             services.AddSingleton<IAuthorizationServiceClient, AuthorizationServiceClient>();
         }
     }
