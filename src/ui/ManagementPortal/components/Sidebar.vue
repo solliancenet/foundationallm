@@ -51,9 +51,11 @@
 		<!-- <div class="sidebar__section-header">
 			<span class="pi pi-sitemap"></span>
 			<span>LLM's</span>
-		</div>
+		</div> -->
 
-		<div class="sidebar__item">Language Models & Endpoints</div> -->
+		<NuxtLink to="/models-and-endpoints" class="sidebar__item">
+			Language Models & Endpoints
+		</NuxtLink>
 
 		<!-- Security -->
 		<h3 class="sidebar__section-header">
@@ -90,7 +92,8 @@
 				<VTooltip :auto-hide="isMobile" :popper-triggers="isMobile ? [] : ['hover']">
 					<span
 						class="sidebar__username"
-						aria-label="Logged in as {{ $authStore.currentAccount?.username }}">
+						aria-label="Logged in as {{ $authStore.currentAccount?.username }}"
+					>
 						{{ $authStore.currentAccount?.name }}
 					</span>
 					<template #popper>
@@ -141,14 +144,14 @@ a {
 }
 
 .sidebar ul {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
 }
 
 .sidebar li {
-  margin: 0;
-  padding: 0;
+	margin: 0;
+	padding: 0;
 }
 
 .sidebar__header {

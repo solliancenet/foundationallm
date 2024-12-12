@@ -28,21 +28,21 @@ export type ResourceProviderGetResult<T> = {
 };
 
 export type ResourceProviderUpsertResult = {
-    /**
-     * The id of the object that was created or updated.
-     */
-    objectId: string;
+	/**
+	 * The id of the object that was created or updated.
+	 */
+	objectId: string;
 
-    /**
-     * A flag denoting whether the upserted resource already exists.
-     */
-    resourceExists: boolean;
+	/**
+	 * A flag denoting whether the upserted resource already exists.
+	 */
+	resourceExists: boolean;
 
-    /**
-     * Gets or sets the resource resulting from the upsert operation.
-     * Each resource provider will decide whether to return the resource in the upsert result or not.
-     */
-    resource?: any;
+	/**
+	 * Gets or sets the resource resulting from the upsert operation.
+	 * Each resource provider will decide whether to return the resource in the upsert result or not.
+	 */
+	resource?: any;
 };
 
 export type AgentTool = {
@@ -103,7 +103,7 @@ export type Agent = ResourceBase & {
 export type AgentAccessToken = ResourceBase & {
 	id: string;
 	active: boolean;
-}
+};
 
 export type Prompt = ResourceBase & {
 	object_id: string;

@@ -1,16 +1,16 @@
 <template>
-	<main id="main-content">
+	<div>
 		<div style="display: flex">
 			<div style="flex: 1">
-				<h2 class="page-header">Data Sources</h2>
-				<div class="page-subheader">The following data sources are available.</div>
+				<h2 class="page-header">Models & Endpoints</h2>
+				<div class="page-subheader">The following models & endpoints are available.</div>
 			</div>
 
 			<div style="display: flex; align-items: center">
-				<NuxtLink to="/data-sources/create" tabindex="-1">
-					<Button aria-label="Create data source">
+				<NuxtLink to="/models-and-endpoints/create">
+					<Button>
 						<i class="pi pi-plus" style="color: var(--text-primary); margin-right: 8px"></i>
-						Create Data Source
+						Create Model/Endpoint
 					</Button>
 				</NuxtLink>
 			</div>
@@ -19,7 +19,7 @@
 		<div :class="{ 'grid--loading': loading }">
 			<!-- Loading overlay -->
 			<template v-if="loading">
-				<div class="grid__loading-overlay" role="status" aria-live="polite">
+				<div class="grid__loading-overlay">
 					<LoadingGrid />
 					<div>{{ loadingStatusText }}</div>
 				</div>
@@ -27,21 +27,20 @@
 
 			<!-- Table -->
 			<DataTable
-				:value="dataSources"
+				:value="modelsAndEndpoints"
 				striped-rows
 				scrollable
 				table-style="max-width: 100%"
 				size="small"
 			>
 				<template #empty>
-					<div role="alert" aria-live="polite">No data sources found.</div>
+					No models/endpoints found. Please use the menu on the left to create a new model/endpoint.
 				</template>
-
-				<template #loading>Loading data sources. Please wait.</template>
+				<template #loading>Loading model & endpoints. Please wait.</template>
 
 				<!-- Name -->
 				<Column
-					field="resource.name"
+					field="name"
 					header="Name"
 					sortable
 					style="min-width: 200px"
@@ -55,7 +54,7 @@
 
 				<!-- Type -->
 				<Column
-					field="resource.type"
+					field="type"
 					header="Source Type"
 					sortable
 					style="min-width: 200px"
@@ -80,19 +79,10 @@
 					}"
 				>
 					<template #body="{ data }">
-						<NuxtLink
-							:to="'/data-sources/edit/' + data.resource.name"
-							class="table__button"
-							tabindex="-1"
-						>
-							<VTooltip :auto-hide="false" :popper-triggers="['hover']">
-								<Button link :aria-label="`Edit ${data.resource.name}`">
-									<i class="pi pi-cog" style="font-size: 1.2rem" aria-hidden="true"></i>
-								</Button>
-								<template #popper
-									><div role="tooltip">Edit {{ data.resource.name }}</div></template
-								>
-							</VTooltip>
+						<NuxtLink :to="'/models-and-endpoints/edit/' + data.name" class="table__button">
+							<Button link>
+								<i class="pi pi-cog" style="font-size: 1.2rem"></i>
+							</Button>
 						</NuxtLink>
 					</template>
 				</Column>
@@ -110,88 +100,71 @@
 					}"
 				>
 					<template #body="{ data }">
-						<VTooltip :auto-hide="false" :popper-triggers="['hover']">
-							<Button
-								link
-								:aria-label="`Delete ${data.resource.name}`"
-								@click="dataSourceToDelete = data.resource"
-							>
-								<i class="pi pi-trash" style="font-size: 1.2rem" aria-hidden="true"></i>
-							</Button>
-							<template #popper
-								><div role="tooltip">Delete {{ data.resource.name }}</div></template
-							>
-						</VTooltip>
+						<Button link @click="itemToDelete = data">
+							<i class="pi pi-trash" style="font-size: 1.2rem; color: var(--red-400)"></i>
+						</Button>
 					</template>
 				</Column>
 			</DataTable>
 		</div>
 
-		<!-- Delete agent dialog -->
-		<Dialog
-			:visible="dataSourceToDelete !== null"
-			modal
-			v-focustrap
-			header="Delete Data Source"
-			:closable="false"
-		>
-			<p>Do you want to delete the data source "{{ dataSourceToDelete.name }}" ?</p>
+		<!-- Delete model/endpoint dialog -->
+		<Dialog :visible="itemToDelete !== null" modal header="Delete Model/Endpoint" :closable="false">
+			<p>Do you want to delete the model/endpoint "{{ itemToDelete.name }}" ?</p>
 			<template #footer>
-				<Button label="Cancel" text @click="dataSourceToDelete = null" />
-				<Button label="Delete" severity="danger" autofocus @click="handleDeleteDataSource" />
+				<Button label="Cancel" text @click="itemToDelete = null" />
+				<Button label="Delete" severity="danger" @click="handleDelete" />
 			</template>
 		</Dialog>
-	</main>
+	</div>
 </template>
 
 <script lang="ts">
 import api from '@/js/api';
-import type { DataSource, ResourceProviderGetResult } from '@/js/types';
+import type { ModelOrEndpoint } from '@/js/types';
 
 export default {
-	name: 'PublicDataSources',
+	name: 'ModelsAndEndpoints',
 
 	data() {
 		return {
-			dataSources: [] as ResourceProviderGetResult<DataSource>[],
+			modelsAndEndpoints: [] as ModelOrEndpoint,
 			loading: false as boolean,
 			loadingStatusText: 'Retrieving data...' as string,
-			dataSourceToDelete: null as DataSource | null,
+			itemToDelete: null as ModelOrEndpoint | null,
 		};
 	},
 
 	async created() {
-		await this.getAgentDataSources();
+		// await this.getModelsAndEndpoints();
 	},
 
 	methods: {
-		async getAgentDataSources() {
-			this.loading = true;
-			try {
-				this.dataSources = await api.getAgentDataSources();
-			} catch (error) {
-				this.$toast.add({
-					severity: 'error',
-					detail: error?.response?._data || error,
-					life: 5000,
-				});
-			}
-			this.loading = false;
+		async getModelsAndEndpoints() {
+			// this.loading = true;
+			// try {
+			// 	this.modelsAndEndpoints = await api.getModelsAndEndpoints();
+			// } catch (error) {
+			// 	this.$toast.add({
+			// 		severity: 'error',
+			// 		detail: error?.response?._data || error,
+			// 		life: 5000,
+			// 	});
+			// }
+			// this.loading = false;
 		},
 
-		async handleDeleteDataSource() {
-			try {
-				await api.deleteDataSource(this.dataSourceToDelete!.name);
-				this.dataSourceToDelete = null;
-			} catch (error) {
-				return this.$toast.add({
-					severity: 'error',
-					detail: error?.response?._data || error,
-					life: 5000,
-				});
-			}
-
-			await this.getAgentDataSources();
+		async handleDelete() {
+			// try {
+			// 	await api.deleteModelOrEndpoint(this.itemToDelete!.name);
+			// 	this.itemToDelete = null;
+			// } catch (error) {
+			// 	return this.$toast.add({
+			// 		severity: 'error',
+			// 		detail: error?.response?._data || error,
+			// 		life: 5000,
+			// 	});
+			// }
 		},
 	},
 };

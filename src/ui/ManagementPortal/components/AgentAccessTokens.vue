@@ -72,11 +72,7 @@
 			</DataTable>
 
 			<div class="d-flex justify-content-end mt-4">
-				<Button
-					@click="createAccessTokenDialogOpen = true"
-				>
-					Create Access Token
-				</Button>
+				<Button @click="createAccessTokenDialogOpen = true"> Create Access Token </Button>
 			</div>
 		</template>
 
@@ -84,7 +80,7 @@
 		<Dialog
 			v-model:visible="createAccessTokenDialogOpen"
 			modal
-			:header="resourceKey ? 'View Access Token Details' :'Create Access Token'"
+			:header="resourceKey ? 'View Access Token Details' : 'Create Access Token'"
 			:style="{ minWidth: '70%' }"
 			@hide="handleCloseAccessTokenDialog"
 		>
@@ -137,7 +133,7 @@
 					</div>
 				</div>
 			</template>
-		
+
 			<template #footer>
 				<template v-if="resourceKey">
 					<!-- Close -->
@@ -182,7 +178,6 @@
 						Create access token
 					</Button>
 				</template>
-
 			</template>
 		</Dialog>
 
@@ -194,7 +189,9 @@
 			:style="{ minWidth: '50%' }"
 			:closable="false"
 		>
-			<div>Are you sure you want to delete the access token "{{ accessTokenToDelete.description }}"?</div>
+			<div>
+				Are you sure you want to delete the access token "{{ accessTokenToDelete.description }}"?
+			</div>
 			<template #footer>
 				<!-- Cancel -->
 				<Button
@@ -220,7 +217,7 @@ import api from '@/js/api';
 import type {
 	AgentAccessToken,
 	ResourceProviderGetResult,
-	ResourceProviderUpsertResult
+	ResourceProviderUpsertResult,
 } from '@/js/types';
 
 export default {
@@ -281,7 +278,7 @@ export default {
 		},
 
 		generateGuid() {
-			return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+			return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
 				const r = (Math.random() * 16) | 0,
 					v = c === 'x' ? r : (r & 0x3) | 0x8;
 				return v.toString(16);
@@ -291,7 +288,9 @@ export default {
 		async fetchAccessTokens() {
 			this.loadingAccessTokens = true;
 			const accessTokensResponse = await api.getAgentAccessTokens(this.agentName);
-			this.accessTokens = (accessTokensResponse as ResourceProviderGetResult<AgentAccessToken>[]).map((result: ResourceProviderGetResult<AgentAccessToken>) => result.resource);
+			this.accessTokens = (
+				accessTokensResponse as ResourceProviderGetResult<AgentAccessToken>[]
+			).map((result: ResourceProviderGetResult<AgentAccessToken>) => result.resource);
 			this.loadingAccessTokens = false;
 		},
 
@@ -308,8 +307,7 @@ export default {
 					detail: 'Access token key copied to clipboard!',
 					life: 5000,
 				});
-			}
-			else {
+			} else {
 				this.$toast.add({
 					severity: 'error',
 					summary: 'Error',
@@ -326,7 +324,10 @@ export default {
 			const link = document.createElement('a');
 			const file = new Blob([this.resourceKey], { type: 'text/plain' });
 			link.href = URL.createObjectURL(file);
-			link.download = `${this.agentName}-${this.accessToken?.description}-key.txt`.replace(/\s+/g, '-');
+			link.download = `${this.agentName}-${this.accessToken?.description}-key.txt`.replace(
+				/\s+/g,
+				'-',
+			);
 			link.click();
 			URL.revokeObjectURL(link.href);
 		},
@@ -400,7 +401,10 @@ export default {
 					return;
 				}
 
-				const result = await api.createAgentAccessToken(this.agentName, this.accessToken) as ResourceProviderUpsertResult;
+				const result = (await api.createAgentAccessToken(
+					this.agentName,
+					this.accessToken,
+				)) as ResourceProviderUpsertResult;
 				this.resourceKey = result.resource;
 
 				this.$toast.add({

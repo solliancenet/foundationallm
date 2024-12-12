@@ -40,6 +40,7 @@
 		"@vue-js-cron/light": "^4.0.5",
 		"@vueup/vue-quill": "^1.2.0",
 		"floating-vue": "^2.0.0",
+		"json-editor-vue": "^0.17.3",
 		"lodash": "^4.17.21",
 		"md5": "^2.3.0",
 		"pinia": "^2.2.2",

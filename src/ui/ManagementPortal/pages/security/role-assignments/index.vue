@@ -9,7 +9,11 @@
 			<div style="display: flex; align-items: center">
 				<NuxtLink to="/security/role-assignments/create" tabindex="-1">
 					<Button aria-label="Create Role Assignment">
-						<i class="pi pi-plus" style="color: var(--text-primary); margin-right: 8px" aria-hidden="true"></i>
+						<i
+							class="pi pi-plus"
+							style="color: var(--text-primary); margin-right: 8px"
+							aria-hidden="true"
+						></i>
 						Create Role Assignment
 					</Button>
 				</NuxtLink>

@@ -631,6 +631,9 @@ export default {
 		);
 	},
 
+	/*
+		AI Models
+	 */
 	async getAIModels(): Promise<ResourceProviderGetResult<AIModel>[]> {
 		const data = (await this.fetch(
 			`/instances/${this.instanceId}/providers/FoundationaLLM.AIModel/aiModels?api-version=${this.apiVersion}`,
@@ -813,6 +816,24 @@ export default {
 		);
 	},
 
+    /*
+		Workflows
+	 */
+	async getAgentWorkflows(): Promise<any> {
+		return await this.fetch(
+			`/instances/${this.instanceId}/providers/FoundationaLLM.Agent/workflows?api-version=${this.apiVersion}`,
+		);
+	},
+
+	/*
+		Agent Workflows
+	 */
+	async getAgentWorkflows(): Promise<any> {
+		return await this.fetch(
+			`/instances/${this.instanceId}/providers/FoundationaLLM.Agent/workflows?api-version=${this.apiVersion}`,
+		);
+	},
+
 	/*
 		Agent Access Tokens
 	 */
@@ -822,14 +843,17 @@ export default {
 		)) as ResourceProviderGetResult<AgentAccessToken>[];
 	},
 
-	async createAgentAccessToken(agentName: string, body: AgentAccessToken): Promise<ResourceProviderUpsertResult> {
-		return await this.fetch(
+	async createAgentAccessToken(
+		agentName: string,
+		body: AgentAccessToken,
+	): Promise<ResourceProviderUpsertResult> {
+		return (await this.fetch(
 			`/instances/${this.instanceId}/providers/FoundationaLLM.Agent/agents/${agentName}/agentAccessTokens/${body.id}?api-version=${this.apiVersion}`,
 			{
 				method: 'POST',
 				body,
 			},
-		) as ResourceProviderUpsertResult;
+		)) as ResourceProviderUpsertResult;
 	},
 
 	async deleteAgentAccessToken(agentName: string, accessTokenId: string): Promise<any> {
