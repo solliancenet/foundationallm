@@ -21,10 +21,24 @@ foreach ($certificateFolder in $certificates) {
     $pfx = Get-ChildItem -Path $pfxPath -Filter *.pfx | Select-Object -First 1
     $keyName = $certificateFolder
 
-    Invoke-AndRequireSuccess "Load PFX Certificate $($certificateFolder) into Azure Key Vault" {
-        az keyvault certificate import `
-            --file $pfx.FullName `
-            --name $keyName `
-            --vault-name $keyVaultName
+    $password = Read-Host "Enter password for $($pfx.FullName) certificate (Enter for none): " -AsSecureString
+    if ($password.Length -eq 0)
+    {
+        Invoke-AndRequireSuccess "Load PFX Certificate $($certificateFolder) into Azure Key Vault" {
+            az keyvault certificate import `
+                --file $pfx `
+                --name $keyName `
+                --vault-name $keyVaultName
+        }
+    }
+    else 
+    {
+        Invoke-AndRequireSuccess "Load PFX Certificate $($certificateFolder) into Azure Key Vault" {
+            az keyvault certificate import `
+                --file $pfx `
+                --name $keyName `
+                --vault-name $keyVaultName `
+                --password $password
+        }
     }
 }

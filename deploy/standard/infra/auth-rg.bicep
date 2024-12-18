@@ -122,6 +122,7 @@ module authStore 'modules/storageAccount.bicep' = {
     containers: [
       'role-assignments'
       'policy-assignments'
+      'secret-keys'
     ]
   }
 }

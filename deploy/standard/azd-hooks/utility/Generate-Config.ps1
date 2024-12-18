@@ -233,8 +233,12 @@ $tokens.gatewayApiRoleAssignmentGuid = $(New-Guid).Guid
 $tokens.vectorizationJobRoleAssignmentGuid = $(New-Guid).Guid
 $tokens.conversationPolicyGuid = $(New-Guid).Guid
 $tokens.attachmentPolicyGuid = $(New-Guid).Guid
+$tokens.conversationMappingsPolicyGuid = $(New-Guid).Guid
+$tokens.fileMappingsPolicyGuid = $(New-Guid).Guid
 $tokens.configReadAccessGuid1 = $(New-Guid).Guid
 $tokens.configReadAccessGuid2 = $(New-Guid).Guid
+$tokens.agentReaderGuid = $(New-Guid).Guid
+$tokens.promptReaderGuid = $(New-Guid).Guid
 $tokens.attachmentContributorGuid = $(New-Guid).Guid
 $tokens.conversationContributorGuid = $(New-Guid).Guid
 $tokens.subscriptionId = $subscriptionId
@@ -540,6 +544,8 @@ $($ingress.frontendIngress).PSBase.Keys | ForEach-Object {
     PopulateTemplate $tokens "..,config,helm,frontend-service.template.yml" "..,config,helm,$($_)-values.yml"
     PopulateTemplate $tokens "..,config,helm,service-ingress.template.yml" "..,config,helm,$($_)-ingress.yml"
 }
+
+$tokens.serviceNamespaceName = $serviceNamespaceName
 
 PopulateTemplate $tokens "..,data,resource-provider,FoundationaLLM.Agent,FoundationaLLM.template.json" "..,..,common,data,resource-provider,FoundationaLLM.Agent,FoundationaLLM.json"
 PopulateTemplate $tokens "..,data,resource-provider,FoundationaLLM.AIModel,completion-model.template.json" "..,..,common,data,resource-provider,FoundationaLLM.AIModel,completion-model.json"

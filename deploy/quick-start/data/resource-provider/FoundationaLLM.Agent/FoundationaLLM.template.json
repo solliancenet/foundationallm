@@ -1,31 +1,67 @@
 {
   "type": "knowledge-management",
-  "name": "FoundationaLLM",
-  "object_id": "/instances/${env:FOUNDATIONALLM_INSTANCE_ID}/providers/FoundationaLLM.Agent/agents/FoundationaLLM",
+  "name": "FoundationaLLM-v2",
+  "object_id": "/instances/${env:FOUNDATIONALLM_INSTANCE_ID}/providers/FoundationaLLM.Agent/agents/FoundationaLLM-v2",
+  "display_name": null,
   "description": "Useful for answering questions about FoundationaLLM.",
-  "deleted": false,
+  "cost_center": "",
+  "vectorization": {
+    "dedicated_pipeline": true,
+    "data_source_object_id": "",
+    "indexing_profile_object_ids": [
+      ""
+    ],
+    "text_embedding_profile_object_id": "",
+    "text_partitioning_profile_object_id": "",
+    "vectorization_data_pipeline_object_id": "",
+    "trigger_type": "Event",
+    "trigger_cron_schedule": "* * * * *"
+  },
   "inline_context": true,
   "sessions_enabled": true,
-  "conversation_history": {
+  "conversation_history_settings": {
     "enabled": false,
     "max_history": 5
   },
-  "gatekeeper": {
-    "use_system_setting": true,
+  "gatekeeper_settings": {
+    "use_system_setting": false,
     "options": []
   },
   "orchestration_settings": {
     "orchestrator": "LangChain",
     "agent_parameters": null
   },
-	"capabilities": [
+  "prompt_object_id": "/instances/${env:FOUNDATIONALLM_INSTANCE_ID}/providers/FoundationaLLM.Prompt/prompts/FoundationaLLM",
+  "ai_model_object_id": "/instances/${env:FOUNDATIONALLM_INSTANCE_ID}/providers/FoundationaLLM.AIModel/aiModels/DefaultCompletionAIModel",
+  "capabilities": [
     "OpenAI.Assistants"
   ],
   "properties": {
-    "welcome_message": "",
+    "welcome_message": "\u003Cp\u003EYou are chatting with an agent named FoundationaLLM, who can answer questions about the FoundationaLLM platform.\u003C/p\u003E\u003Cp\u003EAdditional capabilities include:\u003C/p\u003E\u003Cul\u003E\u003Cli\u003EUpload files and ask the agent to analyze them\u003C/li\u003E\u003Cli\u003EGenerate charts, files, and downloadable content\u003C/li\u003E\u003Cli\u003EGenerate images using DALL-E\u003C/li\u003E\u003C/ul\u003E\u003Cp\u003E\u003Cem\u003EPlease avoid sharing personally identifiable information (PII) while conversing with the agent.\u003C/em\u003E\u003C/p\u003E",
     "Azure.OpenAI.Assistant.Id": "${env:OPENAI_ASSISTANT_ID}"
   },
-  "tools": [],
-  "ai_model_object_id": "/instances/${env:FOUNDATIONALLM_INSTANCE_ID}/providers/FoundationaLLM.AIModel/aiModels/DefaultCompletionAIModel",
-  "prompt_object_id": "/instances/${env:FOUNDATIONALLM_INSTANCE_ID}/providers/FoundationaLLM.Prompt/prompts/FoundationaLLM"
+  "workflow": {
+    "type": "azure-openai-assistants-workflow",
+    "assistant_id": "${env:OPENAI_ASSISTANT_ID}",
+    "resource_object_ids": {
+			"/instances/${env:FOUNDATIONALLM_INSTANCE_ID}/providers/FoundationaLLM.Agent/workflows/OpenAIAssistants": {
+				"object_id": "/instances/${env:FOUNDATIONALLM_INSTANCE_ID}/providers/FoundationaLLM.Agent/workflows/OpenAIAssistants",
+				"properties": {}
+			},
+			"/instances/${env:FOUNDATIONALLM_INSTANCE_ID}/providers/FoundationaLLM.AIModel/aiModels/DefaultCompletionAIModel" : {
+				"object_id": "/instances/${env:FOUNDATIONALLM_INSTANCE_ID}/providers/FoundationaLLM.AIModel/aiModels/DefaultCompletionAIModel",
+				"properties": {
+					"object_role": "main_model",
+					"model_parameters": {}
+				}
+			},
+			"/instances/${env:FOUNDATIONALLM_INSTANCE_ID}/providers/FoundationaLLM.Prompt/prompts/FoundationaLLM": {
+				"object_id": "/instances/${env:FOUNDATIONALLM_INSTANCE_ID}/providers/FoundationaLLM.Prompt/prompts/FoundationaLLM",
+				"properties": {
+					"object_role": "main_prompt"
+				}
+			}
+		}
+  },
+  "tools": []
 }

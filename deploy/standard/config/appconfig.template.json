@@ -36,8 +36,29 @@
             "tags": {}
         },
         {
+            "key": "FoundationaLLM:Instance:EnableResourceProvidersCache",
+            "value": "false",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
             "key": "FoundationaLLM:Configuration:KeyVaultURI",
             "value": "{{keyvaultUri}}",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:PythonSDK:Logging:LogLevel:Default",
+            "value": "Information",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:PythonSDK:Logging:EnableConsoleLogging",
+            "value": "false",
             "label": null,
             "content_type": "",
             "tags": {}
@@ -164,6 +185,13 @@
         {
             "key": "FoundationaLLM:APIEndpoints:AuthorizationAPI:Essentials:APIScope",
             "value": "{{authorizationApiScope}}",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:APIEndpoints:AuthorizationAPI:Essentials:EnableCache",
+            "value": "false",
             "label": null,
             "content_type": "",
             "tags": {}
@@ -404,6 +432,13 @@
             "value": "{\"uri\":\"{{keyvaultUri}}secrets/foundationallm-appinsights-connectionstring\"}",
             "label": null,
             "content_type": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:APIEndpoints:LangChainAPI:Configuration:PollingIntervalSeconds",
+            "value": "10",
+            "label": null,
+            "content_type": "",
             "tags": {}
         },
         {
@@ -857,6 +892,34 @@
         {
             "key": "FoundationaLLM:UserPortal:Authentication:Entra:ClientId",
             "value": "{{chatEntraClientId}}",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:UserPortal:Configuration:ShowLastConversationOnStartup",
+            "value": "false",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:UserPortal:Configuration:ShowMessageRating",
+            "value": "true",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:UserPortal:Configuration:ShowMessageTokens",
+            "value": "true",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:UserPortal:Configuration:ShowViewPrompt",
+            "value": "true",
             "label": null,
             "content_type": "",
             "tags": {}

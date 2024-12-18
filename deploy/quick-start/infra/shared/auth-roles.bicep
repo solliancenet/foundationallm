@@ -9,10 +9,10 @@ resource keyvault 'Microsoft.KeyVault/vaults@2023-07-01' existing = {
 
 resource secretsUserRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   scope: keyvault
-  name: guid(subscription().id, resourceGroup().id, identityId, 'secretsUserRole')
+  name: guid(subscription().id, resourceGroup().id, identityId, 'secretsOfficerRole')
   properties: {
     roleDefinitionId: subscriptionResourceId(
-      'Microsoft.Authorization/roleDefinitions', '4633458b-17de-408a-b874-0445c86b69e6')
+      'Microsoft.Authorization/roleDefinitions', 'b86a8fe4-44ce-4948-aee5-eccb2c155cd7')
     principalType: 'ServicePrincipal'
     principalId: principalId
   }

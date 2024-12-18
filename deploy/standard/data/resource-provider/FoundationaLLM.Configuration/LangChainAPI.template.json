@@ -11,8 +11,8 @@
     "api_key_configuration_name": "FoundationaLLM:APIEndpoints:LangChainAPI:Essentials:APIKey",
     "api_key_header_name": "X-API-KEY"
   },
-  "url": "http://langchain-api/langchain",
-  "status_url": "http://langchain-api/langchain/status",
+  "url": "http://langchain-api.{{serviceNamespaceName}}.svc.cluster.local/langchain",
+  "status_url": "http://langchain-api.{{serviceNamespaceName}}.svc.cluster.local/langchain/status",
   "url_exceptions": [],
   "timeout_seconds": 1800,
   "retry_strategy_name": "ExponentialBackoff",

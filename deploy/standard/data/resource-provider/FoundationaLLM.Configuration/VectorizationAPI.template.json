@@ -11,8 +11,8 @@
     "api_key_configuration_name": "FoundationaLLM:APIEndpoints:VectorizationAPI:Essentials:APIKey",
     "api_key_header_name": "X-API-KEY"
   },
-  "url": "http://vectorization-api/vectorization",
-  "status_url": "http://vectorization-api/vectorization/status",
+  "url": "http://vectorization-api.{{serviceNamespaceName}}.svc.cluster.local/vectorization",
+  "status_url": "http://vectorization-api.{{serviceNamespaceName}}.svc.cluster.local/vectorization/status",
   "url_exceptions": [],
   "timeout_seconds": 60,
   "retry_strategy_name": "ExponentialBackoff",

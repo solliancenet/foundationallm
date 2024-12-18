@@ -11,7 +11,7 @@
     "api_key_configuration_name": "FoundationaLLM:APIEndpoints:VectorizationWorker:Essentials:APIKey",
     "api_key_header_name": "X-API-KEY"
   },
-  "url": "http://vectorization-job/vectorization",
+  "url": "http://vectorization-job.{{serviceNamespaceName}}.svc.cluster.local/vectorization",
   "url_exceptions": [],
   "timeout_seconds": 60,
   "retry_strategy_name": "ExponentialBackoff",
