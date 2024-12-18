@@ -3,14 +3,14 @@
 namespace FoundationaLLM.Common.Models.Events
 {
     /// <summary>
-    /// Event arguments required for event set event delegates.
+    /// Event arguments required for event type event delegates.
     /// </summary>
-    public class EventSetEventArgs : EventArgs
+    public class EventTypeEventArgs : EventArgs
     {
         /// <summary>
-        /// The namespace associated with the event set.
+        /// The event type.
         /// </summary>
-        public required string Namespace { get; set; }
+        public required string EventType { get; set; }
 
         /// <summary>
         /// The list of subjects associated with the event.
@@ -20,9 +20,9 @@ namespace FoundationaLLM.Common.Models.Events
 
     /// <summary>
     /// Multicast delegate used by the Azure Event Grid event service to provide support 
-    /// for subscribing to event namespaces.
+    /// for subscribing to event types.
     /// </summary>
     /// <param name="sender">The object raising the event.</param>
-    /// <param name="e">The <see cref="EventSetEventArgs"/> that contains the details about the events being raised.</param>
-    public delegate void EventSetEventDelegate(object sender, EventSetEventArgs e);
+    /// <param name="e">The <see cref="EventTypeEventArgs"/> that contains the details about the events being raised.</param>
+    public delegate void EventTypeEventDelegate(object sender, EventTypeEventArgs e);
 }

@@ -50,11 +50,16 @@ namespace FoundationaLLM.Common.Services.API
         }
 
         /// <inheritdoc/>
-        public async Task<T> CreateClient<T>(string clientName, UnifiedUserIdentity userIdentity, Func<Dictionary<string, object>, T> clientBuilder)
+        public async Task<T> CreateClient<T>(
+            string clientName,
+            UnifiedUserIdentity userIdentity,
+            Func<Dictionary<string, object>, T> clientBuilder,
+            Dictionary<string, object>? clientBuilderParameters = null)
         {
             var endpointConfiguration = await GetEndpoint(clientName, userIdentity);
 
-            Dictionary<string, object> clientBuilderParameters = [];
+            if (clientBuilderParameters == null)
+                clientBuilderParameters = [];
 
             clientBuilderParameters[HttpClientFactoryServiceKeyNames.Endpoint] =
                 GetUrlExceptionForUserIdentity(endpointConfiguration, userIdentity)?.Url                

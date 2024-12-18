@@ -13,12 +13,14 @@ namespace FoundationaLLM.Common.Interfaces
         /// <param name="namespaceResourceId">The Azure resource identifier of the Azure Event Grid namespace.</param>
         /// <param name="topicName">The name of the topic for which the subscription should be created.</param>
         /// <param name="topicSubscriptionName">The name of the subscription to be created.</param>
+        /// <param name="includedEventTypes">The list of event types to include in the subscription as part of the filters configuration.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> signaling the request to cancel the operation.</param>
         /// <returns>True if the subscription was successfully created, false otherwise.</returns>
         Task<bool> CreateEventGridNamespaceTopicSubscription(
             string namespaceResourceId,
             string topicName,
             string topicSubscriptionName,
+            List<string> includedEventTypes,
             CancellationToken cancellationToken);
 
         /// <summary>

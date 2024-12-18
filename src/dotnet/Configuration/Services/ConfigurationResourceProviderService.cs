@@ -1,6 +1,6 @@
 ﻿using Azure.Messaging;
-using FoundationaLLM.Common.Constants;
 using FoundationaLLM.Common.Constants.Configuration;
+using FoundationaLLM.Common.Constants.Events;
 using FoundationaLLM.Common.Constants.ResourceProviders;
 using FoundationaLLM.Common.Exceptions;
 using FoundationaLLM.Common.Interfaces;
@@ -58,7 +58,7 @@ namespace FoundationaLLM.Configuration.Services
             serviceProvider,
             logger,
             [
-                EventSetEventNamespaces.FoundationaLLM_ResourceProvider_Configuration
+                EventTypes.FoundationaLLM_ResourceProvider_Configuration
             ],
             useInternalReferencesStore: true)
     {
@@ -162,14 +162,14 @@ namespace FoundationaLLM.Configuration.Services
         #region Event handling
 
         /// <inheritdoc/>
-        protected override async Task HandleEvents(EventSetEventArgs e)
+        protected override async Task HandleEvents(EventTypeEventArgs e)
         {
             _logger.LogInformation("{EventsCount} events received in the {EventsNamespace} events namespace.",
-                e.Events.Count, e.Namespace);
+                e.Events.Count, e.EventType);
 
-            switch (e.Namespace)
+            switch (e.EventType)
             {
-                case EventSetEventNamespaces.FoundationaLLM_ResourceProvider_Configuration:
+                case EventTypes.FoundationaLLM_ResourceProvider_Configuration:
                     foreach (var @event in e.Events)
                         await HandleConfigurationResourceProviderEvent(@event);
                     break;

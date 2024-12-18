@@ -24,9 +24,9 @@ namespace FoundationaLLM.Common.Services.Events
         private Task? _dequeueingTask;
 
         /// <summary>
-        /// The queue containing <see cref="EventSetEventArgs"/> events received via the subscriptions to the <see cref="IEventService"/>.
+        /// The queue containing <see cref="EventTypeEventArgs"/> events received via the subscriptions to the <see cref="IEventService"/>.
         /// </summary>
-        private readonly ConcurrentQueue<EventSetEventArgs> _eventsQueue = [];
+        private readonly ConcurrentQueue<EventTypeEventArgs> _eventsQueue = [];
 
         /// <summary>
         /// Subscribes this instance to a specified list of event namespaces supported by the <see cref="IEventService"/>.
@@ -36,7 +36,7 @@ namespace FoundationaLLM.Common.Services.Events
         {
             foreach (var eventNamespace in eventNamespaces)
             {
-                _eventService.SubscribeToEventSetEvent(
+                _eventService.SubscribeToEventTypeEvent(
                     eventNamespace,
                     IngestEvents);
             }
@@ -48,21 +48,21 @@ namespace FoundationaLLM.Common.Services.Events
         /// In the background, the extraction thread will dequeue and submit them to final processing using the provided event handler.
         /// </summary>
         /// <param name="eventHandler">The event handler invoked to process each set of events.</param>
-        public void StartLocalEventProcessing(Func<EventSetEventArgs, Task> eventHandler) =>
+        public void StartLocalEventProcessing(Func<EventTypeEventArgs, Task> eventHandler) =>
             _dequeueingTask = Task.Run(() => DequeueEvents(eventHandler));
 
-        private void IngestEvents(object sender, EventSetEventArgs e) =>
+        private void IngestEvents(object sender, EventTypeEventArgs e) =>
             // Trying to minimize the impact of calling this handler,
             // so we're just queuing the event set - will be processed by a separate thread.
             _eventsQueue.Enqueue(e);
 
-        private async Task DequeueEvents(Func<EventSetEventArgs, Task> eventHandler)
+        private async Task DequeueEvents(Func<EventTypeEventArgs, Task> eventHandler)
         {
             _logger.LogInformation("The local event service has started processing events.");
 
             while (true)
             {
-                while (_eventsQueue.TryDequeue(out EventSetEventArgs? eventSet))
+                while (_eventsQueue.TryDequeue(out EventTypeEventArgs? eventSet))
                 {
                     if (eventSet != null)
                     {
@@ -74,7 +74,7 @@ namespace FoundationaLLM.Common.Services.Events
                         catch (Exception ex)
                         {
                             _logger.LogError(ex, "An error occured while handling an event set originating from the {EventNamespace} event namespace.",
-                                eventSet.Namespace);
+                                eventSet.EventType);
                         }
                     }
                 }
