@@ -3,6 +3,25 @@
 > [!NOTE]
 > This section is for changes that are not yet released but will affect future releases.
 
+## Starting with 0.9.1-rc103
+
+### Configuration changes
+
+Agent resource configuration files that have a `workflow` property now requires a `name` and `package_name` property. This is to support loading external workflows via plugins. For internal workflows, the `package_name` should be set to `FoundationaLLM`. Example below truncated for brevity.
+
+```json
+{
+    "workflow": {
+        "type": "langgraph-react-agent-workflow",
+        "name": "LangGraphReactAgent",
+        "package_name": "FoundationaLLM",
+        "workflow_host": "LangChain",
+        "graph_recursion_limit": 10,
+        "resource_object_ids": {}
+    }
+}
+```
+
 ## Starting with 0.9.1-rc102
 
 ### Configuration changes

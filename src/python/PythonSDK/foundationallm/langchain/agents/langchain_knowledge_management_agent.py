@@ -8,7 +8,8 @@ from langgraph.prebuilt import create_react_agent
 from foundationallm.langchain.agents import LangChainAgentBase
 from foundationallm.langchain.exceptions import LangChainException
 from foundationallm.langchain.retrievers import RetrieverFactory, ContentArtifactRetrievalBase
-from foundationallm.models.agents import AzureOpenAIAssistantsAgentWorkflow, LangGraphReactAgentWorkflow
+from foundationallm.langchain.workflows import ExternalWorkflowFactory
+from foundationallm.models.agents import AzureOpenAIAssistantsAgentWorkflow, ExternalAgentWorkflow, LangGraphReactAgentWorkflow
 from foundationallm.models.constants import (
     AgentCapabilityCategories,
     ResourceObjectIdPropertyNames,
@@ -498,6 +499,42 @@ class LangChainKnowledgeManagementAgent(LangChainAgentBase):
                         total_cost = 0
                     )
         # End LangGraph ReAct Agent workflow implementation
+
+        # Start External Agent workflow implementation
+        if (agent.workflow is not None and isinstance(agent.workflow, ExternalAgentWorkflow)):
+            # prepare tools
+            tool_factory = ToolFactory(self.plugin_manager)            
+            tools = []
+
+            parsed_user_prompt = request.user_prompt
+
+            explicit_tool = next((tool for tool in agent.tools if parsed_user_prompt.startswith(f'[{tool.name}]:')), None)
+            if explicit_tool is not None:
+                tools.append(tool_factory.get_tool(explicit_tool, request.objects, self.user_identity, self.config))
+                parsed_user_prompt = parsed_user_prompt.split(':', 1)[1].strip()
+            else:
+                # Populate tools list from agent configuration
+                for tool in agent.tools:
+                    tools.append(tool_factory.get_tool(tool, request.objects, self.user_identity, self.config))
+
+            # create the workflow
+            workflow_factory = ExternalWorkflowFactory(self.plugin_manager)
+            workflow = workflow_factory.create_workflow(
+                agent.workflow,
+                request.objects,
+                tools,
+                self.user_identity,
+                self.config)
+           
+            # Get message history          
+            messages = self._build_conversation_history_message_list(request.message_history, agent.conversation_history_settings.max_history)            
+
+            response = await workflow.invoke_async(
+                user_prompt=parsed_user_prompt,
+                message_history=messages
+            )
+            return response
+        # End External Agent workflow implementation
 
         # Start LangChain Expression Language (LCEL) implementation
 

@@ -285,7 +285,7 @@ namespace FoundationaLLM.Orchestration.Core.Orchestration
                             }
                             break;
                         case AgentResourceTypeNames.Workflows:
-                            agentWorkflow.WorkflowName = resourcePath.MainResourceId;
+                            agentWorkflow.Name = resourcePath.MainResourceId!;
                             break;
                     }
                 }

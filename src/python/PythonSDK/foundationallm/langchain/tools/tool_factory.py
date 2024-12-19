@@ -46,7 +46,7 @@ class ToolFactory:
             tool_plugin_manager = None
 
             if tool_config.package_name in self.plugin_manager.external_modules:
-                tool_plugin_manager = self.plugin_manager.external_modules[tool_config.package_name].tool_plugin_manager
+                tool_plugin_manager = self.plugin_manager.external_modules[tool_config.package_name].plugin_manager
                 return tool_plugin_manager.create_tool(tool_config, objects, user_identity, config)
             else:
                 raise LangChainException(f"Package {tool_config.package_name} not found in the list of external modules loaded by the package manager.")
