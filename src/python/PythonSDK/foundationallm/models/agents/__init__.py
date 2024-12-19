@@ -4,6 +4,7 @@ from .agent_orchestration_settings import AgentOrchestrationSettings
 from .agent_tool import AgentTool
 from .agent_vectorization_settings import AgentVectorizationSettings
 from .agent_workflows.agent_workflow_ai_model import AgentWorkflowAIModel
+from .agent_workflows.external_agent_workflow import ExternalAgentWorkflow
 from .agent_workflows.agent_workflow_base import AgentWorkflowBase
 from .agent_workflows.azure_openai_assistants_agent_workflow import AzureOpenAIAssistantsAgentWorkflow
 from .agent_workflows.langchain_expression_language_agent_workflow import LangChainExpressionLanguageAgentWorkflow

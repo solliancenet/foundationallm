@@ -10,6 +10,7 @@ namespace FoundationaLLM.Common.Models.ResourceProviders.Agent.AgentWorkflows
     [JsonDerivedType(typeof(AzureOpenAIAssistantsAgentWorkflow), AgentWorkflowTypes.AzureOpenAIAssistants)]
     [JsonDerivedType(typeof(LangChainExpressionLanguageAgentWorkflow), AgentWorkflowTypes.LangChainExpressionLanguage)]
     [JsonDerivedType(typeof(LangGraphReactAgentWorkflow), AgentWorkflowTypes.LangGraphReactAgent)]
+    [JsonDerivedType(typeof(ExternalAgentWorkflow), AgentWorkflowTypes.ExternalAgentWorkflow)]
     public class AgentWorkflowBase
     {        
         /// <summary>
@@ -20,12 +21,17 @@ namespace FoundationaLLM.Common.Models.ResourceProviders.Agent.AgentWorkflows
 
         /// <summary>
         /// The name of the workflow.
+        /// </summary>        
+        [JsonPropertyName("name")]
+        public required string Name { get; set; }
+
+        /// <summary>
+        /// Gets or sets the package name of the workflow.
+        /// For internal workflows, this value will be FoundationaLLM
+        /// For external workflows, this value will be the name of the package.
         /// </summary>
-        /// <remarks>
-        /// This value is always derived from the <see cref="ResourceObjectIds"/> property.
-        /// </remarks>
-        [JsonPropertyName("workflow_name")]
-        public string? WorkflowName { get; set; }
+        [JsonPropertyName("package_name")]
+        public required string PackageName { get; set; }
 
         /// <summary>
         /// The host of the workflow environment.

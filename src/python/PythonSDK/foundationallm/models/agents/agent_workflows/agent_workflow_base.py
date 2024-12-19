@@ -10,7 +10,8 @@ class AgentWorkflowBase(ResourceObjectIdsModelBase):
     """
     type: Optional[str] = Field(None, alias="type")
     workflow_host: str = Field(None, alias="workflow_host")
-    workflow_name: str = Field(None, alias="workflow_name")
+    name: str = Field(None, alias="name")
+    package_name: str=Field(None, alias="package_name")
 
     @staticmethod
     def from_object(obj: Any) -> Self:

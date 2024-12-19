@@ -19,5 +19,10 @@
         /// The LangGraph ReAct agent workflow.
         /// </summary>
         public const string LangGraphReactAgent = "langgraph-react-agent-workflow";
+
+        /// <summary>
+        /// The External Agent workflow.
+        /// </summary>
+        public const string ExternalAgentWorkflow = "external-agent-workflow";
     }
 }
