@@ -25,6 +25,7 @@ import BadgeDirective from 'primevue/badgedirective';
 import ProgressBar from 'primevue/progressbar';
 import ColorPicker from 'primevue/colorpicker';
 import InputSwitch from 'primevue/inputswitch';
+import InputNumber from 'primevue/inputnumber';
 
 import { defineNuxtPlugin } from '#app';
 
@@ -54,6 +55,7 @@ export default defineNuxtPlugin((nuxtApp) => {
 	nuxtApp.vueApp.component('ProgressBar', ProgressBar);
 	nuxtApp.vueApp.component('ColorPicker', ColorPicker);
 	nuxtApp.vueApp.component('InputSwitch', InputSwitch);
+	nuxtApp.vueApp.component('InputNumber', InputNumber);
 
 	nuxtApp.vueApp.use(ToastService);
 });
