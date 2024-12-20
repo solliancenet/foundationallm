@@ -1,8 +1,8 @@
 ﻿using System.Diagnostics;
 using Azure.Messaging;
 using FluentValidation;
-using FoundationaLLM.Common.Constants;
 using FoundationaLLM.Common.Constants.Configuration;
+using FoundationaLLM.Common.Constants.Events;
 using FoundationaLLM.Common.Constants.ResourceProviders;
 using FoundationaLLM.Common.Exceptions;
 using FoundationaLLM.Common.Interfaces;
@@ -18,6 +18,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Text.Json;
+using FoundationaLLM.Common.Constants;
 
 namespace FoundationaLLM.Attachment.ResourceProviders
 {
@@ -50,7 +51,7 @@ namespace FoundationaLLM.Attachment.ResourceProviders
             serviceProvider,
             loggerFactory.CreateLogger<AttachmentResourceProviderService>(),
             [
-                EventSetEventNamespaces.FoundationaLLM_ResourceProvider_Attachment
+                EventTypes.FoundationaLLM_ResourceProvider_Attachment
             ],
             useInternalReferencesStore: false)
     {
@@ -233,14 +234,14 @@ namespace FoundationaLLM.Attachment.ResourceProviders
         #region Event handling
 
         /// <inheritdoc/>
-        protected override async Task HandleEvents(EventSetEventArgs e)
+        protected override async Task HandleEvents(EventTypeEventArgs e)
         {
             _logger.LogInformation("{EventsCount} events received in the {EventsNamespace} events namespace.",
-                e.Events.Count, e.Namespace);
+                e.Events.Count, e.EventType);
 
-            switch (e.Namespace)
+            switch (e.EventType)
             {
-                case EventSetEventNamespaces.FoundationaLLM_ResourceProvider_Attachment:
+                case EventTypes.FoundationaLLM_ResourceProvider_Attachment:
                     foreach (var @event in e.Events)
                         await HandleAttachmentResourceProviderEvent(@event);
                     break;

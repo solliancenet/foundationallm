@@ -26,5 +26,15 @@ namespace FoundationaLLM.Common.Constants
         /// The dictionary key identifying the timeout in seconds associated with an HTTP client.
         /// </summary>
         public const string TimeoutSeconds = "TimeoutSeconds";
+
+        /// <summary>
+        /// The name of the Azure Event Grid topic.
+        /// </summary>
+        public const string AzureEventGridTopicName = "AzureEventGridTopicName";
+
+        /// <summary>
+        /// The name of the Azure Event Grid topic subscription.
+        /// </summary>
+        public const string AzureEventGridTopicSubscriptionName = "AzureEventGridTopicSubscriptionName";
     }
 }

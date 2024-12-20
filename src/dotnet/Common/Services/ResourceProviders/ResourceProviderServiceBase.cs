@@ -754,9 +754,9 @@ namespace FoundationaLLM.Common.Services.ResourceProviders
         /// <summary>
         /// Handles events received from the <see cref="IEventService"/> when they are dequeued locally.
         /// </summary>
-        /// <param name="e">The <see cref="EventSetEventArgs"/> containing the events namespace and the actual events.</param>
+        /// <param name="e">The <see cref="EventTypeEventArgs"/> containing the events namespace and the actual events.</param>
         /// <returns></returns>
-        protected virtual async Task HandleEvents(EventSetEventArgs e) =>
+        protected virtual async Task HandleEvents(EventTypeEventArgs e) =>
             await Task.CompletedTask;
 
         #endregion
