@@ -80,7 +80,11 @@
 					}"
 				>
 					<template #body="{ data }">
-						<NuxtLink :to="'/agents/edit/' + data.resource.name" class="table__button" tabindex="-1">
+						<NuxtLink
+							:to="'/agents/edit/' + data.resource.name"
+							class="table__button"
+							tabindex="-1"
+						>
 							<VTooltip :auto-hide="false" :popper-triggers="['hover']">
 								<Button
 									link
@@ -89,7 +93,9 @@
 								>
 									<i class="pi pi-cog" style="font-size: 1.2rem" aria-hidden="true"></i>
 								</Button>
-								<template #popper><div role="tooltip">Edit {{data.resource.name}}</div></template>
+								<template #popper
+									><div role="tooltip">Edit {{ data.resource.name }}</div></template
+								>
 							</VTooltip>
 						</NuxtLink>
 					</template>
@@ -117,7 +123,9 @@
 							>
 								<i class="pi pi-trash" style="font-size: 1.2rem" aria-hidden="true"></i>
 							</Button>
-							<template #popper><div role="tooltip">Delete {{data.resource.name}}</div></template>
+							<template #popper
+								><div role="tooltip">Delete {{ data.resource.name }}</div></template
+							>
 						</VTooltip>
 					</template>
 				</Column>
@@ -125,7 +133,13 @@
 		</div>
 
 		<!-- Delete agent dialog -->
-		<Dialog :visible="agentToDelete !== null" modal v-focustrap header="Delete Agent" :closable="false">
+		<Dialog
+			:visible="agentToDelete !== null"
+			modal
+			v-focustrap
+			header="Delete Agent"
+			:closable="false"
+		>
 			<p>Do you want to delete the agent "{{ agentToDelete.name }}" ?</p>
 			<template #footer>
 				<Button label="Cancel" text @click="agentToDelete = null" />

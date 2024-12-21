@@ -11,7 +11,10 @@
 			<p>Customize the look and feel of your UI.</p>
 			<div style="display: flex; flex-direction: row; align-items: center; gap: 0.5rem">
 				<p>Show contrast information</p>
-				<InputSwitch v-model="showContrastInfo" aria-label="Toggle to show or hide contrast information" />
+				<InputSwitch
+					v-model="showContrastInfo"
+					aria-label="Toggle to show or hide contrast information"
+				/>
 			</div>
 		</div>
 		<div class="steps">
@@ -52,10 +55,10 @@
 					:style="{ backgroundColor: getBrandingValue('FoundationaLLM:Branding:PrimaryColor') }"
 					class="logo-preview"
 				>
-					<img 
+					<img
 						:src="$filters.publicDirectory(getBrandingValue(key))"
 						alt="Logo Preview"
-						class="logo-image" 
+						class="logo-image"
 					/>
 				</div>
 			</div>
@@ -188,12 +191,7 @@
 				/>
 				<Button label="Save" severity="primary" @click="saveBranding" />
 			</div>
-			<Dialog
-				:visible="resetBrandingDialog"
-				modal
-				header="Reset Branding"
-				:closable="false"
-			>
+			<Dialog :visible="resetBrandingDialog" modal header="Reset Branding" :closable="false">
 				<p>Are you sure you want to reset all branding values to their previous values?</p>
 				<template #footer>
 					<Button label="Cancel" text @click="resetBrandingDialog = false" />

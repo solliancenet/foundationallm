@@ -2,7 +2,7 @@
 	<div class="step">
 		<div class="step-container">
 			<!-- Editing view -->
-			<div 
+			<div
 				v-if="isOpen"
 				class="step-container__edit"
 				:id="'step-content-' + id"
@@ -13,7 +13,12 @@
 					<slot name="edit" />
 
 					<div class="d-flex justify-content-end">
-						<Button class="mt-2" label="Done" aria-label="Close step editing" @click="handleClose" />
+						<Button
+							class="mt-2"
+							label="Done"
+							aria-label="Close step editing"
+							@click="handleClose"
+						/>
 					</div>
 				</div>
 

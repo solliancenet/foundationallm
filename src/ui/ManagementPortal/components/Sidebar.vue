@@ -91,7 +91,8 @@
 				<VTooltip :auto-hide="isMobile" :popper-triggers="isMobile ? [] : ['hover']">
 					<span
 						class="sidebar__username"
-						aria-label="Logged in as {{ $authStore.currentAccount?.username }}">
+						aria-label="Logged in as {{ $authStore.currentAccount?.username }}"
+					>
 						{{ $authStore.currentAccount?.name }}
 					</span>
 					<template #popper>
@@ -142,14 +143,14 @@ a {
 }
 
 .sidebar ul {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
 }
 
 .sidebar li {
-  margin: 0;
-  padding: 0;
+	margin: 0;
+	padding: 0;
 }
 
 .sidebar__header {

@@ -150,7 +150,10 @@
 
 					<!-- Data source -->
 					<div v-if="dedicated_pipeline">
-						<CreateAgentStepItem v-model="editDataSource" focusQuery=".step-container__edit__option">
+						<CreateAgentStepItem
+							v-model="editDataSource"
+							focusQuery=".step-container__edit__option"
+						>
 							<template v-if="selectedDataSource">
 								<div class="step-container__header">{{ selectedDataSource.type }}</div>
 								<div>
@@ -274,11 +277,16 @@
 					</template>
 
 					<!-- Text embedding profiles -->
-					<CreateAgentStepItem v-model="editTextEmbeddingProfile" focusQuery=".step-container__edit__option">
+					<CreateAgentStepItem
+						v-model="editTextEmbeddingProfile"
+						focusQuery=".step-container__edit__option"
+					>
 						<template v-if="selectedTextEmbeddingProfile">
 							<div v-if="selectedTextEmbeddingProfile.object_id !== ''">
 								<div class="step-container__header">{{ selectedTextEmbeddingProfile.name }}</div>
-								<div v-if="selectedTextEmbeddingProfile.resolved_configuration_references?.Endpoint">
+								<div
+									v-if="selectedTextEmbeddingProfile.resolved_configuration_references?.Endpoint"
+								>
 									<span class="step-option__header">URL:</span>
 									<span>{{
 										selectedTextEmbeddingProfile.resolved_configuration_references.Endpoint
@@ -319,7 +327,9 @@
 									<div class="step-container__header">{{ textEmbeddingProfile.name }}</div>
 									<div v-if="textEmbeddingProfile.resolved_configuration_references?.Endpoint">
 										<span class="step-option__header">URL:</span>
-										<span>{{ textEmbeddingProfile.resolved_configuration_references.Endpoint }}</span
+										<span>{{
+											textEmbeddingProfile.resolved_configuration_references.Endpoint
+										}}</span
 										><br />
 										<span class="step-option__header">Deployment:</span>
 										<span>{{
@@ -477,7 +487,9 @@
 						</div>
 
 						<div class="d-flex align-center mt-2">
-							<span id="aria-conversation-history-enabled" class="step-option__header">Enabled:</span>
+							<span id="aria-conversation-history-enabled" class="step-option__header"
+								>Enabled:</span
+							>
 							<span>
 								<ToggleButton
 									v-model="conversationHistory"
@@ -592,22 +604,6 @@
 					</template>
 				</CreateAgentStepItem>
 
-				<!-- Orchestrator -->
-				<div id="aria-orchestrator" class="step-header span-2">
-					How should the agent communicate with the AI model?
-				</div>
-				<div class="span-2">
-					<Dropdown
-						v-model="orchestration_settings.orchestrator"
-						:options="orchestratorOptions"
-						option-label="label"
-						option-value="value"
-						class="dropdown--agent"
-						placeholder="--Select--"
-						aria-labelledby="aria-orchestrator"
-					/>
-				</div>
-
 				<div class="step-header">Which AI model should the orchestrator use?</div>
 				<div class="step-header">Which capabilities should the agent have?</div>
 
@@ -702,12 +698,81 @@
 				</div>
 			</section>
 
-			<!-- System prompt -->
-			<section aria-labelledby="system-prompt" class="span-2 steps">
-				<h3 class="step-section-header span-2" id="system-prompt">System Prompt</h3>
+			<!-- Workflow -->
+			<div class="step-section-header span-2">Workflow</div>
+			<div id="aria-workflow" class="step-header span-2">
+				What workflow should the agent use?
+			</div>
 
-				<div id="aria-persona" class="step-header">What is the persona of the agent?</div>
+			<!-- Workflow selection -->
+			<div class="span-2">
+				<Dropdown
+					:modelValue="selectedWorkflow?.type"
+					:options="workflowOptions"
+					option-label="name"
+					option-value="type"
+					class="dropdown--agent"
+					placeholder="--Select--"
+					aria-labelledby="aria-workflow"
+					@change="
+						selectedWorkflow = JSON.parse(
+							JSON.stringify(workflowOptions.find((workflow) => workflow.type === $event.value)),
+						)
+					"
+				/>
+				<Button
+					class="ml-2"
+					severity="primary"
+					:label="showWorkflowConfiguration ? 'Hide Workflow Configuration' : 'Configure Workflow'"
+					:disabled="!selectedWorkflow?.type"
+					@click="showWorkflowConfiguration = !showWorkflowConfiguration"
+				/>
+			</div>
 
+			<!-- Workflow configuration -->
+			<div v-if="showWorkflowConfiguration" class="span-2">
+				<!-- Workflow main model -->
+				<div class="mb-6">
+					<div class="step-header mb-3">Workflow main model:</div>
+					<Dropdown
+						:modelValue="workflowMainAIModel?.object_id"
+						:options="aiModelOptions"
+						option-label="name"
+						option-value="object_id"
+						class="dropdown--agent"
+						placeholder="--Select--"
+						aria-labelledby="aria-orchestrator"
+						@change="
+							workflowMainAIModel = JSON.parse(
+								JSON.stringify(aiModelOptions.find((model) => model.object_id === $event.value)),
+							)
+						"
+					/>
+				</div>
+
+				<!-- Orchestrator -->
+				<div class="mb-6">
+					<div id="aria-orchestrator" class="step-header mb-3">
+						How should the agent communicate with the model?
+					</div>
+					<div class="span-2">
+						<Dropdown
+							v-model="orchestration_settings.orchestrator"
+							:options="orchestratorOptions"
+							option-label="label"
+							option-value="value"
+							class="dropdown--agent"
+							placeholder="--Select--"
+							aria-labelledby="aria-orchestrator"
+						/>
+					</div>
+				</div>
+
+				<!-- Workflow main model parameters -->
+				<div class="step-header mb-3">Workflow main model parameters:</div>
+				<PropertyBuilder v-model="workflowMainAIModelParameters" class="mb-6" />
+
+				<div id="aria-persona" class="step-header mb-3">What is the main model prompt?</div>
 				<div class="span-2">
 					<Textarea
 						v-model="systemPrompt"
@@ -719,15 +784,105 @@
 						aria-labelledby="aria-persona"
 					/>
 				</div>
-			</section>
-			
+			</div>
+
+			<!-- Tools -->
+			<div class="step-section-header span-2">Tools</div>
+			<div id="aria-orchestrator" class="step-header span-2">What tools should the agent use?</div>
+
+			<!-- Tools table -->
+			<div class="span-2">
+				<DataTable
+					:value="agentTools"
+					striped-rows
+					scrollable
+					table-style="max-width: 100%"
+					size="small"
+				>
+					<template #empty>No agent tools added.</template>
+
+					<template #loading>Loading agent tools. Please wait.</template>
+
+					<!-- Tool name -->
+					<Column
+						field="name"
+						header="Name"
+						sortable
+						:pt="{
+							headerCell: {
+								style: { backgroundColor: 'var(--primary-color)', color: 'var(--primary-text)' },
+							},
+							sortIcon: { style: { color: 'var(--primary-text)' } },
+						}"
+					/>
+
+					<!-- Edit tool -->
+					<Column
+						header="Edit"
+						header-style="width:6rem"
+						style="text-align: center"
+						:pt="{
+							headerCell: {
+								style: { backgroundColor: 'var(--primary-color)', color: 'var(--primary-text)' },
+							},
+							headerContent: { style: { justifyContent: 'center' } },
+						}"
+					>
+						<template #body="{ data }">
+							<Button link @click="toolToEdit = data">
+								<i class="pi pi-cog" style="font-size: 1.2rem"></i>
+							</Button>
+
+							<ConfigureToolDialog
+								v-if="toolToEdit?.name === data.name"
+								v-model="toolToEdit"
+								:visible="!!toolToEdit"
+								@update:visible="toolToEdit = null"
+								@update:modelValue="handleUpdateTool"
+							/>
+						</template>
+					</Column>
+
+					<!-- Delete tool -->
+					<Column
+						header="Delete"
+						header-style="width:6rem"
+						style="text-align: center"
+						:pt="{
+							headerCell: {
+								style: { backgroundColor: 'var(--primary-color)', color: 'var(--primary-text)' },
+							},
+							headerContent: { style: { justifyContent: 'center' } },
+						}"
+					>
+						<template #body="{ data }">
+							<Button link @click="handleRemoveTool(data)">
+								<i class="pi pi-trash" style="font-size: 1.2rem"></i>
+							</Button>
+						</template>
+					</Column>
+				</DataTable>
+
+				<!-- Add new tool -->
+				<div class="d-flex justify-content-end mt-4">
+					<Button @click="showNewToolDialog = true">Add New Tool</Button>
+				</div>
+
+				<ConfigureToolDialog
+					v-if="showNewToolDialog"
+					:visible="!!showNewToolDialog"
+					@update:visible="showNewToolDialog = false"
+					@update:modelValue="handleAddNewTool"
+				/>
+			</div>
+
 			<!-- Security -->
 			<div v-if="virtualSecurityGroupId" class="step-section-header span-2">Security</div>
 
 			<!-- Virtual security group id -->
 			<template v-if="virtualSecurityGroupId">
 				<div class="step-header">Virtual security group ID</div>
-				<div class="span-2" style="display: flex; gap: 16px">
+				<div class="span-2 d-flex gap-4">
 					<InputText
 						:value="virtualSecurityGroupId"
 						disabled
@@ -736,11 +891,7 @@
 						placeholder="Enter cost center name"
 						aria-labelledby="aria-cost-center"
 					/>
-					<Button
-						label="Copy"
-						severity="primary"
-						@click="handleCopySecurityGroupId"
-					/>
+					<Button label="Copy" severity="primary" @click="handleCopySecurityGroupId" />
 				</div>
 			</template>
 
@@ -751,9 +902,9 @@
 					<AgentAccessTokens :agent-name="this.agentName" />
 				</div>
 			</template>
-			
-			
-			<div class="span-2 d-flex justify-content-end" style="gap: 16px">
+
+			<!-- Form buttons -->
+			<div class="span-2 d-flex justify-content-end gap-4">
 				<!-- Create agent -->
 				<Button
 					:label="editAgent ? 'Save Changes' : 'Create Agent'"
@@ -763,12 +914,7 @@
 				/>
 
 				<!-- Cancel -->
-				<Button
-					v-if="editAgent"
-					label="Cancel"
-					severity="secondary"
-					@click="handleCancel"
-				/>
+				<Button v-if="editAgent" label="Cancel" severity="secondary" @click="handleCancel" />
 			</div>
 		</div>
 	</main>
@@ -853,6 +999,11 @@ const getDefaultFormValues = () => {
 		orchestration_settings: {
 			orchestrator: 'LangChain' as string,
 		},
+
+		selectedWorkflow: null,
+
+		toolToEdit: null,
+		agentTools: [] as AgentTool[],
 	};
 };
 
@@ -889,9 +1040,16 @@ export default {
 			textEmbeddingProfileSources: [] as TextEmbeddingProfile[],
 			externalOrchestratorOptions: [] as ExternalOrchestrationService[],
 			aiModelOptions: [] as AIModel[],
-			tools: [] as AgentTool[],
+
+			workflowOptions: [] as AgentWorkflowAIModel[],
+			showWorkflowConfiguration: false,
+			workflowMainAIModel: null as AIModel | null,
+			// workflowMainPrompt: '' as string,
+			workflowMainAIModelParameters: {} as object,
 
 			virtualSecurityGroupId: null as string | null,
+
+			showNewToolDialog: false,
 
 			orchestratorOptions: [
 				{
@@ -976,6 +1134,33 @@ export default {
 		},
 	},
 
+	watch: {
+		selectedWorkflow() {
+			if (this.selectedWorkflow?.resource_object_ids) {
+				const existingMainModel = Object.values(this.selectedWorkflow.resource_object_ids).find(
+					(resource) => resource.properties?.object_role === 'main_model',
+				);
+				this.workflowMainAIModel = existingMainModel ?? null;
+			} else {
+				this.workflowMainAIModel = null;
+			}
+
+			this.showWorkflowConfiguration = true;
+
+			// if (!this.selectedWorkflow?.type) {
+			// 	this.showWorkflowConfiguration = false;
+			// 	this.selectedWorkflow = null;
+			// }
+		},
+
+		workflowMainAIModel() {
+			const mainModel = this.workflowMainAIModel;
+			const existingMainModelParamters =
+				mainModel?.model_parameters ?? mainModel?.properties?.model_parameters;
+			this.workflowMainAIModelParameters = existingMainModelParamters ?? {};
+		},
+	},
+
 	async created() {
 		this.loading = true;
 		// Uncomment to remove mock loading screen
@@ -1011,6 +1196,23 @@ export default {
 			// Filter the AIModels so we only display the ones where the type is 'completion'.
 			this.aiModelOptions = this.aiModelOptions.filter((model) => model.type === 'completion');
 
+			this.loadingStatusText = 'Retrieving workflows...';
+			this.workflowOptions = [
+				// {
+				// 	type: null,
+				// 	workflow_name: 'None',
+				// },
+				// {
+				// 	type: 'langgraph-react-agent-workflow',
+				// 	workflow_name: 'LangGraph ReAct Agent Workflow',
+				// },
+				// {
+				// 	type: 'azure-openai-assistants-workflow',
+				// 	workflow_name: 'Azure OpenAI Assistants Workflow',
+				// },
+				...(await api.getAgentWorkflows()).map((workflow) => workflow.resource),
+			];
+
 			// Update the orchestratorOptions with the externalOrchestratorOptions.
 			this.orchestratorOptions = this.orchestratorOptions.concat(
 				this.externalOrchestratorOptions.map((service) => ({
@@ -1044,16 +1246,37 @@ export default {
 					this.overlapSize = Number(textPartitioningProfile.resource.settings.OverlapSizeTokens);
 				}
 			}
-			if (agent.prompt_object_id !== '') {
+
+			if (agent.prompt_object_id) {
 				this.loadingStatusText = `Retrieving prompt...`;
 				const prompt = await api.getPrompt(agent.prompt_object_id);
 				if (prompt && prompt.resource) {
 					this.systemPrompt = prompt.resource.prefix;
 				}
+			} else if (agent.workflow?.resource_object_ids) {
+				this.loadingStatusText = `Retrieving prompt...`;
+
+				const existingMainPrompt = Object.values(agent.workflow.resource_object_ids).find(
+					(resource) => resource.properties?.object_role === 'main_prompt',
+				);
+
+				if (existingMainPrompt) {
+					const prompt = await api.getPrompt(existingMainPrompt.object_id);
+					if (prompt && prompt.resource) {
+						this.systemPrompt = prompt.resource.prefix;
+					}
+				}
 			}
+
+			if (agent.workflow) {
+				const existingMainModel = Object.values(agent.workflow.resource_object_ids).find(
+					(resource) => resource.properties?.object_role === 'main_model',
+				);
+				this.workflowMainAIModel = existingMainModel ?? null;
+			}
+
 			this.loadingStatusText = `Mapping agent values to form...`;
 			this.mapAgentToForm(agent);
-			this.tools = agent.tools;
 		} else {
 			this.editable = true;
 		}
@@ -1139,6 +1362,10 @@ export default {
 						agent.capabilities?.includes(localOption.code),
 					) || this.selectedAgentCapabilities;
 			}
+
+			this.agentTools = agent.tools;
+
+			this.selectedWorkflow = agent.workflow;
 		},
 
 		updateAgentWelcomeMessage(newContent: string) {
@@ -1230,6 +1457,22 @@ export default {
 			}
 		},
 
+		handleAddNewTool(newTool) {
+			this.agentTools.push(newTool);
+			this.showNewToolDialog = false;
+		},
+
+		handleUpdateTool(updatedTool) {
+			const index = this.agentTools.findIndex((tool) => tool.object_id === updatedTool.object_id);
+			this.agentTools[index] = updatedTool;
+			this.toolToEdit = null;
+		},
+
+		handleRemoveTool(toolToRemove) {
+			const index = this.agentTools.findIndex((tool) => tool.object_id === toolToRemove.object_id);
+			this.agentTools.splice(index, 1);
+		},
+
 		async handleCreateAgent() {
 			const errors = [];
 			if (!this.agentName) {
@@ -1245,16 +1488,24 @@ export default {
 				this.text_embedding_profile_object_id = this.selectedTextEmbeddingProfile?.object_id ?? '';
 			}
 
-			if (this.systemPrompt === '') {
-				errors.push('Please provide a system prompt.');
-			}
-
 			if (!this.orchestration_settings.orchestrator) {
 				errors.push('Please select an orchestrator.');
 			}
 
 			if (!this.selectedAIModel) {
 				errors.push('Please select an AI model for the orchestrator.');
+			}
+
+			if (!this.selectedWorkflow) {
+				errors.push('Please select a workflow.');
+			}
+
+			if (!this.workflowMainAIModel) {
+				errors.push('Please select an AI model for the workflow.');
+			}
+
+			if (this.systemPrompt === '') {
+				errors.push('Please provide a system prompt.');
 			}
 
 			// if (!this.selectedDataSource) {
@@ -1307,6 +1558,20 @@ export default {
 					promptObjectId = promptResponse.objectId;
 				}
 
+				// if (this.selectedWorkflow) {
+				// 	const workflowPromptRequest = {
+				// 		type: 'multipart',
+				// 		name: this.selectedWorkflow.prompt_object_ids.main_prompt,
+				// 		cost_center: null,
+				// 		description: `Workflow prompt for the ${this.selectedWorkflowModelId} model`,
+				// 		prefix: this.workflowMainPrompt,
+				// 		suffix: '',
+				// 	};
+
+				// 	const workflowPromptResponse = await api.createOrUpdatePrompt(this.selectedWorkflow.prompt_object_ids.main_prompt, promptRequest);
+				// 	workflowPromptResponse = promptResponse.objectId;
+				// }
+
 				let textPartitioningProfileObjectId = '';
 				let dataSourceObjectId = '';
 				let indexingProfileObjectId = [''];
@@ -1336,6 +1601,43 @@ export default {
 							indexingProfileObjectId = [defaultAgentIndex.object_id];
 						}
 					}
+				}
+
+				let workflow = null;
+				if (this.selectedWorkflow) {
+					workflow = {
+						...this.selectedWorkflow,
+						workflow_host: this.orchestration_settings.orchestrator,
+						// workflow_name: '',
+
+						resource_object_ids: {
+							...this.selectedWorkflow.resource_object_ids,
+
+							[this.workflowMainAIModel.object_id]: {
+								object_id: this.workflowMainAIModel.object_id,
+								properties: {
+									object_role: 'main_model',
+									model_parameters: this.workflowMainAIModelParameters,
+								},
+							},
+
+							...(promptObjectId ? {
+								[promptObjectId]: {
+									object_id: promptObjectId,
+									properties: {
+										object_role: 'main_prompt',
+									},
+								},
+							} : {}),
+
+							...(this.selectedWorkflow?.object_id ? {
+								[this.selectedWorkflow.object_id]: {
+									object_id: this.selectedWorkflow.object_id,
+									properties: {},
+								},
+							} : {}),
+						},
+					};
 				}
 
 				const agentRequest: CreateAgentRequest = {
@@ -1380,7 +1682,9 @@ export default {
 					orchestration_settings: this.orchestration_settings,
 					ai_model_object_id: this.selectedAIModel.object_id,
 
-					tools: this.tools,
+					tools: this.agentTools,
+
+					workflow,
 				};
 
 				if (this.editAgent) {
