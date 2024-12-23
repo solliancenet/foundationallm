@@ -27,8 +27,13 @@ namespace FoundationaLLM.Common.Interfaces
         /// <param name="clientName">The name of the HTTP client to create. This name must be registered as an <see cref="APIEndpointConfiguration"/> resource in the FoundationaLLM.Configuration resource provider.</param>
         /// <param name="userIdentity">The <see cref="UnifiedUserIdentity"/> of the caller requesting the client.</param>
         /// <param name="clientBuilder">A delegate that creates the <typeparamref name="T"/> client instance based on a dictionary of values. The keys available in the dictionary are defined in <see cref="HttpClientFactoryServiceKeyNames"/>.</param>
+        /// <param name="clientBuilderParameters">A dictionary of parameters to pass to the client builder delegate.</param>
         /// <returns>A <typeparamref name="T"/> client instance.</returns>
-        Task<T> CreateClient<T>(string clientName, UnifiedUserIdentity userIdentity, Func<Dictionary<string, object>, T> clientBuilder);
+        Task<T> CreateClient<T>(
+            string clientName,
+            UnifiedUserIdentity userIdentity,
+            Func<Dictionary<string, object>, T> clientBuilder,
+            Dictionary<string, object>? clientBuilderParameters = null);
 
         /// <summary>
         /// Creates a <see cref="HttpClient"/> instance based on the endpoint configuration.

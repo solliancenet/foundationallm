@@ -1,4 +1,5 @@
 ﻿using FoundationaLLM.Common.Constants.Configuration;
+using FoundationaLLM.Common.Constants.Events;
 using FoundationaLLM.Common.Constants.ResourceProviders;
 using FoundationaLLM.Common.Exceptions;
 using FoundationaLLM.Common.Interfaces;
@@ -13,6 +14,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.Graph.Models;
 using System.Collections.Concurrent;
 using System.Text;
 using System.Text.Json;
@@ -45,7 +47,9 @@ namespace FoundationaLLM.Prompt.ResourceProviders
             resourceValidatorFactory,
             serviceProvider,
             logger,
-            [],
+            [
+                EventTypes.FoundationaLLM_ResourceProvider_Cache_ResetCommand
+            ],
             useInternalReferencesStore: true)
     {
         /// <inheritdoc/>

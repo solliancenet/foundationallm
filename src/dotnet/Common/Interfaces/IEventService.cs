@@ -1,4 +1,5 @@
-﻿using FoundationaLLM.Common.Models.Events;
+﻿using Azure.Messaging;
+using FoundationaLLM.Common.Models.Events;
 
 namespace FoundationaLLM.Common.Interfaces
 {
@@ -7,6 +8,16 @@ namespace FoundationaLLM.Common.Interfaces
     /// </summary>
     public interface IEventService
     {
+        /// <summary>
+        /// The name of the service instance.
+        /// </summary>
+        string ServiceInstanceName { get; }
+
+        /// <summary>
+        /// Indicates whether the event service has started successfully and is active.
+        /// </summary>
+        bool Active { get; }
+
         /// <summary>
         /// Starts the event service, allowing it to initialize.
         /// </summary>
@@ -31,15 +42,23 @@ namespace FoundationaLLM.Common.Interfaces
         /// <summary>
         /// Adds an event set event delgate to the list of event handlers for a specified event set namespace.
         /// </summary>
-        /// <param name="eventNamespace">The name of the event namespace.</param>
+        /// <param name="eventType">The event type to subscribe to.</param>
         /// <param name="eventHandler">The function to be invoked during event handling.</param>
-        void SubscribeToEventSetEvent(string eventNamespace, EventSetEventDelegate eventHandler);
+        void SubscribeToEventTypeEvent(string eventType, EventTypeEventDelegate eventHandler);
 
         /// <summary>
         /// Removes an event set event delegate from the list of event handlers for a specified event set namespace.
         /// </summary>
-        /// <param name="eventNamespace">The name of the event namespace.</param>
+        /// <param name="eventType">The event type to subscribe to.</param>
         /// <param name="eventHandler">The function to be invoked during event handling.</param>
-        void UnsubscribeFromEventSetEvent(string eventNamespace, EventSetEventDelegate eventHandler);
+        void UnsubscribeFromEventTypeEvent(string eventType, EventTypeEventDelegate eventHandler);
+
+        /// <summary>
+        /// Sends an event to the event service.
+        /// </summary>
+        /// <param name="topicName">The name of the topic where the event should be sent.</param>
+        /// <param name="cloudEvent">The <see cref="CloudEvent"/> object containing the details of the event.</param>
+        /// <returns></returns>
+        Task SendEvent(string topicName, CloudEvent cloudEvent);
     }
 }

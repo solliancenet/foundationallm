@@ -30,7 +30,7 @@ namespace FoundationaLLM.Common.Services.ResourceProviders
         private bool _isInitialized = false;
 
         private LocalEventService? _localEventService;
-        private readonly List<string>? _eventNamespacesToSubscribe;
+        private readonly List<string>? _eventTypesToSubscribe;
         private readonly ImmutableList<string> _allowedResourceProviders;
         private readonly Dictionary<string, ResourceTypeDescriptor> _allowedResourceTypes;
         private readonly Dictionary<string, IResourceProviderService> _resourceProviders = [];
@@ -123,7 +123,7 @@ namespace FoundationaLLM.Common.Services.ResourceProviders
         /// <param name="resourceValidatorFactory">The <see cref="IResourceValidatorFactory"/> providing services to instantiate resource validators.</param>
         /// <param name="logger">The logger used for logging.</param>
         /// <param name="serviceProvider">The <see cref="IServiceProvider"/> of the main dependency injection container.</param>
-        /// <param name="eventNamespacesToSubscribe">The list of Event Service event namespaces to subscribe to for local event processing.</param>
+        /// <param name="eventTypesToSubscribe">The list of Event Service event namespaces to subscribe to for local event processing.</param>
         /// <param name="useInternalReferencesStore">Indicates whether the resource provider should use the internal resource references store or provide one of its own.</param>
         public ResourceProviderServiceBase(
             InstanceSettings instanceSettings,
@@ -133,7 +133,7 @@ namespace FoundationaLLM.Common.Services.ResourceProviders
             IResourceValidatorFactory resourceValidatorFactory,
             IServiceProvider serviceProvider,
             ILogger logger,
-            List<string>? eventNamespacesToSubscribe = default,
+            List<string>? eventTypesToSubscribe = default,
             bool useInternalReferencesStore = false)
         {
             _authorizationServiceClient = authorizationServiceClient;
@@ -143,7 +143,7 @@ namespace FoundationaLLM.Common.Services.ResourceProviders
             _logger = logger;
             _serviceProvider = serviceProvider;
             _instanceSettings = instanceSettings;
-            _eventNamespacesToSubscribe = eventNamespacesToSubscribe;
+            _eventTypesToSubscribe = eventTypesToSubscribe;
             _useInternalReferencesStore = useInternalReferencesStore;
 
             if (_instanceSettings.EnableResourceProvidersCache)
@@ -179,14 +179,14 @@ namespace FoundationaLLM.Common.Services.ResourceProviders
 
                 await InitializeInternal();
 
-                if (_eventNamespacesToSubscribe != null
-                    && _eventNamespacesToSubscribe.Count > 0)
+                if (_eventTypesToSubscribe != null
+                    && _eventTypesToSubscribe.Count > 0)
                 {
                     _localEventService = new LocalEventService(
                         new LocalEventServiceSettings { EventProcessingCycleSeconds = 10 },
                         _eventService,
                         _logger);
-                    _localEventService.SubscribeToEventNamespaces(_eventNamespacesToSubscribe);
+                    _localEventService.SubscribeToEventTypes(_eventTypesToSubscribe);
                     _localEventService.StartLocalEventProcessing(HandleEvents);
                 }
 
@@ -754,9 +754,9 @@ namespace FoundationaLLM.Common.Services.ResourceProviders
         /// <summary>
         /// Handles events received from the <see cref="IEventService"/> when they are dequeued locally.
         /// </summary>
-        /// <param name="e">The <see cref="EventSetEventArgs"/> containing the events namespace and the actual events.</param>
+        /// <param name="e">The <see cref="EventTypeEventArgs"/> containing the events namespace and the actual events.</param>
         /// <returns></returns>
-        protected virtual async Task HandleEvents(EventSetEventArgs e) =>
+        protected virtual async Task HandleEvents(EventTypeEventArgs e) =>
             await Task.CompletedTask;
 
         #endregion

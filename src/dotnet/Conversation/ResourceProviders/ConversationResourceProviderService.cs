@@ -41,7 +41,7 @@ namespace FoundationaLLM.Conversation.ResourceProviders
             resourceValidatorFactory,
             serviceProvider,
             logger,
-            eventNamespacesToSubscribe: null,
+            eventTypesToSubscribe: null,
             useInternalReferencesStore: false)
     {
         private readonly IAzureCosmosDBService _cosmosDBService = cosmosDBService;
