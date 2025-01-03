@@ -225,21 +225,20 @@ namespace FoundationaLLM.Orchestration.Core.Orchestration
                     switch (resourcePath.MainResourceTypeName)
                     {
                         case AIModelResourceTypeNames.AIModels:
+                            var retrievedAIModel = await aiModelResourceProvider.GetResourceAsync<AIModelBase>(
+                                            resourceObjectId.ObjectId,
+                                            currentUserIdentity);
+                            var retrievedAPIEndpointConfiguration = await configurationResourceProvider.GetResourceAsync<APIEndpointConfiguration>(
+                                                    retrievedAIModel.EndpointObjectId!,
+                                                    currentUserIdentity);
+
+                            mainAIModel = retrievedAIModel;
+                            mainAIModelAPIEndpointConfiguration = retrievedAPIEndpointConfiguration;
+
                             // Check if the AI model is the main model, if so check for overrides.
                             if (resourceObjectId.Properties.TryGetValue(ResourceObjectIdPropertyNames.ObjectRole, out var aiModelObjectRole)
                                 && ((JsonElement)aiModelObjectRole).GetString() == ResourceObjectIdPropertyValues.MainModel)
                             {
-
-                                var retrievedAIModel = await aiModelResourceProvider.GetResourceAsync<AIModelBase>(
-                                        resourceObjectId.ObjectId,
-                                        currentUserIdentity);
-                                var retrievedAPIEndpointConfiguration = await configurationResourceProvider.GetResourceAsync<APIEndpointConfiguration>(
-                                                        retrievedAIModel.EndpointObjectId!,
-                                                        currentUserIdentity);
-
-                                mainAIModel = retrievedAIModel;
-                                mainAIModelAPIEndpointConfiguration = retrievedAPIEndpointConfiguration;
-
                                 // Agent Workflow AI Model overrides.
                                 if (resourceObjectId.Properties.TryGetValue(ResourceObjectIdPropertyNames.ModelParameters, out var modelParameters)
                                     && modelParameters != null)
@@ -251,38 +250,32 @@ namespace FoundationaLLM.Orchestration.Core.Orchestration
                                         retrievedAIModel.ModelParameters[key] = modelParamsDict[key];
                                     }
                                 }
-
-                                explodedObjectsManager.TryAdd(
-                                    retrievedAIModel.ObjectId!,
-                                    retrievedAIModel);
-                                explodedObjectsManager.TryAdd(
-                                    retrievedAIModel.EndpointObjectId!,
-                                    retrievedAPIEndpointConfiguration);
                             }
-
+                            explodedObjectsManager.TryAdd(
+                                  retrievedAIModel.ObjectId!,
+                                  retrievedAIModel);
+                            explodedObjectsManager.TryAdd(
+                                retrievedAIModel.EndpointObjectId!,
+                                retrievedAPIEndpointConfiguration);
                             break;
-                        case PromptResourceTypeNames.Prompts:
-                            if (resourceObjectId.Properties.TryGetValue(ResourceObjectIdPropertyNames.ObjectRole, out var promptObjectRole)
-                                && ((JsonElement)promptObjectRole).GetString() == ResourceObjectIdPropertyValues.MainPrompt)
-                            {
-                                var retrievedPrompt = await promptResourceProvider.GetResourceAsync<PromptBase>(
-                                           resourceObjectId.ObjectId,
-                                           currentUserIdentity);
+                        case PromptResourceTypeNames.Prompts:                           
+                            var retrievedPrompt = await promptResourceProvider.GetResourceAsync<PromptBase>(
+                                        resourceObjectId.ObjectId,
+                                        currentUserIdentity);
 
-                                if (retrievedPrompt is MultipartPrompt multipartPrompt)
+                            if (retrievedPrompt is MultipartPrompt multipartPrompt)
+                            {
+                                //check for token replacements, multipartPrompt variable has the same reference as retrievedPrompt therefore this edits the prefix/suffix in place
+                                if (multipartPrompt is not null)
                                 {
-                                    //check for token replacements, multipartPrompt variable has the same reference as retrievedPrompt therefore this edits the prefix/suffix in place
-                                    if (multipartPrompt is not null)
-                                    {
                                         
-                                        multipartPrompt.Prefix = templatingService.Transform(multipartPrompt.Prefix!);
-                                        multipartPrompt.Suffix = templatingService.Transform(multipartPrompt.Suffix!);
-                                    }
+                                    multipartPrompt.Prefix = templatingService.Transform(multipartPrompt.Prefix!);
+                                    multipartPrompt.Suffix = templatingService.Transform(multipartPrompt.Suffix!);
                                 }
-                                explodedObjectsManager.TryAdd(
-                                    retrievedPrompt.ObjectId!,
-                                    retrievedPrompt);
                             }
+                            explodedObjectsManager.TryAdd(
+                                retrievedPrompt.ObjectId!,
+                                retrievedPrompt);                            
                             break;
                         case AgentResourceTypeNames.Workflows:
 
