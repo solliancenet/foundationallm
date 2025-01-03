@@ -51,7 +51,7 @@ module authRoleAssignments 'utility/roleAssignments.bicep' = {
     principalId: managedIdentity.properties.principalId
     roleDefinitionNames: [
       'Contributor'
-      'Key Vault Secrets User'
+      'Key Vault Secrets Officer'
       'Storage Blob Data Contributor'
     ]
   }

@@ -11,8 +11,8 @@
     "api_key_configuration_name": "FoundationaLLM:APIEndpoints:GatewayAPI:Essentials:APIKey",
     "api_key_header_name": "X-API-KEY"
   },
-  "url": "http://gateway-api/gateway",
-  "status_url": "http://gateway-api/gateway/status",
+  "url": "http://gateway-api.{{serviceNamespaceName}}.svc.cluster.local",
+  "status_url": "http://gateway-api.{{serviceNamespaceName}}.svc.cluster.local/status",
   "url_exceptions": [],
   "timeout_seconds": 1200,
   "retry_strategy_name": "ExponentialBackoff",

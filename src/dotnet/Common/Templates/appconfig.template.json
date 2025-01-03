@@ -72,7 +72,7 @@
         },
         {
             "key": "FoundationaLLM:Code:CodeExecution:AzureContainerAppsDynamicSessions",
-            "value": "{"DynamicSessionsEndpoints": []}",
+            "value": "{\"DynamicSessionsEndpoints\": []}",
             "label": null,
             "content_type": "application/json",
             "tags": {}

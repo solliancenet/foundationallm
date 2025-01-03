@@ -11,8 +11,8 @@
     "api_key_configuration_name": "FoundationaLLM:APIEndpoints:StateAPI:Essentials:APIKey",
     "api_key_header_name": "X-API-KEY"
   },
-  "url": "http://state-api/state",
-  "status_url": "http://state-api/state/status",
+  "url": "http://state-api.{{serviceNamespaceName}}.svc.cluster.local",
+  "status_url": "http://state-api.{{serviceNamespaceName}}.svc.cluster.local/status",
   "url_exceptions": [],
   "timeout_seconds": 60,
   "retry_strategy_name": "ExponentialBackoff",

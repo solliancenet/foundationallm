@@ -109,7 +109,7 @@
 				"name": "AzureContainerAppsDynamicSessions",
 				"description": "The settings for the Azure Container Apps Dynamic Sessions code execution service.",
 				"secret": "",
-				"value": "{\"DynamicSessionsEndpoints\": []}",
+				"value": "{\\\"DynamicSessionsEndpoints\\\": []}",
 				"content_type": "application/json",
 				"first_version": "0.9.1"
 			}

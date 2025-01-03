@@ -11,8 +11,8 @@
     "api_key_configuration_name": "",
     "api_key_header_name": ""
   },
-  "url": "",
-  "status_url": "",
+  "url": "http://core-api.{{serviceNamespaceName}}.svc.cluster.local",
+  "status_url": "http://core-api.{{serviceNamespaceName}}.svc.cluster.local/instances/{{instanceId}}/status",
   "url_exceptions": [],
   "timeout_seconds": 2700,
   "retry_strategy_name": "ExponentialBackoff",

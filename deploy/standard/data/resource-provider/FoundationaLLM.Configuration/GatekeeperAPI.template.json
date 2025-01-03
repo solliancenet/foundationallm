@@ -11,8 +11,8 @@
     "api_key_configuration_name": "FoundationaLLM:APIEndpoints:GatekeeperAPI:Essentials:APIKey",
     "api_key_header_name": "X-API-KEY"
   },
-  "url": "http://gatekeeper-api/gatekeeper",
-  "status_url": "http://gatekeeper-api/gatekeeper/instances/{{instanceId}}/status",
+  "url": "http://gatekeeper-api.{{serviceNamespaceName}}.svc.cluster.local",
+  "status_url": "http://gatekeeper-api.{{serviceNamespaceName}}.svc.cluster.local/instances/{{instanceId}}/status",
   "url_exceptions": [],
   "timeout_seconds": 2700,
   "retry_strategy_name": "ExponentialBackoff",

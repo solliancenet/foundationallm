@@ -11,8 +11,8 @@
     "api_key_configuration_name": "FoundationaLLM:APIEndpoints:GatewayAdapterAPI:Essentials:APIKey",
     "api_key_header_name": "X-API-KEY"
   },
-  "url": "http://gateway-adapter-api/gatewayadapter",
-  "status_url": "http://gateway-adapter-api/gatewayadapter/status",
+  "url": "http://gateway-adapter-api.{{serviceNamespaceName}}.svc.cluster.local",
+  "status_url": "http://gateway-adapter-api.{{serviceNamespaceName}}.svc.cluster.local/status",
   "url_exceptions": [],
   "timeout_seconds": 60,
   "retry_strategy_name": "ExponentialBackoff",

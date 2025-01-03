@@ -63,6 +63,8 @@ $env:GUID10 = $($(New-Guid).Guid)
 $env:GUID11 = $($(New-Guid).Guid)
 $env:GUID12 = $($(New-Guid).Guid)
 $env:GUID13 = $($(New-Guid).Guid)
+$env:GUID14 = $($(New-Guid).Guid)
+$env:GUID15 = $($(New-Guid).Guid)
 
 $env:POLICYGUID01 = $($(New-Guid).Guid)
 $env:POLICYGUID02 = $($(New-Guid).Guid)
