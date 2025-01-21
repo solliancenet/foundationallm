@@ -60,5 +60,15 @@ namespace FoundationaLLM.Common.Models.ResourceProviders.Agent.AgentWorkflows
                 .FirstOrDefault(
                     roid => roid.HasObjectRole(ResourceObjectIdPropertyValues.MainModel))
                 ?.ObjectId;
+
+        /// <summary>
+        /// Gets the main prompt object identifier.
+        /// </summary>
+        [JsonIgnore]
+        public string? MainPromptObjectId =>
+            ResourceObjectIds.Values
+                .FirstOrDefault(
+                    roid => roid.HasObjectRole(ResourceObjectIdPropertyValues.MainPrompt))
+                ?.ObjectId;
     }
 }
