@@ -5,13 +5,14 @@ import sys
 
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 
-from langchain_core.messages import HumanMessage
+from langchain_core.messages import HumanMessage, AIMessage
 from langchain_openai import AzureChatOpenAI
 from langgraph.prebuilt import create_react_agent
 
 from foundationallm.config import Configuration, UserIdentity
 from foundationallm.models.agents import AgentTool
 from foundationallm.telemetry import Telemetry
+
 
 config = Configuration()
 # Telemetry.configure_monitoring(config, f'FoundationaLLM:APIEndpoints:LangChainAPI:Essentials:AppInsightsConnectionString', __name__)
@@ -45,7 +46,7 @@ skunkworks_tool = skunkworks_tool_plugin_manager.create_tool(agent_tool, explode
 
 llm_endpoint_url = 'https://openai-ftpisrjz2rvjc.openai.azure.com/'
 llm_endpoint_version = '2024-07-01-preview'
-llm_deployment_name = 'gpt-4o-mini'
+llm_deployment_name = 'completions4o'
 scope = 'https://cognitiveservices.azure.com/.default'
 # Set up a Azure AD token provider.
 token_provider = get_bearer_token_provider(
@@ -58,7 +59,9 @@ llm = AzureChatOpenAI(
     api_version=llm_endpoint_version,
     openai_api_type='azure_ad',
     azure_ad_token_provider=token_provider,
-    azure_deployment=llm_deployment_name
+    azure_deployment=llm_deployment_name,
+    temperature=0.5,
+    top_p=0.5
 )
 
 graph = create_react_agent(
@@ -66,13 +69,20 @@ graph = create_react_agent(
     tools=[skunkworks_tool],
     state_modifier=agent_prompt_json['prefix'])
 
-user_prompt = 'Create and run code that generates and prints the first 10 terms of a Fibonacci series. Make the resulting code available as a downloadable file.'
+user_prompt = "How is Miami performing?"
+inputs = {'messages': [HumanMessage(content=user_prompt)]}
 
 response = asyncio.run(
     graph.ainvoke(
-        {'messages': [HumanMessage(content=user_prompt)]},
+        inputs,
         config={ 'configurable': { 'original_user_prompt': user_prompt }}))
-print (response)
 
+def print_stream(stream):
+    for s in stream:
+        message = s["messages"][-1]
+        if isinstance(message, tuple):
+            print(message)
+        else:
+            message.pretty_print()
 
-
+print_stream(graph.stream(inputs, stream_mode="values"))

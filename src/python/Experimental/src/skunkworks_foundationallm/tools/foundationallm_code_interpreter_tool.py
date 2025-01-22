@@ -1,5 +1,5 @@
 # Platform imports
-from typing import Optional
+from typing import Any, Tuple
 
 # LangChain imports
 from langchain_azure_dynamic_sessions import SessionsPythonREPLTool
