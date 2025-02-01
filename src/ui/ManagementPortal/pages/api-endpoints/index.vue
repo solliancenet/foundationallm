@@ -1,16 +1,16 @@
 <template>
-	<main id="main-content">
+	<div>
 		<div style="display: flex">
 			<div style="flex: 1">
-				<h2 class="page-header">Prompts</h2>
-				<div class="page-subheader">The following agent and tool prompts are available.</div>
+				<h2 class="page-header">API Endpoints</h2>
+				<div class="page-subheader">The following API endpoints are available.</div>
 			</div>
 
 			<div style="display: flex; align-items: center">
-				<NuxtLink to="/prompts/create" tabindex="-1">
-					<Button aria-label="Create prompt">
+				<NuxtLink to="/api-endpoints/create">
+					<Button>
 						<i class="pi pi-plus" style="color: var(--text-primary); margin-right: 8px"></i>
-						Create Prompt
+						Create API Endpoint
 					</Button>
 				</NuxtLink>
 			</div>
@@ -19,7 +19,7 @@
 		<div :class="{ 'grid--loading': loading }">
 			<!-- Loading overlay -->
 			<template v-if="loading">
-				<div class="grid__loading-overlay" role="status" aria-live="polite">
+				<div class="grid__loading-overlay">
 					<LoadingGrid />
 					<div>{{ loadingStatusText }}</div>
 				</div>
@@ -27,19 +27,18 @@
 
 			<!-- Table -->
 			<DataTable
-				:value="prompts"
+				:value="apiEndpoints"
 				striped-rows
 				scrollable
-				:multiSortMeta="sortingFields"
+				sortField="resource.name"
 				:sortOrder="1"
-				sortMode="multiple"
 				table-style="max-width: 100%"
 				size="small"
 			>
 				<template #empty>
-					<div role="alert" aria-live="polite">No prompts found.</div>
+					No models/endpoints found. Please use the menu on the left to create a new model/endpoint.
 				</template>
-				<template #loading>Loading agent prompts. Please wait.</template>
+				<template #loading>Loading model & endpoints. Please wait.</template>
 
 				<!-- Name -->
 				<Column
@@ -55,24 +54,10 @@
 					}"
 				></Column>
 
-				<!-- Category -->
+				<!-- Type -->
 				<Column
 					field="resource.category"
 					header="Category"
-					header-style="width:6rem"
-					sortable
-					:pt="{
-						headerCell: {
-							style: { backgroundColor: 'var(--primary-color)', color: 'var(--primary-text)' },
-						},
-						sortIcon: { style: { color: 'var(--primary-text)' } },
-					}"
-				></Column>
-
-				<!-- Description -->
-				<Column
-					field="resource.description"
-					header="Description"
 					sortable
 					style="min-width: 200px"
 					:pt="{
@@ -82,6 +67,24 @@
 						sortIcon: { style: { color: 'var(--primary-text)' } },
 					}"
 				></Column>
+
+				<!-- Type -->
+				<Column
+					field="resource.subcategory"
+					header="Subcategory"
+					sortable
+					style="min-width: 200px"
+					:pt="{
+						headerCell: {
+							style: { backgroundColor: 'var(--primary-color)', color: 'var(--primary-text)' },
+						},
+						sortIcon: { style: { color: 'var(--primary-text)' } },
+					}"
+				>
+					<template #body="{ data }">
+						<span>{{ data.resource.subcategory || '-' }}</span>
+					</template>
+				</Column>
 
 				<!-- Edit -->
 				<Column
@@ -96,66 +99,72 @@
 					}"
 				>
 					<template #body="{ data }">
-						<NuxtLink
-							:to="'/prompts/edit/' + data.resource.name"
-							class="table__button"
-							tabindex="-1"
-						>
-							<VTooltip :auto-hide="false" :popper-triggers="['hover']">
-								<Button
-									link
-									:disabled="!data.actions.includes('FoundationaLLM.Prompt/prompts/write')"
-									:aria-label="`Edit ${data.resource.name}`"
-								>
-									<i class="pi pi-cog" style="font-size: 1.2rem" aria-hidden="true"></i>
-								</Button>
-								<template #popper
-									><div role="tooltip">Edit {{ data.resource.name }}</div></template
-								>
-							</VTooltip>
+						<NuxtLink :to="'/api-endpoints/edit/' + data.resource.name" class="table__button">
+							<Button link>
+								<i class="pi pi-cog" style="font-size: 1.2rem"></i>
+							</Button>
 						</NuxtLink>
 					</template>
 				</Column>
-				<template #groupheader="slotProps">
-					<div class="flex items-center gap-2">
-						<span class="pi pi-book" aria-hidden="true"></span>
-						<span>&nbsp;&nbsp;Category: {{ slotProps.data.resource.category ?? 'None' }}</span>
-					</div>
-				</template>
+
+				<!-- Delete -->
+				<Column
+					header="Delete"
+					header-style="width:6rem"
+					style="text-align: center"
+					:pt="{
+						headerCell: {
+							style: { backgroundColor: 'var(--primary-color)', color: 'var(--primary-text)' },
+						},
+						headerContent: { style: { justifyContent: 'center' } },
+					}"
+				>
+					<template #body="{ data }">
+						<Button link @click="itemToDelete = data.resource">
+							<i class="pi pi-trash" style="font-size: 1.2rem"></i>
+						</Button>
+					</template>
+				</Column>
 			</DataTable>
 		</div>
-	</main>
+
+		<!-- Delete model/endpoint dialog -->
+		<Dialog :visible="itemToDelete !== null" modal header="Delete Model Endpoint" :closable="false">
+			<p>Do you want to delete the model endpoint "{{ itemToDelete.name }}" ?</p>
+			<template #footer>
+				<Button label="Cancel" text @click="itemToDelete = null" />
+				<Button label="Delete" severity="danger" @click="handleDelete" />
+			</template>
+		</Dialog>
+	</div>
 </template>
 
 <script lang="ts">
 import api from '@/js/api';
-import type { Prompt, ResourceProviderGetResult } from '@/js/types';
+import type { APIEndpointConfiguration } from '@/js/types';
 
 export default {
-	name: 'Prompts',
+	name: 'APIEndpoints',
 
 	data() {
 		return {
-			prompts: [] as ResourceProviderGetResult<Prompt>[],
+			apiEndpoints: [] as APIEndpointConfiguration,
 			loading: false as boolean,
 			loadingStatusText: 'Retrieving data...' as string,
-			accessControlModalOpen: false,
-			sortingFields: [
-				{ field: 'resource.category', order: 1 },
-				{ field: 'resource.name', order: 1 },
-			],
+			itemToDelete: null as APIEndpointConfiguration | null,
 		};
 	},
 
 	async created() {
-		await this.getPrompts();
+		await this.getEndpoints();
 	},
 
 	methods: {
-		async getPrompts() {
+		async getEndpoints() {
 			this.loading = true;
 			try {
-				this.prompts = (await api.getPrompts()) || [];
+				this.apiEndpoints = await api.getAPIEndpointConfigurations();
+				this.apiEndpoints = this.apiEndpoints; //.filter(({ resource }) => ['AIModel'].includes(resource.subcategory));
 			} catch (error) {
 				this.$toast.add({
 					severity: 'error',
@@ -164,6 +173,21 @@ export default {
 				});
 			}
 			this.loading = false;
+		},
+
+		async handleDelete() {
+			try {
+				await api.deleteAPIEndpointConfiguration(this.itemToDelete!.name);
+				this.itemToDelete = null;
+			} catch (error) {
+				return this.$toast.add({
+					severity: 'error',
+					detail: error?.response?._data || error,
+					life: 5000,
+				});
+			}
+
+			await this.getEndpoints();
 		},
 	},
 };
