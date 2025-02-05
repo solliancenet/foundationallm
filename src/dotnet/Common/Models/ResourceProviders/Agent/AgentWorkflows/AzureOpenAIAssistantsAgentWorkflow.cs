@@ -16,5 +16,11 @@ namespace FoundationaLLM.Common.Models.ResourceProviders.Agent.AgentWorkflows
         /// </summary>
         [JsonPropertyName("assistant_id")]
         public required string AssistantId { get; set; }
+
+        /// <summary>
+        /// The vector store ID for the assistant.
+        /// </summary>
+        [JsonPropertyName("vector_store_id")]
+        public string? VectorStoreId { get; set; }
     }
 }
