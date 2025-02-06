@@ -311,6 +311,21 @@
 				"name": "FoundationaLLM.Attachment/attachments/delete",
 				"description": "Delete attachments.",
 				"field_name": "FoundationaLLM_Attachment_Attachments_Delete"
+			},
+			{
+				"name": "FoundationaLLM.Attachment/agentPrivateFiles/read",
+				"description": "Read agent private files.",
+				"field_name": "FoundationaLLM_Attachment_AgentPrivateFiles_Read"
+			},
+			{
+				"name": "FoundationaLLM.Attachment/agentPrivateFiles/write",
+				"description": "Create or update agent private files.",
+				"field_name": "FoundationaLLM_Attachment_AgentPrivateFiles_Write"
+			},
+			{
+				"name": "FoundationaLLM.Attachment/agentPrivateFiles/delete",
+				"description": "Delete agent private files.",
+				"field_name": "FoundationaLLM_Attachment_AgentPrivateFiles_Delete"
 			}
 		]
 	},

@@ -9,5 +9,10 @@
         /// The attachment is a file.
         /// </summary>
         public const string File = "file";
+
+        /// <summary>
+        /// The attachment is an agent private file.
+        /// </summary>
+        public const string AgentPrivateFile = "agent-private-file";
     }
 }

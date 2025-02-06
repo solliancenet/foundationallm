@@ -6,8 +6,13 @@
     public static class AttachmentResourceTypeNames
     {
         /// <summary>
-        /// Data sources.
+        /// Attachments.
         /// </summary>
         public const string Attachments = "attachments";
+
+        /// <summary>
+        /// Agent private files.
+        /// </summary>
+        public const string AgentPrivateFiles = "agentPrivateFiles";
     }
 }

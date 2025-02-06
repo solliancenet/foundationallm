@@ -398,6 +398,27 @@ namespace FoundationaLLM.Common.Models.Authorization
                         "Attachment")
                 },
                 {
+                    AuthorizableActionNames.FoundationaLLM_Attachment_AgentPrivateFiles_Read,
+                    new AuthorizableAction(
+                        AuthorizableActionNames.FoundationaLLM_Attachment_AgentPrivateFiles_Read,
+                        "Read agent private files.",
+                        "Attachment")
+                },
+                {
+                    AuthorizableActionNames.FoundationaLLM_Attachment_AgentPrivateFiles_Write,
+                    new AuthorizableAction(
+                        AuthorizableActionNames.FoundationaLLM_Attachment_AgentPrivateFiles_Write,
+                        "Create or update agent private files.",
+                        "Attachment")
+                },
+                {
+                    AuthorizableActionNames.FoundationaLLM_Attachment_AgentPrivateFiles_Delete,
+                    new AuthorizableAction(
+                        AuthorizableActionNames.FoundationaLLM_Attachment_AgentPrivateFiles_Delete,
+                        "Delete agent private files.",
+                        "Attachment")
+                },
+                {
                     AuthorizableActionNames.FoundationaLLM_AIModel_AIModels_Read,
                     new AuthorizableAction(
                         AuthorizableActionNames.FoundationaLLM_AIModel_AIModels_Read,

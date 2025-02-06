@@ -105,8 +105,6 @@ namespace FoundationaLLM.Agent.ResourceProviders
                    }),
                 AgentResourceTypeNames.AgentAccessTokens => await LoadAgentAccessTokens(
                     resourcePath)!,
-                AgentResourceTypeNames.Files => await LoadAgentFiles(
-                    resourcePath.MainResourceId!)!,
                 _ => throw new ResourceProviderException($"The resource type {resourcePath.ResourceTypeName} is not supported by the {_name} resource provider.",
                     StatusCodes.Status400BadRequest)
             };
@@ -117,7 +115,6 @@ namespace FoundationaLLM.Agent.ResourceProviders
             {
                 AgentResourceTypeNames.Agents => await UpdateAgent(resourcePath, serializedResource!, userIdentity),
                 AgentResourceTypeNames.AgentAccessTokens => await UpdateAgentAccessToken(resourcePath, serializedResource!),
-                AgentResourceTypeNames.Files => await UpdateAgentFile(resourcePath, formFile!, userIdentity),
                 _ => throw new ResourceProviderException($"The resource type {resourcePath.ResourceTypeName} is not supported by the {_name} resource provider.",
                     StatusCodes.Status400BadRequest)
             };
@@ -158,9 +155,6 @@ namespace FoundationaLLM.Agent.ResourceProviders
             {
                 case AgentResourceTypeNames.Agents:
                     await DeleteResource<AgentBase>(resourcePath);
-                    break;
-                case AgentResourceTypeNames.Files:
-                    await DeleteAgentFile(resourcePath);
                     break;
                 case AgentResourceTypeNames.AgentAccessTokens:
                     await DeleteAgentAccessToken(resourcePath);
@@ -482,80 +476,6 @@ namespace FoundationaLLM.Agent.ResourceProviders
             }
 
             return fallbackResult;
-        }
-
-        private async Task<List<ResourceProviderGetResult<AgentFile>>> LoadAgentFiles(string agentName) =>
-            (await _resourceReferenceStore!.GetAllResourceReferences<AgentFile>())
-                .Where(r => r.Name.StartsWith(agentName))
-                .Select(r => (r, r.Name.Split("|").Last()))
-                .Select(x => new ResourceProviderGetResult<AgentFile>()
-                {
-                    Actions = [],
-                    Roles = [],
-                    Resource = new AgentFile()
-                    {
-                        Name = x.Item2,
-                        DisplayName = x.Item2,
-                        ObjectId = ResourcePath.GetObjectId(_instanceSettings.Id, _name, AgentResourceTypeNames.Agents, agentName, AgentResourceTypeNames.Files, x.Item2)
-                    }
-                }).ToList();
-
-        private async Task<ResourceProviderUpsertResult> UpdateAgentFile(ResourcePath resourcePath, ResourceProviderFormFile formFile, UnifiedUserIdentity userIdentity)
-        {
-            if (formFile.BinaryContent.Length == 0)
-                throw new ResourceProviderException("The attached file is not valid.",
-                    StatusCodes.Status400BadRequest);
-
-            if (resourcePath.ResourceId != formFile.FileName)
-                throw new ResourceProviderException("The resource path does not match the file name (name mismatch).",
-                    StatusCodes.Status400BadRequest);
-
-            var filePath = $"{_name}/{_instanceSettings.Id}/{resourcePath.MainResourceId!}/private-file-store/{resourcePath.ResourceId!}";
-            var resourceName = $"{resourcePath.MainResourceId!}|{resourcePath.ResourceId}";
-
-            var existingAgentReference = await _resourceReferenceStore!.GetResourceReference(resourceName);
-
-            if (existingAgentReference == null)
-            {
-                var agentFileReference = new AgentReference
-                {
-                    Name = resourceName,
-                    Type = AgentTypes.AgentFile,
-                    Filename = $"/{filePath}",
-                    Deleted = false
-                };
-
-                await _resourceReferenceStore.AddResourceReference(agentFileReference);
-            }
-
-            await _storageService.WriteFileAsync(_storageContainerName, filePath, new MemoryStream(formFile.BinaryContent.ToArray()), formFile.ContentType, CancellationToken.None);
-
-            return new ResourceProviderUpsertResult
-            {
-                ResourceExists = existingAgentReference != null,
-                ObjectId = ResourcePath.GetObjectId(_instanceSettings.Id, _name, AgentResourceTypeNames.Agents, resourcePath.MainResourceId!, AgentResourceTypeNames.Files, resourcePath.ResourceId!)
-            };
-        }
-
-        private async Task DeleteAgentFile(ResourcePath resourcePath)
-        {
-            var resourceName = $"{resourcePath.MainResourceId!}|{resourcePath.ResourceId}";
-
-            var result = await _resourceReferenceStore!.TryGetResourceReference(resourceName);
-
-            if (result.Success && !result.Deleted)
-            {
-                await _resourceReferenceStore!.DeleteResourceReference(result.ResourceReference!);
-
-                //var filePath = $"{_name}/{_instanceSettings.Id}/{resourcePath.MainResourceId!}/private-file-store/{resourcePath.ResourceId!}";
-
-                //await _storageService.DeleteFileAsync(_storageContainerName, filePath);
-            }
-            else
-            {
-                throw new ResourceProviderException($"The resource {resourceName} cannot be deleted because it was either already deleted or does not exist.",
-                    StatusCodes.Status404NotFound);
-            }
         }
 
         #endregion

@@ -31,6 +31,24 @@ namespace FoundationaLLM.Common.Constants.ResourceProviders
                         ])
                     ]
                 }
+            },
+            {
+                AttachmentResourceTypeNames.AgentPrivateFiles,
+                new ResourceTypeDescriptor (
+                    AttachmentResourceTypeNames.AgentPrivateFiles,
+                    typeof(FileContent))
+                {
+                    AllowedTypes = [
+                        new ResourceTypeAllowedTypes(HttpMethod.Get.Method, AuthorizableOperations.Write, [], [], [typeof(ResourceProviderGetResult<AgentPrivateFile>)]),
+                        new ResourceTypeAllowedTypes(HttpMethod.Post.Method, AuthorizableOperations.Write, [], [], [typeof(ResourceProviderUpsertResult)]),
+                        new ResourceTypeAllowedTypes(HttpMethod.Delete.Method, AuthorizableOperations.Delete, [], [], []),
+                    ],
+                    Actions = [
+                        new ResourceTypeAction(ResourceProviderActions.Filter, false, true, [
+                            new ResourceTypeAllowedTypes(HttpMethod.Post.Method, AuthorizableOperations.Read, [], [typeof(ResourceFilter)], [typeof(AgentPrivateFile)])
+                        ])
+                    ]
+                }
             }
         };
     }

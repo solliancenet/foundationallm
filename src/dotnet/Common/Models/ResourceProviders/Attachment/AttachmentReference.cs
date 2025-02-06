@@ -64,6 +64,7 @@ namespace FoundationaLLM.Common.Models.ResourceProviders.Attachment
             Type switch
             {
                 AttachmentTypes.File => typeof(AttachmentFile),
+                AttachmentTypes.AgentPrivateFile => typeof(AgentPrivateFile),
                 _ => throw new ResourceProviderException($"The resource type {Type} is not supported.")
             };
     }

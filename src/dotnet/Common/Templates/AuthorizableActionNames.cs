@@ -310,6 +310,21 @@ namespace FoundationaLLM.Common.Constants.Authorization
         /// </summary>
         public const string FoundationaLLM_Attachment_Attachments_Delete = "FoundationaLLM.Attachment/attachments/delete";
 
+        /// <summary>
+        /// Read agent private files.
+        /// </summary>
+        public const string FoundationaLLM_Attachment_AgentPrivateFiles_Read = "FoundationaLLM.Attachment/agentPrivateFiles/read";
+
+        /// <summary>
+        /// Create or update agent private files.
+        /// </summary>
+        public const string FoundationaLLM_Attachment_AgentPrivateFiles_Write = "FoundationaLLM.Attachment/agentPrivateFiles/write";
+
+        /// <summary>
+        /// Delete agent private files.
+        /// </summary>
+        public const string FoundationaLLM_Attachment_AgentPrivateFiles_Delete = "FoundationaLLM.Attachment/agentPrivateFiles/delete";
+
         #endregion
 
         #region AIModel

@@ -1,6 +1,5 @@
-﻿using System.Diagnostics;
-using Azure.Messaging;
-using FluentValidation;
+﻿using FluentValidation;
+using FoundationaLLM.Common.Constants;
 using FoundationaLLM.Common.Constants.Configuration;
 using FoundationaLLM.Common.Constants.Events;
 using FoundationaLLM.Common.Constants.ResourceProviders;
@@ -9,16 +8,15 @@ using FoundationaLLM.Common.Interfaces;
 using FoundationaLLM.Common.Models.Authentication;
 using FoundationaLLM.Common.Models.Authorization;
 using FoundationaLLM.Common.Models.Configuration.Instance;
-using FoundationaLLM.Common.Models.Events;
 using FoundationaLLM.Common.Models.ResourceProviders;
 using FoundationaLLM.Common.Models.ResourceProviders.Attachment;
 using FoundationaLLM.Common.Services.ResourceProviders;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Text.Json;
-using FoundationaLLM.Common.Constants;
 
 namespace FoundationaLLM.Attachment.ResourceProviders
 {
@@ -83,7 +81,6 @@ namespace FoundationaLLM.Attachment.ResourceProviders
             switch (resourcePath.MainResourceTypeName)
             {
                 case AttachmentResourceTypeNames.Attachments:
-
                     var attachments = new List<AttachmentReference>();
 
                     if (resourcePath.ResourceTypeInstances[0].ResourceId != null)
@@ -91,11 +88,34 @@ namespace FoundationaLLM.Attachment.ResourceProviders
                     else
                         attachments = await _cosmosDBService.GetAttachments(userIdentity.UPN!);
 
-                    var results = new List<AttachmentFile>();
+                    var attachmentFiles = new List<AttachmentFile>();
                     foreach(var attachment in attachments)
-                        results.Add(await LoadAttachment(attachment, options != null && options!.LoadContent));
+                        attachmentFiles.Add(await LoadAttachment(attachment, options != null && options!.LoadContent));
 
-                    return results.Select(r => new ResourceProviderGetResult<AttachmentFile>
+                    return attachmentFiles.Select(af => new ResourceProviderGetResult<AttachmentFile>
+                    {
+                        Resource = af,
+                        Roles = (options?.IncludeRoles ?? false)
+                              ? authorizationResult.Roles
+                              : [],
+                        Actions = (options?.IncludeActions ?? false)
+                                ? authorizationResult.Actions
+                                : []
+                    }).ToList();
+
+                case AttachmentResourceTypeNames.AgentPrivateFiles:
+                    var agentPrivateFiles = new List<AttachmentReference>();
+
+                    if (resourcePath.ResourceTypeInstances[0].ResourceId != null)
+                        agentPrivateFiles = [await _cosmosDBService.GetAttachment(userIdentity.UPN!, resourcePath.ResourceTypeInstances[0].ResourceId!)];
+                    else
+                        agentPrivateFiles = await _cosmosDBService.GetAttachments(userIdentity.UPN!);
+
+                    var results = new List<AgentPrivateFile>();
+                    foreach (var agentPrivateFile in agentPrivateFiles)
+                        results.Add(await LoadAgentPrivateFile(agentPrivateFile, options != null && options!.LoadContent));
+
+                    return results.Select(r => new ResourceProviderGetResult<AgentPrivateFile>
                     {
                         Resource = r,
                         Roles = (options?.IncludeRoles ?? false)
@@ -105,6 +125,7 @@ namespace FoundationaLLM.Attachment.ResourceProviders
                                 ? authorizationResult.Actions
                                 : []
                     }).ToList();
+
                 default:
                     throw new ResourceProviderException($"The resource type {resourcePath.MainResourceTypeName} is not supported by the {_name} resource provider.",
                         StatusCodes.Status400BadRequest);
@@ -126,7 +147,6 @@ namespace FoundationaLLM.Attachment.ResourceProviders
             switch (resourcePath.MainResourceTypeName)
             {
                 case AttachmentResourceTypeNames.Attachments:
-
                     switch(resourcePath.Action)
                     {
                         case ResourceProviderActions.Filter:
@@ -143,6 +163,25 @@ namespace FoundationaLLM.Attachment.ResourceProviders
                             throw new ResourceProviderException($"The action {resourcePath.Action} is not supported by the {_name} resource provider.",
                                 StatusCodes.Status400BadRequest);
                     }
+
+                case AttachmentResourceTypeNames.AgentPrivateFiles:
+                    switch (resourcePath.Action)
+                    {
+                        case ResourceProviderActions.Filter:
+                            var agentPrivateFiles = await _cosmosDBService.FilterAttachments(
+                                userIdentity.UPN!,
+                                JsonSerializer.Deserialize<ResourceFilter>(serializedAction)!);
+
+                            var results = new List<AgentPrivateFile>();
+                            foreach (var agentPrivateFile in agentPrivateFiles)
+                                results.Add(await LoadAgentPrivateFile(agentPrivateFile, false));
+
+                            return results;
+
+                        default:
+                            throw new ResourceProviderException($"The action {resourcePath.Action} is not supported by the {_name} resource provider.",
+                                StatusCodes.Status400BadRequest);
+                    }
                 default:
                     throw new ResourceProviderException($"The resource type {resourcePath.MainResourceTypeName} is not supported by the {_name} resource provider.",
                         StatusCodes.Status400BadRequest);
@@ -155,17 +194,26 @@ namespace FoundationaLLM.Attachment.ResourceProviders
             switch (resourcePath.ResourceTypeName)
             {
                 case AttachmentResourceTypeNames.Attachments:
+                case AttachmentResourceTypeNames.AgentPrivateFiles:
                     var attachment = await _cosmosDBService.GetAttachment(userIdentity.UPN!, resourcePath.ResourceTypeInstances[0].ResourceId!)
                         ?? throw new ResourceProviderException($"The resource {resourcePath.ResourceTypeInstances[0].ResourceId!} of type {resourcePath.MainResourceTypeName} was not found.");
 
                     await _cosmosDBService.DeleteAttachment(attachment);
-
                     break;
                 default:
                     throw new ResourceProviderException($"The resource type {resourcePath.ResourceTypeName} is not supported by the {_name} resource provider.",
                     StatusCodes.Status400BadRequest);
             };
         }
+
+        /// <inheritdoc/>
+        protected override async Task<object> UpsertResourceAsync(ResourcePath resourcePath, string? serializedResource, ResourceProviderFormFile? formFile, UnifiedUserIdentity userIdentity) =>
+            resourcePath.ResourceTypeName switch
+            {
+                AttachmentResourceTypeNames.AgentPrivateFiles => await UpdateAgentPrivateFile(resourcePath, formFile!, userIdentity),
+                _ => throw new ResourceProviderException($"The resource type {resourcePath.ResourceTypeName} is not supported by the {_name} resource provider.",
+                    StatusCodes.Status400BadRequest)
+            };
 
         #endregion
 
@@ -311,8 +359,72 @@ namespace FoundationaLLM.Attachment.ResourceProviders
             };
         }
 
-        private string GetFileExtension(string fileName) =>
+        private static string GetFileExtension(string fileName) =>
             Path.GetExtension(fileName);
+
+        private async Task<AgentPrivateFile> LoadAgentPrivateFile(AttachmentReference attachment, bool loadContent = false)
+        {
+            var agentPrivateFile = new AgentPrivateFile
+            {
+                ObjectId = attachment.ObjectId,
+                Name = attachment.Name,
+                Type = attachment.Type,
+                ContentType = attachment.ContentType
+            };
+
+            if (loadContent)
+            {
+                var fileContent = await _storageService.ReadFileAsync(
+                    _storageContainerName,
+                    attachment.Filename,
+                    default);
+                agentPrivateFile.Content = fileContent.ToArray();
+            }
+
+            return agentPrivateFile;
+        }
+
+        private async Task<ResourceProviderUpsertResult> UpdateAgentPrivateFile(ResourcePath resourcePath, ResourceProviderFormFile formFile, UnifiedUserIdentity userIdentity)
+        {
+            if (formFile.BinaryContent.Length == 0)
+                throw new ResourceProviderException("The attached file is not valid.",
+                    StatusCodes.Status400BadRequest);
+
+            if (resourcePath.ResourceId != formFile.FileName)
+                throw new ResourceProviderException("The resource path does not match the file name (name mismatch).",
+                    StatusCodes.Status400BadRequest);
+
+            string agentName = "TODO";
+            var filePath = $"/{_name}/{_instanceSettings.Id}/{agentName}/private-file-store/{resourcePath.ResourceId!}";
+            var resourceName = $"{agentName}|{resourcePath.ResourceId}";
+
+            var agentPrivateFile = new AttachmentReference
+            {
+                Id = resourceName,
+                ObjectId = resourcePath.GetObjectId(_instanceSettings.Id, _name),
+                OriginalFilename = formFile.FileName,
+                ContentType = formFile.ContentType!,
+                Name = resourceName,
+                Type = AttachmentTypes.AgentPrivateFile,
+                Filename = filePath,
+                Size = formFile.BinaryContent.Length,
+                UPN = userIdentity.UPN ?? string.Empty,
+                Deleted = false
+            };
+
+            await CreateResource(
+                agentPrivateFile,
+                new MemoryStream(formFile.BinaryContent.ToArray()),
+                agentPrivateFile.ContentType ?? default);
+
+            await _cosmosDBService.CreateAttachment(agentPrivateFile);
+
+            return new ResourceProviderUpsertResult<AgentPrivateFile>
+            {
+                ObjectId = agentPrivateFile!.ObjectId,
+                ResourceExists = false
+            };
+        }
 
         #endregion
     }
