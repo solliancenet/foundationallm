@@ -599,7 +599,6 @@ export default {
 		handleNameInput(event) {
 			const sanitizedValue = this.$filters.sanitizeNameInput(event);
 			this.dataSource.name = sanitizedValue;
-			this.sourceName = sanitizedValue;
 
 			// Check if the name is available if we are creating a new data source.
 			if (!this.editId) {
@@ -613,8 +612,8 @@ export default {
 				errors.push('Please give the data source a name.');
 			}
 			if (this.nameValidationStatus === 'invalid') {
-                errors.push(this.validationMessage);
-            }
+				errors.push(this.validationMessage);
+			}
 
 			if (!this.dataSource.type) {
 				errors.push('Please specify a data source type.');
