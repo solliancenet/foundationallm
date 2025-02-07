@@ -26,6 +26,16 @@
         public const string LoadFileContent = "load-file-content";
 
         /// <summary>
+        /// Associate a file with a tool resource.
+        /// </summary>
+        public const string AddFileTool = "add-file-tool";
+
+        /// <summary>
+        /// Remove tool association from a file.
+        /// </summary>
+        public const string RemoveFileTool = "remove-file-tool";
+
+        /// <summary>
         /// Validate resources.
         /// </summary>
         public const string Validate = "validate";

@@ -19,5 +19,10 @@
         /// Main indexing profile.
         /// </summary>
         public const string MainIndexingProfile = "main_indexing_profile";
+
+        /// <summary>
+        /// Tool association.
+        /// </summary>
+        public const string ToolAssociation = "tool_association";
     }
 }

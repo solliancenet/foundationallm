@@ -26,8 +26,17 @@ namespace FoundationaLLM.Common.Models.ResourceProviders
         /// </summary>
         /// <param name="role">The object role being searched.</param>
         /// <returns><see langword="true"/> if the object role is present, <see langword="false"/> otherwise.</returns>
-        public bool HasObjectRole(string role) =>
-            Properties.TryGetValue(ResourceObjectIdPropertyNames.ObjectRole, out var objectRole)
-            && ((JsonElement)objectRole).GetString() == role;
+        public bool HasObjectRole(string role)
+        {
+            if (Properties.TryGetValue(ResourceObjectIdPropertyNames.ObjectRole, out var objectRole))
+            {
+                return objectRole switch
+                {
+                    JsonElement element => element.GetString() == role,
+                    _ => objectRole.ToString() == role
+                };
+            }
+            return false;
+        }
     }
 }
