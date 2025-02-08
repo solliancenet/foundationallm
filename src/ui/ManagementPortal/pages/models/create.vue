@@ -1,50 +1,45 @@
 <template>
-	<main id="main-content">
-		<div style="display: flex">
-			<!-- Title -->
-			<div style="flex: 1">
-				<h2 class="page-header">
-					{{ editPrompt ? 'Edit Prompt' : 'Create New Prompt' }}
-				</h2>
-				<div class="page-subheader">
-					{{
-						editPrompt
-							? 'Edit your prompt below.'
-							: 'Complete the settings below to create a new prompt.'
-					}}
-				</div>
-			</div>
+	<div>
+		<!-- Header -->
+		<h2 class="page-header">{{ editId ? 'Edit Model' : 'Create Model' }}</h2>
+		<div class="page-subheader">
+			{{
+				editId
+					? 'Edit your model settings below.'
+					: 'Complete the settings below to configure the model.'
+			}}
 		</div>
 
+		<!-- Steps -->
 		<div class="steps" :class="{ 'steps--loading': loading }">
 			<!-- Loading overlay -->
 			<template v-if="loading">
-				<div class="steps__loading-overlay" role="status" aria-live="polite">
+				<div class="steps__loading-overlay">
 					<LoadingGrid />
 					<div>{{ loadingStatusText }}</div>
 				</div>
 			</template>
 
+			<!-- Name -->
+			<div class="step-header span-2">What is the model name?</div>
 			<div class="span-2">
-				<div id="aria-prompt-name" class="step-header mb-2">Prompt name:</div>
-				<div id="aria-prompt-name-desc" class="mb-2">
+				<div id="aria-source-name-desc" class="mb-2">
 					No special characters or spaces, use letters and numbers with dashes and underscores only.
 				</div>
 				<div class="input-wrapper">
 					<InputText
-						v-model="prompt.name"
-						:disabled="editPrompt"
+						v-model="aiModel.name"
+						:disabled="editId"
 						type="text"
 						class="w-100"
-						placeholder="Enter prompt name"
-						aria-labelledby="aria-prompt-name aria-prompt-name-desc"
+						placeholder="Enter model name"
+						aria-labelledby="aria-source-name aria-source-name-desc"
 						@input="handleNameInput"
 					/>
 					<span
 						v-if="nameValidationStatus === 'valid'"
 						class="icon valid"
 						title="Name is available"
-						aria-label="Name is available"
 					>
 						✔️
 					</span>
@@ -52,91 +47,80 @@
 						v-else-if="nameValidationStatus === 'invalid'"
 						:title="validationMessage"
 						class="icon invalid"
-						:aria-label="validationMessage"
 					>
 						❌
 					</span>
 				</div>
 			</div>
+
+			<!-- Model type -->
+			<div class="step-header span-2">What is the model type?</div>
 			<div class="span-2">
-				<div class="step-header mb-2">Description:</div>
-				<div id="aria-description" class="mb-2">
-					Provide a description to help others understand the prompt's purpose.
-				</div>
-				<InputText
-					v-model="prompt.description"
-					type="text"
-					class="w-100"
-					placeholder="Enter prompt description"
-					aria-labelledby="aria-description"
-				/>
-			</div>
-			<div class="span-2">
-				<div class="step-header mb-2">Category:</div>
+				<div class="mb-2">Model Type:</div>
 				<Dropdown
-					v-model="prompt.category"
-					:options="categoryOptions"
+					v-model="aiModel.type"
+					:options="aiModelTypeOptions"
 					option-label="label"
 					option-value="value"
-					class="dropdown--agent"
 					placeholder="--Select--"
-					aria-labelledby="aria-source-type"
 				/>
 			</div>
 
-			<!-- System prompt -->
-			<section aria-labelledby="system-prompt" class="span-2 steps">
-				<h3 class="step-section-header span-2" id="system-prompt">Prompt Prefix</h3>
+			<!-- Model endpoint -->
+			<div class="step-header span-2">What is the model endpoint?</div>
+			<div class="span-2">
+				<div class="mb-2">Model Endpoint:</div>
+				<Dropdown
+					v-model="aiModel.endpoint_object_id"
+					:options="aiModelEndpointOptions"
+					option-label="name"
+					option-value="object_id"
+					placeholder="--Select--"
+				/>
+			</div>
 
-				<div class="span-2">
-					<Textarea
-						v-model="prompt.prefix"
-						class="w-100"
-						auto-resize
-						rows="5"
-						type="text"
-						placeholder="You are an analytic agent named Khalil that helps people find information about FoundationaLLM. Provide concise answers that are polite and professional."
-						aria-labelledby="aria-persona"
-					/>
-				</div>
-			</section>
+			<!-- Model parameters -->
+			<div class="step-header span-2">What are the model parameters?</div>
+			<div class="span-2">
+				<PropertyBuilder v-model="aiModel.model_parameters" />
+			</div>
 
-			<div class="span-2 d-flex justify-content-end" style="gap: 16px">
-				<!-- Create prompt -->
+			<!-- Buttons -->
+			<div class="button-container column-2 justify-self-end">
+				<!-- Create model -->
 				<Button
-					:label="editPrompt ? 'Save Changes' : 'Create Prompt'"
+					:label="editId ? 'Save Changes' : 'Create Model'"
 					severity="primary"
-					:disabled="editable === false"
-					@click="handleCreatePrompt"
+					@click="handleCreate"
 				/>
 
 				<!-- Cancel -->
-				<Button v-if="editPrompt" label="Cancel" severity="secondary" @click="handleCancel" />
+				<Button
+					v-if="editId"
+					style="margin-left: 16px"
+					label="Cancel"
+					severity="secondary"
+					@click="handleCancel"
+				/>
 			</div>
 		</div>
-	</main>
+	</div>
 </template>
 
 <script lang="ts">
 import type { PropType } from 'vue';
-import { ref } from 'vue';
 import { debounce } from 'lodash';
+
 import api from '@/js/api';
-import type { Prompt, CreatePromptRequest } from '@/js/types';
 
 export default {
-	name: 'CreatePrompt',
+	name: 'CreateModel',
 
 	props: {
-		editPrompt: {
+		editId: {
 			type: [Boolean, String] as PropType<false | string>,
 			required: false,
 			default: false,
-		},
-		promptName: {
-			type: String as PropType<string>,
-			required: false,
-			default: '',
 		},
 	},
 
@@ -145,21 +129,38 @@ export default {
 			loading: false as boolean,
 			loadingStatusText: 'Retrieving data...' as string,
 
-			prompt: {} as Prompt,
-
-			editable: false as boolean,
-
 			nameValidationStatus: null as string | null, // 'valid', 'invalid', or null
 			validationMessage: '' as string,
 
-			categoryOptions: [
+			aiModelEndpointOptions: [],
+
+			aiModel: {
+				name: null as string | null,
+				type: null as string | null,
+				// object_id: '',
+				endpoint_object_id: '' as string,
+				// display_name: '' as string,
+				// deployment_name: 'completions4' as string,
+				// version: '0.0' as string,
+				model_parameters: {} as object,
+			},
+
+			aiModelTypeOptions: [
 				{
-					label: 'Workflow',
-					value: 'Workflow',
+					label: 'Basic',
+					value: 'basic',
 				},
 				{
-					label: 'Tool',
-					value: 'Tool',
+					label: 'Embedding',
+					value: 'embedding',
+				},
+				{
+					label: 'Completion',
+					value: 'completion',
+				},
+				{
+					label: 'ImageGeneration',
+					value: 'image-generation',
 				},
 			],
 		};
@@ -167,38 +168,29 @@ export default {
 
 	async created() {
 		this.loading = true;
+		this.loadingStatusText = `Retrieving AI model endpoints...`;
+		const modelEndpoints = (await api.getAPIEndpointConfigurations()).map(
+			(endpoint) => endpoint.resource,
+		);
+		this.aiModelEndpointOptions = modelEndpoints.filter((resource) =>
+			['AIModel'].includes(resource.subcategory),
+		);
+		this.loading = false;
 
-		if (this.editPrompt && this.promptName !== '') {
-			this.loadingStatusText = `Retrieving prompt: ${this.promptName}...`;
-			const promptGetResult = await api.getPromptByName(this.promptName);
-			this.editable =
-				promptGetResult?.actions.includes('FoundationaLLM.Prompt/prompts/write') ?? false;
-
-			const prompt = promptGetResult?.resource;
-			this.loadingStatusText = `Mapping prompt values to form...`;
-			if (prompt) {
-				this.prompt = prompt;
-			}
-		} else {
-			this.editable = true;
+		if (this.editId) {
+			this.loading = true;
+			this.loadingStatusText = `Retrieving AI model "${this.editId}"...`;
+			this.aiModel = (await api.getAIModel(this.editId))[0].resource;
+			this.loading = false;
 		}
 
 		this.debouncedCheckName = debounce(this.checkName, 500);
-
-		this.loading = false;
 	},
 
 	methods: {
-		handleCancel() {
-			if (!confirm('Are you sure you want to cancel?')) {
-				return;
-			}
-			this.$router.push('/prompts');
-		},
-
 		async checkName() {
 			try {
-				const response = await api.checkPromptName(this.prompt.name, this.prompt.type);
+				const response = await api.checkAIModelName(this.aiModel.name);
 
 				// Handle response based on the status
 				if (response.status === 'Allowed') {
@@ -211,38 +203,43 @@ export default {
 					this.validationMessage = response.message;
 				}
 			} catch (error) {
-				console.error('Error checking prompt name: ', error);
+				console.error('Error checking AI model name: ', error);
 				this.nameValidationStatus = 'invalid';
-				this.validationMessage = 'Error checking the prompt name. Please try again.';
+				this.validationMessage = 'Error checking the AI model name. Please try again.';
 			}
+		},
+
+		handleCancel() {
+			if (!confirm('Are you sure you want to cancel?')) {
+				return;
+			}
+
+			this.$router.push('/models');
 		},
 
 		handleNameInput(event) {
 			const sanitizedValue = this.$filters.sanitizeNameInput(event);
-			this.prompt.name = sanitizedValue;
-			this.sourceName = sanitizedValue;
+			this.aiModel.name = sanitizedValue;
 
-			// Check if the name is available if we are creating a new prompt.
-			if (!this.editPrompt) {
+			// Check if the name is available if we are creating a new data source.
+			if (!this.editId) {
 				this.debouncedCheckName();
 			}
 		},
 
-		async handleCreatePrompt() {
-			const errors = [];
-			if (!this.prompt.name) {
-				errors.push('Please give the prompt a name.');
-			}
-			if (this.nameValidationStatus === 'invalid') {
-				errors.push(this.validationMessage);
+		async handleCreate() {
+			const errors: string[] = [];
+
+			if (!this.aiModel.name) {
+				errors.push('Please give the AI model a name.');
 			}
 
-			if (!this.prompt.prefix) {
-				errors.push('The prompt requires a prefix.');
+			if (!this.aiModel.type) {
+				errors.push('Please specify an AI model type.');
 			}
 
-			if (!this.prompt.category) {
-				errors.push('Please select a category for the prompt.');
+			if (!this.aiModel.endpoint_object_id) {
+				errors.push('Please specify an AI model endpoint.');
 			}
 
 			if (errors.length > 0) {
@@ -256,24 +253,11 @@ export default {
 			}
 
 			this.loading = true;
-			this.loadingStatusText = 'Saving prompt...';
-
-			const promptRequest: CreatePromptRequest = {
-				type: 'multipart',
-				name: this.prompt.name,
-				cost_center: this.prompt.cost_center,
-				description: this.prompt.description,
-				prefix: this.prompt.prefix,
-				suffix: this.prompt.suffix,
-				object_id: this.prompt.object_id || '',
-				display_name: this.prompt.display_name,
-				expiration_date: this.prompt.expiration_date,
-				properties: this.prompt.properties,
-				category: this.prompt.category,
-			};
-
+			let successMessage = null as null | string;
 			try {
-				await api.createOrUpdatePrompt(this.prompt.name, promptRequest);
+				this.loadingStatusText = 'Saving AI model...';
+				await api.upsertAIModel(this.editId || this.aiModel.name, this.aiModel);
+				successMessage = `AI model "${this.aiModel.name}" was successfully saved.`;
 			} catch (error) {
 				this.loading = false;
 				return this.$toast.add({
@@ -285,13 +269,15 @@ export default {
 
 			this.$toast.add({
 				severity: 'success',
-				detail: `Prompt ${this.editPrompt ? 'updated' : 'created'} successfully.`,
+				detail: successMessage,
 				life: 5000,
 			});
 
 			this.loading = false;
 
-			this.$router.push('/prompts');
+			if (!this.editId) {
+				this.$router.push('/models');
+			}
 		},
 	},
 };
@@ -326,7 +312,6 @@ export default {
 }
 
 .step-section-header {
-	margin: 0px;
 	background-color: rgba(150, 150, 150, 1);
 	color: white;
 	font-size: 1rem;
@@ -340,8 +325,8 @@ export default {
 }
 
 .step {
-	display: flex;
-	flex-direction: column;
+	// display: flex;
+	// flex-direction: column;
 }
 
 .step--disabled {
@@ -479,6 +464,12 @@ $editStepPadding: 16px;
 	margin-right: 8px;
 }
 
+.primary-button {
+	background-color: var(--primary-button-bg) !important;
+	border-color: var(--primary-button-bg) !important;
+	color: var(--primary-button-text) !important;
+}
+
 .input-wrapper {
 	position: relative;
 	display: flex;
@@ -496,10 +487,6 @@ input {
 	cursor: default;
 }
 
-// .p-button-icon {
-// 	color: var(--primary-button-text) !important;
-// }
-
 .valid {
 	color: green;
 }
@@ -508,8 +495,16 @@ input {
 	color: red;
 }
 
-.virtual-security-group-id {
-	margin: 0 1rem 0 0;
-	width: auto;
+.flex-container {
+	display: flex;
+	align-items: center; /* Align items vertically in the center */
+}
+
+.flex-item {
+	flex-grow: 1; /* Allow the textarea to grow and fill the space */
+}
+
+.flex-item-button {
+	margin-left: 8px; /* Add some space between the textarea and the button */
 }
 </style>

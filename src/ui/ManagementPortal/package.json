@@ -48,7 +48,8 @@
 		"primevue": "^3.53.0",
 		"simple-code-editor": "^2.0.9",
 		"uuid": "^10.0.0",
-		"vue-diff": "^1.2.4"
+		"vue-diff": "^1.2.4",
+		"vue-json-pretty": "^2.4.0"
 	},
 	"optionalDependencies": {
 		"@rollup/rollup-linux-x64-gnu": "4.21.0"
