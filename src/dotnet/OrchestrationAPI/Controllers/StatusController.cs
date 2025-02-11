@@ -1,4 +1,6 @@
-﻿using FoundationaLLM.Orchestration.Core.Interfaces;
+﻿using FoundationaLLM.Common.Models.Infrastructure;
+using FoundationaLLM.Orchestration.Core.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FoundationaLLM.Orchestration.API.Controllers
@@ -9,6 +11,8 @@ namespace FoundationaLLM.Orchestration.API.Controllers
     /// <param name="orchestrationService">The <see cref="IOrchestrationService"/> that provides orchestration capabilities.</param>
     [ApiController]
     [Route("instances/{instanceId}/[controller]")]
+    [Consumes("application/json")]
+    [Produces("application/json")]
     public class StatusController(
         IOrchestrationService orchestrationService) : ControllerBase
     {
@@ -17,13 +21,15 @@ namespace FoundationaLLM.Orchestration.API.Controllers
         /// <summary>
         /// Returns the status of the Orchestration API service.
         /// </summary>
+        [AllowAnonymous]
         [HttpGet(Name = "GetServiceStatus")]
-        public async Task<IActionResult> Get(string instanceId) =>
-            new OkObjectResult(await _orchestrationService.GetStatus(instanceId));
+        public async Task<ServiceStatusInfo> Get(string instanceId) =>
+            await _orchestrationService.GetStatus(instanceId);
 
         /// <summary>
         /// Returns the allowed HTTP methods for the Orchestration API service.
         /// </summary>
+        [AllowAnonymous]
         [HttpOptions]
         public IActionResult Options()
         {

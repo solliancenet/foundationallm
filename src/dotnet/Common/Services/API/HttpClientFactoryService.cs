@@ -42,11 +42,18 @@ namespace FoundationaLLM.Common.Services.API
         }
 
         /// <inheritdoc/>
-        public async Task<HttpClient> CreateClient(string clientName, UnifiedUserIdentity userIdentity)
+        public async Task<HttpClient> CreateClient(string clientName, UnifiedUserIdentity userIdentity, bool getStatusEndpoint = false)
         {
             var endpointConfiguration = await GetEndpoint(clientName, userIdentity);
 
-            return await CreateClient(endpointConfiguration, userIdentity);
+            var client = await CreateClient(endpointConfiguration, userIdentity);
+
+            if (getStatusEndpoint && !string.IsNullOrWhiteSpace(endpointConfiguration.StatusUrl))
+            {
+                client.BaseAddress = new Uri(endpointConfiguration.StatusUrl);
+            }
+
+            return client;
         }
 
         /// <inheritdoc/>

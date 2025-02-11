@@ -80,6 +80,9 @@ namespace FoundationaLLM.Orchestration.API
 
             builder.Services.AddInstanceProperties(builder.Configuration);
 
+            // CORS policies
+            builder.AddCorsPolicies();
+
             // Add Azure ARM services.
             builder.AddAzureResourceManager();
 
@@ -185,6 +188,9 @@ namespace FoundationaLLM.Orchestration.API
                 .AddSwaggerGenNewtonsoftSupport();
 
             var app = builder.Build();
+
+            // Set the CORS policy before other middleware.
+            app.UseCors(CorsPolicyNames.AllowAllOrigins);
 
             // Register the middleware to extract the user identity context and other HTTP request context data required by the downstream services.
             app.UseMiddleware<CallContextMiddleware>();

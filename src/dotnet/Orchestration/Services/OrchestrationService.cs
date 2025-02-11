@@ -110,9 +110,9 @@ public class OrchestrationService : IOrchestrationService
             InstanceId = instanceId,
             InstanceName = ValidatedEnvironment.MachineName,
             Version = Environment.GetEnvironmentVariable(EnvironmentVariables.FoundationaLLM_Version),
-            Status = subordinateStatuses.All(s => s.Status!.Equals("ready", StringComparison.CurrentCultureIgnoreCase))
-                ? "ready"
-                : "partially_unavailable",
+            Status = subordinateStatuses.All(s => s.Status!.Equals(ServiceStatuses.Ready, StringComparison.CurrentCultureIgnoreCase))
+                ? ServiceStatuses.Ready
+                : ServiceStatuses.PartiallyAvailable,
             SubordinateServices = subordinateStatuses
         };
     }

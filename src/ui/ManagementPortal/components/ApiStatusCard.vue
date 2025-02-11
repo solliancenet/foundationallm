@@ -67,9 +67,10 @@ export default {
 			this.loading = true;
 			try {
 				if (this.statusUrl) {
-					const response = await $fetch(
-						`/api/api-status?url=${encodeURIComponent(this.statusUrl)}`,
-					);
+					// const response = await $fetch(
+					// 	`/api/api-status?url=${encodeURIComponent(this.statusUrl)}`,
+					// );
+					const response = await $fetch(this.statusUrl);
 					if (response.error) {
 						this.error = response.error;
 					} else {
