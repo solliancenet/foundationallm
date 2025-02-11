@@ -54,6 +54,7 @@ export interface Message {
 	sessionId: string;
 	timeStamp: string;
 	sender: 'User' | 'Agent';
+	senderName: string | null;
 	senderDisplayName: string | null;
 	tokens: number;
 	text: string;

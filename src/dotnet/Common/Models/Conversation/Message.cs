@@ -44,7 +44,12 @@ public record Message
     public string Sender { get; set; }
 
     /// <summary>
-    /// The display name of the message sender. This could be the name of the signed in user or the name of the agent.
+    /// The name of the message sender, such as the signed-in user or the name of the agent.
+    /// </summary>
+    public string? SenderName { get; set; }
+
+    /// <summary>
+    /// The display name of the message sender, if applicable, such as the agent's display name.
     /// </summary>
     public string? SenderDisplayName { get; set; }
 

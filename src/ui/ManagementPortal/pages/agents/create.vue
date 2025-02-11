@@ -68,6 +68,18 @@
 				</div>
 			</div>
 			<div class="span-2">
+				<div class="step-header mb-2">Agent Display Name:</div>
+				<div class="mb-2">
+					This is the name that will be displayed to users when interacting with the agent.
+				</div>
+				<InputText
+					v-model="agentDisplayName"
+					type="text"
+					class="w-100"
+					placeholder="Enter agent display name"
+				/>
+			</div>
+			<div class="span-2">
 				<div class="step-header mb-2">Description:</div>
 				<div id="aria-description" class="mb-2">
 					Provide a description to help others understand the agent's purpose.
@@ -1040,6 +1052,7 @@ const getDefaultFormValues = () => {
 
 		agentName: '',
 		agentDescription: '',
+		agentDisplayName: '',
 		agentWelcomeMessage: '',
 		object_id: '',
 		text_partitioning_profile_object_id: '',
@@ -1397,6 +1410,7 @@ export default {
 		mapAgentToForm(agent: Agent) {
 			this.agentName = agent.name || this.agentName;
 			this.agentDescription = agent.description || this.agentDescription;
+			this.agentDisplayName = agent.display_name || this.agentDisplayName;
 			this.agentWelcomeMessage = agent.properties?.welcome_message || this.agentWelcomeMessage;
 			this.agentType = agent.type || this.agentType;
 			this.object_id = agent.object_id || this.object_id;
@@ -1781,6 +1795,7 @@ export default {
 					type: this.agentType,
 					name: this.agentName,
 					description: this.agentDescription,
+					display_name: this.agentDisplayName,
 					properties: {
 						welcome_message: this.agentWelcomeMessage,
 					},

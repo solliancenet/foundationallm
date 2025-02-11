@@ -365,7 +365,9 @@ export const useAppStore = defineStore('app', {
 
 			if (lastAssistantMessage) {
 				const agent = this.agents.find(
-					(agent) => agent.resource.name === lastAssistantMessage.senderDisplayName,
+					(agent) =>
+						agent.resource.name === lastAssistantMessage.senderName ||
+						agent.resource.name === lastAssistantMessage.senderDisplayName,
 				);
 				if (agent) {
 					this.setSessionAgent(session, agent);
@@ -425,6 +427,7 @@ export const useAppStore = defineStore('app', {
 				id: null,
 				rating: null,
 				sender: 'User',
+				senderName: authStore.currentAccount?.name ?? 'You',
 				senderDisplayName: authStore.currentAccount?.name ?? 'You',
 				sessionId: this.currentSession!.id,
 				text,
@@ -442,7 +445,8 @@ export const useAppStore = defineStore('app', {
 				id: '',
 				rating: null,
 				sender: 'Agent',
-				senderDisplayName: agent.name,
+				senderName: agent.name,
+				senderDisplayName: agent.display_name,
 				sessionId: this.currentSession!.id,
 				text: '',
 				timeStamp: new Date().toISOString(),

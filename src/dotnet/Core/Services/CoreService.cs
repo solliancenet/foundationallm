@@ -181,7 +181,7 @@ public partial class CoreService(
 
             completionRequest = await PrepareCompletionRequest(completionRequest, agentBase, true);
 
-            var conversationItems = await CreateConversationItemsAsync(instanceId, completionRequest, _userIdentity);
+            var conversationItems = await CreateConversationItemsAsync(instanceId, completionRequest, _userIdentity, agentBase.DisplayName);
 
             var agentOption = GetGatekeeperOption(instanceId, agentBase, completionRequest);
 
@@ -190,6 +190,7 @@ public partial class CoreService(
                 InstanceId = instanceId,
                 OperationId = completionRequest.OperationId!,
                 AgentName = completionRequest.AgentName!,
+                AgentDisplayName = agentBase.DisplayName,
                 SessionId = completionRequest.SessionId!,
                 UserMessageId = conversationItems.UserMessage.Id,
                 AgentMessageId = conversationItems.AgentMessage.Id,
@@ -347,7 +348,8 @@ public partial class CoreService(
                     Status = OperationStatus.Failed,
                     Text = "The completion operation has exceeded the maximum time allowed.",
                     TimeStamp = DateTime.UtcNow,
-                    SenderDisplayName = operationContext.AgentName
+                    SenderName = operationContext.AgentName,
+                    SenderDisplayName = operationContext.AgentDisplayName ?? operationContext.AgentName
                 },
                 Status = OperationStatus.Failed
             };
@@ -385,7 +387,8 @@ public partial class CoreService(
             Status = operation.Status,
             Text = operation.StatusMessage ?? "The completion operation is in progress.",
             TimeStamp = DateTime.UtcNow,
-            SenderDisplayName = operationContext.AgentName
+            SenderName = operationContext.AgentName,
+            SenderDisplayName = operationContext.AgentDisplayName ?? operationContext.AgentName
         };
 
         return operation;
@@ -410,7 +413,7 @@ public partial class CoreService(
 
             completionRequest = await PrepareCompletionRequest(completionRequest, agentBase);
 
-            var conversationItems = await CreateConversationItemsAsync(instanceId, completionRequest, _userIdentity);
+            var conversationItems = await CreateConversationItemsAsync(instanceId, completionRequest, _userIdentity, agentBase.DisplayName);
 
             var agentOption = GetGatekeeperOption(instanceId, agentBase, completionRequest);
 
@@ -422,6 +425,7 @@ public partial class CoreService(
                 {
                     InstanceId = instanceId,
                     AgentName = completionRequest.AgentName!,
+                    AgentDisplayName = agentBase.DisplayName,
                     SessionId = completionRequest.SessionId!,
                     OperationId = completionRequest.OperationId!,
                     UserMessageId = conversationItems.UserMessage.Id,
@@ -797,7 +801,8 @@ public partial class CoreService(
     /// <summary>
     /// Add session message
     /// </summary>
-    private async Task<(Message UserMessage, Message AgentMessage, CompletionPrompt CompletionPrompt)> CreateConversationItemsAsync(string instanceId, CompletionRequest request, UnifiedUserIdentity userIdentity)
+    private async Task<(Message UserMessage, Message AgentMessage, CompletionPrompt CompletionPrompt)> CreateConversationItemsAsync
+        (string instanceId, CompletionRequest request, UnifiedUserIdentity userIdentity, string? agentDisplayName)
     {
         var userMessage = new Message
         {
@@ -806,6 +811,7 @@ public partial class CoreService(
             Sender = nameof(Participants.User),
             Text = request.UserPrompt,
             UPN = userIdentity.UPN!,
+            SenderName = userIdentity.Name,
             SenderDisplayName = userIdentity.Name,
             Attachments = request.Attachments,
             Status = OperationStatus.Pending,
@@ -818,7 +824,8 @@ public partial class CoreService(
             SessionId = request.SessionId!,
             Sender = nameof(Participants.Agent),
             UPN = userIdentity.UPN!,
-            SenderDisplayName = request.AgentName,
+            SenderName = request.AgentName,
+            SenderDisplayName = agentDisplayName ?? request.AgentName,
             Status = OperationStatus.Pending,
             OperationId = request.OperationId
         };

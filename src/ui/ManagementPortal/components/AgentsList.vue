@@ -13,7 +13,7 @@
 			:value="agents"
 			striped-rows
 			scrollable
-			sortField="resource.name"
+			sortField="resource.display_name"
 			:sortOrder="1"
 			table-style="max-width: 100%"
 			size="small"
@@ -39,7 +39,7 @@
 				}"
 			>
 				<template #body="{ data }">
-					<span>{{ data.resource.name }}</span>
+					<span>{{ data.resource.name }} {{ data.resource.display_name ? `(${data.resource.display_name})` : '' }}</span>
 					<template v-if="data.resource.properties?.default_resource === 'true'">
 						<Chip label="Default" icon="pi pi-star" style="margin-left: 8px" />
 					</template>
@@ -101,7 +101,7 @@
 								<i class="pi pi-cog" style="font-size: 1.2rem" aria-hidden="true"></i>
 							</Button>
 							<template #popper
-								><div role="tooltip">Edit {{ data.resource.name }}</div></template
+								><div role="tooltip">Edit {{ data.resource.display_name || data.resource.name }}</div></template
 							>
 						</VTooltip>
 					</NuxtLink>
@@ -131,7 +131,7 @@
 							<i class="pi pi-trash" style="font-size: 1.2rem" aria-hidden="true"></i>
 						</Button>
 						<template #popper
-							><div role="tooltip">Delete {{ data.resource.name }}</div></template
+							><div role="tooltip">Delete {{ data.resource.display_name || data.resource.name }}</div></template
 						>
 					</VTooltip>
 				</template>
@@ -160,7 +160,7 @@
 							<i class="pi pi-star" style="font-size: 1.2rem" aria-hidden="true"></i>
 						</Button>
 						<template #popper
-							><div role="tooltip">Set {{ data.resource.name }} as default agent</div></template
+							><div role="tooltip">Set {{ data.resource.display_name || data.resource.name }} as default agent</div></template
 						>
 					</VTooltip>
 				</template>

@@ -29,6 +29,12 @@ namespace FoundationaLLM.Common.Models.Orchestration
         public required string AgentName { get; set; }
 
         /// <summary>
+        /// Gets or sets the display name of the agent that runs the long-running operation.
+        /// </summary>
+        [JsonProperty("agentDisplayName")]
+        public string? AgentDisplayName { get; set; }
+
+        /// <summary>
         /// The API endpoint URL of the main AI model used by the agent workflow.
         /// </summary>
         [JsonProperty("agentWorkflowMainAIModelAPIEndpoint")]
