@@ -13,8 +13,10 @@ param frontendAksNodeSku string
 @description('The environment name token used in naming resources.')
 param environmentName string
 
-param hubResourceGroup string
-param hubSubscriptionId string = subscription().subscriptionId
+param opsResourceGroupName string
+
+param globalDnsResourceGroup string
+param dnsSubscriptionId string = subscription().subscriptionId
 
 @description('AKS namespace')
 param k8sNamespace string
@@ -33,12 +35,9 @@ param monitorWorkspaceName string
 @description('Networking Resource Group Name')
 param networkingResourceGroupName string
 
-param openAiName stringMLS_PIPELINE_API_SSL_SECRET_NAME
+param openAiName string
 
 param deployOpenAi bool
-
-@description('OPS Resource Group name')
-param opsResourceGroupName string
 
 @description('Project Name, used in naming resources.')
 param project string
@@ -145,15 +144,15 @@ module aksBackend 'modules/aks.bicep' = {
     admnistratorObjectIds: [ administratorObjectId ]
     aksServiceCidr: aksServiceCidr
     aksNodeSku: backendAksNodeSku
-    hubResourceGroup: hubResourceGroup
-    hubSubscriptionId: hubSubscriptionId
+    dnsResourceGroup: globalDnsResourceGroup
+    dnsSubscriptionId: dnsSubscriptionId
     location: location
     logAnalyticWorkspaceId: logAnalyticsWorkspaceId
     logAnalyticWorkspaceResourceId: logAnalyticsWorkspaceResourceId
     monitorWorkspaceName: monitorWorkspaceName
     networkingResourceGroupName: networkingResourceGroupName
     opsResourceGroupName: opsResourceGroupName
-    privateDnsZones: filter(dnsZones.outputs.ids, (zone) => contains([ 'aks' ], zone.key))
+    privateDnsZones: filter(globalDnsZones.outputs.ids, (zone) => contains(['aks_${location}'], zone.key))
     resourceSuffix: '${resourceSuffix}-backend'
     subnetId: subnets['aks-backend'].id
     subnetIdPrivateEndpoint: subnets.services.id
@@ -168,15 +167,15 @@ module aksFrontend 'modules/aks.bicep' = {
     admnistratorObjectIds: [ administratorObjectId ]
     aksServiceCidr: aksServiceCidr
     aksNodeSku: frontendAksNodeSku
-    hubResourceGroup: hubResourceGroup
-    hubSubscriptionId: hubSubscriptionId
+    dnsResourceGroup: globalDnsResourceGroup
+    dnsSubscriptionId: dnsSubscriptionId
     location: location
     logAnalyticWorkspaceId: logAnalyticsWorkspaceId
     logAnalyticWorkspaceResourceId: logAnalyticsWorkspaceResourceId
     monitorWorkspaceName: monitorWorkspaceName
     networkingResourceGroupName: networkingResourceGroupName
     opsResourceGroupName: opsResourceGroupName
-    privateDnsZones: filter(dnsZones.outputs.ids, (zone) => contains([ 'aks' ], zone.key))
+    privateDnsZones: filter(globalDnsZones.outputs.ids, (zone) => contains(['aks_${location}'], zone.key))
     resourceSuffix: '${resourceSuffix}-frontend'
     subnetId: subnets['aks-frontend'].id
     subnetIdPrivateEndpoint: subnets.services.id
@@ -184,11 +183,11 @@ module aksFrontend 'modules/aks.bicep' = {
   }
 }
 
-module dnsZones 'modules/utility/dnsZoneData.bicep' = {
-  name: 'dnsZones-${timestamp}'
-  scope: resourceGroup(hubSubscriptionId, hubResourceGroup)
+module globalDnsZones 'modules/utility/globalDnsZoneData.bicep' = {
+  name: 'glbDnsZones-${timestamp}'
+  scope: resourceGroup(dnsSubscriptionId, globalDnsResourceGroup)
   params: {
-    location: location
+    locations: [location]
   }
 }
 
@@ -529,6 +528,7 @@ module cognitiveServicesOpenAiUserGatewayRole 'modules/utility/openAiRoleAssignm
     principalId: srBackend[indexOf(backendServiceNames, 'gateway-api')].outputs.servicePrincipalId
     roleDefinitionIds: {
       'Cognitive Services OpenAI Contributor': 'a001fd3d-188f-4b5d-821b-7da978bf7442'
+      'Cognitive Services OpenAI User': '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd'
     }
   }
 }

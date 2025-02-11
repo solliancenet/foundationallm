@@ -38,7 +38,7 @@ try {
                 --allow-forwarded-traffic 1 `
                 --allow-gateway-transit 0 `
                 --allow-vnet-access 1 `
-                --use-remote-gateways 1
+                --use-remote-gateways 0
         }
 
         $peerings = @(az network vnet peering list `
@@ -59,7 +59,7 @@ try {
                 --vnet-name $env:FOUNDATIONALLM_HUB_VNET_NAME `
                 --subscription $env:FOUNDATIONALLM_HUB_SUBSCRIPTION_ID `
                 --allow-forwarded-traffic 1 `
-                --allow-gateway-transit 1 `
+                --allow-gateway-transit 0 `
                 --allow-vnet-access 1 `
                 --use-remote-gateways 0
         }

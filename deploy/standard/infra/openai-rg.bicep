@@ -1,7 +1,9 @@
 /** Inputs **/
 param actionGroupId string
-param hubResourceGroup string
-param hubSubscriptionId string = subscription().subscriptionId
+
+param globalDnsResourceGroup string
+param dnsSubscriptionId string = subscription().subscriptionId
+
 param environmentName string
 param location string
 param logAnalyticsWorkspaceId string
@@ -43,11 +45,11 @@ var tags = {
 
 /** Nested Modules **/
 @description('Read DNS Zones')
-module dnsZones 'modules/utility/dnsZoneData.bicep' = {
-  name: 'dnsZones-${timestamp}'
-  scope: resourceGroup(hubSubscriptionId, hubResourceGroup)
+module globalDnsZones 'modules/utility/globalDnsZoneData.bicep' = {
+  name: 'glbDnsZones-${timestamp}'
+  scope: resourceGroup(dnsSubscriptionId, globalDnsResourceGroup)
   params: {
-    location: location
+    locations: [location]
   }
 }
 
@@ -59,7 +61,7 @@ module contentSafety 'modules/contentSaftey.bicep' = {
     location: location
     logAnalyticWorkspaceId: logAnalyticsWorkspaceId
     opsResourceGroupName: opsResourceGroupName
-    privateDnsZones: filter(dnsZones.outputs.ids, (zone) => zone.key == 'cognitiveservices')
+    privateDnsZones: filter(globalDnsZones.outputs.ids, (zone) => zone.key == 'cognitiveservices')
     resourceSuffix: resourceSuffix
     subnetId: '${vnetId}/subnets/openai'
     tags: tags
@@ -74,7 +76,7 @@ module openai './modules/openai.bicep' = if (deployOpenAi) {
     deployments: deployments
     location: location
     logAnalyticWorkspaceId: logAnalyticsWorkspaceId
-    privateDnsZones: filter(dnsZones.outputs.ids, (zone) => zone.key == 'openai')
+    privateDnsZones: filter(globalDnsZones.outputs.ids, (zone) => zone.key == 'openai')
     resourceSuffix: resourceSuffix
     subnetId: '${vnetId}/subnets/openai'
     tags: tags

@@ -25,27 +25,27 @@ finally {
     Pop-Location
 }
 
-# Navigate to the script directory so that we can use relative paths.
-Push-Location $($MyInvocation.InvocationName | Split-Path)
-try {
-    # Map TLS certifiates to secret names
-    $certificates = @(
-        "chatui",
-        "coreapi",
-        "managementui",
-        "managementapi"
-    )
+# # Navigate to the script directory so that we can use relative paths.
+# Push-Location $($MyInvocation.InvocationName | Split-Path)
+# try {
+#     # Map TLS certifiates to secret names
+#     $certificates = @(
+#         "chatui",
+#         "coreapi",
+#         "managementui",
+#         "managementapi"
+#     )
 
-    Invoke-AndRequireSuccess "Load Certificates" {
-        ./utility/Load-Certificates.ps1 `
-            -keyVaultResourceGroup $env:FLLM_OPS_RG `
-            -keyVaultName $env:FLLM_OPS_KV `
-            -certificates $certificates
-    }
-}
-finally {
-    Pop-Location
-}
+#     Invoke-AndRequireSuccess "Load Certificates" {
+#         ./utility/Load-Certificates.ps1 `
+#             -keyVaultResourceGroup $env:FLLM_OPS_RG `
+#             -keyVaultName $env:FLLM_OPS_KV `
+#             -certificates $certificates
+#     }
+# }
+# finally {
+#     Pop-Location
+# }
 
 Push-Location $($MyInvocation.InvocationName | Split-Path)
 try {

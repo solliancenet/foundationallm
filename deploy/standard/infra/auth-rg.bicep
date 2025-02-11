@@ -17,8 +17,8 @@ param instanceId string
 @description('The environment name token used in naming resources.')
 param environmentName string
 
-param hubResourceGroup string
-param hubSubscriptionId string = subscription().subscriptionId
+param regionalDnsResourceGroup string
+param dnsSubscriptionId string = subscription().subscriptionId
 
 @description('AKS namespace')
 param k8sNamespace string
@@ -86,7 +86,7 @@ var workload = 'svc'
 @description('Read DNS Zones')
 module dnsZones 'modules/utility/dnsZoneData.bicep' = {
   name: 'dnsZones-${timestamp}'
-  scope: resourceGroup(hubSubscriptionId, hubResourceGroup)
+  scope: resourceGroup(dnsSubscriptionId, regionalDnsResourceGroup)
   params: {
     location: location
   }

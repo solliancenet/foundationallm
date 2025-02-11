@@ -1,0 +1,61 @@
+{
+	"instance_id": "687e0088-11f2-406f-ae9b-bb514d9a52b5",
+	"policy_assignments": [
+		{
+			"name": "0769613d-94a7-42ad-9101-a02aa0e91116",
+			"type": "FoundationaLLM.Authorization/policyAssignments",
+			"object_id": "/providers/FoundationaLLM.Authorization/policyAssignments/0769613d-94a7-42ad-9101-a02aa0e91116",
+			"description": "Ownership on conversation resources managed by the FoundationaLLM.Conversation resource provider.",
+			"policy_definition_id": "/providers/FoundationaLLM.Authorization/policyDefinitions/00000000-0000-0000-0001-000000000001",
+			"principal_id": "7d791bbd-4ff1-4141-bf2a-52b864a56f43",
+			"principal_type": "Group",
+			"scope": "/instances/687e0088-11f2-406f-ae9b-bb514d9a52b5/providers/FoundationaLLM.Conversation/conversations",
+			"created_on": "2025-02-10T21:23:17.3597520Z",
+			"updated_on": "2025-02-10T21:23:17.3597520Z",
+			"created_by": "SYSTEM",
+			"updated_by": "SYSTEM"
+		},
+		{
+			"name": "989cdb88-7400-45a3-858c-609bc7347e1d",
+			"type": "FoundationaLLM.Authorization/policyAssignments",
+			"object_id": "/providers/FoundationaLLM.Authorization/policyAssignments/989cdb88-7400-45a3-858c-609bc7347e1d",
+			"description": "Ownership on attachment resources managed by the FoundationaLLM.Attachment resource provider.",
+			"policy_definition_id": "/providers/FoundationaLLM.Authorization/policyDefinitions/00000000-0000-0000-0001-000000000001",
+			"principal_id": "7d791bbd-4ff1-4141-bf2a-52b864a56f43",
+			"principal_type": "Group",
+			"scope": "/instances/687e0088-11f2-406f-ae9b-bb514d9a52b5/providers/FoundationaLLM.Attachment/attachments",
+			"created_on": "2025-02-10T21:23:17.3597520Z",
+			"updated_on": "2025-02-10T21:23:17.3597520Z",
+			"created_by": "SYSTEM",
+			"updated_by": "SYSTEM"
+		},
+		{
+			"name": "85a33e14-f7e1-4c23-b5a1-336f6942d16c",
+			"type": "FoundationaLLM.Authorization/policyAssignments",
+			"object_id": "/providers/FoundationaLLM.Authorization/policyAssignments/85a33e14-f7e1-4c23-b5a1-336f6942d16c",
+			"description": "Ownership on conversation mapping resources managed by the FoundationaLLM.AzureOpenAI resource provider.",
+			"policy_definition_id": "/providers/FoundationaLLM.Authorization/policyDefinitions/00000000-0000-0000-0001-000000000001",
+			"principal_id": "7d791bbd-4ff1-4141-bf2a-52b864a56f43",
+			"principal_type": "Group",
+			"scope": "/instances/687e0088-11f2-406f-ae9b-bb514d9a52b5/providers/FoundationaLLM.AzureOpenAI/conversationMappings",
+			"created_on": "2025-02-10T21:23:17.3597520Z",
+			"updated_on": "2025-02-10T21:23:17.3597520Z",
+			"created_by": "SYSTEM",
+			"updated_by": "SYSTEM"
+		},
+		{
+			"name": "5bd66145-3b83-47a3-966f-f625173eae97",
+			"type": "FoundationaLLM.Authorization/policyAssignments",
+			"object_id": "/providers/FoundationaLLM.Authorization/policyAssignments/5bd66145-3b83-47a3-966f-f625173eae97",
+			"description": "Ownership on file mapping resources managed by the FoundationaLLM.AzureOpenAI resource provider.",
+			"policy_definition_id": "/providers/FoundationaLLM.Authorization/policyDefinitions/00000000-0000-0000-0001-000000000001",
+			"principal_id": "7d791bbd-4ff1-4141-bf2a-52b864a56f43",
+			"principal_type": "Group",
+			"scope": "/instances/687e0088-11f2-406f-ae9b-bb514d9a52b5/providers/FoundationaLLM.AzureOpenAI/fileMappings",
+			"created_on": "2025-02-10T21:23:17.3597520Z",
+			"updated_on": "2025-02-10T21:23:17.3597520Z",
+			"created_by": "SYSTEM",
+			"updated_by": "SYSTEM"
+		}
+	]
+}

@@ -18,10 +18,10 @@
         "value": "${ENTRA_AUTH_API_TENANT_ID}"
       },
       "backendAksNodeSku": {
-        "value": "${FLLM_BACKEND_AKS_NODE_SKU=Standard_D8s_v5}"
+        "value": "${FLLM_BACKEND_AKS_NODE_SKU=Standard_D16as_v6}"
       },
       "frontendAksNodeSku": {
-        "value": "${FLLM_FRONTEND_AKS_NODE_SKU=Standard_D8s_v5}"
+        "value": "${FLLM_FRONTEND_AKS_NODE_SKU=Standard_D2as_v6}"
       },
       "aksServiceCidr": {
         "value": "${FLLM_AKS_SERVICE_CIDR=10.100.0.0/16}"
@@ -50,7 +50,7 @@
       "location": {
         "value": "${AZURE_LOCATION}"
       },
-      "hubResourceGroup": {
+      "opsResourceGroup": {
         "value": "${FOUNDATIONALLM_HUB_RESOURCE_GROUP}"
       },
       "hubSubscriptionId": {

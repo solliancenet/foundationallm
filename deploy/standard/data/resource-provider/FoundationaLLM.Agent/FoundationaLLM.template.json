@@ -19,9 +19,12 @@
   },
   "inline_context": true,
   "sessions_enabled": true,
+  "text_rewrite_settings": null,
+  "cache_settings": null,
   "conversation_history_settings": {
     "enabled": false,
-    "max_history": 5
+    "max_history": 5,
+    "history_content_artifact_types": null
   },
   "gatekeeper_settings": {
     "use_system_setting": false,
@@ -31,39 +34,45 @@
     "orchestrator": "LangChain",
     "agent_parameters": null
   },
-  "prompt_object_id": "/instances/{{instanceId}}/providers/FoundationaLLM.Prompt/prompts/FoundationaLLM",
-  "ai_model_object_id": "/instances/{{instanceId}}/providers/FoundationaLLM.AIModel/aiModels/GPT4oCompletionAIModel",
-  "capabilities": [
-    "OpenAI.Assistants"
-  ],
-  "properties": {
-    "welcome_message": "\u003Cp\u003EYou are chatting with an agent named FoundationaLLM, who can answer questions about the FoundationaLLM platform.\u003C/p\u003E\u003Cp\u003EAdditional capabilities include:\u003C/p\u003E\u003Cul\u003E\u003Cli\u003EUpload files and ask the agent to analyze them\u003C/li\u003E\u003Cli\u003EGenerate charts, files, and downloadable content\u003C/li\u003E\u003Cli\u003EGenerate images using DALL-E\u003C/li\u003E\u003C/ul\u003E\u003Cp\u003E\u003Cem\u003EPlease avoid sharing personally identifiable information (PII) while conversing with the agent.\u003C/em\u003E\u003C/p\u003E",
-    "Azure.OpenAI.Assistant.Id": "{{oaiAssistantId}}"
-  },
   "workflow": {
     "type": "azure-openai-assistants-workflow",
-    "name": "OpenAIAssistants",
     "assistant_id": "{{oaiAssistantId}}",
+    "name": "OpenAIAssistants",
     "package_name": "FoundationaLLM",
+    "workflow_host": "LangChain",
     "resource_object_ids": {
-			"/instances/{{instanceId}}/providers/FoundationaLLM.Agent/workflows/OpenAIAssistants": {
-				"object_id": "/instances/{{instanceId}}/providers/FoundationaLLM.Agent/workflows/OpenAIAssistants",
-				"properties": {}
-			},
-			"/instances/{{instanceId}}/providers/FoundationaLLM.AIModel/aiModels/DefaultCompletionAIModel" : {
-				"object_id": "/instances/{{instanceId}}/providers/FoundationaLLM.AIModel/aiModels/GPT4oCompletionAIModel",
-				"properties": {
-					"object_role": "main_model",
-					"model_parameters": {}
-				}
-			},
-			"/instances/{{instanceId}}/providers/FoundationaLLM.Prompt/prompts/FoundationaLLM": {
-				"object_id": "/instances/{{instanceId}}/providers/FoundationaLLM.Prompt/prompts/FoundationaLLM",
-				"properties": {
-					"object_role": "main_prompt"
-				}
-			}
-		}
+      "/instances/{{instanceId}}/providers/FoundationaLLM.AIModel/aiModels/GPT4oCompletionAIModel": {
+        "object_id": "/instances/{{instanceId}}/providers/FoundationaLLM.AIModel/aiModels/GPT4oCompletionAIModel",
+        "properties": {
+          "object_role": "main_model",
+          "model_parameters": {
+            "temperature": 0
+          }
+        }
+      },
+      "/instances/{{instanceId}}/providers/FoundationaLLM.Prompt/prompts/FoundationaLLM": {
+        "object_id": "/instances/{{instanceId}}/providers/FoundationaLLM.Prompt/prompts/FoundationaLLM",
+        "properties": {
+          "object_role": "main_prompt"
+        }
+      },
+      "/instances/{{instanceId}}/providers/FoundationaLLM.Agent/workflows/OpenAIAssistants": {
+        "object_id": "/instances/{{instanceId}}/providers/FoundationaLLM.Agent/workflows/OpenAIAssistants",
+        "properties": {}
+      }
+    },
+    "properties": null
   },
-  "tools": []
+  "tools": [],
+  "show_message_tokens": true,
+  "show_message_rating": false,
+  "show_view_prompt": false,
+  "properties": {
+    "welcome_message": "\u003Cp\u003EYou are chatting with an agent named FoundationaLLM, who can answer questions about the FoundationaLLM platform.\u003C/p\u003E\u003Cp\u003EAdditional capabilities include:\u003C/p\u003E\u003Cul\u003E\u003Cli\u003EUpload files and ask the agent to analyze them\u003C/li\u003E\u003Cli\u003EGenerate charts, files, and downloadable content\u003C/li\u003E\u003Cli\u003EGenerate images using DALL-E\u003C/li\u003E\u003C/ul\u003E\u003Cp\u003E\u003Cem\u003EPlease avoid sharing personally identifiable information (PII) while conversing with the agent.\u003C/em\u003E\u003C/p\u003E"    
+  },
+  "created_on": "0001-01-01T00:00:00+00:00",
+  "updated_on": "0001-01-01T00:00:00+00:00",
+  "created_by": null,
+  "updated_by": "SYSTEM",
+  "deleted": false
 }

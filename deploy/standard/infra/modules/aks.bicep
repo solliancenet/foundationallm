@@ -55,8 +55,8 @@ param admnistratorObjectIds array
 param aksServiceCidr string = '10.100.0.0/16'
 param aksNodeSku string
 
-param hubResourceGroup string
-param hubSubscriptionId string = subscription().subscriptionId
+param dnsResourceGroup string
+param dnsSubscriptionId string = subscription().subscriptionId
 
 @description('Location for all resources')
 param location string
@@ -221,10 +221,10 @@ resource main 'Microsoft.ContainerService/managedClusters@2023-01-02-preview' = 
         minCount: 1
         mode: 'System'
         name: 'sys'
-        osDiskSizeGB: 128
+        osDiskSizeGB: 256
         tags: tags
         type: 'VirtualMachineScaleSets'
-        vmSize: 'Standard_D2s_v5'
+        vmSize: 'Standard_D2as_v6'
         vnetSubnetID: subnetId
 
         nodeTaints: [
@@ -240,7 +240,7 @@ resource main 'Microsoft.ContainerService/managedClusters@2023-01-02-preview' = 
     apiServerAccessProfile: {
       enablePrivateCluster: true
       enablePrivateClusterPublicFQDN: false
-      privateDNSZone: filter(privateDnsZones, (privateDnsZone) => privateDnsZone.key == 'aks')[0].id
+      privateDNSZone: filter(privateDnsZones, (privateDnsZone) => privateDnsZone.key == 'aks_${location}')[0].id
     }
 
     autoUpgradeProfile: { upgradeChannel: 'stable' }
@@ -322,10 +322,10 @@ resource userPool 'Microsoft.ContainerService/managedClusters/agentPools@2024-04
   parent: main
   properties: {
     availabilityZones: zones
-    count: 10
+    count: 3
     enableAutoScaling: true
     maxCount: 15
-    minCount: 6
+    minCount: 3
     mode: 'User'
     osDiskSizeGB: 256
     tags: tags
@@ -476,7 +476,7 @@ resource uai 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
 /** Nested Modules **/
 module dnsRoleAssignment 'utility/roleAssignments.bicep' = {
   name: 'dnsra-${resourceSuffix}-${timestamp}'
-  scope: resourceGroup(hubSubscriptionId, hubResourceGroup)
+  scope: resourceGroup(dnsSubscriptionId, dnsResourceGroup)
   params: {
     principalId: uai.properties.principalId
     roleDefinitionIds: {

@@ -34,6 +34,10 @@ param hubResourceGroup string
 param hubSubscriptionId string = subscription().subscriptionId
 param hubVnetName string
 
+param globalDnsResourceGroup string
+param regionalDnsResourceGroup string
+param dnsSubscriptionId string = subscription().subscriptionId
+
 // Locals
 var abbrs = loadJsonContent('./abbreviations.json')
 var k8sNamespace = 'fllm'
@@ -105,8 +109,6 @@ module app 'app-rg.bicep' = {
     backendAksNodeSku: backendAksNodeSku
     frontendAksNodeSku: frontendAksNodeSku
     environmentName: environmentName
-    hubResourceGroup: hubResourceGroup
-    hubSubscriptionId: hubSubscriptionId
     k8sNamespace: k8sNamespace
     location: location
     logAnalyticsWorkspaceId: ops.outputs.logAnalyticsWorkspaceId
@@ -122,6 +124,8 @@ module app 'app-rg.bicep' = {
     storageResourceGroupName: resourceGroups.storage
     vectorizationResourceGroupName: resourceGroups.vec
     vnetName: networking.outputs.vnetName
+    globalDnsResourceGroup: globalDnsResourceGroup
+    dnsSubscriptionId: dnsSubscriptionId
   }
 }
 
@@ -137,8 +141,6 @@ module auth 'auth-rg.bicep' = {
     authAppRegistrationInstance: authAppRegistrationInstance
     authAppRegistrationTenantId: authAppRegistrationTenantId
     environmentName: environmentName
-    hubResourceGroup: hubResourceGroup
-    hubSubscriptionId: hubSubscriptionId
     instanceId: instanceId
     k8sNamespace: k8sNamespace
     location: location
@@ -147,6 +149,8 @@ module auth 'auth-rg.bicep' = {
     principalType: principalType
     project: project
     vnetId: networking.outputs.vnetId
+    regionalDnsResourceGroup: regionalDnsResourceGroup
+    dnsSubscriptionId: dnsSubscriptionId
   }
 }
 
@@ -158,6 +162,8 @@ module networking 'networking-rg.bicep' = {
     cidrVnet: cidrVnet
     allowedExternalCidr: allowedExternalCidr
     environmentName: environmentName
+    globalDnsResourceGroup: globalDnsResourceGroup
+    regionalDnsResourceGroup: regionalDnsResourceGroup
     hubResourceGroup: hubResourceGroup
     hubSubscriptionId: hubSubscriptionId
     hubVnetName: hubVnetName
@@ -173,8 +179,6 @@ module openai 'openai-rg.bicep' = {
   scope: resourceGroup(resourceGroups.oai)
   params: {
     actionGroupId: ops.outputs.actionGroupId
-    hubResourceGroup: hubResourceGroup
-    hubSubscriptionId: hubSubscriptionId
     environmentName: environmentName
     existingOpenAiInstance: existingOpenAiInstance
     location: location
@@ -183,6 +187,8 @@ module openai 'openai-rg.bicep' = {
     opsResourceGroupName: resourceGroups.ops
     project: project
     vnetId: networking.outputs.vnetId
+    globalDnsResourceGroup: globalDnsResourceGroup
+    dnsSubscriptionId: dnsSubscriptionId
   }
 }
 
@@ -192,12 +198,13 @@ module ops 'ops-rg.bicep' = {
   scope: resourceGroup(resourceGroups.ops)
   params: {
     administratorObjectId: administratorObjectId
-    hubResourceGroup: hubResourceGroup
-    hubSubscriptionId: hubSubscriptionId
     environmentName: environmentName
     location: location
     project: project
     vnetId: networking.outputs.vnetId
+    regionalDnsResourceGroup: regionalDnsResourceGroup
+    dnsSubscriptionId: dnsSubscriptionId
+
   }
 }
 
@@ -208,14 +215,14 @@ module storage 'storage-rg.bicep' = {
   params: {
     actionGroupId: ops.outputs.actionGroupId
     administratorObjectId: administratorObjectId
-    hubResourceGroup: hubResourceGroup
-    hubSubscriptionId: hubSubscriptionId
     environmentName: environmentName
     location: location
     logAnalyticsWorkspaceId: ops.outputs.logAnalyticsWorkspaceId
     principalType: principalType
     project: project
     vnetId: networking.outputs.vnetId
+    regionalDnsResourceGroup: regionalDnsResourceGroup
+    dnsSubscriptionId: dnsSubscriptionId
   }
 }
 
@@ -225,13 +232,13 @@ module vec 'vec-rg.bicep' = {
   scope: resourceGroup(resourceGroups.vec)
   params: {
     actionGroupId: ops.outputs.actionGroupId
-    hubResourceGroup: hubResourceGroup
-    hubSubscriptionId: hubSubscriptionId
     environmentName: environmentName
     location: location
     logAnalyticsWorkspaceId: ops.outputs.logAnalyticsWorkspaceId
     project: project
     vnetId: networking.outputs.vnetId
+    globalDnsResourceGroup: globalDnsResourceGroup
+    dnsSubscriptionId: dnsSubscriptionId
   }
 }
 

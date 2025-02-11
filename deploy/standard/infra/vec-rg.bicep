@@ -11,8 +11,8 @@ param location string
 @description('Log Analytics Workspace Id to use for diagnostics')
 param logAnalyticsWorkspaceId string
 
-param hubResourceGroup string
-param hubSubscriptionId string = subscription().subscriptionId
+param globalDnsResourceGroup string
+param dnsSubscriptionId string = subscription().subscriptionId
 
 @description('Project Name, used in naming resources.')
 param project string
@@ -40,11 +40,11 @@ var workload = 'storage'
 
 /** Nested Modules **/
 @description('Read DNS Zones')
-module dnsZones 'modules/utility/dnsZoneData.bicep' = {
-  name: 'dnsZones-${timestamp}'
-  scope: resourceGroup(hubSubscriptionId, hubResourceGroup)
+module globalDnsZones 'modules/utility/globalDnsZoneData.bicep' = {
+  name: 'glbDnsZones-${timestamp}'
+  scope: resourceGroup(dnsSubscriptionId, globalDnsResourceGroup)
   params: {
-    location: location
+    locations: [location]
   }
 }
 
@@ -57,6 +57,6 @@ module search 'modules/search.bicep' = {
     resourceSuffix: resourceSuffix
     tags: tags
     subnetId: '${vnetId}/subnets/vectorization'
-    privateDnsZones: filter(dnsZones.outputs.ids, (zone) => zone.key == 'search')
+    privateDnsZones: filter(globalDnsZones.outputs.ids, (zone) => zone.key == 'search')
   }
 }

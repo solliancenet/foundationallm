@@ -1,15 +1,14 @@
 {
-    "type": "azure-openai-assistants-workflow",
-    "name": "OpenAIAssistants",
-    "object_id": "/instances/{{instanceId}}/providers/FoundationaLLM.Agent/workflows/OpenAIAssistants",
-    "display_name": "OpenAIAssistants",
-    "description": "Open AI Assistants workflow",
-    "cost_center": null,
-    "properties": null,
-    "created_on": "2024-11-08T10:08:27.1953263+00:00",
-    "updated_on": "0001-01-01T00:00:00+00:00",
-    "created_by": "andrei@foundationaLLM.ai",
-    "updated_by": null,
-    "deleted": false,
-    "expiration_date": null
-  }
+  "type": "azure-openai-assistants-workflow",
+  "name": "OpenAIAssistants",
+  "object_id": "/instances/{{instanceId}}/providers/FoundationaLLM.Agent/workflows/OpenAIAssistants",
+  "display_name": "OpenAIAssistants",
+  "description": "Open AI Assistants workflow",
+  "cost_center": null,
+  "properties": null,
+  "created_on": "0001-01-01T00:00:00+00:00",
+  "updated_on": "0001-01-01T00:00:00+00:00",
+  "created_by": null,
+  "updated_by": "SYSTEM",
+  "deleted": false
+}

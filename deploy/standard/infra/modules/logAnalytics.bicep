@@ -1,5 +1,5 @@
 param actionGroupId string
-param ampls object
+// param ampls object
 param environmentName string
 param location string
 param project string
@@ -134,12 +134,12 @@ resource diagnostics 'Microsoft.Insights/diagnosticSettings@2017-05-01-preview' 
 /**
  * Creates a scoped service for private link integration with Azure Log Analytics.
  */
-resource scopedService 'microsoft.insights/privatelinkscopes/scopedresources@2021-07-01-preview' = {
-  name: '${ampls.name}/amplss-${name}'
-  properties: {
-    linkedResourceId: main.id
-  }
-}
+// resource scopedService 'microsoft.insights/privatelinkscopes/scopedresources@2021-07-01-preview' = {
+//   name: '${ampls.name}/amplss-${name}'
+//   properties: {
+//     linkedResourceId: main.id
+//   }
+// }
 
 /*
   This resource block deploys a Log Analytics solution.

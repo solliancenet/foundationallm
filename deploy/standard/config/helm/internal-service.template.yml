@@ -24,6 +24,6 @@ azureWorkloadIdentity:
   authorizationApiClientId: {{authorizationApiMiClientId}}
   tenantId: {{tenantId}}
 authKeyvaultUri: {{authKeyvaultUri}}
-
+instanceId: {{instanceId}}
 ingress:
   enabled: false

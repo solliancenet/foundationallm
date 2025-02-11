@@ -4,6 +4,11 @@ param environmentName string
 param hubResourceGroup string
 param hubSubscriptionId string = subscription().subscriptionId
 param hubVnetName string
+
+param globalDnsResourceGroup string
+param regionalDnsResourceGroup string
+param dnsSubscriptionId string = subscription().subscriptionId
+
 param location string
 param networkName string = ''
 param project string
@@ -12,26 +17,29 @@ param allowedExternalCidr string
 
 // Locals
 @description('Private DNS Zones to link.')
-var privateDnsZone = {
-  agentsvc: 'privatelink.agentsvc.azure-automation.net'
-  aks: 'privatelink.${location}.azmk8s.io'
-  blob: 'privatelink.blob.${environment().suffixes.storage}'
+var globalPrivateDnsZone = {
   cognitiveservices: 'privatelink.cognitiveservices.azure.com'
+  openai: 'privatelink.openai.azure.com'
+  search: 'privatelink.search.windows.net'
+  sql_server: 'privatelink${environment().suffixes.sqlServerHostname}'
+  aks: 'privatelink.${location}.azmk8s.io'
+  cr_region: '${location}.privatelink.azurecr.io'
+}
+
+var privateDnsZone = {
+  //  agentsvc: 'privatelink.agentsvc.azure-automation.net'
+  blob: 'privatelink.blob.${environment().suffixes.storage}'
   configuration_stores: 'privatelink.azconfig.io'
   cosmosdb: 'privatelink.documents.azure.com'
   cr: 'privatelink.azurecr.io'
-  cr_region: '${location}.privatelink.azurecr.io'
   dfs: 'privatelink.dfs.${environment().suffixes.storage}'
   eventgrid: 'privatelink.eventgrid.azure.net'
   file: 'privatelink.file.${environment().suffixes.storage}'
-  monitor: 'privatelink.monitor.azure.com'
-  ods: 'privatelink.ods.opinsights.azure.com'
-  oms: 'privatelink.oms.opinsights.azure.com'
-  openai: 'privatelink.openai.azure.com'
+  // monitor: 'privatelink.monitor.azure.com'
+  // ods: 'privatelink.ods.opinsights.azure.com'
+  // oms: 'privatelink.oms.opinsights.azure.com'
   queue: 'privatelink.queue.${environment().suffixes.storage}'
-  search: 'privatelink.search.windows.net'
-  sites: 'privatelink.azurewebsites.net'
-  sql_server: 'privatelink${environment().suffixes.sqlServerHostname}'
+  // sites: 'privatelink.azurewebsites.net'
   table: 'privatelink.table.${environment().suffixes.storage}'
   vault: 'privatelink.vaultcore.azure.net'
 }
@@ -569,7 +577,7 @@ module nsg 'modules/nsg.bicep' = [
 @description('Use the preexisting specified private DNS zones.')
 module dns './modules/dns.bicep' = [for zone in items(privateDnsZone): {
   name: '${zone.value}-${timestamp}'
-  scope: resourceGroup(hubSubscriptionId, hubResourceGroup)
+  scope: resourceGroup(dnsSubscriptionId, regionalDnsResourceGroup)
   params: {
     key: zone.key
     vnetId: main.id
@@ -585,9 +593,28 @@ module dns './modules/dns.bicep' = [for zone in items(privateDnsZone): {
   }
 }]
 
-resource hub 'Microsoft.Network/virtualNetworks@2024-01-01' existing = {
+@description('Use the preexisting specified private DNS zones.')
+module globalDns './modules/dns.bicep' = [for zone in items(globalPrivateDnsZone): {
+  name: '${zone.value}-${timestamp}'
+  scope: resourceGroup(dnsSubscriptionId, globalDnsResourceGroup)
+  params: {
+    key: zone.key
+    vnetId: main.id
+    vnetName: main.name
+    zone: zone.value
+
+    tags: {
+      Environment: environmentName
+      IaC: 'Bicep'
+      Project: project
+      Purpose: 'Networking'
+    }
+  }
+}]
+
+resource hubVnet 'Microsoft.Network/virtualNetworks@2024-01-01' existing = {
   name: hubVnetName
   scope: resourceGroup(hubSubscriptionId, hubResourceGroup)
 }
 
-output hubVnetId string = hub.id
+output hubVnetId string = hubVnet.id

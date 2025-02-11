@@ -13,8 +13,8 @@ param location string
 @description('Log Analytics Workspace Id to use for diagnostics')
 param logAnalyticsWorkspaceId string
 
-param hubResourceGroup string
-param hubSubscriptionId string = subscription().subscriptionId
+param regionalDnsResourceGroup string
+param dnsSubscriptionId string = subscription().subscriptionId
 
 param principalType string
 
@@ -43,10 +43,9 @@ var tags = {
 var workload = 'storage'
 
 /** Nested Modules **/
-@description('Read DNS Zones')
 module dnsZones 'modules/utility/dnsZoneData.bicep' = {
   name: 'dnsZones-${timestamp}'
-  scope: resourceGroup(hubSubscriptionId, hubResourceGroup)
+  scope: resourceGroup(dnsSubscriptionId, regionalDnsResourceGroup)
   params: {
     location: location
   }

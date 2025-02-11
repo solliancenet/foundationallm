@@ -1,6 +1,6 @@
 /** Inputs **/
-@description('AMPLS Name')
-param amplsName string
+// @description('AMPLS Name')
+// param amplsName string
 
 @description('The environment name token used in naming resources.')
 param environmentName string
@@ -73,12 +73,12 @@ resource main 'microsoft.insights/components@2020-02-02' = {
 /**
  * Creates a scoped service for private link integration with Azure Log Analytics.
  */
-resource scopedService 'microsoft.insights/privatelinkscopes/scopedresources@2021-07-01-preview' = {
-  name: '${amplsName}/amplss-${name}'
-  properties: {
-    linkedResourceId: main.id
-  }
-}
+// resource scopedService 'microsoft.insights/privatelinkscopes/scopedresources@2021-07-01-preview' = {
+//   name: '${amplsName}/amplss-${name}'
+//   properties: {
+//     linkedResourceId: main.id
+//   }
+// }
 
 @description('Application Insights connection string.')
 module aiConnectionString 'kvSecret.bicep' = {

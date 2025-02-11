@@ -190,6 +190,34 @@
             "tags": {}
         },
         {
+            "key": "FoundationaLLM:APIEndpoints:AuthorizationAPI:Essentials:AbsoluteCacheExpirationSeconds",
+            "value": "300",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:APIEndpoints:AuthorizationAPI:Essentials:SlidingCacheExpirationSeconds",
+            "value": "120",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:APIEndpoints:AuthorizationAPI:Essentials:CacheSizeLimit",
+            "value": "10000",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:APIEndpoints:AuthorizationAPI:Essentials:CacheExpirationScanFrequencySeconds",
+            "value": "30",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
             "key": "FoundationaLLM:APIEndpoints:AuthorizationAPI:Essentials:APIUrl",
             "value": "http://authorization-api.{{serviceNamespaceName}}.svc.cluster.local",
             "label": null,
@@ -911,6 +939,13 @@
             "tags": {}
         },
         {
+            "key": "FoundationaLLM:UserPortal:Authentication:Entra:TimeoutInMinutes",
+            "value": "60",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
             "key": "FoundationaLLM:UserPortal:Authentication:Entra:Scopes",
             "value": "{{chatEntraScopes}}",
             "label": null,
@@ -927,6 +962,13 @@
         {
             "key": "FoundationaLLM:UserPortal:Authentication:Entra:ClientId",
             "value": "{{chatEntraClientId}}",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:UserPortal:Configuration:ShowFileUpload",
+            "value": "true",
             "label": null,
             "content_type": "",
             "tags": {}
