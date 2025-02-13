@@ -4,6 +4,7 @@ import type {
 	Agent,
 	DataSource,
 	AppConfigUnion,
+	// AppConfigKeyVault,
 	AgentIndex,
 	// AgentGatekeeper,
 	AgentAccessToken,
@@ -22,9 +23,11 @@ import type {
 	// Role,
 	RoleAssignment,
 	APIEndpointConfiguration,
+	Workflow,
+	AgentTool,
 } from './types';
 import { convertToDataSource, convertToAppConfigKeyVault, convertToAppConfig } from '@/js/types';
-
+// import { isEmpty, upperFirst, camelCase } from 'lodash';
 // async function wait(milliseconds: number = 1000): Promise<void> {
 // 	return await new Promise<void>((resolve) => setTimeout(() => resolve(), milliseconds));
 // }
@@ -240,7 +243,7 @@ export default {
 		);
 	},
 
-	async deleteDataSource(dataSourceId: string): Promise<any> {
+	async deleteDataSource(dataSourceId: string): Promise<void> {
 		return await this.fetch(
 			`/instances/${this.instanceId}/providers/FoundationaLLM.DataSource/dataSources/${dataSourceId}?api-version=${this.apiVersion}`,
 			{
@@ -265,7 +268,7 @@ export default {
 		)) as ResourceProviderGetResult<AppConfigUnion>[];
 	},
 
-	async upsertAppConfig(request): Promise<any> {
+	async upsertAppConfig(request: AppConfigUnion): Promise<any> {
 		return await this.fetch(
 			`/instances/${this.instanceId}/providers/FoundationaLLM.Configuration/appConfigurations/${request.key}?api-version=${this.apiVersion}`,
 			{
@@ -274,6 +277,15 @@ export default {
 			},
 		);
 	},
+
+	// async deleteAppConfig(appConfigKey: string): Promise<void> {
+	// 	return await this.fetch(
+	// 		`/instances/${this.instanceId}/providers/FoundationaLLM.Configuration/appConfigurations/${appConfigKey}?api-version=${this.apiVersion}`,
+	// 		{
+	// 			method: 'DELETE',
+	// 		},
+	// 	);
+	// },
 
 	/*
 		Indexes
@@ -533,7 +545,7 @@ export default {
 		);
 	},
 
-	async deleteAgent(agentId: string): Promise<any> {
+	async deleteAgent(agentId: string): Promise<void> {
 		return await this.fetch(
 			`/instances/${this.instanceId}/providers/FoundationaLLM.Agent/agents/${agentId}?api-version=${this.apiVersion}`,
 			{
@@ -633,38 +645,6 @@ export default {
 		);
 	},
 
-	async getExternalOrchestrationServices(
-		resolveApiKey: boolean = false,
-	): Promise<ResourceProviderGetResult<ExternalOrchestrationService>[]> {
-		const data = (await this.fetch(
-			`/instances/${this.instanceId}/providers/FoundationaLLM.Configuration/apiEndpointConfigurations?api-version=${this.apiVersion}`,
-		)) as ResourceProviderGetResult<ExternalOrchestrationService>[];
-
-		// Retrieve all the app config values for the external orchestration services..
-		const appConfigFilter = `FoundationaLLM:ExternalAPIs:*`;
-		const appConfigResults = await this.getAppConfigs(appConfigFilter);
-
-		// Loop through the external orchestration services and replace the app config keys with the real values.
-		for (const externalOrchestrationService of data) {
-			externalOrchestrationService.resource.resolved_api_key = '';
-
-			if (resolveApiKey) {
-				// Find a matching app config for the API Key. The app config name should be in the format FoundationaLLM:ExternalAPIs:<ServiceName>:APIKey
-				const apiKeyAppConfig = appConfigResults.find(
-					(appConfig) =>
-						appConfig.resource.name ===
-						`FoundationaLLM:ExternalAPIs:${externalOrchestrationService.resource.name}:APIKey`,
-				);
-				if (apiKeyAppConfig) {
-					externalOrchestrationService.resource.resolved_api_key = apiKeyAppConfig.resource.value;
-				}
-			}
-		}
-
-		// Return the updated external orchestration services.
-		return data;
-	},
-
 	async getBranding(): Promise<any> {
 		return await this.fetch(
 			`/instances/${this.instanceId}/providers/FoundationaLLM.Configuration/appConfigurations/FoundationaLLM:Branding:*`,
@@ -682,6 +662,142 @@ export default {
 	},
 
 	/*
+		API Endpoints Configurations
+	 */
+	async getAPIEndpointConfigurations(): Promise<
+		ResourceProviderGetResult<APIEndpointConfiguration>[]
+	> {
+		const data = (await this.fetch(
+			`/instances/${this.instanceId}/providers/FoundationaLLM.Configuration/apiEndpointConfigurations?api-version=${this.apiVersion}`,
+		)) as ResourceProviderGetResult<APIEndpointConfiguration>[];
+
+		return data;
+	},
+
+	async getAPIEndpointConfiguration(
+		apiEndpointName: string,
+	): Promise<ResourceProviderGetResult<APIEndpointConfiguration>> {
+		const [data] = (await this.fetch(
+			`/instances/${this.instanceId}/providers/FoundationaLLM.Configuration/apiEndpointConfigurations/${apiEndpointName}?api-version=${this.apiVersion}`,
+		)) as ResourceProviderGetResult<APIEndpointConfiguration>[];
+
+		// data.resource.resolved_authentication_parameters = {};
+
+		// // Attempt to load the real authentication parameter values if they are stored in app config
+		// for (const authenticationParameterKey in data.resource.authentication_parameters) {
+		// 	const authenticationParameterValue =
+		// 		data.resource.authentication_parameters[authenticationParameterKey];
+		// 	const appConfigValue = await this.getAppConfig(authenticationParameterValue);
+
+		// 	if (appConfigValue) {
+		// 		data.resource.resolved_authentication_parameters[authenticationParameterKey] = {
+		// 			secret: true,
+		// 			value: appConfigValue.resource.value,
+		// 		};
+		// 	} else {
+		// 		data.resource.resolved_authentication_parameters[authenticationParameterKey] = {
+		// 			secret: false,
+		// 			value: authenticationParameterValue,
+		// 		};
+		// 	}
+		// }
+
+		return data;
+	},
+
+	async createAPIEndpointConfiguration(apiEndpoint: any): Promise<ResourceProviderUpsertResult> {
+		// const authenticationParameters = {};
+
+		// if (!isEmpty(apiEndpoint.resolved_authentication_parameters)) {
+		// 	// Convert secret authentication values into app config values and store app config key as value instead
+		// 	for (const authenticationParameterKey in apiEndpoint.resolved_authentication_parameters) {
+		// 		const authenticationParameterValue =
+		// 			apiEndpoint.resolved_authentication_parameters[authenticationParameterKey];
+
+		// 		if (authenticationParameterValue.secret) {
+		// 			const parameterKeyPascalCase = upperFirst(camelCase(authenticationParameterKey));
+		// 			var appConfigKey = `FoundationaLLM:APIEndpoints:${apiEndpoint.name}:Essentials:${parameterKeyPascalCase}`;
+		// 			let appConfig: AppConfigKeyVault = {
+		// 				name: appConfigKey,
+		// 				display_name: appConfigKey,
+		// 				description: '',
+		// 				key: appConfigKey,
+		// 				value: authenticationParameterValue.value,
+		// 				content_type: 'application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8',
+		// 			};
+
+		// 			const appConfigResult = await this.getAppConfig(
+		// 				'FoundationaLLM:Configuration:KeyVaultURI',
+		// 			);
+		// 			const keyVaultUri = appConfigResult.resource;
+		// 			const keyVaultSecretName =
+		// 				`foundationallm-apiendpoints-${apiEndpoint.name}-${parameterKeyPascalCase}`.toLowerCase();
+
+		// 			appConfig = {
+		// 				...appConfig,
+		// 				key_vault_uri: keyVaultUri.value,
+		// 				key_vault_secret_name: keyVaultSecretName,
+		// 			};
+
+		// 			await this.upsertAppConfig(appConfig);
+
+		// 			authenticationParameters[authenticationParameterKey] = appConfigKey;
+		// 		} else {
+		// 			authenticationParameters[authenticationParameterKey] = authenticationParameterValue.value;
+		// 		}
+		// 	}
+		// }
+
+		const data = (await this.fetch(
+			`/instances/${this.instanceId}/providers/FoundationaLLM.Configuration/apiEndpointConfigurations/${apiEndpoint.name}?api-version=${this.apiVersion}`,
+			{
+				method: 'POST',
+				body: {
+					type: 'api-endpoint',
+					...apiEndpoint,
+					// resolved_authentication_parameters: undefined,
+					// authentication_parameters: authenticationParameters,
+				},
+			},
+		)) as ResourceProviderUpsertResult;
+
+		return data;
+	},
+
+	async deleteAPIEndpointConfiguration(apiEndpointName: string): Promise<void> {
+		const response = await this.fetch(
+			`/instances/${this.instanceId}/providers/FoundationaLLM.Configuration/apiEndpointConfigurations/${apiEndpointName}?api-version=${this.apiVersion}`,
+			{
+				method: 'DELETE',
+			},
+		);
+
+		// Try to delete the APIKey associated with the endpoint as well
+		// try {
+		// 	const appConfigKey = `FoundationaLLM:APIEndpoints:${apiEndpointName}:Essentials:APIKey`;
+		// 	await this.deleteAppConfig(appConfigKey);
+		// } catch (error) {
+		// 	console.error('Failed to delete app config APIKey associated to endpoint.');
+		// }
+
+		return response;
+	},
+
+	async checkAPIEndpointConfigurationName(name: string): Promise<CheckNameResponse> {
+		const payload = {
+			name,
+		};
+
+		return await this.fetch(
+			`/instances/${this.instanceId}/providers/FoundationaLLM.Configuration/apiEndpointConfigurations/checkname?api-version=${this.apiVersion}`,
+			{
+				method: 'POST',
+				body: payload,
+			},
+		);
+	},
+
+	/*
 		AI Models
 	 */
 	async getAIModels(): Promise<ResourceProviderGetResult<AIModel>[]> {
@@ -692,10 +808,73 @@ export default {
 		return data;
 	},
 
+	async getAIModel(aiModelName: string): Promise<ResourceProviderGetResult<AIModel>[]> {
+		const data = (await this.fetch(
+			`/instances/${this.instanceId}/providers/FoundationaLLM.AIModel/aiModels/${aiModelName}?api-version=${this.apiVersion}`,
+		)) as ResourceProviderGetResult<AIModel>[];
+
+		return data;
+	},
+
+	async createAIModel(aiModel: CreateAgentRequest): Promise<ResourceProviderUpsertResult[]> {
+		const data = (await this.fetch(
+			`/instances/${this.instanceId}/providers/FoundationaLLM.AIModel/aiModels/${aiModel.name}?api-version=${this.apiVersion}`,
+			{
+				method: 'POST',
+				body: aiModel,
+			},
+		)) as ResourceProviderUpsertResult;
+
+		return data;
+	},
+
+	async upsertAIModel(
+		aiModelOriginalName: string,
+		aiModel: CreateAgentRequest,
+	): Promise<ResourceProviderUpsertResult> {
+		const aiModelNoType = { ...aiModel };
+		delete aiModelNoType.type;
+
+		return await this.fetch(
+			`/instances/${this.instanceId}/providers/FoundationaLLM.AIModel/aiModels/${aiModelOriginalName}?api-version=${this.apiVersion}`,
+			{
+				method: 'POST',
+				body: {
+					// Type must be the first property sent in the payload in order to succeed
+					type: aiModel.type,
+					...aiModelNoType,
+				},
+			},
+		);
+	},
+
+	async deleteAIModel(aiModelName: string): Promise<void> {
+		return await this.fetch(
+			`/instances/${this.instanceId}/providers/FoundationaLLM.AIModel/aiModels/${aiModelName}?api-version=${this.apiVersion}`,
+			{
+				method: 'DELETE',
+			},
+		);
+	},
+
+	async checkAIModelName(name: string): Promise<CheckNameResponse> {
+		const payload = {
+			name,
+		};
+
+		return await this.fetch(
+			`/instances/${this.instanceId}/providers/FoundationaLLM.AIModel/aiModels/checkname?api-version=${this.apiVersion}`,
+			{
+				method: 'POST',
+				body: payload,
+			},
+		);
+	},
+
 	/*
 		Role Assignments
 	 */
-	async getRoleAssignments(scope): RoleAssignment[] {
+	async getRoleAssignments(scope: string): Promise<ResourceProviderGetResult<RoleAssignment>[]> {
 		const assignments = (await this.fetch(
 			`/instances/${this.instanceId}/providers/FoundationaLLM.Authorization/roleAssignments/filter?api-version=${this.apiVersion}`,
 			{
@@ -704,7 +883,7 @@ export default {
 					scope: `/instances/${this.instanceId}${scope ? `/${scope}` : ''}`,
 				}),
 			},
-		)) as RoleAssignment[];
+		)) as ResourceProviderGetResult<RoleAssignment>[];
 
 		assignments.forEach((assignment) => {
 			if (assignment.resource.scope === `/instances/${this.instanceId}`) {
@@ -717,7 +896,7 @@ export default {
 		return assignments;
 	},
 
-	async getRoleAssignment(roleAssignmentId): RoleAssignment[] {
+	async getRoleAssignment(roleAssignmentId: string): Promise<RoleAssignment[]> {
 		return (await this.fetch(
 			`/instances/${this.instanceId}/providers/FoundationaLLM.Authorization/roleAssignments/${roleAssignmentId}?api-version=${this.apiVersion}`,
 			{
@@ -729,7 +908,7 @@ export default {
 		)) as RoleAssignment[];
 	},
 
-	async createRoleAssignment(request: Object): Promise<any> {
+	async createRoleAssignment(request: any): Promise<ResourceProviderUpsertResult> {
 		if (!request.scope) {
 			request.scope = `/instances/${this.instanceId}`;
 		}
@@ -743,7 +922,7 @@ export default {
 		);
 	},
 
-	async deleteRoleAssignment(roleAssignmentId): void {
+	async deleteRoleAssignment(roleAssignmentId: string): Promise<void> {
 		return await this.fetch(
 			`/instances/${this.instanceId}/providers/FoundationaLLM.Authorization/roleAssignments/${roleAssignmentId}?api-version=${this.apiVersion}`,
 			{
@@ -857,7 +1036,7 @@ export default {
 		);
 	},
 
-	async deleteFileFromPrivateStorage(agentName, fileName): Promise<any> {
+	async deleteFileFromPrivateStorage(agentName: string, fileName: string): Promise<void> {
 		return await this.fetch(
 			`/instances/${this.instanceId}/providers/FoundationaLLM.Agent/agents/${agentName}/files/${fileName}?api-version=${this.apiVersion}`,
 			{
@@ -869,19 +1048,19 @@ export default {
 	/*
 		Agent Workflows
 	 */
-	async getAgentWorkflows(): Promise<any> {
-		return await this.fetch(
+	async getAgentWorkflows(): Promise<ResourceProviderGetResult<Workflow>[]> {
+		return (await this.fetch(
 			`/instances/${this.instanceId}/providers/FoundationaLLM.Agent/workflows?api-version=${this.apiVersion}`,
-		);
+		)) as ResourceProviderGetResult<Workflow>[];
 	},
 
 	/*
 		Agent Tools
 	 */
-	async getAgentTools(): Promise<any> {
-		return await this.fetch(
+	async getAgentTools(): Promise<ResourceProviderGetResult<AgentTool>[]> {
+		return (await this.fetch(
 			`/instances/${this.instanceId}/providers/FoundationaLLM.Agent/tools?api-version=${this.apiVersion}`,
-		);
+		)) as ResourceProviderGetResult<AgentTool>[];
 	},
 
 	/*
@@ -906,7 +1085,7 @@ export default {
 		)) as ResourceProviderUpsertResult;
 	},
 
-	async deleteAgentAccessToken(agentName: string, accessTokenId: string): Promise<any> {
+	async deleteAgentAccessToken(agentName: string, accessTokenId: string): Promise<void> {
 		return await this.fetch(
 			`/instances/${this.instanceId}/providers/FoundationaLLM.Agent/agents/${agentName}/agentAccessTokens/${accessTokenId}?api-version=${this.apiVersion}`,
 			{
@@ -945,7 +1124,7 @@ export default {
 		);
 	},
 
-	async deleteIndexingProfile(indexingProfileId: string): Promise<any> {
+	async deleteIndexingProfile(indexingProfileId: string): Promise<void> {
 		return await this.fetch(
 			`/instances/${this.instanceId}/providers/FoundationaLLM.Vectorization/indexingProfiles/${indexingProfileId}?api-version=${this.apiVersion}`,
 			{
@@ -973,5 +1152,37 @@ export default {
 		return (await this.fetch(
 			`/instances/${this.instanceId}/providers/FoundationaLLM.Configuration/apiEndpointConfigurations?api-version=${this.apiVersion}`,
 		)) as APIEndpointConfiguration;
+	},
+
+	async getExternalOrchestrationServices(
+		resolveApiKey: boolean = false,
+	): Promise<ResourceProviderGetResult<ExternalOrchestrationService>[]> {
+		const data = (await this.fetch(
+			`/instances/${this.instanceId}/providers/FoundationaLLM.Configuration/apiEndpointConfigurations?api-version=${this.apiVersion}`,
+		)) as ResourceProviderGetResult<ExternalOrchestrationService>[];
+
+		// Retrieve all the app config values for the external orchestration services..
+		const appConfigFilter = `FoundationaLLM:ExternalAPIs:*`;
+		const appConfigResults = await this.getAppConfigs(appConfigFilter);
+
+		// Loop through the external orchestration services and replace the app config keys with the real values.
+		for (const externalOrchestrationService of data) {
+			externalOrchestrationService.resource.resolved_api_key = '';
+
+			if (resolveApiKey) {
+				// Find a matching app config for the API Key. The app config name should be in the format FoundationaLLM:ExternalAPIs:<ServiceName>:APIKey
+				const apiKeyAppConfig = appConfigResults.find(
+					(appConfig) =>
+						appConfig.resource.name ===
+						`FoundationaLLM:ExternalAPIs:${externalOrchestrationService.resource.name}:APIKey`,
+				);
+				if (apiKeyAppConfig) {
+					externalOrchestrationService.resource.resolved_api_key = apiKeyAppConfig.resource.value;
+				}
+			}
+		}
+
+		// Return the updated external orchestration services.
+		return data;
 	},
 };

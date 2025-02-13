@@ -1,15 +1,14 @@
 <template>
-	<div class="main-content">
-		<Head>
-			<Title>{{ pageTitle }}</Title>
-			<Meta name="description" :content="pageTitle" />
-			<Link rel="icon" type="image/x-icon" :href="iconLink" />
-		</Head>
+	<Head>
+		<Title>{{ pageTitle }}</Title>
+		<Meta name="description" :content="pageTitle" />
+		<Link rel="icon" type="image/x-icon" :href="iconLink" />
+	</Head>
 
+	<div class="main-content">
 		<NuxtLayout>
 			<NuxtPage />
 		</NuxtLayout>
-
 		<Toast position="top-center" />
 	</div>
 </template>
@@ -108,6 +107,15 @@ body,
 
 .mr-1 {
 	margin-right: 4px !important;
+}
+
+.mr-2 {
+	margin-right: 8px !important;
+}
+
+.mx-2 {
+	margin-left: 8px !important;
+	margin-right: 8px !important;
 }
 
 .mt-2 {

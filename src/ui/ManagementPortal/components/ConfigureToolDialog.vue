@@ -183,7 +183,7 @@ export default {
 			} else if (type === 'aiModels') {
 				return 'AI Model';
 			} else if (type === 'textEmbeddingProfiles') {
-				return 'Embedding Profile';			
+				return 'Embedding Profile';
 			} else if (type === 'indexingProfiles') {
 				return 'Vector Store';
 			} else if (type === 'apiEndpointConfigurations') {

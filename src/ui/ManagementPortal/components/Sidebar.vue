@@ -57,30 +57,19 @@
 					<li><NuxtLink to="/vector-stores" class="sidebar__item">Vector Stores</NuxtLink></li>
 				</ul>
 
-				<!-- Pipeline -->
-				<!-- <h3 class="sidebar__section-header">
-					<span class="pi pi-equals" aria-hidden="true"></span>
-					<span>Data Pipeline</span>
+				<!-- Models and Endpoints -->
+				<h3 class="sidebar__section-header">
+					<span class="pi pi-box" aria-hidden="true"></span>
+					<span>Models and Endpoints</span>
 				</h3>
 				<ul>
-					<li><NuxtLink to="/pipeline/indexing-profiles" class="sidebar__item">Indexing Profiles</NuxtLink></li>
-				</ul> -->
-
-				<!-- Quotas -->
-				<!-- <div class="sidebar__section-header">
-					<span class="pi pi-calculator"></span>
-					<span>Quotas</span>
-				</div>
-
-				<div class="sidebar__item">Policies</div> -->
-
-				<!-- LLM's -->
-				<!-- <div class="sidebar__section-header">
-					<span class="pi pi-sitemap"></span>
-					<span>LLM's</span>
-				</div>
-
-				<div class="sidebar__item">Language Models & Endpoints</div> -->
+					<li>
+						<NuxtLink to="/models" class="sidebar__item">AI Models</NuxtLink>
+					</li>
+					<li>
+						<NuxtLink to="/api-endpoints" class="sidebar__item">API Endpoints</NuxtLink>
+					</li>
+				</ul>
 
 				<!-- Security -->
 				<h3 class="sidebar__section-header">

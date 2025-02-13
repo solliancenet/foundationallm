@@ -7,7 +7,6 @@ import CreateDataSource from '../create.vue';
 
 export default {
 	name: 'EditDataSource',
-
 	components: {
 		CreateDataSource,
 	},

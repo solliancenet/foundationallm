@@ -233,7 +233,7 @@
 					<CreateAgentStepItem v-model="editIndexSource" focusQuery=".step-container__edit__option">
 						<template v-if="selectedIndexSource">
 							<div v-if="selectedIndexSource.object_id !== ''">
-								<div class="step-container__header">{{ selectedIndexSource.name }}</div>								
+								<div class="step-container__header">{{ selectedIndexSource.name }}</div>
 								<div>
 									<span class="step-option__header">Index Name:</span>
 									<span>{{ selectedIndexSource.settings.index_name }}</span>
@@ -775,7 +775,7 @@
 			<!-- Workflow selection -->
 			<div class="span-2">
 				<Dropdown
-					:modelValue="selectedWorkflow?.type"
+					:model-value="selectedWorkflow?.type"
 					:options="workflowOptions"
 					option-label="name"
 					option-value="type"
@@ -980,7 +980,9 @@
 			<div class="step-section-header span-2">User Prompt Rewrite Settings</div>
 
 			<!-- Enable user prompt rewrite -->
-			<div id="aria-user-prompt-rewrite-enabled" class="step-header span-2">Enable user prompt rewrite?</div>
+			<div id="aria-user-prompt-rewrite-enabled" class="step-header span-2">
+				Enable user prompt rewrite?
+			</div>
 			<div class="span-2">
 				<ToggleButton
 					v-model="userPromptRewriteEnabled"
@@ -994,7 +996,9 @@
 
 			<template v-if="userPromptRewriteEnabled">
 				<!-- User prompt rewrite model -->
-				<div id="aria-user-prompt-rewrite-model" class="step-header span-2 mt-2">What model should be used for the prompt rewrite?</div>
+				<div id="aria-user-prompt-rewrite-model" class="step-header span-2 mt-2">
+					What model should be used for the prompt rewrite?
+				</div>
 				<div class="span-2">
 					<Dropdown
 						v-model="userPromptRewriteAIModel"
@@ -1008,7 +1012,9 @@
 				</div>
 
 				<!-- User prompt rewrite prompt -->
-				<div id="aria-user-prompt-rewrite-prompt" class="step-header span-2 mt-2">What prompt should be used to rewrite the user prompt?</div>
+				<div id="aria-user-prompt-rewrite-prompt" class="step-header span-2 mt-2">
+					What prompt should be used to rewrite the user prompt?
+				</div>
 				<div class="span-2">
 					<Dropdown
 						v-model="userPromptRewritePrompt"
@@ -1022,7 +1028,9 @@
 				</div>
 
 				<!-- User prompt rewrite window size -->
-				<div id="aria-user-prompt-rewrite-window-size" class="step-header span-2 mt-2">What should the rewrite window size be?</div>
+				<div id="aria-user-prompt-rewrite-window-size" class="step-header span-2 mt-2">
+					What should the rewrite window size be?
+				</div>
 				<div class="span-2">
 					<InputNumber
 						v-model="userPromptRewriteWindowSize"
@@ -1052,7 +1060,9 @@
 
 			<template v-if="semanticCacheEnabled">
 				<!-- Semantic cache model -->
-				<div id="aria-semantic-cache-model" class="step-header span-2 mt-2">What model should be used for the semantic cache?</div>
+				<div id="aria-semantic-cache-model" class="step-header span-2 mt-2">
+					What model should be used for the semantic cache?
+				</div>
 				<div class="span-2">
 					<Dropdown
 						v-model="semanticCacheAIModel"
@@ -1066,7 +1076,9 @@
 				</div>
 
 				<!-- Semantic cache embedding dimensions -->
-				<div id="aria-semantic-cache-embedding-dimensions" class="step-header span-2 mt-2">How many embedding dimensions to use?</div>
+				<div id="aria-semantic-cache-embedding-dimensions" class="step-header span-2 mt-2">
+					How many embedding dimensions to use?
+				</div>
 				<div class="span-2">
 					<InputNumber
 						v-model="semanticCacheEmbeddingDimensions"
@@ -1078,7 +1090,9 @@
 				</div>
 
 				<!-- Semantic cache minimum similarity threshold -->
-				<div id="aria-semantic-cache-minimum-similarity" class="step-header span-2 mt-2">What should the minimum similarity threshold be?</div>
+				<div id="aria-semantic-cache-minimum-similarity" class="step-header span-2 mt-2">
+					What should the minimum similarity threshold be?
+				</div>
 				<div class="span-2">
 					<InputNumber
 						v-model="semanticCacheMinimumSimilarityThreshold"
@@ -1152,6 +1166,7 @@ import type {
 	ExternalOrchestrationService,
 	TextEmbeddingProfile,
 	Prompt,
+	Workflow,
 	// AgentCheckNameResponse,
 } from '@/js/types';
 
@@ -1272,7 +1287,7 @@ export default {
 			externalOrchestratorOptions: [] as ExternalOrchestrationService[],
 			aiModelOptions: [] as AIModel[],
 
-			workflowOptions: [] as AgentWorkflowAIModel[],
+			workflowOptions: [] as Workflow[],
 			showWorkflowConfiguration: false,
 			workflowMainAIModel: null as AIModel | null,
 			// workflowMainPrompt: '' as string,
@@ -1543,7 +1558,8 @@ export default {
 			this.object_id = agent.object_id || this.object_id;
 			this.inline_context = agent.inline_context || this.inline_context;
 			this.cost_center = agent.cost_center || this.cost_center;
-			this.hasOpenAIAssistantCapability = agent.workflow?.type === 'azure-openai-assistants-workflow';			
+			this.hasOpenAIAssistantCapability =
+				agent.workflow?.type === 'azure-openai-assistants-workflow';
 			this.expirationDate = agent.expiration_date
 				? new Date(agent.expiration_date)
 				: this.expirationDate;
@@ -1621,16 +1637,20 @@ export default {
 			this.showFileUpload = agent.show_file_upload ?? false;
 
 			const userPromptRewriteSettings = agent.text_rewrite_settings?.user_prompt_rewrite_settings;
-			this.userPromptRewriteEnabled = agent.text_rewrite_settings?.user_prompt_rewrite_enabled ?? false;
-			this.userPromptRewriteAIModel = userPromptRewriteSettings?.user_prompt_rewrite_ai_model_object_id ?? null;
-			this.userPromptRewritePrompt = userPromptRewriteSettings?.user_prompt_rewrite_prompt_object_id ?? null;
+			this.userPromptRewriteEnabled =
+				agent.text_rewrite_settings?.user_prompt_rewrite_enabled ?? false;
+			this.userPromptRewriteAIModel =
+				userPromptRewriteSettings?.user_prompt_rewrite_ai_model_object_id ?? null;
+			this.userPromptRewritePrompt =
+				userPromptRewriteSettings?.user_prompt_rewrite_prompt_object_id ?? null;
 			this.userPromptRewriteWindowSize = userPromptRewriteSettings?.user_prompts_window_size ?? 3;
 
 			const semanticCacheSettings = agent.cache_settings?.semantic_cache_settings;
 			this.semanticCacheEnabled = agent.cache_settings?.semantic_cache_enabled ?? false;
 			this.semanticCacheAIModel = semanticCacheSettings?.embedding_ai_model_object_id ?? null;
 			this.semanticCacheEmbeddingDimensions = semanticCacheSettings?.embedding_dimensions ?? 2048;
-			this.semanticCacheMinimumSimilarityThreshold = semanticCacheSettings?.minimum_similarity_threshold ?? 0.97;
+			this.semanticCacheMinimumSimilarityThreshold =
+				semanticCacheSettings?.minimum_similarity_threshold ?? 0.97;
 
 			// this.showFileUpload = agent.show_file_upload ?? false;
 		},
