@@ -1,6 +1,5 @@
-﻿using System.Diagnostics;
-using Azure.Messaging;
-using FluentValidation;
+﻿using FluentValidation;
+using FoundationaLLM.Common.Constants;
 using FoundationaLLM.Common.Constants.Configuration;
 using FoundationaLLM.Common.Constants.Events;
 using FoundationaLLM.Common.Constants.ResourceProviders;
@@ -9,7 +8,6 @@ using FoundationaLLM.Common.Interfaces;
 using FoundationaLLM.Common.Models.Authentication;
 using FoundationaLLM.Common.Models.Authorization;
 using FoundationaLLM.Common.Models.Configuration.Instance;
-using FoundationaLLM.Common.Models.Events;
 using FoundationaLLM.Common.Models.ResourceProviders;
 using FoundationaLLM.Common.Models.ResourceProviders.Attachment;
 using FoundationaLLM.Common.Services.ResourceProviders;
@@ -18,7 +16,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Text.Json;
-using FoundationaLLM.Common.Constants;
 
 namespace FoundationaLLM.Attachment.ResourceProviders
 {
@@ -83,7 +80,6 @@ namespace FoundationaLLM.Attachment.ResourceProviders
             switch (resourcePath.MainResourceTypeName)
             {
                 case AttachmentResourceTypeNames.Attachments:
-
                     var attachments = new List<AttachmentReference>();
 
                     if (resourcePath.ResourceTypeInstances[0].ResourceId != null)
@@ -91,13 +87,13 @@ namespace FoundationaLLM.Attachment.ResourceProviders
                     else
                         attachments = await _cosmosDBService.GetAttachments(userIdentity.UPN!);
 
-                    var results = new List<AttachmentFile>();
+                    var attachmentFiles = new List<AttachmentFile>();
                     foreach(var attachment in attachments)
-                        results.Add(await LoadAttachment(attachment, options != null && options!.LoadContent));
+                        attachmentFiles.Add(await LoadAttachment(attachment, options != null && options!.LoadContent));
 
-                    return results.Select(r => new ResourceProviderGetResult<AttachmentFile>
+                    return attachmentFiles.Select(af => new ResourceProviderGetResult<AttachmentFile>
                     {
-                        Resource = r,
+                        Resource = af,
                         Roles = (options?.IncludeRoles ?? false)
                               ? authorizationResult.Roles
                               : [],
@@ -126,7 +122,6 @@ namespace FoundationaLLM.Attachment.ResourceProviders
             switch (resourcePath.MainResourceTypeName)
             {
                 case AttachmentResourceTypeNames.Attachments:
-
                     switch(resourcePath.Action)
                     {
                         case ResourceProviderActions.Filter:
@@ -159,7 +154,6 @@ namespace FoundationaLLM.Attachment.ResourceProviders
                         ?? throw new ResourceProviderException($"The resource {resourcePath.ResourceTypeInstances[0].ResourceId!} of type {resourcePath.MainResourceTypeName} was not found.");
 
                     await _cosmosDBService.DeleteAttachment(attachment);
-
                     break;
                 default:
                     throw new ResourceProviderException($"The resource type {resourcePath.ResourceTypeName} is not supported by the {_name} resource provider.",
@@ -174,11 +168,18 @@ namespace FoundationaLLM.Attachment.ResourceProviders
         /// <inheritdoc/>
         protected override async Task<T> GetResourceAsyncInternal<T>(ResourcePath resourcePath, ResourcePathAuthorizationResult authorizationResult, UnifiedUserIdentity userIdentity, ResourceProviderGetOptions? options = null) where T : class
         {
-            var attachment = await _cosmosDBService.GetAttachment(userIdentity.UPN!, resourcePath.ResourceTypeInstances[0].ResourceId!)
-                ?? throw new ResourceProviderException($"The resource {resourcePath.ResourceTypeInstances[0].ResourceId!} of type {resourcePath.MainResourceTypeName} was not found.");
+            switch (resourcePath.MainResourceTypeName)
+            {
+                case AttachmentResourceTypeNames.Attachments:
+                    var attachment = await _cosmosDBService.GetAttachment(userIdentity.UPN!, resourcePath.ResourceTypeInstances[0].ResourceId!)
+                        ?? throw new ResourceProviderException($"The resource {resourcePath.ResourceTypeInstances[0].ResourceId!} of type {resourcePath.MainResourceTypeName} was not found.");
 
-            return (await LoadAttachment(attachment, loadContent: options?.LoadContent ?? false)) as T
-                ?? throw new ResourceProviderException($"The resource {resourcePath.ResourceTypeInstances[0].ResourceId!} of type {resourcePath.MainResourceTypeName} could not be loaded.");
+                    return (await LoadAttachment(attachment, loadContent: options?.LoadContent ?? false)) as T
+                        ?? throw new ResourceProviderException($"The resource {resourcePath.ResourceTypeInstances[0].ResourceId!} of type {resourcePath.MainResourceTypeName} could not be loaded.");
+                default:
+                    throw new ResourceProviderException($"The resource type {resourcePath.MainResourceTypeName} is not supported by the {_name} resource provider.",
+                        StatusCodes.Status400BadRequest);
+            }
         }
 
         /// <inheritdoc/>
@@ -311,7 +312,7 @@ namespace FoundationaLLM.Attachment.ResourceProviders
             };
         }
 
-        private string GetFileExtension(string fileName) =>
+        private static string GetFileExtension(string fileName) =>
             Path.GetExtension(fileName);
 
         #endregion

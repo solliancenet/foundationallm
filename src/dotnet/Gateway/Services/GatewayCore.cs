@@ -8,6 +8,7 @@ using FoundationaLLM.Common.Interfaces;
 using FoundationaLLM.Common.Models.Authentication;
 using FoundationaLLM.Common.Models.Azure;
 using FoundationaLLM.Common.Models.ResourceProviders;
+using FoundationaLLM.Common.Models.ResourceProviders.Agent.AgentFiles;
 using FoundationaLLM.Common.Models.ResourceProviders.Attachment;
 using FoundationaLLM.Common.Models.Vectorization;
 using FoundationaLLM.Gateway.Interfaces;
@@ -44,6 +45,8 @@ namespace FoundationaLLM.Gateway.Services
         private readonly ILoggerFactory _loggerFactory = loggerFactory;
         private readonly IResourceProviderService _attachmentResourceProvider =
             resourceProviderServices.Single(rps => rps.Name == ResourceProviderNames.FoundationaLLM_Attachment);
+        private readonly IResourceProviderService _agentResourceProvider =
+            resourceProviderServices.Single(rps => rps.Name == ResourceProviderNames.FoundationaLLM_Agent);
         private readonly ILogger<GatewayCore> _logger = loggerFactory.CreateLogger<GatewayCore>();
 
         private bool _initialized = false;
@@ -216,9 +219,13 @@ namespace FoundationaLLM.Gateway.Services
         {
             Dictionary<string, object> result = [];
             var createAssistant = GetParameterValue<bool>(parameters, OpenAIAgentCapabilityParameterNames.CreateOpenAIAssistant, false);
+            var createAssistantVectorStore = GetParameterValue<bool>(parameters, OpenAIAgentCapabilityParameterNames.CreateOpenAIAssistantVectorStore, false);
             var createAssistantThread = GetParameterValue<bool>(parameters, OpenAIAgentCapabilityParameterNames.CreateOpenAIAssistantThread, false);
             var createAssistantFile = GetParameterValue<bool>(parameters, OpenAIAgentCapabilityParameterNames.CreateOpenAIFile, false);
             var addAssistantFileToVectorStore = GetParameterValue<bool>(parameters, OpenAIAgentCapabilityParameterNames.AddOpenAIFileToVectorStore, false);
+            var removeAssistantFileFromVectorStore = GetParameterValue<bool>(parameters, OpenAIAgentCapabilityParameterNames.RemoveOpenAIFileFromVectorStore, false);
+            var addAssistantFileToCodeInterpreter = GetParameterValue<bool>(parameters, OpenAIAgentCapabilityParameterNames.AddOpenAIFileToCodeInterpreter, false);
+            var removeAssistantFileFromCodeInterpreter = GetParameterValue<bool>(parameters, OpenAIAgentCapabilityParameterNames.RemoveOpenAIFileFromCodeInterpreter, false);
 
             if (createAssistant
                 && string.IsNullOrEmpty(capabilityName))
@@ -237,6 +244,20 @@ namespace FoundationaLLM.Gateway.Services
             if (createAssistant)
             {
                 var assistantClient = GetAzureOpenAIAssistantClient(azureOpenAIAccount.Endpoint);
+                var vectorStoreClient = GetAzureOpenAIVectorStoreClient(azureOpenAIAccount.Endpoint);
+
+                // Create the assistant-level vector store and assign it to the file search tool definition for the assistant.
+                var vectorStoreResult = await vectorStoreClient.CreateVectorStoreAsync(true, new VectorStoreCreationOptions
+                {
+                    Name = capabilityName,
+                    ExpirationPolicy = new VectorStoreExpirationPolicy
+                    {
+                        Anchor = VectorStoreExpirationAnchor.LastActiveAt,
+                        Days = 365
+                    }
+                });
+                var fileSearchToolResources = new FileSearchToolResources();
+                fileSearchToolResources.VectorStoreIds.Add(vectorStoreResult.Value!.Id);
 
                 var prompt = GetRequiredParameterValue<string>(parameters, OpenAIAgentCapabilityParameterNames.OpenAIAssistantPrompt);
                 var modelDeploymentName = GetRequiredParameterValue<string>(parameters, OpenAIAgentCapabilityParameterNames.OpenAIModelDeploymentName);
@@ -250,16 +271,60 @@ namespace FoundationaLLM.Gateway.Services
                 var assistantResult = await assistantClient.CreateAssistantAsync(modelDeploymentName, new AssistantCreationOptions()
                 {
                     Name = capabilityName,
-                    Instructions = prompt,
+                    Instructions = prompt, 
                     Tools =
                     {
                         new CodeInterpreterToolDefinition(),
                         new FileSearchToolDefinition()
+                    },
+                    ToolResources = new ToolResources()
+                    {
+                        FileSearch = fileSearchToolResources
                     }
+                    
                 });
 
                 var assistant = assistantResult.Value;
+                _logger.LogInformation("Created assistant {AssistantName} with ID {AssistantId}.", assistant.Name, assistant.Id);
                 result[OpenAIAgentCapabilityParameterNames.OpenAIAssistantId] = assistant.Id;
+                result[OpenAIAgentCapabilityParameterNames.OpenAIVectorStoreId] = vectorStoreResult.Value!.Id;
+            }
+
+            if(createAssistantVectorStore)
+            {
+                var assistantClient = GetAzureOpenAIAssistantClient(azureOpenAIAccount.Endpoint);
+                var vectorStoreClient = GetAzureOpenAIVectorStoreClient(azureOpenAIAccount.Endpoint);
+                var assistantId = GetRequiredParameterValue<string>(parameters, OpenAIAgentCapabilityParameterNames.OpenAIAssistantId);
+                                
+                var assistant = await assistantClient.GetAssistantAsync(assistantId);
+                if (assistant.Value == null)
+                {
+                    throw new GatewayException($"The assistant with ID {assistantId} was not found.", StatusCodes.Status404NotFound);
+                }
+
+                var vectorStoreResult = await vectorStoreClient.CreateVectorStoreAsync(true, new VectorStoreCreationOptions
+                {
+                    Name = $"vs_{assistant.Value.Name}",
+                    ExpirationPolicy = new VectorStoreExpirationPolicy
+                    {
+                        Anchor = VectorStoreExpirationAnchor.LastActiveAt,
+                        Days = 365
+                    }
+                });
+
+                var fileSearchToolResources = new FileSearchToolResources();
+                fileSearchToolResources.VectorStoreIds.Add(vectorStoreResult.Value!.Id);
+
+                // Update the assistant with the new vector store file search tool resource               
+                var updateAssistantResult = await assistantClient.ModifyAssistantAsync(assistant.Value.Id, new AssistantModificationOptions
+                {
+                    ToolResources = new ToolResources()
+                    {
+                        FileSearch = fileSearchToolResources
+                    }
+                });
+                _logger.LogInformation("Added vector store {VectorStoreId} to file search tool for assistant {AssistantId}.", vectorStoreResult.Value!.Id, assistantId);
+                result[OpenAIAgentCapabilityParameterNames.OpenAIVectorStoreId] = vectorStoreResult.Value!.Id;
             }
 
             if (createAssistantThread)
@@ -288,7 +353,7 @@ namespace FoundationaLLM.Gateway.Services
                 });
                 var thread = threadResult.Value;
                 var vectorStore = vectorStoreResult.Value;
-
+                _logger.LogInformation("Created thread {ThreadId} with vector store {VectorStoreId}.", thread.Id, vectorStore.Id);
                 result[OpenAIAgentCapabilityParameterNames.OpenAIAssistantThreadId] = thread.Id;
                 result[OpenAIAgentCapabilityParameterNames.OpenAIVectorStoreId] = vectorStore.Id;
             }
@@ -298,15 +363,39 @@ namespace FoundationaLLM.Gateway.Services
             if (createAssistantFile)
             {
                 var fileClient = GetAzureOpenAIFileClient(azureOpenAIAccount.Endpoint);
+                var originalFileName = string.Empty;
+                byte[]? fileContent = null;
 
-                var attachmentObjectId = GetRequiredParameterValue<string>(parameters, OpenAIAgentCapabilityParameterNames.AttachmentObjectId);
-                var attachmentFile = await _attachmentResourceProvider.GetResourceAsync<AttachmentFile>(attachmentObjectId, userIdentity, new ResourceProviderGetOptions { LoadContent = true });
-
+                // check if it's an attachment or an agent file
+                var attachmentObjectId = GetParameterValue<string>(parameters, OpenAIAgentCapabilityParameterNames.AttachmentObjectId, string.Empty);
+                if(!string.IsNullOrEmpty(attachmentObjectId))
+                {
+                    var attachmentFile = await _attachmentResourceProvider.GetResourceAsync<AttachmentFile>(attachmentObjectId, userIdentity, new ResourceProviderGetOptions { LoadContent = true });
+                    originalFileName = attachmentFile.OriginalFileName;
+                    fileContent = attachmentFile.Content;
+                }
+                else
+                {
+                    var agentFileObjectId = GetParameterValue<string>(parameters, OpenAIAgentCapabilityParameterNames.AgentFileObjectId, string.Empty);
+                    var agentFile = await _agentResourceProvider.GetResourceAsync<AgentFile>(agentFileObjectId, userIdentity, new ResourceProviderGetOptions { LoadContent = true });
+                    originalFileName = agentFile.DisplayName;
+                    fileContent = agentFile.Content;                   
+                }
+                if (string.IsNullOrWhiteSpace(originalFileName))
+                {
+                    throw new GatewayException("The request does not have a valid AttachmentObjectId or AgentFileObjectId parameter value.", StatusCodes.Status400BadRequest);
+                }
+                if (fileContent == null)
+                {
+                    throw new GatewayException("The file content is null.", StatusCodes.Status400BadRequest);
+                }
+               
                 var fileResult = await fileClient.UploadFileAsync(
-                    new MemoryStream(attachmentFile.Content!),
-                    attachmentFile.OriginalFileName,
+                    new MemoryStream(fileContent!),
+                    originalFileName,
                     FileUploadPurpose.Assistants);
                 var file = fileResult.Value;
+                _logger.LogInformation("Uploaded file {FileName} as an OpenAI file with ID {FileId}.", originalFileName, file.Id);
                 result[OpenAIAgentCapabilityParameterNames.OpenAIFileId] = file.Id;
                 fileId = file.Id;
             }
@@ -338,17 +427,100 @@ namespace FoundationaLLM.Gateway.Services
                 {
                     _logger.LogWarning("The maximum polling time ({MaxPollingTime} seconds) was exceeded during the vectorization of file {FileId} in vector store {VectorStoreId}.",
                         _settings.AzureOpenAIAssistantsMaxVectorizationTimeSeconds, fileId, vectorStoreId);
-                    result[OpenAIAgentCapabilityParameterNames.AddOpenAIFileToVectorStoreSuccess] = false;
+                    result[OpenAIAgentCapabilityParameterNames.OpenAIFileActionOnVectorStoreSuccess] = false;
                 }
                 else
                 {
                     _logger.LogInformation("Completed vectorization of file {FileId} in vector store {VectorStoreId} in {TotalSeconds} with result {VectorizationResult}.",
                         fileId, vectorStoreId, (DateTimeOffset.UtcNow - startTime).TotalSeconds, fileAssociationResult.Value.Status);
-                    result[OpenAIAgentCapabilityParameterNames.AddOpenAIFileToVectorStoreSuccess] =
-                        (fileAssociationResult.Value.Status == VectorStoreFileAssociationStatus.Completed);
+                    result[OpenAIAgentCapabilityParameterNames.OpenAIFileActionOnVectorStoreSuccess] =
+                        fileAssociationResult.Value.Status == VectorStoreFileAssociationStatus.Completed;
                 }
             }
 
+            if(removeAssistantFileFromVectorStore)
+            {
+                var vectorStoreClient = GetAzureOpenAIVectorStoreClient(azureOpenAIAccount.Endpoint);
+                var vectorStoreId = GetRequiredParameterValue<string>(parameters, OpenAIAgentCapabilityParameterNames.OpenAIVectorStoreId);
+                // verify the file is in the vector store
+                var associations = vectorStoreClient.GetFileAssociationsAsync(vectorStoreId);
+                bool isRemoved = true; // return true if the file is not found in the vector store
+                // iterate through associations as removing a file that is not in the vector store will throw an exception
+                await foreach (var association in associations)
+                {
+                    if (association.FileId == fileId)
+                    {
+                        var vectorizationResult = await vectorStoreClient.RemoveFileFromStoreAsync(vectorStoreId, fileId);
+                        isRemoved = vectorizationResult.Value.Removed;
+                    }                   
+                }
+                _logger.LogInformation("Removed file {FileId} from vector store {VectorStoreId}.", fileId, vectorStoreId);
+                result[OpenAIAgentCapabilityParameterNames.OpenAIFileActionOnVectorStoreSuccess] = isRemoved;
+            }
+
+            if(addAssistantFileToCodeInterpreter)
+            {
+                var assistantClient = GetAzureOpenAIAssistantClient(azureOpenAIAccount.Endpoint);
+                var assistantId = GetRequiredParameterValue<string>(parameters, OpenAIAgentCapabilityParameterNames.OpenAIAssistantId);
+                var file = GetRequiredParameterValue<string>(parameters, OpenAIAgentCapabilityParameterNames.OpenAIFileId);
+
+                var assistant = await assistantClient.GetAssistantAsync(assistantId);
+                if (assistant.Value == null)
+                {
+                    throw new GatewayException($"The assistant with ID {assistantId} was not found.", StatusCodes.Status404NotFound);
+                }
+
+                var codeInterpreterToolResources = assistant.Value.ToolResources.CodeInterpreter;
+
+                if (!codeInterpreterToolResources.FileIds.Contains(file))
+                {
+                    codeInterpreterToolResources.FileIds.Add(file);
+                }
+
+                // Update the assistant with the new file in the code interpreter tool
+                var updateAssistantResult = await assistantClient.ModifyAssistantAsync(assistant.Value.Id, new AssistantModificationOptions
+                {
+                    ToolResources = new ToolResources()
+                    {
+                        CodeInterpreter = codeInterpreterToolResources
+                    }
+                });
+                _logger.LogInformation("Added file {FileId} to code interpreter tool for assistant {AssistantId}.", file, assistantId);
+                result[OpenAIAgentCapabilityParameterNames.OpenAIFileActionOnCodeInterpreterSuccess] = true;
+
+            }
+
+            if (removeAssistantFileFromCodeInterpreter)
+            {
+                var assistantClient = GetAzureOpenAIAssistantClient(azureOpenAIAccount.Endpoint);
+                var assistantId = GetRequiredParameterValue<string>(parameters, OpenAIAgentCapabilityParameterNames.OpenAIAssistantId);
+                var file = GetRequiredParameterValue<string>(parameters, OpenAIAgentCapabilityParameterNames.OpenAIFileId);
+
+                var assistant = await assistantClient.GetAssistantAsync(assistantId);
+                if (assistant.Value == null)
+                {
+                    throw new GatewayException($"The assistant with ID {assistantId} was not found.", StatusCodes.Status404NotFound);
+                }
+
+                var codeInterpreterToolResources = assistant.Value.ToolResources.CodeInterpreter;
+
+                if (!codeInterpreterToolResources.FileIds.Contains(file))
+                {
+                    codeInterpreterToolResources.FileIds.Remove(file);
+                }
+
+                // Update the assistant with the new file in the code interpreter tool
+                var updateAssistantResult = await assistantClient.ModifyAssistantAsync(assistant.Value.Id, new AssistantModificationOptions
+                {
+                    ToolResources = new ToolResources()
+                    {
+                        CodeInterpreter = codeInterpreterToolResources
+                    }
+                });
+                _logger.LogInformation("Removed file {FileId} from code interpreter tool for assistant {AssistantId}.", file, assistantId);
+                result[OpenAIAgentCapabilityParameterNames.OpenAIFileActionOnCodeInterpreterSuccess] = true;
+
+            }
             return result;
         }
 

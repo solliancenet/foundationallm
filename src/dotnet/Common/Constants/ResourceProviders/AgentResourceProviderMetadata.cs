@@ -2,6 +2,7 @@
 using FoundationaLLM.Common.Models.ResourceProviders;
 using FoundationaLLM.Common.Models.ResourceProviders.Agent;
 using FoundationaLLM.Common.Models.ResourceProviders.Agent.AgentAccessTokens;
+using FoundationaLLM.Common.Models.ResourceProviders.Agent.AgentFiles;
 
 namespace FoundationaLLM.Common.Constants.ResourceProviders
 {
@@ -40,23 +41,24 @@ namespace FoundationaLLM.Common.Constants.ResourceProviders
                     SubTypes = new()
                     {
                         {
-                            AgentResourceTypeNames.Files,
+                            AgentResourceTypeNames.AgentFiles,
                             new ResourceTypeDescriptor (
-                                AgentResourceTypeNames.Files,
-                                typeof(FileContent))
+                                AgentResourceTypeNames.AgentFiles,
+                                typeof(AgentFile))
                             {
                                 AllowedTypes = [
                                     new ResourceTypeAllowedTypes(HttpMethod.Get.Method, AuthorizableOperations.Write, [], [], [typeof(ResourceProviderGetResult<AgentFile>)]),
                                     new ResourceTypeAllowedTypes(HttpMethod.Post.Method, AuthorizableOperations.Write, [], [], [typeof(ResourceProviderUpsertResult)]),
                                     new ResourceTypeAllowedTypes(HttpMethod.Delete.Method, AuthorizableOperations.Delete, [], [], []),
-                                ]
+                                ],
+                                Actions = []
                             }
                         },
                         {
                             AgentResourceTypeNames.AgentAccessTokens,
                             new ResourceTypeDescriptor(
-                                    AgentResourceTypeNames.AgentAccessTokens,
-                                    typeof(AgentAccessToken))
+                                AgentResourceTypeNames.AgentAccessTokens,
+                                typeof(AgentAccessToken))
                             {
                                 AllowedTypes = [
                                     new ResourceTypeAllowedTypes(HttpMethod.Get.Method, AuthorizableOperations.Read, [], [], [typeof(ResourceProviderGetResult<AgentAccessToken>)]),
@@ -68,6 +70,19 @@ namespace FoundationaLLM.Common.Constants.ResourceProviders
                                         new ResourceTypeAllowedTypes(HttpMethod.Post.Method, AuthorizableOperations.Read, [], [typeof(AgentAccessTokenValidationRequest)], [typeof(AgentAccessTokenValidationResult)])
                                     ])
                                 ]
+                            }
+                        },
+                        {
+                            AgentResourceTypeNames.AgentFileToolAssociations,
+                            new ResourceTypeDescriptor(
+                                AgentResourceTypeNames.AgentFileToolAssociations,
+                                typeof(AgentFileToolAssociation))
+                            {
+                                AllowedTypes = [
+                                    new ResourceTypeAllowedTypes(HttpMethod.Get.Method, AuthorizableOperations.Read, [], [], [typeof(ResourceProviderGetResult<AgentFileToolAssociation>)]),
+                                    new ResourceTypeAllowedTypes(HttpMethod.Post.Method, AuthorizableOperations.Write, [], [typeof(AgentFileToolAssociationRequest)], [typeof(ResourceProviderUpsertResult)])
+                                ],
+                                Actions = []
                             }
                         }
                     }

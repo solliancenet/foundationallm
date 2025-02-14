@@ -4,6 +4,7 @@ using FoundationaLLM.Common.Models.Conversation;
 using FoundationaLLM.Common.Models.Orchestration;
 using FoundationaLLM.Common.Models.Orchestration.Response;
 using FoundationaLLM.Common.Models.ResourceProviders;
+using FoundationaLLM.Common.Models.ResourceProviders.Agent.AgentFiles;
 using FoundationaLLM.Common.Models.ResourceProviders.Attachment;
 
 namespace FoundationaLLM.Common.Interfaces;
@@ -261,6 +262,41 @@ public interface IAzureCosmosDBService
     /// <param name="cancellationToken">Cancellation token for async calls.</param>
     /// <returns></returns>
     Task DeleteAttachment(AttachmentReference attachment, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Gets an agent file.
+    /// </summary>
+    /// <param name="instanceId">The instance unique identifier</param>
+    /// <param name="agentName">The agent name.</param>
+    /// <param name="id">The agent file id.</param>
+    /// <param name="cancellationToken">Cancellation token for async calls.</param>
+    /// <returns>An agent file.</returns>
+    Task<AgentFileReference?> GetAgentFile(string instanceId, string agentName, string id, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Gets a list of agent files.
+    /// </summary>
+    /// <param name="instanceId">The instance unique identifier</param>
+    /// <param name="agentName">The agent name.</param>
+    /// <param name="cancellationToken">Cancellation token for async calls.</param>
+    /// <returns>A list of agent files.</returns>
+    Task<List<AgentFileReference>> GetAgentFiles(string instanceId, string agentName, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Creates an agent file.
+    /// </summary>
+    /// <param name="agentFile">The agent file to be added.</param>
+    /// <param name="cancellationToken">Cancellation token for async calls.</param>
+    /// <returns></returns>
+    Task CreateAgentFile(AgentFileReference agentFile, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Deletes an agent file.
+    /// </summary>
+    /// <param name="agentFile">The agent file to be deleted.</param>
+    /// <param name="cancellationToken">Cancellation token for async calls.</param>
+    /// <returns></returns>
+    Task DeleteAgentFile(AgentFileReference agentFile, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Creates a new container for vector search.

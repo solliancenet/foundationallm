@@ -15,7 +15,7 @@
 
 			<div style="display: flex; align-items: center">
 				<!-- Private storage -->
-				<PrivateStorage v-if="hasOpenAIAssistantCapability" :agent-name="agentName" />
+				<PrivateStorage v-if="hasAgentPrivateStorage" :agent-name="agentName" />
 
 				<!-- Edit access control -->
 				<AccessControl
@@ -1261,7 +1261,7 @@ export default {
 			loadingStatusText: 'Retrieving data...' as string,
 
 			editable: false as boolean,
-			hasOpenAIAssistantCapability: false as boolean,
+			hasAgentPrivateStorage: false as boolean,
 
 			nameValidationStatus: null as string | null, // 'valid', 'invalid', or null
 			validationMessage: '' as string,
@@ -1613,8 +1613,8 @@ export default {
 
 			this.agentTools = agent.tools;
 
-			this.selectedWorkflow = agent.workflow;
-
+			this.selectedWorkflow = agent.workflow;			
+			this.hasAgentPrivateStorage = agent.workflow.type == 'azure-openai-assistants-workflow';			
 			this.showMessageTokens = agent.show_message_tokens ?? false;
 			this.showMessageRating = agent.show_message_rating ?? false;
 			this.showViewPrompt = agent.show_view_prompt ?? false;

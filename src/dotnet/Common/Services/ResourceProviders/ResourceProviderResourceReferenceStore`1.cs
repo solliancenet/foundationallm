@@ -238,6 +238,26 @@ namespace FoundationaLLM.Common.Services.ResourceProviders
         /// </summary>
         /// <param name="resourceReference">The resource reference to add.</param>
         /// <returns></returns>
+        public async Task UpsertResourceReference(T resourceReference)
+        {
+            await _lock.WaitAsync();
+            try
+            {
+                var existingResourceReference = GetResourceReferenceInternal(resourceReference.Name);             
+                _resourceReferences[resourceReference.Name] = resourceReference;
+                await SaveResourceReferences();
+            }
+            finally
+            {
+                _lock.Release();
+            }
+        }
+
+        /// <summary>
+        /// Adds a resource reference to the store.
+        /// </summary>
+        /// <param name="resourceReference">The resource reference to add.</param>
+        /// <returns></returns>
         public async Task AddResourceReference(T resourceReference)
         {
             await _lock.WaitAsync();

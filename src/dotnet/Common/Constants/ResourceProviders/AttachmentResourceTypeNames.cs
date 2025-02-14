@@ -6,7 +6,7 @@
     public static class AttachmentResourceTypeNames
     {
         /// <summary>
-        /// Data sources.
+        /// Attachments.
         /// </summary>
         public const string Attachments = "attachments";
     }

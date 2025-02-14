@@ -16,9 +16,10 @@
         public const string KnowledgeManagement = "knowledge-management";
 
         /// <summary>
-        /// File stored in the agent private store.
+        /// Agent file.
         /// </summary>
         public const string AgentFile = "agent-file";
+
 
         /// <summary>
         /// Workflow.

@@ -1,4 +1,4 @@
-﻿using Azure.Messaging;
+using Azure.Messaging;
 using FoundationaLLM.Common.Authentication;
 using FoundationaLLM.Common.Constants;
 using FoundationaLLM.Common.Constants.Authorization;
@@ -1232,7 +1232,7 @@ namespace FoundationaLLM.Common.Services.ResourceProviders
                    default,
                 default);
 
-                await _resourceReferenceStore!.AddResourceReference(resourceReference);
+                await _resourceReferenceStore!.UpsertResourceReference(resourceReference);
 
                 // Add resource to cache if caching is enabled.
                 _resourceCache?.SetValue<T>(resourceReference, resource);

@@ -36,6 +36,11 @@
         public const string Leases = "leases";
 
         /// <summary>
+        /// Stores agent resource references.
+        /// </summary>
+        public const string Agents = "Agents";
+
+        /// <summary>
         /// Stores file attachment references.
         /// </summary>
         public const string Attachments = "Attachments";

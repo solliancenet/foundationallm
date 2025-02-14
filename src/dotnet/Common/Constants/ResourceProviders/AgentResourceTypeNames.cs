@@ -11,19 +11,24 @@
         public const string Agents = "agents";
 
         /// <summary>
-        /// Files.
+        /// Agent files.
         /// </summary>
-        public const string Files = "files";
-
-        /// <summary>
-        /// Workflows.
-        /// </summary>
-        public const string Workflows = "workflows";
+        public const string AgentFiles = "agentFiles";
 
         /// <summary>
         /// Agent access tokens.
         /// </summary>
         public const string AgentAccessTokens = "agentAccessTokens";
+
+        /// <summary>
+        /// Agent file tool associations.
+        /// </summary>
+        public const string AgentFileToolAssociations = "agentFileToolAssociations";
+
+        /// <summary>
+        /// Workflows.
+        /// </summary>
+        public const string Workflows = "workflows";
 
         /// <summary>
         /// Tools.

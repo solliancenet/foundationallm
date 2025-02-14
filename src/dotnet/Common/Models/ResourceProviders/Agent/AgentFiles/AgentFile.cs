@@ -1,9 +1,9 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace FoundationaLLM.Common.Models.ResourceProviders.Agent
+namespace FoundationaLLM.Common.Models.ResourceProviders.Agent.AgentFiles
 {
     /// <summary>
-    /// Attachment resource.
+    /// Agent file resource.
     /// </summary>
     public class AgentFile : ResourceBase
     {
@@ -12,6 +12,12 @@ namespace FoundationaLLM.Common.Models.ResourceProviders.Agent
         /// </summary>
         [JsonIgnore]
         public override string? Type { get; set; } = nameof(AgentFile);
+
+        /// <summary>
+        /// Agent object identifier.
+        /// </summary>
+        [JsonPropertyName("agent_object_id")]
+        public string? AgentObjectId { get; set; }
 
         /// <summary>
         /// File stream of the attachment contents.

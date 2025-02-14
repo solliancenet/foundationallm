@@ -367,7 +367,7 @@ namespace FoundationaLLM.Orchestration.Core.Orchestration
                                 { OpenAIAgentCapabilityParameterNames.OpenAIFileId, fileMapping.OpenAIFileId! }
                             });
 
-                        vectorizationResult.TryGetValue(OpenAIAgentCapabilityParameterNames.AddOpenAIFileToVectorStoreSuccess, out var vectorizationSuccessObject);
+                        vectorizationResult.TryGetValue(OpenAIAgentCapabilityParameterNames.OpenAIFileActionOnVectorStoreSuccess, out var vectorizationSuccessObject);
                         var vectorizationSuccess = ((JsonElement)vectorizationSuccessObject!).Deserialize<bool>();
 
                         if (!vectorizationSuccess)
