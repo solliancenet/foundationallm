@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Text.Json;
+using FoundationaLLM.Common.Constants.Authentication;
 
 namespace FoundationaLLM.Authorization.ResourceProviders
 {
@@ -137,6 +138,9 @@ namespace FoundationaLLM.Authorization.ResourceProviders
                     ResourceExists = false
                 };
 
+            if (roleAssignmentResult.ResultReason == RoleAssignmentResultReasons.AssignmentExists)
+                throw new ResourceProviderException($"The role assignment already exists.",
+                    StatusCodes.Status409Conflict);
             throw new ResourceProviderException("The role assignment failed.");
         }
 

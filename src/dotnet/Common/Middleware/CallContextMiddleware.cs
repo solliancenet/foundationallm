@@ -49,7 +49,6 @@ namespace FoundationaLLM.Common.Middleware
 
                 // We are only expanding group membership for User objects
                 // Service Principal permissions must be assigned directly and not over group membership.
-                // The Agent Accest Token authentication scheme is 
                 if (userIdentity != null
                     && !claimsProviderService.IsServicePrincipal(context.User))
                 {
@@ -59,6 +58,7 @@ namespace FoundationaLLM.Common.Middleware
 
                             // Retrieve group membership when using the Agent Access Token authentication scheme.
                             userIdentity.GroupIds = claimsProviderService.GetSecurityGroupIds(context.User) ?? [];
+                            userIdentity.AssociatedWithAccessToken = true;
 
                             break;
 

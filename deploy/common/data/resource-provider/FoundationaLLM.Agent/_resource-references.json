@@ -11,6 +11,12 @@
 			"Filename": "/FoundationaLLM.Agent/OpenAIAssistants.json",
 			"Type": "workflow",
 			"Deleted": false
+		},
+		{
+			"Name": "LangGraphReactAgent",
+			"Filename": "/FoundationaLLM.Agent/LangGraphReactAgent.json",
+			"Type": "workflow",
+			"Deleted": false
 		}
 	]
 }

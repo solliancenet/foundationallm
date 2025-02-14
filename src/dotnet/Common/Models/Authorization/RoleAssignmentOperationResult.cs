@@ -12,5 +12,11 @@ namespace FoundationaLLM.Common.Models.Authorization
         /// </summary>
         [JsonPropertyName("success")]
         public required bool Success { get; set; }
+
+        /// <summary>
+        /// The reason for the result of the role assignment operation.
+        /// </summary>
+        [JsonPropertyName("result_reason")]
+        public string? ResultReason { get; set; }
     }
 }

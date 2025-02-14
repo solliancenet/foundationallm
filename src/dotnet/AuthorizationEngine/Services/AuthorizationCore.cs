@@ -19,6 +19,7 @@ using System.Collections.Concurrent;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using FoundationaLLM.Common.Constants.Authentication;
 
 namespace FoundationaLLM.AuthorizationEngine.Services
 {
@@ -548,6 +549,13 @@ namespace FoundationaLLM.AuthorizationEngine.Services
                                     default);
 
                             return new RoleAssignmentOperationResult() { Success = true };
+                        }
+                        else
+                        {
+                            return new RoleAssignmentOperationResult()
+                            {
+                                Success = false, ResultReason = RoleAssignmentResultReasons.AssignmentExists
+                            };
                         }
                     }
                 }

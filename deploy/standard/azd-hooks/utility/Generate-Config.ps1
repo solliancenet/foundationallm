@@ -241,6 +241,16 @@ $tokens.agentReaderGuid = $(New-Guid).Guid
 $tokens.promptReaderGuid = $(New-Guid).Guid
 $tokens.attachmentContributorGuid = $(New-Guid).Guid
 $tokens.conversationContributorGuid = $(New-Guid).Guid
+
+$tokens.openAiAssistantsReaderGuid = $(New-Guid).Guid
+$tokens.langGraphReactAgentReaderGuid = $(New-Guid).Guid
+$tokens.conversationContributorGuid2 = $(New-Guid).Guid
+$tokens.attachmentContributorGuid2 = $(New-Guid).Guid
+$tokens.configReadAccessGuid3 = $(New-Guid).Guid
+$tokens.configReadAccessGuid4 = $(New-Guid).Guid
+$tokens.pbacConversationsOwnerGuid = $(New-Guid).Guid
+$tokens.pbacConversationMappingsGuid = $(New-Guid).Guid
+
 $tokens.subscriptionId = $subscriptionId
 $tokens.storageResourceGroup = $resourceGroups.storage
 $tokens.opsResourceGroup = $resourceGroups.ops
@@ -550,6 +560,7 @@ $tokens.serviceNamespaceName = $serviceNamespaceName
 
 PopulateTemplate $tokens "..,data,resource-provider,FoundationaLLM.Agent,FoundationaLLM.template.json" "..,..,common,data,resource-provider,FoundationaLLM.Agent,FoundationaLLM.json"
 PopulateTemplate $tokens "..,data,resource-provider,FoundationaLLM.Agent,OpenAIAssistants.template.json" "..,..,common,data,resource-provider,FoundationaLLM.Agent,OpenAIAssistants.json"
+PopulateTemplate $tokens "..,data,resource-provider,FoundationaLLM.Agent,LangGraphReactAgent.template.json" "..,..,common,data,resource-provider,FoundationaLLM.Agent,LangGraphReactAgent.json"
 PopulateTemplate $tokens "..,data,resource-provider,FoundationaLLM.AIModel,completion-4-model.template.json" "..,..,common,data,resource-provider,FoundationaLLM.AIModel,completion-4-model.json"
 PopulateTemplate $tokens "..,data,resource-provider,FoundationaLLM.AIModel,completion-4o-model.template.json" "..,..,common,data,resource-provider,FoundationaLLM.AIModel,completion-4o-model.json"
 PopulateTemplate $tokens "..,data,resource-provider,FoundationaLLM.AIModel,embedding-model.template.json" "..,..,common,data,resource-provider,FoundationaLLM.AIModel,embedding-model.json"

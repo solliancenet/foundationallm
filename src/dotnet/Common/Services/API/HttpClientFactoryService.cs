@@ -214,7 +214,7 @@ namespace FoundationaLLM.Common.Services.API
         /// <param name="userIdentity">The Identity of the user.</param>
         /// <returns>URLException or NULL</returns>
         private UrlException? GetUrlExceptionForUserIdentity(APIEndpointConfiguration endpointConfiguration, UnifiedUserIdentity userIdentity)
-        => endpointConfiguration.UrlExceptions.SingleOrDefault(x => x.UserPrincipalName.ToLower() == userIdentity.UPN!.ToLower() && x.Enabled);
+            => endpointConfiguration.UrlExceptions.SingleOrDefault(x => x.UserPrincipalName.ToLower() == userIdentity.UPN!.ToLower() && x.Enabled);
         
     }
 }

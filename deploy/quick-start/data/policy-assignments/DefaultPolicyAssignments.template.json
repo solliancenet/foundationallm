@@ -56,6 +56,34 @@
             "updated_on": "${env:DEPLOY_TIME}",
             "created_by": "SYSTEM",
             "updated_by": "SYSTEM"
+        },
+        {
+			"name": "${env:POLICYGUID05}",
+			"type": "FoundationaLLM.Authorization/policyAssignments",
+			"object_id": "/providers/FoundationaLLM.Authorization/policyAssignments/${env:POLICYGUID05}",
+			"description": "Ownership on conversation resources for AllAgentsVirtualSecurityGroup by the FoundationaLLM.Conversation resource provider.",
+			"policy_definition_id": "/providers/FoundationaLLM.Authorization/policyDefinitions/00000000-0000-0000-0001-000000000001",
+			"principal_id": "5bb493a2-5909-4771-93ba-d83b7b5a1de9",
+			"principal_type": "Group",
+			"scope": "/instances/${env:FOUNDATIONALLM_INSTANCE_ID}/FoundationaLLM.Conversation/conversations",
+			"created_on": "${env:DEPLOY_TIME}",
+			"updated_on": "${env:DEPLOY_TIME}",
+			"created_by": "SYSTEM",
+			"updated_by": "SYSTEM"
+		},
+        {
+            "name": "${env:POLICYGUID06}",
+            "type": "FoundationaLLM.Authorization/policyAssignments",
+            "object_id": "/providers/FoundationaLLM.Authorization/policyAssignments/${env:POLICYGUID06}",
+            "description": "Ownership on conversation mapping resources for AllAgentsVirtualSecurityGroup managed by the FoundationaLLM.AzureOpenAI resource provider.",
+            "policy_definition_id": "/providers/FoundationaLLM.Authorization/policyDefinitions/00000000-0000-0000-0001-000000000001",
+            "principal_id": "5bb493a2-5909-4771-93ba-d83b7b5a1de9",
+            "principal_type": "Group",
+            "scope": "/instances/${env:FOUNDATIONALLM_INSTANCE_ID}/providers/FoundationaLLM.AzureOpenAI/conversationMappings",
+            "created_on": "${env:DEPLOY_TIME}",
+            "updated_on": "${env:DEPLOY_TIME}",
+            "created_by": "SYSTEM",
+            "updated_by": "SYSTEM"
         }
     ]
   }

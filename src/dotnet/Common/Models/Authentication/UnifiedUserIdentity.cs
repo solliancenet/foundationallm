@@ -24,13 +24,19 @@ namespace FoundationaLLM.Common.Models.Authentication
         /// The unique identifier of the user.
         /// </summary>
         [JsonPropertyName("user_id")]
-        public string ? UserId { get; set; }
+        public string? UserId { get; set; }
 
         /// <summary>
         /// The User Principal Name (UPN) of the user.
         /// </summary>
         [JsonPropertyName("upn")]
         public string? UPN { get; set; }
+
+        /// <summary>
+        /// Indicates whether the identity is associated with an agent access token.
+        /// </summary>
+        [JsonPropertyName("associated_with_access_token")]
+        public bool AssociatedWithAccessToken { get; set; } = false;
 
         /// <summary>
         /// The list of the identifiers of the groups to which the user belongs.
