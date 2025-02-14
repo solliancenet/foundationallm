@@ -92,7 +92,7 @@ namespace FoundationaLLM.Vectorization.Handlers
 
             var indexingResult = await Service.IndexEmbeddingsAsync(
                 embeddedContent,
-                ((IndexingProfile)VectorizationProfile).Settings!["IndexName"]);
+                ((IndexingProfile)VectorizationProfile).Settings!["index_name"]);
 
             state.AddOrReplaceIndexReferences(indexingResult);
 

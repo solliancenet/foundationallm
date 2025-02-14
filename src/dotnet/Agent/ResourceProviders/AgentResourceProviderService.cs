@@ -205,16 +205,18 @@ namespace FoundationaLLM.Agent.ResourceProviders
             };
 
             agent.ObjectId = resourcePath.GetObjectId(_instanceSettings.Id, _name);
-
-            if ((agent is KnowledgeManagementAgent { Vectorization.DedicatedPipeline: true, InlineContext: false } kmAgent))
+      
+            if (agent is KnowledgeManagementAgent { Vectorization.DedicatedPipeline: true, InlineContext: false } kmAgent)
             {
+                // If the agent is new, create the associated vectorization pipeline in an active state so the initial population is done.
+                bool isPipelineActive = existingAgentReference is null;
                 var result = await GetResourceProviderServiceByName(ResourceProviderNames.FoundationaLLM_Vectorization)
                     .HandlePostAsync(
                         $"/instances/{_instanceSettings.Id}/providers/{ResourceProviderNames.FoundationaLLM_Vectorization}/{VectorizationResourceTypeNames.VectorizationPipelines}/{kmAgent.Name}",
                         JsonSerializer.Serialize<VectorizationPipeline>(new VectorizationPipeline
                         {
                             Name = kmAgent.Name,
-                            Active = true,
+                            Active = isPipelineActive,
                             Description = $"Vectorization data pipeline dedicated to the {kmAgent.Name} agent.",
                             DataSourceObjectId = kmAgent.Vectorization.DataSourceObjectId!,
                             TextPartitioningProfileObjectId = kmAgent.Vectorization.TextPartitioningProfileObjectId!,

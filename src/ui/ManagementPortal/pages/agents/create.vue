@@ -1856,10 +1856,10 @@ export default {
 				text_splitter: 'TokenTextSplitter',
 				name: this.agentName,
 				settings: {
-					Tokenizer: 'MicrosoftBPETokenizer',
-					TokenizerEncoder: 'cl100k_base',
-					ChunkSizeTokens: this.chunkSize.toString(),
-					OverlapSizeTokens: this.overlapSize.toString(),
+					tokenizer: 'MicrosoftBPETokenizer',
+					tokenizer_encoder: 'cl100k_base',
+					chunk_size_tokens: this.chunkSize.toString(),
+					overlap_size_tokens: this.overlapSize.toString(),
 				},
 			};
 
