@@ -17,6 +17,7 @@ import type {
 	MessageContent,
 } from '@/js/types';
 import api from '@/js/api';
+import { isAgentExpired } from '@/js/helpers';
 // import eventBus from '@/js/eventBus';
 
 const DEFAULT_POLLING_INTERVAL_MS = 5000;
@@ -376,8 +377,9 @@ export const useAppStore = defineStore('app', {
 		getSessionAgent(session: Session) {
 			if (!session) return null;
 			let selectedAgent = this.selectedAgents.get(session.id);
+
 			if (!selectedAgent) {
-				if (this.lastSelectedAgent) {
+				if (this.lastSelectedAgent && !isAgentExpired(this.lastSelectedAgent)) {
 					// Default to the last selected agent to make the selection "sticky" across sessions.
 					selectedAgent = this.lastSelectedAgent;
 				} else {

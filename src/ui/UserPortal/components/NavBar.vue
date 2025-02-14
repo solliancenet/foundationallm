@@ -108,6 +108,7 @@
 <script lang="ts">
 import { hideAllPoppers } from 'floating-vue';
 import eventBus from '@/js/eventBus';
+import { isAgentExpired } from '@/js/helpers';
 import type { Session } from '@/js/types';
 
 interface AgentDropdownOption {
@@ -167,9 +168,14 @@ export default {
 			},
 			deep: true,
 		},
+		'$appStore.lastSelectedAgent': {
+			handler() {
+				this.setAgentOptions();
+				this.updateAgentSelection();
+			},
+			deep: true,
+		},
 	},
-
-	async created() {},
 
 	mounted() {
 		this.updateAgentSelection();
@@ -177,6 +183,8 @@ export default {
 
 	methods: {
 		handleAgentChange() {
+			if (isAgentExpired(this.agentSelection!.value)) return;
+
 			this.$appStore.setSessionAgent(this.currentSession, this.agentSelection!.value);
 			const message = this.agentSelection!.value
 				? `Agent changed to ${this.agentSelection!.label}`
@@ -201,9 +209,16 @@ export default {
 		handlePrint() {
 			window.print();
     },
-    
+
 		async setAgentOptions() {
-			this.agentOptions = this.$appStore.agents.map((agent) => ({
+			const isCurrentAgent = (agent): boolean  => {
+				return agent.resource.name === this.$appStore.getSessionAgent(this.currentSession)?.resource?.name;
+			}
+
+			// Filter out expired agents, but keep the currently selected agent even if it is expired
+			const notExpiredOrCurrentAgents = this.$appStore.agents.filter((agent) => !isAgentExpired(agent) || isCurrentAgent(agent));
+
+			this.agentOptions = notExpiredOrCurrentAgents.map((agent) => ({
 				label: agent.resource.display_name ? agent.resource.display_name : agent.resource.name,
 				type: agent.resource.type,
 				object_id: agent.resource.object_id,
@@ -230,6 +245,7 @@ export default {
 			];
 			this.virtualUser = await this.$appStore.getVirtualUser();
 
+			this.agentOptionsGroup = [];
 			this.agentOptionsGroup.push({
 				label: '',
 				items: [
