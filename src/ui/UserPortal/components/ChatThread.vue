@@ -21,15 +21,12 @@
 				<!-- Messages -->
 				<template v-if="messages.length !== 0">
 					<ChatMessage
-						v-for="(message, index) in messages.slice().reverse()"
+						v-for="(message, index) in messages.slice()"
 						:id="`message-${getMessageOrderFromReversedIndex(index)}`"
 						:key="message.renderId || message.id"
 						:message="message"
-						:show-word-animation="index === 0 && message.sender !== 'User'"
+						:show-word-animation="index === messages.length - 1 && message.sender !== 'User'"
 						role="log"
-						:aria-flowto="
-							index === 0 ? null : `message-${getMessageOrderFromReversedIndex(index) + 1}`
-						"
 						@rate="handleRateMessage($event.message)"
 					/>
 				</template>
@@ -121,6 +118,7 @@ export default {
 			const sessionAgent = this.$appStore.getSessionAgent(newSession);
 			this.welcomeMessage = this.getWelcomeMessage(sessionAgent);
 			this.isLoading = false;
+			this.scrollToBottom();
 		},
 
 		lastSelectedAgent(newAgent, oldAgent) {
@@ -136,6 +134,13 @@ export default {
 				this.isMessagePending = false;
 			}
 		},
+
+		messages: {
+			handler() {
+				this.scrollToBottom();
+			},
+			deep: true,
+		}
 	},
 
 	created() {
@@ -214,6 +219,12 @@ export default {
 
 			// this.isMessagePending = false;
 		},
+
+		scrollToBottom() {
+			this.$nextTick(() => {
+				this.$refs.messageContainer.scrollTop = this.$refs.messageContainer.scrollHeight;
+			});
+		},
 	},
 };
 </script>
@@ -245,7 +256,7 @@ export default {
 
 .chat-thread__messages {
 	display: flex;
-	flex-direction: column-reverse;
+	flex-direction: column;
 	flex: 1;
 	overflow-y: auto;
 	overscroll-behavior: auto;
