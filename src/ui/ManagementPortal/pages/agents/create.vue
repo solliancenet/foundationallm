@@ -20,12 +20,21 @@
 				<!-- Edit access control -->
 				<AccessControl
 					v-if="editAgent"
-					:scope="`providers/FoundationaLLM.Agent/agents/${agentName}`"
+					:scopes="[
+						{
+							label: 'Agent',
+							value: `providers/FoundationaLLM.Agent/agents/${agentName}`,
+						},
+						{
+							label: 'Prompt',
+							value: `providers/FoundationaLLM.Prompt/prompts/${agentPrompt?.resource?.name}`,
+						},
+					]"
 				/>
 			</div>
 		</div>
 
-		<div class="steps" :class="{ 'steps--loading': loading }">
+		<div class="steps">
 			<!-- Loading overlay -->
 			<template v-if="loading">
 				<div class="steps__loading-overlay" role="status" aria-live="polite">
@@ -1211,6 +1220,7 @@ const getDefaultFormValues = () => {
 		agentCapabilities: { label: 'None', value: null },
 
 		systemPrompt: defaultSystemPrompt as string,
+		agentPrompt: null as null | Prompt,
 
 		// orchestration_settings: {
 		// 	orchestrator: 'LangChain' as string,
@@ -1494,6 +1504,7 @@ export default {
 				this.loadingStatusText = `Retrieving prompt...`;
 				const prompt = await api.getPrompt(agent.prompt_object_id);
 				if (prompt && prompt.resource) {
+					this.agentPrompt = prompt;
 					this.systemPrompt = prompt.resource.prefix;
 				}
 			} else if (agent.workflow?.resource_object_ids) {
@@ -1506,6 +1517,7 @@ export default {
 				if (existingMainPrompt) {
 					const prompt = await api.getPrompt(existingMainPrompt.object_id);
 					if (prompt && prompt.resource) {
+						this.agentPrompt = prompt;
 						this.systemPrompt = prompt.resource.prefix;
 					}
 				}
@@ -2074,10 +2086,6 @@ export default {
 	position: relative;
 }
 
-.steps--loading {
-	pointer-events: none;
-}
-
 .steps__loading-overlay {
 	position: fixed;
 	top: 0;
@@ -2091,7 +2099,7 @@ export default {
 	gap: 16px;
 	z-index: 10;
 	background-color: rgba(255, 255, 255, 0.9);
-	pointer-events: none;
+	pointer-events: auto;
 }
 
 .step-section-header {

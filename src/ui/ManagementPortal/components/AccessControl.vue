@@ -17,34 +17,46 @@
 	>
 		<!-- Table step -->
 		<template v-if="currentStep === STEPS.TABLE_STEP">
-			<RoleAssignmentsTable :scope="scope" />
+
+			<!-- Multiple scopes -->
+			<TabView v-if="scopes.length > 1" v-model:activeIndex="currentScopeIndex" lazy>
+				<TabPanel v-for="scope in scopes" :key="scope.value" :header="scope.label">
+					<RoleAssignmentsTable :scope="currentScope.value" />
+				</TabPanel>
+			</TabView>
+
+			<!-- Single scope -->
+			<RoleAssignmentsTable v-else :scope="currentScope.value" />
 		</template>
 
 		<!-- Create step -->
 		<template v-if="currentStep === STEPS.CREATE_STEP">
-			<CreateRoleAssignment ref="createForm" headless :scope="scope" />
+			<CreateRoleAssignment ref="createForm" headless :scope="currentScope.value" />
 		</template>
 
+		<!-- Footer -->
 		<template #footer>
-			<!-- Table step buttons -->
-			<template v-if="currentStep === STEPS.TABLE_STEP">
-				<Button label="Close" text @click="handleClose" />
+			<div class="mt-4">
+				<!-- Table step buttons -->
+				<template v-if="currentStep === STEPS.TABLE_STEP">
+					<Button label="Close" text @click="handleClose" class="pt-2" />
 
-				<Button v-if="currentStep === STEPS.TABLE_STEP" @click="currentStep = STEPS.CREATE_STEP">
-					<i class="pi pi-plus" style="color: var(--text-primary); margin-right: 8px"></i>
-					Add role assignment for this resource
-				</Button>
-			</template>
+					<Button v-if="currentStep === STEPS.TABLE_STEP" @click="currentStep = STEPS.CREATE_STEP">
+						<i class="pi pi-plus" style="color: var(--text-primary); margin-right: 8px"></i>
+						Add role assignment for this {{ currentScope.label }}
+					</Button>
+				</template>
 
-			<!-- Create step buttons -->
-			<template v-else-if="currentStep === STEPS.CREATE_STEP">
-				<Button label="Back" text @click="currentStep = STEPS.TABLE_STEP" />
+				<!-- Create step buttons -->
+				<template v-else-if="currentStep === STEPS.CREATE_STEP">
+					<Button label="Back" text @click="currentStep = STEPS.TABLE_STEP" />
 
-				<Button @click="handleCreateRoleAssignment">
-					<i class="pi pi-plus" style="color: var(--text-primary); margin-right: 8px"></i>
-					Create role assignment
-				</Button>
-			</template>
+					<Button @click="handleCreateRoleAssignment">
+						<i class="pi pi-plus" style="color: var(--text-primary); margin-right: 8px"></i>
+						Create role assignment
+					</Button>
+				</template>
+			</div>
 		</template>
 	</Dialog>
 </template>
@@ -63,10 +75,10 @@ export default {
 	},
 
 	props: {
-		scope: {
-			type: String,
-			required: false,
-			default: null,
+		scopes: {
+			type: Array,
+			required: true,
+			// default: [],
 		},
 	},
 
@@ -74,8 +86,15 @@ export default {
 		return {
 			STEPS,
 			dialogOpen: false,
+			currentScopeIndex: 0,
 			currentStep: STEPS.TABLE_STEP,
 		};
+	},
+
+	computed: {
+		currentScope() {
+			return this.scopes[this.currentScopeIndex];
+		},
 	},
 
 	methods: {
