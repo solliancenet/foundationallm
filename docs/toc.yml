@@ -80,6 +80,10 @@ items:
       href: setup-guides/agents/knowledge-management-agent.md
     - name: Prompt resources
       href: setup-guides/agents/prompt-resource.md
+    - name: Agent Workflows
+      href: setup-guides/agents/agents_workflows.md
+    - name: Agent Access Token
+      href: setup-guides/agents/Agent_AccessToken.md
   - name: Branding
     href: setup-guides/branding/index.md
   - name: Exposed APIs
