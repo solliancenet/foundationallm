@@ -200,7 +200,7 @@ export default {
 
 		handlePrint() {
 			window.print();
-    },
+    	},
     
 		async setAgentOptions() {
 			this.agentOptions = this.$appStore.agents.map((agent) => ({
