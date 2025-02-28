@@ -439,6 +439,27 @@ namespace FoundationaLLM.Common.Models.Authorization
                         "Delete conversations.",
                         "Conversation")
                 },
+                {
+                    AuthorizableActionNames.FoundationaLLM_DataPipeline_DataPipelines_Read,
+                    new AuthorizableAction(
+                        AuthorizableActionNames.FoundationaLLM_DataPipeline_DataPipelines_Read,
+                        "Read data pipelines.",
+                        "DataPipeline")
+                },
+                {
+                    AuthorizableActionNames.FoundationaLLM_DataPipeline_DataPipelines_Write,
+                    new AuthorizableAction(
+                        AuthorizableActionNames.FoundationaLLM_DataPipeline_DataPipelines_Write,
+                        "Create or update data pipelines.",
+                        "DataPipeline")
+                },
+                {
+                    AuthorizableActionNames.FoundationaLLM_DataPipeline_DataPipelines_Delete,
+                    new AuthorizableAction(
+                        AuthorizableActionNames.FoundationaLLM_DataPipeline_DataPipelines_Delete,
+                        "Delete data pipelines.",
+                        "DataPipeline")
+                },
             });
 
         /// <summary>

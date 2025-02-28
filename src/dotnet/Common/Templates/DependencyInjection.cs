@@ -429,5 +429,56 @@ namespace FoundationaLLM
                 };
             });
         }
+        
+        /// <summary>
+        /// Add the named <see cref="IStorageService"/> implementation for the FoundationaLLM.DataPipeline resource provider.
+        /// </summary>
+        /// <param name="builder">The application builder.</param>
+        public static void AddDataPipelineResourceProviderStorage(this IHostApplicationBuilder builder)
+        {
+            builder.Services.AddOptions<BlobStorageServiceSettings>(
+                DependencyInjectionKeys.FoundationaLLM_ResourceProviders_DataPipeline)
+                .Bind(builder.Configuration.GetSection(AppConfigurationKeySections.FoundationaLLM_ResourceProviders_DataPipeline_Storage));
+
+            builder.Services.AddSingleton<IStorageService, BlobStorageService>(sp =>
+            {
+                var settings = sp.GetRequiredService<IOptionsMonitor<BlobStorageServiceSettings>>()
+                    .Get(DependencyInjectionKeys.FoundationaLLM_ResourceProviders_DataPipeline);
+                var logger = sp.GetRequiredService<ILogger<BlobStorageService>>();
+
+                return new BlobStorageService(
+                    Options.Create<BlobStorageServiceSettings>(settings),
+                    logger)
+                {
+                    InstanceName = DependencyInjectionKeys.FoundationaLLM_ResourceProviders_DataPipeline
+                };
+            });
+        }
+
+        /// <summary>
+        /// Add the named <see cref="IStorageService"/> implementation for the FoundationaLLM.DataPipeline resource provider.
+        /// </summary>
+        /// <param name="services">The <see cref="IServiceCollection"/> dependency injection container service collection.</param>
+        /// <param name="configuration">The <see cref="IConfigurationManager"/> application configuration manager.</param>
+        public static void AddDataPipelineResourceProviderStorage(this IServiceCollection services, IConfigurationManager configuration)
+        {
+            services.AddOptions<BlobStorageServiceSettings>(
+                DependencyInjectionKeys.FoundationaLLM_ResourceProviders_DataPipeline)
+                .Bind(configuration.GetSection(AppConfigurationKeySections.FoundationaLLM_ResourceProviders_DataPipeline_Storage));
+
+            services.AddSingleton<IStorageService, BlobStorageService>(sp =>
+            {
+                var settings = sp.GetRequiredService<IOptionsMonitor<BlobStorageServiceSettings>>()
+                    .Get(DependencyInjectionKeys.FoundationaLLM_ResourceProviders_DataPipeline);
+                var logger = sp.GetRequiredService<ILogger<BlobStorageService>>();
+
+                return new BlobStorageService(
+                    Options.Create<BlobStorageServiceSettings>(settings),
+                    logger)
+                {
+                    InstanceName = DependencyInjectionKeys.FoundationaLLM_ResourceProviders_DataPipeline
+                };
+            });
+        }
     }
 }

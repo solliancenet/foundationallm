@@ -133,6 +133,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VectorizationEngine", "dotn
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthorizationEngine", "dotnet\AuthorizationEngine\AuthorizationEngine.csproj", "{57FDCB0F-6FF4-4514-BD34-881055866584}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataPipeline", "dotnet\DataPipeline\DataPipeline.csproj", "{710F5569-8B02-4876-B9C8-F79AB0B044A2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -338,6 +340,10 @@ Global
 		{57FDCB0F-6FF4-4514-BD34-881055866584}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{57FDCB0F-6FF4-4514-BD34-881055866584}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{57FDCB0F-6FF4-4514-BD34-881055866584}.Release|Any CPU.Build.0 = Release|Any CPU
+		{710F5569-8B02-4876-B9C8-F79AB0B044A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{710F5569-8B02-4876-B9C8-F79AB0B044A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{710F5569-8B02-4876-B9C8-F79AB0B044A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{710F5569-8B02-4876-B9C8-F79AB0B044A2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -403,6 +409,7 @@ Global
 		{EE94F312-488C-448B-92C9-20C4C1816F16} = {2C948535-3001-4852-9686-492A23E9E356}
 		{60EFF702-32FA-449B-BA34-7DEA70616D3F} = {B6DC1190-2873-44A3-85B3-63D7BDE99231}
 		{57FDCB0F-6FF4-4514-BD34-881055866584} = {B6DC1190-2873-44A3-85B3-63D7BDE99231}
+		{710F5569-8B02-4876-B9C8-F79AB0B044A2} = {2C948535-3001-4852-9686-492A23E9E356}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FF5DE858-4B85-4EE8-8A6D-46E8E4FBA078}

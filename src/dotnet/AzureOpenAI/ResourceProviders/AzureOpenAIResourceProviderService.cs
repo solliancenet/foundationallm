@@ -234,7 +234,7 @@ namespace FoundationaLLM.AzureOpenAI.ResourceProviders
             // Retrieve using the OpenAI file ID.           
             var result = await fileClient.DownloadFileAsync(fileMapping!.OpenAIFileId);
 
-            return new ResourceProviderActionResult<FileContent>(true)
+            return new ResourceProviderActionResult<FileContent>(fileMapping.FileObjectId, true)
             {
                 Resource = new()
                 {

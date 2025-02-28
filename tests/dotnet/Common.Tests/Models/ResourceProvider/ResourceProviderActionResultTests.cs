@@ -9,12 +9,13 @@ namespace FoundationaLLM.Common.Tests.Models.ResourceProvider
         {
             // Arrange
             bool isSuccess = true;
+            string objectId = string.Empty;
 
             // Act
-            var result = new ResourceProviderActionResult(isSuccess);
+            var result = new ResourceProviderActionResult(objectId, isSuccess);
 
             // Assert
-            Assert.True(result.IsSuccessResult);
+            Assert.True(result.IsSuccess);
         }
     }
 }

@@ -165,7 +165,7 @@ namespace Management.Client.Tests.Clients.Resources
         {
             // Arrange
             var promptName = "test-prompt";
-            var expectedPurgeResult = new ResourceProviderActionResult(true);
+            var expectedPurgeResult = new ResourceProviderActionResult(promptName, true);
 
             _mockRestClient.Resources
                 .ExecuteResourceActionAsync<ResourceProviderActionResult>(

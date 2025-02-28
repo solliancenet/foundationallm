@@ -183,7 +183,7 @@ namespace Management.Client.Tests.Clients.Resources
         {
             // Arrange
             var dataSourceName = "test-dataSource";
-            var expectedPurgeResult = new ResourceProviderActionResult(true);
+            var expectedPurgeResult = new ResourceProviderActionResult(dataSourceName, true);
 
             _mockRestClient.Resources
                 .ExecuteResourceActionAsync<ResourceProviderActionResult>(

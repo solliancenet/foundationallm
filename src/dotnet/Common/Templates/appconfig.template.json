@@ -225,6 +225,20 @@
             "tags": {}
         },
         {
+            "key": "FoundationaLLM:ResourceProviders:DataPipeline:Storage:AuthenticationType",
+            "value": "AzureIdentity",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:ResourceProviders:DataPipeline:Storage:AccountName",
+            "value": "${env:AZURE_STORAGE_ACCOUNT_NAME}",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
             "key": "FoundationaLLM:APIEndpoints:AuthorizationAPI:Essentials:APIUrl",
             "value": "${env:SERVICE_AUTH_API_ENDPOINT_URL}",
             "label": null,

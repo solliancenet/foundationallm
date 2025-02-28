@@ -3,6 +3,17 @@
 > [!NOTE]
 > This section is for changes that are not yet released but will affect future releases.
 
+## Starting from 0.9.5
+
+### Configuration changes
+
+Added the following App Configuration value:
+
+|Name | Default value | Description |
+|--- | --- | --- |
+| `FoundationaLLM:ResourceProviders:DataPipeline:Storage:AccountName` | `<storage_account_name>` | Provides the storage account used by the FoundationaLLM.DataPipeline resource provider. |
+| `FoundationaLLM:ResourceProviders:DataPipeline:Storage:AuthenticationType` | `AzureIdentity` |  Indicates the authentication type used by the FoundationaLLM.DataPipeline resource provider to connect to the storage account. |
+
 ## Starting with 0.9.4-rc100
 
 ### Configuration changes

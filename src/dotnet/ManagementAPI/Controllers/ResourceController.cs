@@ -123,8 +123,9 @@ namespace FoundationaLLM.Management.API.Controllers
                 resourcePath,
                 async (resourceProviderService) =>
                 {
-                    await resourceProviderService.HandleDeleteAsync($"instances/{instanceId}/providers/{resourceProvider}/{resourcePath}", _callContext.CurrentUserIdentity);
-                    return new OkObjectResult(new ResourceProviderActionResult(true));
+                    var objectId = $"instances/{instanceId}/providers/{resourceProvider}/{resourcePath}";
+                    await resourceProviderService.HandleDeleteAsync(objectId, _callContext.CurrentUserIdentity!);
+                    return new OkObjectResult(new ResourceProviderActionResult(objectId, true));
                 });
 
         private async Task<IActionResult> HandleRequest(string resourceProvider, string resourcePath, Func<IResourceProviderService, Task<IActionResult>> handler)
