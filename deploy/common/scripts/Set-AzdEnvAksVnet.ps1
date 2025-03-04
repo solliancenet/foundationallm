@@ -1,4 +1,4 @@
-#! /usr/bin/pwsh
+#!/usr/bin/pwsh
 <#
 .SYNOPSIS
 Sets the environment variables for Networking in the default environment file.
@@ -33,6 +33,7 @@ directory.
 
 #>
 
+# Parameters for setting environment variables for Networking
 Param(
 	[parameter(Mandatory = $false, HelpMessage = "CIDR block for the AKS Services - e.g., 10.100.0.0/16")][string]
 	$fllmAksServiceCidr = "10.100.0.0/16",
@@ -52,45 +53,31 @@ $ErrorActionPreference = "Stop"
 $ScriptDirectory = Split-Path -Path $MyInvocation.MyCommand.Path
 . $ScriptDirectory/Function-Library.ps1
 
-function Get-HostNameFromPfxName {
-	param(
-		[string]$directory
-	)
-
-	# Fail if basePath directory does not exist
-	if (-not (Test-Path -Path "$directory")) {
-		throw "The basePath $directory does not exist."
-	}
-
-	# Get the first pfx file in the directory
-	$certificate = Get-ChildItem -Path "$directory" -Filter "*.pfx" | Select-Object -First 1
-
-	# Fail if certificate does not exist
-	if (-not $certificate) {
-		throw "No pfx files found in the $directory directory."
-	}
-
-	$hostname = $certificate.Name -replace "\.pfx$"
-	return $hostname
-}
-
 # Define the path to the certificates
 $basePath = "./certs" | Get-AbsolutePath
 
 # Fail if base path does not exist
 if (-not (Test-Path -Path $basePath)) {
-	throw "The base path $basePath does not exist."
+	New-Item -ItemType Directory -Path $basePath -Force
 }
 
-$hosts = @(
-	"coreapi",
-	"managementapi",
-	"managementui",
-	"chatui"
-)
+$baseDomain = Read-Host -Prompt "Please enter the base domain name for FLLM services"
+
+$hosts = @{
+	"coreapi"       = "core-api"
+	"managementapi" = "management-api"
+	"managementui"  = "management-ui"
+	"chatui"        = "chat-ui"
+}
 $hostnames = @{}
-foreach ($hostId in $hosts) {
-	$hostnames[$hostId] = Get-HostNameFromPfxName -directory "$basePath/$hostId"
+foreach ($hostId in $hosts.GetEnumerator()) {
+	$hostname = Read-Host -Prompt "Please enter the hostname for $($hostId.Value) service"
+
+	$hostnames[$hostId.Key] = @($hostname, $baseDomain) -join "."
+	$hostPath = Join-Path -Path $basePath -ChildPath $hostId.Key
+	if (-not (Test-Path -Path $hostPath)) {
+		New-Item -ItemType Directory -Path $hostPath -Force
+	}
 }
 
 # Set the environment values
@@ -130,8 +117,9 @@ User Portal Hostname: $($hostnames["chatui"])
 Write-Host -ForegroundColor Yellow $message
 
 foreach ($value in $envValues.GetEnumerator()) {
-	Write-Host -ForegroundColor Yellow "Setting $($value.Name) to $($value.Value)"
-	azd env set $value.Name $value.Value
+	Invoke-CliCommand "Setting $($value.Name) to $($value.Value)" {
+		azd env set $value.Name $value.Value
+	}
 }
 
 $message = @"
@@ -143,3 +131,5 @@ Write-Host -ForegroundColor Blue $message
 Invoke-CliCommand "azd env get-values" {
 	azd env get-values
 }
+
+Stop-Transcript
