@@ -33,7 +33,7 @@ param monitorWorkspaceName string
 @description('Networking Resource Group Name')
 param networkingResourceGroupName string
 
-param openAiName string
+param openAiName stringMLS_PIPELINE_API_SSL_SECRET_NAME
 
 param deployOpenAi bool
 

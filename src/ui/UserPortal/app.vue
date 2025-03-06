@@ -152,10 +152,6 @@ main {
 		print-color-adjust: exact;
 	}
 
-	.message {
-		width: 95% !important;
-	}
-
 	.message__copy, .message__footer {
 		display: none !important;
 	}
@@ -185,19 +181,19 @@ main {
 	}
 
 	.katex {
-        font-size: inherit !important;
+        font-size: inherit !important; /* Adjust font size to fit */
         line-height: normal !important;
     }
 
 	.katex .vlist > span > span {
-        display: inline !important;
+        display: inline !important; /* Fixes spacing issue */
     }
 
 	.katex-display {
         display: block !important;
         margin: 0 !important;
         padding: 0 !important;
-        text-align: left !important;
+        text-align: left !important; /* Ensure alignment */
     }
 
 	.katex-block {

@@ -91,6 +91,12 @@ namespace FoundationaLLM.Common.Constants.Configuration
             "FoundationaLLM:ResourceProviders:Vectorization:Storage:*";
         
         /// <summary>
+        /// Filter for the configuration section used to identify the storage settings for the FoundationaLLM.DataPipeline resource provider.
+        /// </summary>
+        public const string FoundationaLLM_ResourceProviders_DataPipeline_Storage =
+            "FoundationaLLM:ResourceProviders:DataPipeline:Storage:*";
+        
+        /// <summary>
         /// Filter for the configuration section used to identify the settings for all API endpoints.
         /// </summary>
         public const string FoundationaLLM_APIEndpoints =

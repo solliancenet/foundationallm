@@ -84,8 +84,6 @@ $env:POLICYGUID03 = $($(New-Guid).Guid)
 $env:POLICYGUID04 = $($(New-Guid).Guid)
 $env:POLICYGUID05 = $($(New-Guid).Guid)
 $env:POLICYGUID06 = $($(New-Guid).Guid)
-$env:POLICYGUID07 = $($(New-Guid).Guid)
-$env:POLICYGUID08 = $($(New-Guid).Guid)
 
 Invoke-AndRequireSuccess "Create New OpenAI Assistant" {
     $accountInfo = $(az resource show --ids $env:AZURE_OPENAI_ID --query "{resourceGroup:resourceGroup,name:name}" | ConvertFrom-Json)

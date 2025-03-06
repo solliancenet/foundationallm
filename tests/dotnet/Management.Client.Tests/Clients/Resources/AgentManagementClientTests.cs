@@ -156,7 +156,7 @@ namespace Management.Client.Tests.Clients.Resources
         {
             // Arrange
             var agentName = "test-agent";
-            var expectedPurgeResult = new ResourceProviderActionResult(true);
+            var expectedPurgeResult = new ResourceProviderActionResult(agentName, true);
 
             _mockRestClient.Resources
                 .ExecuteResourceActionAsync<ResourceProviderActionResult>(

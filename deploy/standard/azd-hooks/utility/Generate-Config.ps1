@@ -256,8 +256,6 @@ $tokens.dalleImageGenerationReaderGuid = $(New-Guid).Guid
 $tokens.foundationaLLMContentSearchToolReaderGuid = $(New-Guid).Guid
 $tokens.pbacConversationsOwnerGuid = $(New-Guid).Guid
 $tokens.pbacConversationMappingsGuid = $(New-Guid).Guid
-$tokens.pbacAttachmentsOwnerGuid = $(New-Guid).Guid
-$tokens.pbacFileMappingsGuid = $(New-Guid).Guid
 
 $tokens.subscriptionId = $subscriptionId
 $tokens.storageResourceGroup = $resourceGroups.storage

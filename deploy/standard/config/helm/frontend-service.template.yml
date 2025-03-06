@@ -20,7 +20,6 @@ azureWorkloadIdentity:
   tenantId: {{tenantId}}
 apihost: {{serviceHostname}}
 baseUrl: {{serviceBaseUrl}}
-instanceId: {{instanceId}}
 
 ingress:
   enabled: false

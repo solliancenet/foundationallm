@@ -8,8 +8,7 @@ Param(
     [parameter(Mandatory = $false)][string]$secretProviderClassManifest,
     [parameter(Mandatory = $false)][string]$serviceNamespace = "fllm",
     [parameter(Mandatory = $false)][string]$registry = "ghcr.io/solliancenet",
-    [parameter(Mandatory = $false)][string]$version = "0.7.0",
-    [parameter(Mandatory = $false)][string]$ingressEscrowed = $false
+    [parameter(Mandatory = $false)][string]$version = "0.7.0"
 )
 
 Set-StrictMode -Version 3.0
@@ -57,24 +56,13 @@ Invoke-AndRequireSuccess "Deploying secret provider class" {
 }
 
 Invoke-AndRequireSuccess "Deploy ingress-nginx" {
-    if ($ingressEscrowed)
-    {
-        helm upgrade `
-            --install gateway oci://$($registry)/helm/ingress-nginx `
-            --namespace ${gatewayNamespace} `
-            --values ${ingressNginxValues} `
-            --version 4.10.0
-    }
-    else 
-    {
-        helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-        helm repo update
-        helm upgrade `
-            --install gateway ingress-nginx/ingress-nginx `
-            --namespace ${gatewayNamespace} `
-            --values ${ingressNginxValues} `
-            --version 4.10.0        
-    }
+    helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+    helm repo update
+    helm upgrade `
+        --install gateway ingress-nginx/ingress-nginx `
+        --namespace ${gatewayNamespace} `
+        --values ${ingressNginxValues} `
+        --version 4.10.0
 }
 
 # **** Service Namespace ****

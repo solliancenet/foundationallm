@@ -1,12 +1,12 @@
 {
     "items": [
         {
-            "key": ".appconfig.featureflag/FoundationaLLM.Agent.PrivateStore",
-            "value": "{\"id\":\"FoundationaLLM.Agent.PrivateStore\",\"description\":\"\",\"enabled\":false,\"conditions\":{\"client_filters\":[]}}",
-            "label": null,
-            "content_type": "application/vnd.microsoft.appconfig.ff+json;charset=utf-8",
-            "tags": {}
-        },
+			"key": ".appconfig.featureflag/FoundationaLLM.Agent.PrivateStore",
+			"value": "{\"id\":\"FoundationaLLM.Agent.PrivateStore\",\"description\":\"\",\"enabled\":false,\"conditions\":{\"client_filters\":[]}}",
+			"label": null,
+			"content_type": "application/vnd.microsoft.appconfig.ff+json;charset=utf-8",
+			"tags": {}
+		},
         {
             "key": "FoundationaLLM:Instance:Id",
             "value": "${env:FOUNDATIONALLM_INSTANCE_ID}",
@@ -31,13 +31,6 @@
         {
             "key": "FoundationaLLM:Instance:IdentitySubstitutionUserPrincipalNamePattern",
             "value": "",
-            "label": null,
-            "content_type": "",
-            "tags": {}
-        },
-        {
-            "key": "FoundationaLLM:Instance:EnableResourceProvidersCache",
-            "value": "false",
             "label": null,
             "content_type": "",
             "tags": {}
@@ -219,6 +212,20 @@
         },
         {
             "key": "FoundationaLLM:ResourceProviders:Vectorization:Storage:AccountName",
+            "value": "${env:AZURE_STORAGE_ACCOUNT_NAME}",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:ResourceProviders:DataPipeline:Storage:AuthenticationType",
+            "value": "AzureIdentity",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:ResourceProviders:DataPipeline:Storage:AccountName",
             "value": "${env:AZURE_STORAGE_ACCOUNT_NAME}",
             "label": null,
             "content_type": "",

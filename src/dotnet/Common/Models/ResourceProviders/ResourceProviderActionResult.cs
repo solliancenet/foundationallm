@@ -1,11 +1,17 @@
-﻿namespace FoundationaLLM.Common.Models.ResourceProviders
+﻿using System.Text.Json.Serialization;
+
+namespace FoundationaLLM.Common.Models.ResourceProviders
 {
     /// <summary>
-    /// The result of an action executed by a resource provider.
+    /// Represents the result of executing a resource provider action.
     /// </summary>
-    /// <param name="IsSuccessResult">Indicates whether the action executed successfully or not.</param>
+    /// <param name="ObjectId">The object id to which the result refers to.</param>
+    /// <param name="IsSuccess">Indicates whether the execution was completed successfully.</param>
+    /// <param name="ErrorMessage">When IsSuccess is false, contains an error message with details.</param>
     public record ResourceProviderActionResult(
-        bool IsSuccessResult)
+        [property: JsonPropertyName("object_id")] string ObjectId,
+        [property: JsonPropertyName("is_success")] bool IsSuccess,
+        [property: JsonPropertyName("error_message")] string? ErrorMessage = null)
     {
     }
 }

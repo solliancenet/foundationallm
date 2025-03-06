@@ -216,6 +216,17 @@ export default {
 		})) as Session;
 	},
 
+	/**
+	 * Retrieves messages for a given session.
+	 * @param sessionId - The ID of the session.
+	 * @returns An array of messages.
+	 */
+	async getMessages(sessionId: string) {
+		return (await this.fetch(
+			`/instances/${this.instanceId}/sessions/${sessionId}/messages`,
+		)) as Array<Message>;
+	},
+
 	// Mock polling route
 	// async getMessage(messageId: string) {
 	// 	return await $fetch(`/api/stream-message/`);
@@ -231,17 +242,6 @@ export default {
 		return (await this.fetch(
 			`/instances/${this.instanceId}/sessions/${sessionId}/completionprompts/${promptId}`,
 		)) as CompletionPrompt;
-	},
-
-	/**
-	 * Retrieves messages for a given session.
-	 * @param sessionId - The ID of the session.
-	 * @returns An array of messages.
-	 */
-	async getMessages(sessionId: string) {
-		return (await this.fetch(
-			`/instances/${this.instanceId}/sessions/${sessionId}/messages`,
-		)) as Array<Message>;
 	},
 
 	/**

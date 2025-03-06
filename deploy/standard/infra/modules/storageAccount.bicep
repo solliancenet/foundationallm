@@ -86,7 +86,7 @@ resource main 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   }
 
   sku: {
-    name: 'Standard_GRS'
+    name: 'Standard_GZRS'
   }
 
   properties: {

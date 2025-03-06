@@ -32,9 +32,6 @@ spec:
         - name: {{ .name }}
       {{- end -}}
       {{- end }}
-      volumes:
-        - name: tmpfs
-          emptyDir: {}
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -64,9 +61,6 @@ spec:
                   key: {{ .name }}
           {{- end -}}
           {{- end }}
-          volumeMounts:
-            - name: tmpfs
-              mountPath: /tmp
           ports:
             - name: http
               containerPort: 80

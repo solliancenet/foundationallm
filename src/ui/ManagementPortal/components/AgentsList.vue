@@ -13,7 +13,7 @@
 			:value="agents"
 			striped-rows
 			scrollable
-			sortField="resource.name"
+			sortField="resource.display_name"
 			:sortOrder="1"
 			table-style="max-width: 100%"
 			size="small"

@@ -178,7 +178,10 @@ namespace FoundationaLLM.Agent.ResourceProviders
                     await DeleteAgentAccessToken(resourcePath);
                     break;
                 case AgentResourceTypeNames.AgentFiles:
-                    await DeleteAgentFile(resourcePath, userIdentity);
+                    var attachment = await _cosmosDBService.GetAgentFile(_instanceSettings.Id, resourcePath.MainResourceId!, resourcePath.ResourceId!)
+                        ?? throw new ResourceProviderException($"The resource {resourcePath.ResourceTypeInstances[0].ResourceId!} of type {resourcePath.MainResourceTypeName} was not found.");
+
+                    await _cosmosDBService.DeleteAgentFile(attachment);
                     break;
                 default:
                     throw new ResourceProviderException(
@@ -563,25 +566,6 @@ namespace FoundationaLLM.Agent.ResourceProviders
                 return fallbackResult;
 
             var agentClientSecretKey = AgentClientSecretKey.FromClientSecretKey(clientSecretKey);
-            var accessTokens = await LoadAgentAccessTokens(resourcePath);
-            var matchingAccessToken = accessTokens.FirstOrDefault(x => x.Resource.Id == new Guid(agentClientSecretKey.Id))?.Resource;
-            if (matchingAccessToken != null)
-            {
-                if (matchingAccessToken.ExpirationDate.HasValue && matchingAccessToken.ExpirationDate.Value < DateTime.UtcNow)
-                {
-                    _logger.LogWarning("An expired agent access token was used for the agent {AgentName} in instance {InstanceId}.",
-                        agentClientSecretKey.AgentName,
-                        resourcePath.InstanceId);
-                    return fallbackResult;
-                }
-                if (!matchingAccessToken.Active)
-                {
-                    _logger.LogWarning("An inactive agent access token was used for the agent {AgentName} in instance {InstanceId}.",
-                        agentClientSecretKey.AgentName,
-                        resourcePath.InstanceId);
-                    return fallbackResult;
-                }
-            }
 
             if (!StringComparer.OrdinalIgnoreCase.Equals(agentClientSecretKey.AgentName, resourcePath.MainResourceId))
                 return fallbackResult;
@@ -593,7 +577,7 @@ namespace FoundationaLLM.Agent.ResourceProviders
 
             if (result.Valid)
             {
-                // Set virtual identity.
+                // Set virtual identity
                 var agent = await GetResourceAsync<AgentBase>($"/instances/{resourcePath.InstanceId}/providers/{_name}/{AgentResourceTypeNames.Agents}/{agentClientSecretKey.AgentName}", userIdentity);
                 var upn =
                     $"aat_{agentClientSecretKey.AgentName}_{agentClientSecretKey.Id}@foundationallm.internal_";
@@ -680,6 +664,11 @@ namespace FoundationaLLM.Agent.ResourceProviders
                 throw new ResourceProviderException("The attached file is not valid.",
                     StatusCodes.Status400BadRequest);
 
+            //if (!resourcePath.ResourceId!.StartsWith("af-") ||
+            //    !Guid.TryParse(resourcePath.ResourceId.Split('-').Last(), out var _))
+            //    throw new ResourceProviderException("The resource id is not valid.",
+            //        StatusCodes.Status400BadRequest);
+
             var uniqueId = $"af-{Guid.NewGuid()}";
             var extension = GetFileExtension(formFile.FileName);
             var fullName = $"{uniqueId}{extension}";
@@ -727,48 +716,6 @@ namespace FoundationaLLM.Agent.ResourceProviders
             };
         }
 
-        private async Task DeleteAgentFile(ResourcePath resourcePath, UnifiedUserIdentity userIdentity)
-        {
-            var attachment = await _cosmosDBService.GetAgentFile(_instanceSettings.Id, resourcePath.MainResourceId!, resourcePath.ResourceId!)
-                        ?? throw new ResourceProviderException($"The resource {resourcePath.ResourceTypeInstances[0].ResourceId!} of type {resourcePath.MainResourceTypeName} was not found.");
-
-            var filePath = $"/{_name}/{_instanceSettings.Id}/{resourcePath.MainResourceId!}/Associations.json";
-            await EnsureAgentFileToolAssociationsFileExists(filePath);
-
-            var fileContent = await _storageService.ReadFileAsync(_storageContainerName, filePath, default);
-            var existingAssociations = JsonSerializer.Deserialize<List<AgentFileToolAssociation>>(Encoding.UTF8.GetString(fileContent.ToArray()))!;
-
-            var fileObjectId = $"/{resourcePath.RawResourcePath}";
-            var fileToolAssociation = existingAssociations.Where(x => x.FileObjectId == fileObjectId).SingleOrDefault();
-
-            if (fileToolAssociation != null)
-            {
-                if (!ResourcePath.TryParse(
-                    $"/instances/{_instanceSettings.Id}/providers/{_name}/{AgentResourceTypeNames.Agents}/{resourcePath.MainResourceId}/{AgentResourceTypeNames.AgentFileToolAssociations}/{Guid.NewGuid()}",
-                    [_name],
-                    AgentResourceProviderMetadata.AllowedResourceTypes,
-                    false,
-                    out var toolAssociationResourcePath))
-                        throw new ResourceProviderException("The object definition is invalid.",
-                            StatusCodes.Status400BadRequest);
-
-                var associatedTools = fileToolAssociation.AssociatedResourceObjectIds!.Keys.ToList();
-                foreach (var toolObjectId in associatedTools)
-                    await RemoveFileToolAssociation(fileObjectId, toolObjectId, fileToolAssociation, toolAssociationResourcePath!, userIdentity);
-
-                existingAssociations.Remove(fileToolAssociation);
-
-                await _storageService.WriteFileAsync(
-                    _storageContainerName,
-                    filePath,
-                    JsonSerializer.Serialize(existingAssociations),
-                    default,
-                    default);
-            }
-
-            await _cosmosDBService.DeleteAgentFile(attachment);
-        }
-
         private async Task<List<ResourceProviderGetResult<AgentFileToolAssociation>>> LoadAgentFileToolAssociations(
             ResourcePath resourcePath, UnifiedUserIdentity userIdentity)
         {
@@ -796,11 +743,9 @@ namespace FoundationaLLM.Agent.ResourceProviders
                 {
                     existingAssociations.Add(new AgentFileToolAssociation()
                     {
-                        Name = Guid.NewGuid().ToString(),
                         FileObjectId = agentFile.ObjectId!,
-                        CreatedBy = userIdentity.UPN,
-                        CreatedOn = DateTimeOffset.UtcNow,
                         AssociatedResourceObjectIds = [],
+                        Name = Guid.NewGuid().ToString()
                     });
                 }
             }
@@ -847,9 +792,7 @@ namespace FoundationaLLM.Agent.ResourceProviders
                         fileToolAssociation = new AgentFileToolAssociation()
                         {
                             Name = Guid.NewGuid().ToString(),
-                            FileObjectId = fileObjectId,
-                            CreatedBy = userIdentity.UPN,
-                            CreatedOn = DateTimeOffset.UtcNow
+                            FileObjectId = fileObjectId
                         };
                         existingAssociations.Add(fileToolAssociation);
                     }
@@ -862,8 +805,6 @@ namespace FoundationaLLM.Agent.ResourceProviders
                         try
                         {
                             await AddFileToolAssociation(fileObjectId, toolObjectId, fileToolAssociation!, resourcePath, userIdentity);
-                            fileToolAssociation!.UpdatedBy = userIdentity.UPN;
-                            fileToolAssociation!.UpdatedOn = DateTimeOffset.UtcNow;
                         }
                         catch (Exception ex)
                         {
@@ -885,8 +826,6 @@ namespace FoundationaLLM.Agent.ResourceProviders
                         try
                         {
                             await RemoveFileToolAssociation(fileObjectId, toolObjectId, fileToolAssociation!, resourcePath, userIdentity);
-                            fileToolAssociation!.UpdatedBy = userIdentity.UPN;
-                            fileToolAssociation!.UpdatedOn = DateTimeOffset.UtcNow;
                         }
                         catch (Exception ex)
                         {

@@ -44,7 +44,7 @@
 
 		<!-- Chat input -->
 		<div class="chat-thread__input">
-			<ChatInput ref="chatInput" :disabled="isLoading || isMessagePending || $appStore.sessionMessagePending" @send="handleSend" />
+			<ChatInput ref="chatInput" :disabled="isLoading || isMessagePending" @send="handleSend" />
 		</div>
 
 		<!-- Footer -->

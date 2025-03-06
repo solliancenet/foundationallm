@@ -30,8 +30,6 @@
 				:value="aiModels"
 				striped-rows
 				scrollable
-				sortField="resource.name"
-				:sortOrder="1"
 				table-style="max-width: 100%"
 				size="small"
 			>

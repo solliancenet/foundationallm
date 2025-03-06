@@ -138,15 +138,6 @@ var containers = [
     }
     defaultTtl: 300
   }
-  {
-    name: 'Agents'
-    partitionKey: {
-      paths: [
-        '/instanceId'
-        '/agentName'
-      ]
-    }
-  }
 ]
 
 @description('The Resource logs to enable')

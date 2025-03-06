@@ -14,11 +14,7 @@ service:
   type: ClusterIP
   port: 80
 
-resources:
-  requests:
-    ephemeral-storage: "100G"
-  limits:
-    ephemeral-storage: "100G"
+resources: {}
 
 nodeSelector: {}
 

@@ -74,26 +74,20 @@ namespace FoundationaLLM.Core.API.Controllers
             await stream.CopyToAsync(memoryStream);
             var content = memoryStream.ToArray();
 
-            var uploadResult = await _coreService.UploadAttachment(
-                instanceId,
-                sessionId,
-                new AttachmentFile
-                {
-                    Name = name,
-                    Content = content,
-                    DisplayName = fileName,
-                    ContentType = contentType,
-                    OriginalFileName = fileName
-                },
-                agentName,
-                _callContext.CurrentUserIdentity!);
-
-            if (uploadResult.Resource != null)
-            {
-                uploadResult.Resource.Content = null;
-            }
-
-            return new OkObjectResult(uploadResult);
+            return new OkObjectResult(
+                await _coreService.UploadAttachment(
+                    instanceId,
+                    sessionId,
+                    new AttachmentFile
+                    {
+                        Name = name,
+                        Content = content,
+                        DisplayName = fileName,
+                        ContentType = contentType,
+                        OriginalFileName = fileName
+                    },
+                    agentName,
+                    _callContext.CurrentUserIdentity!));
         }
 
         /// <summary>

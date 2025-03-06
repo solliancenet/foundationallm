@@ -129,16 +129,9 @@ Follow the steps below to deploy the solution to your Azure subscription.
     azd env set FLLM_MGMT_API_HOSTNAME management-api.example.com
     ```
 
-11. If you are hosting FoundationaLLM and dependencies (like ingress-nginx) on an internally hosted container registry, be sure to set the following AZD environment settings:
-
-    ```pwsh
-    azd env set INGRESS_ESCROWED $true
-    azd env set FOUNDATIONALLM_REGISTRY mycrname.azurecr.io
-    ```
-
 ## Provision Infrastructure
 
-12. Provision platform infrastructure with `AZD`:
+11. Provision platform infrastructure with `AZD`:
 
     ```pwsh
     cd .\deploy\standard
@@ -151,9 +144,9 @@ Follow the steps below to deploy the solution to your Azure subscription.
 
 ## Configure and Deploy
 
-13. Ensure that you have network access to the deployed resources and that DNS resolution to deployed resources is configured (this is environment specific).
+12. Ensure that you have network access to the deployed resources and that DNS resolution to deployed resources is configured (this is environment specific).
 
-14. Deploy to platform infrastructure with `AZD`:
+13. Deploy to platform infrastructure with `AZD`:
 
     ```pwsh
     cd .\deploy\standard
@@ -184,7 +177,7 @@ Follow the steps below to deploy the solution to your Azure subscription.
 
 ### Running script to allow MS Graph access through Role Permissions
 
-15. After the deployment is complete, you will need to run the following script to allow MS Graph access through Role Permissions. (See below)
+14. After the deployment is complete, you will need to run the following script to allow MS Graph access through Role Permissions. (See below)
 
     > [!IMPORTANT]
     > The user running the script will need to have the appropriate permissions to assign roles to the managed identities. The user will need to be a `Global Administrator` or have the `Privileged Role Administrator` role in the Entra ID tenant.
@@ -204,4 +197,4 @@ Follow the steps below to deploy the solution to your Azure subscription.
 
 ## Connect and Test
 
-16. Visit the chat UI in your browser and send a message to verify the deployment.  The message can be very simple like "Who are you?".  The default agent should respond with a message explaining it's persona.
+15. Visit the chat UI in your browser and send a message to verify the deployment.  The message can be very simple like "Who are you?".  The default agent should respond with a message explaining it's persona.

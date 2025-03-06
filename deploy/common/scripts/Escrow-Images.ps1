@@ -1,21 +1,9 @@
-Install-Module -Name powershell-yaml -Force
-Import-Module powershell-yaml
-
-function Expand-Tar($tarFile, $dest) {
-
-    if (-not (Get-Command Expand-7Zip -ErrorAction Ignore)) {
-        Install-Package -Scope CurrentUser -Force 7Zip4PowerShell > $null
-    }
-
-    Expand-7Zip $tarFile $dest
-}
-
 $services = @{
-    "version" = "0.9.2"
+    "version" = "0.8.3"
     "sourceRegistry" = "ghcr.io/solliancenet/foundationallm"
-    "destRegistry" = "crsyn092.azurecr.io"
-    "destUsername" = "crsyn092"
-    "destPassword" = "<ACR password>"
+    "destRegistry" = "acrfllm.azurecr.io"
+    "destUsername" = "acrfllm"
+    "destPassword" = "<ACR Password>"
     "service_matrix" = @(
         "agent-hub-api"
         "authorization-api"
@@ -39,6 +27,7 @@ $services = @{
     )
 }
 
+
 foreach ($service in $($services.service_matrix)) {
     $srcChartUrl = "$($services.sourceRegistry)/helm/$service"
     $destChartUrl = "$($services.destRegistry)/helm"
@@ -57,66 +46,27 @@ foreach ($service in $($services.service_matrix)) {
     docker push $destImageUrl
 }
 
-$ingressChartRepo = "https://kubernetes.github.io/ingress-nginx"
-$ingressChart = "ingress-nginx/ingress-nginx"
-$ingressChartVersion = "4.10.0"
-$destChartUrl = "$($services.destRegistry)/helm"
-helm repo add ingress-nginx $ingressChartRepo
-helm repo update
-Remove-Item -Path ingress-nginx -Recurse
-helm pull $ingressChart --version $ingressChartVersion --untar
-
-$ingressValues = Get-Content "ingress-nginx/values.yaml" | ConvertFrom-Yaml
-$ingressImages = @{
-    "controller" = @{
-        image = $ingressValues.controller.image.image
-        registry = $ingressValues.controller.image.registry
-        tag = $ingressValues.controller.image.tag
-        suffix = "@" + $ingressValues.controller.image.digestChroot
-    }
-    "opentelemetry" = @{
-        image = $ingressValues.controller.opentelemetry.image.image
-        registry = $ingressValues.controller.opentelemetry.image.registry
-        tag = $ingressValues.controller.opentelemetry.image.tag
-        suffix = "@" + $ingressValues.controller.opentelemetry.image.digest
-    }
-    "certgen" = @{
-        image = $ingressValues.controller.admissionWebhooks.patch.image.image
-        registry = $ingressValues.controller.admissionWebhooks.patch.image.registry
-        tag = $ingressValues.controller.admissionWebhooks.patch.image.tag
-        suffix = "@" + $ingressValues.controller.admissionWebhooks.patch.image.digest
-    }
-    "defaultbackend" = @{
-        image = $ingressValues.defaultBackend.image.image
-        registry = $ingressValues.defaultBackend.image.registry
-        tag = $ingressValues.defaultBackend.image.tag
-        suffix = ""
-    }
-}
-
-$ingressValues.controller.image.registry = $services.destRegistry
-$ingressValues.controller.opentelemetry.image.registry = $services.destRegistry
-$ingressValues.controller.admissionWebhooks.patch.image.registry = $services.destRegistry
-$ingressValues.defaultBackend.image.registry = $services.destRegistry
-
-$ingressValues.controller.image.Remove('digest')
-$ingressValues.controller.image.Remove('digestChroot')
-$ingressValues.controller.opentelemetry.image.Remove('digest')
-$ingressValues.controller.admissionWebhooks.patch.image.Remove('digest')
-
-Out-File -FilePath "ingress-nginx/values.yaml" -InputObject ($ingressValues | ConvertTo-Yaml) -Encoding utf8
-
-foreach ($image in $ingressImages.GetEnumerator()) {
-    $srcImageUrl = $image.Value.registry + "/" + $image.Value.image + ":" + $image.Value.tag + $image.Value.suffix
-    $destImageUrl = "$($services.destRegistry)/$($image.Value.image):$($image.Value.tag)"
-    Write-Host "Escrowing image $srcImageUrl to $destImageUrl" -ForegroundColor Green
-    docker logout
-    docker pull $srcImageUrl
-    docker tag $srcImageUrl $destImageUrl
-    echo $services.destPassword | docker login $services.destRegistry -u $services.destUsername --password-stdin
-    docker push $destImageUrl
-}
-
-helm package ingress-nginx
+docker logout
+docker pull registry.k8s.io/ingress-nginx/controller:v1.11.3@sha256:d56f135b6462cfc476447cfe564b83a45e8bb7da2774963b00d12161112270b7
+docker tag "registry.k8s.io/ingress-nginx/controller:v1.11.3@sha256:d56f135b6462cfc476447cfe564b83a45e8bb7da2774963b00d12161112270b7" "$($services.destRegistry)/ingress-nginx/controller:v1.11.3"
 echo $services.destPassword | docker login $services.destRegistry -u $services.destUsername --password-stdin
-helm push "ingress-nginx-$($ingressChartVersion).tgz" oci://$destChartUrl
+docker push "$($services.destRegistry)/ingress-nginx/controller:v1.11.3"
+
+
+docker logout
+docker pull registry.k8s.io/ingress-nginx/kube-webhook-certgen:v1.4.4@sha256:a9f03b34a3cbfbb26d103a14046ab2c5130a80c3d69d526ff8063d2b37b9fd3f
+docker tag "registry.k8s.io/ingress-nginx/kube-webhook-certgen:v1.4.4@sha256:a9f03b34a3cbfbb26d103a14046ab2c5130a80c3d69d526ff8063d2b37b9fd3f" "$($services.destRegistry)/ingress-nginx/kube-webhook-certgen:v1.4.4"
+echo $services.destPassword | docker login $services.destRegistry -u $services.destUsername --password-stdin
+docker push "$($services.destRegistry)/ingress-nginx/kube-webhook-certgen:v1.4.4"
+
+docker logout
+docker pull registry.k8s.io/ingress-nginx/opentelemetry-1.25.3:v20240813-b933310d@sha256:f7604ac0547ed64d79b98d92133234e66c2c8aade3c1f4809fed5eec1fb7f922
+docker tag "registry.k8s.io/ingress-nginx/opentelemetry-1.25.3:v20240813-b933310d@sha256:f7604ac0547ed64d79b98d92133234e66c2c8aade3c1f4809fed5eec1fb7f922" "$($services.destRegistry)/ingress-nginx/opentelemetry-1.25.3:v20240813-b933310d"
+echo $services.destPassword | docker login $services.destRegistry -u $services.destUsername --password-stdin
+docker push "$($services.destRegistry)/ingress-nginx/opentelemetry-1.25.3:v20240813-b933310d"
+
+docker logout
+docker pull registry.k8s.io/defaultbackend-amd64:1.5
+docker tag "registry.k8s.io/defaultbackend-amd64:1.5" "$($services.destRegistry)/defaultbackend-amd64:1.5"
+echo $services.destPassword | docker login $services.destRegistry -u $services.destUsername --password-stdin
+docker push "$($services.destRegistry)/defaultbackend-amd64:1.5"

@@ -353,5 +353,25 @@
 				"field_name": "FoundationaLLM_Conversation_Conversations_Delete"
 			}
 		]
+	},
+	{
+		"category": "DataPipeline",
+		"actions": [
+			{
+				"name": "FoundationaLLM.DataPipeline/dataPipelines/read",
+				"description": "Read data pipelines.",
+				"field_name": "FoundationaLLM_DataPipeline_DataPipelines_Read"
+			},
+			{
+				"name": "FoundationaLLM.DataPipeline/dataPipelines/write",
+				"description": "Create or update data pipelines.",
+				"field_name": "FoundationaLLM_DataPipeline_DataPipelines_Write"
+			},
+			{
+				"name": "FoundationaLLM.DataPipeline/dataPipelines/delete",
+				"description": "Delete data pipelines.",
+				"field_name": "FoundationaLLM_DataPipeline_DataPipelines_Delete"
+			}
+		]
 	}
 ]

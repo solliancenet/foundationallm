@@ -192,12 +192,12 @@ export default {
 				return;
 			}
 
-			this.$emit('content-update', this.processedContent);
+			this.$emit('content-update', this.content);
 			this.showHtmlDialog = false;
 		},
 
 		handleSaveCorrectedHTML() {
-			this.$emit('content-update', this.processedContent);
+			this.$emit('content-update', this.content);
 			this.showHtmlCorrectionDialog = false;
 			this.showHtmlDialog = false;
 		},

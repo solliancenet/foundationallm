@@ -349,5 +349,24 @@ namespace FoundationaLLM.Common.Constants.Authorization
         public const string FoundationaLLM_Conversation_Conversations_Delete = "FoundationaLLM.Conversation/conversations/delete";
 
         #endregion
+
+        #region DataPipeline
+
+        /// <summary>
+        /// Read data pipelines.
+        /// </summary>
+        public const string FoundationaLLM_DataPipeline_DataPipelines_Read = "FoundationaLLM.DataPipeline/dataPipelines/read";
+
+        /// <summary>
+        /// Create or update data pipelines.
+        /// </summary>
+        public const string FoundationaLLM_DataPipeline_DataPipelines_Write = "FoundationaLLM.DataPipeline/dataPipelines/write";
+
+        /// <summary>
+        /// Delete data pipelines.
+        /// </summary>
+        public const string FoundationaLLM_DataPipeline_DataPipelines_Delete = "FoundationaLLM.DataPipeline/dataPipelines/delete";
+
+        #endregion
     }
 }

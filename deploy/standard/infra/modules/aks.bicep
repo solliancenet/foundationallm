@@ -150,7 +150,7 @@ var logs = [
 var zones = pickZones('Microsoft.Compute', 'virtualMachines', location, 3)
 
 /** Resources **/
-resource main 'Microsoft.ContainerService/managedClusters@2024-10-02-preview' = {
+resource main 'Microsoft.ContainerService/managedClusters@2023-01-02-preview' = {
   name: name
   location: location
   tags: tags
@@ -167,12 +167,12 @@ resource main 'Microsoft.ContainerService/managedClusters@2024-10-02-preview' = 
   }
 
   sku: {
-    name: 'Base'
-    tier: 'Standard'
+    name: 'Basic'
+    tier: 'Paid'
   }
 
   properties: {
-    kubernetesVersion: '1.30.9'
+    kubernetesVersion: '1.30.5'
     enableRBAC: true
     fqdnSubdomain: name
     nodeResourceGroup: 'mrg-${name}'

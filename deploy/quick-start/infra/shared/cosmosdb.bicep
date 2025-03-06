@@ -69,7 +69,9 @@ resource cosmosContainerWithTtl 'Microsoft.DocumentDB/databaseAccounts/sqlDataba
       resource: {
         id: container.name
         partitionKey: {
-          paths: container.partitionKeyPath
+          paths: [
+            container.partitionKeyPath
+          ]
           kind: 'Hash'
           version: 2
         }

@@ -540,7 +540,7 @@ namespace Management.Client.Tests.Clients.Resources
         {
             // Arrange
             var pipelineName = "test-pipeline";
-            var expectedPurgeResult = new ResourceProviderActionResult(true);
+            var expectedPurgeResult = new ResourceProviderActionResult(pipelineName, true);
 
             _mockRestClient.Resources
                 .ExecuteResourceActionAsync<ResourceProviderActionResult>(
@@ -577,7 +577,7 @@ namespace Management.Client.Tests.Clients.Resources
         {
             // Arrange
             var profileName = "test-profile";
-            var expectedPurgeResult = new ResourceProviderActionResult(true);
+            var expectedPurgeResult = new ResourceProviderActionResult(profileName, true);
 
             _mockRestClient.Resources
                 .ExecuteResourceActionAsync<ResourceProviderActionResult>(
@@ -614,7 +614,7 @@ namespace Management.Client.Tests.Clients.Resources
         {
             // Arrange
             var profileName = "test-profile";
-            var expectedPurgeResult = new ResourceProviderActionResult(true);
+            var expectedPurgeResult = new ResourceProviderActionResult(profileName, true);
 
             _mockRestClient.Resources
                 .ExecuteResourceActionAsync<ResourceProviderActionResult>(
@@ -736,7 +736,7 @@ namespace Management.Client.Tests.Clients.Resources
         {
             // Arrange
             var profileName = "test-profile";
-            var expectedPurgeResult = new ResourceProviderActionResult(true);
+            var expectedPurgeResult = new ResourceProviderActionResult(profileName, true);
 
             _mockRestClient.Resources
                 .ExecuteResourceActionAsync<ResourceProviderActionResult>(
