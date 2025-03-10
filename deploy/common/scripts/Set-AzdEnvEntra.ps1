@@ -56,7 +56,7 @@ from the ./foundationallm/deploy/standard directory:
 #>
 
 Param(
-   [parameter(Mandatory = $true, HelpMessage = "Azure EntraID Tenant")][string]$tenantID,
+   [parameter(Mandatory = $false, HelpMessage = "Azure EntraID Tenant")][string]$tenantID = $null,
    [string]$adminGroupName = 'FLLM-Admins',
    [string]$userGroupName = 'FLLM-Users',
    [string]$authAppName = 'FoundationaLLM-Authorization-API',
@@ -77,6 +77,13 @@ $ErrorActionPreference = "Stop"
 $ScriptDirectory = Split-Path -Path $MyInvocation.MyCommand.Path
 . $ScriptDirectory/Function-Library.ps1
 
+# Retrieve the tenant ID from the current Azure account context if not provided
+if (-not $tenantID) {
+   $tenantID = (az account show --query 'tenantId' --output tsv)
+   if (-not $tenantID) {
+      throw "Unable to retrieve tenant ID from the current Azure account context. Please provide a tenant ID."
+   }
+}
 
 # Set the environment values
 Write-Host -ForegroundColor Blue "Please wait while gathering azd environment values for the ${tenantID} EntraID Tenant."

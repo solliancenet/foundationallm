@@ -38,7 +38,6 @@ try {
 
     Invoke-AndRequireSuccess "Load Certificates" {
         ./utility/Load-Certificates.ps1 `
-            -keyVaultResourceGroup $env:FLLM_OPS_RG `
             -keyVaultName $env:FLLM_OPS_KV `
             -certificates $certificates
     }
@@ -49,19 +48,29 @@ finally {
 
 Push-Location $($MyInvocation.InvocationName | Split-Path)
 try {
-    if ($env:EXTENSIONS_INSTALLED) {
+    if (-not $env:EXTENSIONS_INSTALLED) {
         $extensions = @("aks-preview", "application-insights", "storage-preview", "eventgrid")
         foreach ($extension in $extensions) {
-            Invoke-AndRequireSuccess "Install $extension extension" {
-                az extension add --name $extension --allow-preview true --yes
-                az extension update --name $extension --allow-preview true
+            $installed = az extension list --query "[?name=='$extension']" --output tsv
+            if (-not $installed) {
+                Invoke-AndRequireSuccess "Install $extension extension" {
+                    az extension add --name $extension --allow-preview true --yes
+                }
+            }
+            else {
+                Invoke-AndRequireSuccess "Update $extension extension" {
+                    az extension update --name $extension --allow-preview true
+                }
             }
         }
 
-        # TODO this needs to be in its own try-finally block
         Push-Location ..
-        azd env set EXTENSIONS_INSTALLED 1
-        Pop-Location
+        try {
+            azd env set EXTENSIONS_INSTALLED 1
+        }
+        finally {
+            Pop-Location
+        }
     }
 
     # Convert the manifest resource groups to a hashtable for easier access
@@ -96,7 +105,7 @@ try {
 
     # Get frontend and backend hostnames
     $ingress = @{
-        apiIngress = @{}
+        apiIngress      = @{}
         frontendIngress = @{}
     }
 
@@ -104,22 +113,22 @@ try {
     if ($env:FLLM_USER_PORTAL_HOSTNAME) {
         $frontEndHosts += $env:FLLM_USER_PORTAL_HOSTNAME
         $($ingress.frontendIngress).chatui = @{
-            host = $env:FLLM_USER_PORTAL_HOSTNAME
-            path = "/"
-            pathType = "ImplementationSpecific"
+            host        = $env:FLLM_USER_PORTAL_HOSTNAME
+            path        = "/"
+            pathType    = "ImplementationSpecific"
             serviceName = "chat-ui"
-            sslCert = "chatui"
+            sslCert     = "chatui"
         }
     }
 
     if ($env:FLLM_MGMT_PORTAL_HOSTNAME) {
         $frontEndHosts += $env:FLLM_MGMT_PORTAL_HOSTNAME
         $($ingress.frontendIngress).managementui = @{
-            host = $env:FLLM_MGMT_PORTAL_HOSTNAME
-            path = "/"
-            pathType = "ImplementationSpecific"
+            host        = $env:FLLM_MGMT_PORTAL_HOSTNAME
+            path        = "/"
+            pathType    = "ImplementationSpecific"
             serviceName = "management-ui"
-            sslCert = "managementui"
+            sslCert     = "managementui"
         }
     }
 
@@ -127,22 +136,22 @@ try {
     if ($env:FLLM_CORE_API_HOSTNAME) {
         $backendHosts += $env:FLLM_CORE_API_HOSTNAME
         $($ingress.apiIngress).coreapi = @{
-            host = $env:FLLM_CORE_API_HOSTNAME
-            path = "/core/"
-            pathType = "ImplementationSpecific"
+            host        = $env:FLLM_CORE_API_HOSTNAME
+            path        = "/core/"
+            pathType    = "ImplementationSpecific"
             serviceName = "core-api"
-            sslCert = "coreapi"
+            sslCert     = "coreapi"
         }
     }
 
     if ($env:FLLM_MGMT_API_HOSTNAME) {
         $backendHosts += $env:FLLM_MGMT_API_HOSTNAME
         $($ingress.apiIngress).managementapi = @{
-            host = $env:FLLM_MGMT_API_HOSTNAME
-            path = "/management/"
-            pathType = "ImplementationSpecific"
+            host        = $env:FLLM_MGMT_API_HOSTNAME
+            path        = "/management/"
+            pathType    = "ImplementationSpecific"
             serviceName = "management-api"
-            sslCert = "managementapi"
+            sslCert     = "managementapi"
         }
     }
 
