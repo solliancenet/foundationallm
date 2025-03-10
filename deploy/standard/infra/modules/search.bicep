@@ -121,7 +121,7 @@ resource diagnostics 'Microsoft.Insights/diagnosticSettings@2017-05-01-preview' 
 /** Nested Modules **/
 @description('Metric alerts for the resource')
 module metricAlerts 'utility/metricAlerts.bicep' = {
-  name: 'alert-${main.name}-${timestamp}'
+  name: 'alerts-${serviceType}-${timestamp}'
   params: {
     actionGroupId: actionGroupId
     alerts: alerts
@@ -134,7 +134,7 @@ module metricAlerts 'utility/metricAlerts.bicep' = {
 
 @description('Private endpoint for the resource')
 module privateEndpoint 'utility/privateEndpoint.bicep' = {
-  name: 'pe-${main.name}-${timestamp}'
+  name: 'pe-${serviceType}-${timestamp}'
   params: {
     groupId: 'searchService'
     location: location

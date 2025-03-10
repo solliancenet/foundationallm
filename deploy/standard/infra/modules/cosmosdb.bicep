@@ -140,6 +140,7 @@ var containers = [
   }
   {
     name: 'Agents'
+    defaultTtl: null
     partitionKey: {
       paths: [
         '/instanceId'
@@ -304,7 +305,7 @@ resource cosmosContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/con
         }
 
         partitionKey: {
-          kind: 'Hash'
+          kind: length(c.partitionKey.paths) == 1 ? 'Hash' : 'MultiHash'
           paths: c.partitionKey.paths
           version: 2
         }
@@ -353,7 +354,7 @@ resource cosmosContainerWithTtl 'Microsoft.DocumentDB/databaseAccounts/sqlDataba
         }
 
         partitionKey: {
-          kind: 'Hash'
+          kind: length(c.partitionKey.paths) == 1 ? 'Hash' : 'MultiHash'
           paths: c.partitionKey.paths
           version: 2
         }
@@ -406,7 +407,7 @@ resource cosmosContainerWithVecIdx 'Microsoft.DocumentDB/databaseAccounts/sqlDat
         }
 
         partitionKey: {
-          kind: 'Hash'
+          kind: length(c.partitionKey.paths) == 1 ? 'Hash' : 'MultiHash'
           paths: c.partitionKey.paths
           version: 2
         }
@@ -417,7 +418,7 @@ resource cosmosContainerWithVecIdx 'Microsoft.DocumentDB/databaseAccounts/sqlDat
           uniqueKeys: []
         }
 
-        vectorEmbeddingPolicy: c.?vectorEmbeddingPolicy
+       vectorEmbeddingPolicy: c.?vectorEmbeddingPolicy
 
         conflictResolutionPolicy: {
           conflictResolutionPath: '/_ts'
