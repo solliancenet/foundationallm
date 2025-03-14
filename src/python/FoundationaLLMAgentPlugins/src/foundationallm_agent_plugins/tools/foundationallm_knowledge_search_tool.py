@@ -1,6 +1,7 @@
-from typing import Optional
+from typing import List, Optional, Tuple 
 from langchain_core.callbacks import CallbackManagerForToolRun, AsyncCallbackManagerForToolRun
 from langchain_core.language_models import BaseLanguageModel
+from langchain_core.runnables import RunnableConfig
 from langchain_core.tools import ToolException
 from foundationallm.config import Configuration, UserIdentity
 from foundationallm.langchain.common import FoundationaLLMToolBase
@@ -21,21 +22,21 @@ from foundationallm.models.resource_providers.vectorization import (
     AzureAISearchIndexingProfile)
 from foundationallm.services.gateway_text_embedding import GatewayTextEmbeddingService
 from foundationallm.utils import ObjectUtils
+from foundationallm_agent_plugins.common.constants import CONTENT_ARTIFACT_TYPE_TOOL_EXECUTION
 
-class FoundationaLLMContentSearchTool(FoundationaLLMToolBase):
+class FoundationaLLMKnowledgeSearchTool(FoundationaLLMToolBase):
     """
-    FoundationaLLM file search tool.    
-    """           
+    FoundationaLLM knowledge search tool.    
+    """              
+
     def __init__(self, tool_config: AgentTool, objects: dict, user_identity:UserIdentity, config: Configuration):
-        """ Initializes the FoundationaLLMFileSearchTool class with the tool configuration,
+        """ Initializes the FoundationaLLMKnowledgeSearchTool class with the tool configuration,
             exploded objects collection, and platform configuration. """
-        super().__init__(tool_config, objects, user_identity, config)
-        self.tool_config = tool_config
-        self.objects = objects
+        super().__init__(tool_config, objects, user_identity, config)        
         self.retriever = self._get_document_retriever()
         self.client = self._get_client()
         # When configuring the tool on an agent, the description will be set providing context to the document source.
-        self.description = self.tool_config.description or "Answers questions by searching through documents."       
+        self.description = self.tool_config.description or "Answers questions by searching through documents."        
 
     def _run(self,                 
             prompt: str,            
@@ -45,9 +46,15 @@ class FoundationaLLMContentSearchTool(FoundationaLLMToolBase):
     
     async def _arun(self,                 
             prompt: str,           
-            run_manager: Optional[AsyncCallbackManagerForToolRun] = None):
+            run_manager: Optional[AsyncCallbackManagerForToolRun] = None,
+            runnable_config: RunnableConfig = None) -> Tuple[str, List[ContentArtifact]]:
         """ Retrieves documents from an index based on the proximity to the prompt to answer the prompt."""
         # Azure AI Search retriever only supports synchronous execution.
+        # Get the original prompt
+        original_prompt = prompt
+        if runnable_config is not None and 'original_user_prompt' in runnable_config['configurable']:        
+            original_prompt = runnable_config['configurable']['original_user_prompt']
+
         docs = self.retriever.invoke(prompt)
         context = self.retriever.format_docs(docs)
         rag_prompt = f"Answer the question using only the context provided.\n\nContext:\n{context}\n\nQuestion:{prompt}"
@@ -56,14 +63,18 @@ class FoundationaLLMContentSearchTool(FoundationaLLMToolBase):
         content_artifacts = self.retriever.get_document_content_artifacts() or []
         # Token usage content artifact
         # Transform all completion.usage_metadata property values to string
-        completion.usage_metadata = {k: str(v) for k, v in completion.usage_metadata.items()}
+        metadata = {
+            'prompt_tokens': str(completion.usage_metadata['input_tokens']),
+            'completion_tokens': str(completion.usage_metadata['output_tokens']),
+            'tool_input': prompt
+        }
         content_artifacts.append(ContentArtifact(
-            id = "token_usage",
-            title="Token Usage",
-            content = "Token usage information",
-            source = "tool",
-            type = "token_usage",
-            metadata=completion.usage_metadata or {}))
+            id = self.name,
+            title = self.name,
+            content = original_prompt,
+            source = self.name,
+            type = CONTENT_ARTIFACT_TYPE_TOOL_EXECUTION,
+            metadata=metadata))
         # Full prompt recording content artifact
         #content_artifacts.append(ContentArtifact(
         #    id = "full_prompt",
@@ -145,12 +156,11 @@ class FoundationaLLMContentSearchTool(FoundationaLLMToolBase):
         return retriever
 
     def _get_client(self) -> BaseLanguageModel:
-        """ Creates a client for the FoundationaLLM file search tool. """
+        """ Creates a client for the FoundationaLLM knowledge search tool. """
         language_model_factory = LanguageModelFactory(self.objects, self.config)
         ai_model_definition = self.tool_config.get_resource_object_id_properties(
             ResourceProviderNames.FOUNDATIONALLM_AIMODEL,
             AIModelResourceTypeNames.AI_MODELS,
             ResourceObjectIdPropertyNames.OBJECT_ROLE,
             ResourceObjectIdPropertyValues.MAIN_MODEL)
-        return language_model_factory.get_language_model(ai_model_definition.object_id)
-        
+        return language_model_factory.get_language_model(ai_model_definition.object_id) 

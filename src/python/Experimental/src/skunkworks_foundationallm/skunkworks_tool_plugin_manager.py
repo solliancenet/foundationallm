@@ -5,15 +5,13 @@ from foundationallm.plugins import ToolPluginManagerBase
 
 from skunkworks_foundationallm.tools import (
     FoundationaLLMNopTool,
-    FoundationaLLMCodeInterpreterTool,
-    FoundationaLLMContentSearchTool
+    FoundationaLLMCodeInterpreterTool
 )
 
 class SkunkworksToolPluginManager(ToolPluginManagerBase):
 
     FOUNDATIONALLM_NOP_TOOL_NAME = 'FoundationaLLMNopTool'
     FOUNDATIONALLM_CODE_INTERPRETER_TOOL_NAME = 'FoundationaLLMCodeInterpreterTool'
-    FOUNDATIONALLM_CONTENT_SEARCH_TOOL_NAME = 'FoundationaLLMContentSearchTool'
 
     def __init__(self):
         super().__init__()
@@ -28,9 +26,7 @@ class SkunkworksToolPluginManager(ToolPluginManagerBase):
             case SkunkworksToolPluginManager.FOUNDATIONALLM_NOP_TOOL_NAME:
                 return FoundationaLLMNopTool(tool_config, objects, user_identity, config)
             case SkunkworksToolPluginManager.FOUNDATIONALLM_CODE_INTERPRETER_TOOL_NAME:
-                return FoundationaLLMCodeInterpreterTool(tool_config, objects, user_identity, config)
-            case SkunkworksToolPluginManager.FOUNDATIONALLM_CONTENT_SEARCH_TOOL_NAME:
-                return FoundationaLLMContentSearchTool(tool_config, objects, user_identity, config)
+                return FoundationaLLMCodeInterpreterTool(tool_config, objects, user_identity, config)           
             case _:
                 raise ValueError(f"Unknown tool name: {tool_config.name}")
 
