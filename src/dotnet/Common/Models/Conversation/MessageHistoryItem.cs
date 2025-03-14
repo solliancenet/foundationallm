@@ -41,5 +41,11 @@ namespace FoundationaLLM.Common.Models.Conversation
         /// </remarks>
         [JsonPropertyName("content_artifacts")]
         public List<ContentArtifact>? ContentArtifacts { get; set; }
+
+        /// <summary>
+        /// Gets or sets the list of attachments for the message.
+        /// </summary>
+        [JsonPropertyName("attachments")]
+        public List<AttachmentDetail> Attachments { get; set; } = [];
     }
 }

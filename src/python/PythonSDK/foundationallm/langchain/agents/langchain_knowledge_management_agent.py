@@ -534,18 +534,13 @@ class LangChainKnowledgeManagementAgent(LangChainAgentBase):
                 self.user_identity,
                 self.config)
 
-            # Get message history
-            if agent.conversation_history_settings.enabled:
-                messages = self._build_conversation_history_message_list(request.message_history, agent.conversation_history_settings.max_history*2)
-            else:
-                messages = []
-
+            # Get message history          
             with self.tracer.start_as_current_span('langchain_invoke_external_workflow', kind=SpanKind.SERVER) as span:
                 response = await workflow.invoke_async(
                     operation_id=request.operation_id,
                     user_prompt=parsed_user_prompt,
                     user_prompt_rewrite=request.user_prompt_rewrite,
-                    message_history=messages
+                    message_history=request.message_history
                 )
                 # Ensure the user prompt rewrite is returned in the response
                 response.user_prompt_rewrite = request.user_prompt_rewrite

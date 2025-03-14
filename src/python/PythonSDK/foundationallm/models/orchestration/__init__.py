@@ -2,6 +2,7 @@
 from .analysis_result import AnalysisResult
 from .content_artifact import ContentArtifact
 
+from .attachment_detail import AttachmentDetail
 from .message_content_item_types import MessageContentItemTypes
 from .message_content_item_base import MessageContentItemBase
 

@@ -60,6 +60,7 @@
     <Compile Include="foundationallm\models\constants\__init__.py" />
     <Compile Include="foundationallm\models\messages\__init__.py" />
     <Compile Include="foundationallm\models\orchestration\analysis_result.py" />
+    <Compile Include="foundationallm\models\orchestration\attachment_detail.py" />
     <Compile Include="foundationallm\models\orchestration\completion_request_object_keys.py" />
     <Compile Include="foundationallm\models\orchestration\message_content_item_base.py" />
     <Compile Include="foundationallm\models\orchestration\message_content_item_types.py" />

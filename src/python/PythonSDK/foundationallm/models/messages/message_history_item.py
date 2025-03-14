@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import List, Optional
 
-from foundationallm.models.orchestration import ContentArtifact
+from foundationallm.models.orchestration import ContentArtifact, AttachmentDetail
 
 class MessageHistoryItem(BaseModel):
     """
@@ -17,3 +17,4 @@ class MessageHistoryItem(BaseModel):
     sender: str
     text: str
     content_artifacts : Optional[List[ContentArtifact]] = []
+    attachments : Optional[List[AttachmentDetail]] = []

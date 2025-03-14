@@ -3,6 +3,9 @@
 > [!NOTE]
 > This section is for changes that are not yet released but will affect future releases.
 
+## Starting from 0.9.7-beta106
+
+For External Agent Workflows, the invocation of the workflow now sends the completion request MessageHistoryItem list vs the translated LangChain BaseMessage construct. This way workflows have more control on how to handle the message history of a conversation.
 
 ## Starting from 0.9.7-beta105
 

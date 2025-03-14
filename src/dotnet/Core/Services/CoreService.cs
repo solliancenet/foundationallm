@@ -189,7 +189,7 @@ public partial class CoreService(
                 };
             }
 
-            completionRequest = await PrepareCompletionRequest(completionRequest, agentBase, true);
+            completionRequest = await PrepareCompletionRequest(instanceId, completionRequest, agentBase, true);
 
             var conversationItems = await CreateConversationItemsAsync(instanceId, completionRequest, _userIdentity);
 
@@ -428,7 +428,7 @@ public partial class CoreService(
                 };
             }
 
-            completionRequest = await PrepareCompletionRequest(completionRequest, agentBase);
+            completionRequest = await PrepareCompletionRequest(instanceId, completionRequest, agentBase);
 
             var conversationItems = await CreateConversationItemsAsync(instanceId, completionRequest, _userIdentity);
 
@@ -500,7 +500,7 @@ public partial class CoreService(
                 };
             }
 
-            directCompletionRequest = await PrepareCompletionRequest(directCompletionRequest, agentBase);
+            directCompletionRequest = await PrepareCompletionRequest(instanceId, directCompletionRequest, agentBase);
 
             var agentOption = GetGatekeeperOption(instanceId, agentBase, directCompletionRequest);
 
@@ -979,11 +979,12 @@ public partial class CoreService(
     /// <summary>
     /// Pre-processing of incoming completion request.
     /// </summary>
+    /// <param name="instanceId">The FoundationaLLM instance ID.</param>
     /// <param name="request">The completion request.</param>
     /// <param name="agent">The <see cref="AgentBase"/> resource object.</param>
     /// <param name="longRunningOperation">Indicates whether this is a long-running operation.</param>
     /// <returns>The updated completion request with pre-processing applied.</returns>
-    private async Task<CompletionRequest> PrepareCompletionRequest(CompletionRequest request, AgentBase agent, bool longRunningOperation = false)
+    private async Task<CompletionRequest> PrepareCompletionRequest(string instanceId, CompletionRequest request, AgentBase agent, bool longRunningOperation = false)
     {
         request.LongRunningOperation = longRunningOperation;
 
@@ -1019,6 +1020,16 @@ public partial class CoreService(
                 {
                     ContentArtifacts = message.ContentArtifacts?.Where(ca => contentArtifactTypes.Contains(ca.Type ?? string.Empty)).ToList()
                 };
+                if(message.Attachments is { Count: > 0 })
+                {
+                    foreach (var attachmentObjectId in message.Attachments)
+                    {
+                        //Get resource path for attachment
+                        var rp = ResourcePath.GetResourcePath(attachmentObjectId);
+                        var file = await _attachmentResourceProvider.GetResourceAsync<AttachmentFile>(instanceId, rp.MainResourceId!, _userIdentity);
+                        messageHistoryItem.Attachments.Add(AttachmentDetail.FromAttachmentFile(file));
+                    }
+                }
                 messageHistoryList.Add(messageHistoryItem);
             }
         }

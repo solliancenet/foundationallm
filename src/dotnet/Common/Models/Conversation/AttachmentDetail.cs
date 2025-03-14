@@ -1,5 +1,4 @@
-﻿using FoundationaLLM.Common.Models.ResourceProviders;
-using FoundationaLLM.Common.Models.ResourceProviders.Attachment;
+﻿using FoundationaLLM.Common.Models.ResourceProviders.Attachment;
 using System.Text.Json.Serialization;
 
 namespace FoundationaLLM.Common.Models.Conversation
