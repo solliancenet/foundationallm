@@ -31,7 +31,7 @@ class FoundationaLLMCodeInterpreterFile(BaseModel):
 class FoundationaLLMCodeInterpreterToolInput(BaseModel):
     """ Input data model for the Code Intepreter tool. """
     python_code: str = Field(
-        description="The Python code to execute. This should be the complete code including any file operations."
+        description="The Python code to execute. This should be the complete code including any file operations and required pip installations."
     )
     files: Optional[List[FoundationaLLMCodeInterpreterFile]] = Field(
         default=None,
@@ -137,7 +137,7 @@ class FoundationaLLMCodeInterpreterTool(FoundationaLLMToolBase):
                     id = self.name,
                     title = self.name,
                     type = CONTENT_ARTIFACT_TYPE_FILE,
-                    source = generated_file_storage_path,
+                    filepath = generated_file_storage_path,                    
                     metadata = {}
                 ))
         response = json.loads(result)

@@ -32,10 +32,15 @@ from foundationallm.models.orchestration import (
     CompletionResponse,
     ContentArtifact,
     FileHistoryItem,
-    OpenAITextMessageContentItem
+    OpenAITextMessageContentItem,
+    OpenAIImageFileMessageContentItem,
+    OpenAIFilePathMessageContentItem
 )
 from foundationallm.telemetry import Telemetry
-from foundationallm_agent_plugins.common.constants import CONTENT_ARTIFACT_TYPE_WORKFLOW_EXECUTION
+from foundationallm_agent_plugins.common.constants import(    
+    CONTENT_ARTIFACT_TYPE_FILE,
+    CONTENT_ARTIFACT_TYPE_WORKFLOW_EXECUTION
+)
 
 class FoundationaLLMFunctionCallingWorkflow(FoundationaLLMWorkflowBase):
     """
@@ -127,7 +132,7 @@ class FoundationaLLMFunctionCallingWorkflow(FoundationaLLMWorkflowBase):
             HumanMessage(content=llm_prompt)
         ]
         messages_with_toolchain = messages.copy()             
-        content_artifacts = []
+        content_artifacts: List[ContentArtifact] = []
         completion_tokens = 0
         prompt_tokens = 0
         final_response = None
@@ -190,23 +195,42 @@ class FoundationaLLMFunctionCallingWorkflow(FoundationaLLMWorkflowBase):
                 router_end_time - router_start_time)
             content_artifacts.append(workflow_content_artifact)
             
-            # Initialize response_content with the result, taking final_response as priority.
-            response_content = OpenAITextMessageContentItem(
+            # Initialize response_content with the result, taking final_response as priority.   
+            response_content = []         
+            final_response_content = OpenAITextMessageContentItem(
                 value= final_response or response.content,
                 agent_capability_category=AgentCapabilityCategories.FOUNDATIONALLM_KNOWLEDGE_MANAGEMENT
-            )    
+            )
+            response_content.append(final_response_content)
 
-            return CompletionResponse(
+            # Process any generated files.
+            for artifact in content_artifacts:
+                if artifact.type == CONTENT_ARTIFACT_TYPE_FILE:
+                    # if the file path has an image extension, add it to the response_content as an OpenAIImageFileMessageContentItem.    
+                    if any(artifact.filepath.lower().endswith(ext) for ext in ['.png', '.jpg', '.jpeg', '.gif', '.bmp', '.tiff', '.ico', '.webp']):
+                        response_content.append(OpenAIImageFileMessageContentItem(
+                            file_id = artifact.filepath,
+                            agent_capability_category=AgentCapabilityCategories.FOUNDATIONALLM_KNOWLEDGE_MANAGEMENT
+                        ))
+                    else:
+                        # if it's not an image, add it to the final_response_content as an annotation of type OpenAIFilePathMessageContentItem.
+                        final_response_content.annotations.append(OpenAIFilePathMessageContentItem(
+                            file_id = artifact.filepath,
+                            agent_capability_category=AgentCapabilityCategories.FOUNDATIONALLM_KNOWLEDGE_MANAGEMENT
+                        ))           
+
+            retvalue = CompletionResponse(
                 operation_id=operation_id,
-                content=[response_content],
+                content = response_content,
                 content_artifacts=content_artifacts,
                 user_prompt=llm_prompt,
-                full_prompt='',
+                full_prompt=self.workflow_prompt,
                 completion_tokens=completion_tokens,
                 prompt_tokens=prompt_tokens,
                 total_tokens=prompt_tokens + completion_tokens,
                 total_cost=0
             )
+            return retvalue
 
     def __create_workflow_llm(self):
         """ Creates the workflow LLM instance and saves it to self.workflow_llm. """        

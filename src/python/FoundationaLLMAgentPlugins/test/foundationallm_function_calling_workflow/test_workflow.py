@@ -15,10 +15,11 @@ from foundationallm.config import Configuration, UserIdentity
 from foundationallm.models.agents import KnowledgeManagementCompletionRequest
 from foundationallm_agent_plugins.common.constants import CONTENT_ARTIFACT_TYPE_FILE
 
-user_prompt = "What does this file do?"
+#user_prompt = "What does this file do?"
 #user_prompt = "Generate a graph of y=mx+b where m=2 and b=3 and create a PDF with the graph along with text explaining the graph"
 #user_prompt = "Generate a PDF document with the title 'Test' and the content 'This is a test'"
 #user_prompt = "Generate an interactive graph of y=mx+b where m=2 and b=3"
+user_prompt = "Generate a graph of y=mx+b where m=2 and b=3"
 user_prompt_rewrite = None
 operation_id = str(uuid.uuid4())
 
@@ -75,7 +76,7 @@ print("++++++++++++++++++++++++++++++++++++++")
 print('File content artifacts:')
 for content_artifact in response.content_artifacts:
     if content_artifact.type == CONTENT_ARTIFACT_TYPE_FILE:
-        print(content_artifact.source)
+        print(content_artifact.filepath)
 print("++++++++++++++++++++++++++++++++++++++")
 
 print("*********************************")
