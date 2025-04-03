@@ -2,7 +2,7 @@
 
 1. **Environment Setup:**
    - [Initial environment setup (Quick Start Deployment)](../deployment/deployment-quick-start.md)
-   - [Initial environment setup (Standard Deployment)](https://github.com/solliancenet/foundationallm/blob/mg-terraform-iac/deploy/standard/bicep/README.md)
+   - [Initial environment setup (Standard Deployment)](https://github.com/solliancenet/foundationallm/blob/main/deploy/standard/README.md)
    - Configuration settings for different components:
      - [App Configuration Settings](../deployment/app-configuration-values.md)
      - [Configuration for deployment](../deployment/deployment-configuration.md)
