@@ -351,22 +351,36 @@ namespace FoundationaLLM.Orchestration.Core.Orchestration
                 Dictionary<string, object> toolParameters = [];
 
                 if (tool.TryGetPropertyValue<bool>(
-                        AgentToolPropertyNames.FoundationaLLM_AzureContainerApps_CodeExecution_Enabled, out bool requiresCodeExecution)
-                    && requiresCodeExecution)
+                        AgentToolPropertyNames.CodeSessionRequired, out bool codeSessionRequired)
+                    && codeSessionRequired)
                 {
+                    if (!tool.TryGetPropertyValue<string>(
+                            AgentToolPropertyNames.CodeSessionEndpointProvider, out string? codeSessionProvider)
+                        || string.IsNullOrWhiteSpace(codeSessionProvider))
+                        throw new OrchestrationException(
+                            $"The tool {tool.Name} requires a code session, but the code session provider is not specified or is invalid.");
+
+                    if (!tool.TryGetPropertyValue<string>(
+                            AgentToolPropertyNames.CodeSessionLanguage, out string? codeSessionLanguage)
+                        || string.IsNullOrWhiteSpace(codeSessionLanguage))
+                        throw new OrchestrationException(
+                            $"The tool {tool.Name} requires a code session, but the code session language is not specified or is invalid.");
+
                     var contextServiceResponse = await contextServiceClient.CreateCodeSession(
                         instanceId,
                         agentName,
                         conversationId!,
-                        tool.Name);
+                        tool.Name,
+                        codeSessionProvider,
+                        codeSessionLanguage);
 
                     if (contextServiceResponse.Success)
                     {
                         toolParameters.Add(
-                            AgentToolPropertyNames.FoundationaLLM_AzureContainerApps_CodeExecution_Endpoint,
+                            AgentToolPropertyNames.CodeSessionEndpoint,
                             contextServiceResponse.Result!.Endpoint);
                         toolParameters.Add(
-                            AgentToolPropertyNames.FoundationaLLM_AzureContainerApps_CodeExecution_SessionId,
+                            AgentToolPropertyNames.CodeSessionId,
                             contextServiceResponse.Result!.SessionId);
                     }
                     else

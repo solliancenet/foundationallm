@@ -37,7 +37,7 @@ builder.Configuration.AddAzureAppConfiguration((Action<AzureAppConfigurationOpti
     options.Select(AppConfigurationKeyFilters.FoundationaLLM_APIEndpoints_ContextAPI_Essentials);
     options.Select(AppConfigurationKeyFilters.FoundationaLLM_APIEndpoints_ContextAPI_Configuration);
 
-    options.Select(AppConfigurationKeyFilters.FoundationaLLM_Code_CodeExecution);
+    options.Select(AppConfigurationKeyFilters.FoundationaLLM_Code_CodeExecution_AzureContainerAppsDynamicSessions);
 }));
 
 if (builder.Environment.IsDevelopment())
@@ -65,7 +65,7 @@ builder.AddHttpClientFactoryService();
 //---------------------------
 
 builder.AddAzureCosmosDBContextServices();
-builder.AddAzureContainerAppsCodeSessionProviderService();
+builder.AddAzureContainerAppsCodeSessionProviderServices();
 
 //---------------------------
 // Scoped services

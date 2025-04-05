@@ -80,14 +80,21 @@ namespace FoundationaLLM.Common.Constants.Configuration
 
         #endregion
 
-        #region FoundationaLLM:Code:CodeExecution
+        #region FoundationaLLM:Code:CodeExecution:AzureContainerAppsDynamicSessions
         
         /// <summary>
-        /// The app configuration key for the FoundationaLLM:Code:CodeExecution:AzureContainerAppsDynamicSessions setting.
-        /// <para>Value description:<br/>The settings for the Azure Container Apps Dynamic Sessions code execution service.</para>
+        /// The app configuration key for the FoundationaLLM:Code:CodeExecution:AzureContainerAppsDynamicSessions:CodeInterpreter setting.
+        /// <para>Value description:<br/>The settings for the Azure Container Apps Dynamic Sessions code interpreter code execution service.</para>
         /// </summary>
-        public const string FoundationaLLM_Code_CodeExecution_AzureContainerAppsDynamicSessions =
-            "FoundationaLLM:Code:CodeExecution:AzureContainerAppsDynamicSessions";
+        public const string FoundationaLLM_Code_CodeExecution_AzureContainerAppsDynamicSessions_CodeInterpreter =
+            "FoundationaLLM:Code:CodeExecution:AzureContainerAppsDynamicSessions:CodeInterpreter";
+        
+        /// <summary>
+        /// The app configuration key for the FoundationaLLM:Code:CodeExecution:AzureContainerAppsDynamicSessions:CustomContainer setting.
+        /// <para>Value description:<br/>The settings for the Azure Container Apps Dynamic Sessions custom container code execution service.</para>
+        /// </summary>
+        public const string FoundationaLLM_Code_CodeExecution_AzureContainerAppsDynamicSessions_CustomContainer =
+            "FoundationaLLM:Code:CodeExecution:AzureContainerAppsDynamicSessions:CustomContainer";
 
         #endregion
 

@@ -54,8 +54,8 @@ class FoundationaLLMCodeInterpreterToolInput(BaseModel):
 class FoundationaLLMCodeInterpreterTool(FoundationaLLMToolBase):
     """ A tool for executing Python code in a code interpreter. """
     args_schema: Type[BaseModel] = FoundationaLLMCodeInterpreterToolInput
-    DYNAMIC_SESSION_ENDPOINT: ClassVar[str] = "foundationallm_aca_code_execution_endpoint"
-    DYNAMIC_SESSION_ID: ClassVar[str] = "foundationallm_aca_code_execution_session_id"
+    DYNAMIC_SESSION_ENDPOINT: ClassVar[str] = "code_session_endpoint"
+    DYNAMIC_SESSION_ID: ClassVar[str] = "code_session_id"
 
     def __init__(self, tool_config: AgentTool, objects: dict, user_identity:UserIdentity, config: Configuration):
         """ Initializes the FoundationaLLMCodeInterpreterTool class with the tool configuration,
@@ -97,10 +97,10 @@ class FoundationaLLMCodeInterpreterTool(FoundationaLLMToolBase):
 
         content_artifacts = []
         operation_id = None
-       
+
         # Upload any files required by this execution to the code interpreter
-        file_names = [f.file_name for f in files] if files else []              
-        
+        file_names = [f.file_name for f in files] if files else []
+
         # returns the operation_id
         self.context_api_client.headers['X-USER-IDENTITY'] = self.user_identity.model_dump_json()
         operation_response = await self.context_api_client.post_async(
@@ -135,11 +135,11 @@ class FoundationaLLMCodeInterpreterTool(FoundationaLLMToolBase):
             )
             files_list = files_list_response['file_records']
             # Remove files that were already present in the beginning of the session
-            files_list = {key: value for key, value in files_list.items() if key not in beginning_files_list}     
-        
+            files_list = {key: value for key, value in files_list.items() if key not in beginning_files_list}
+
         if files_list:
-            # Download the files from the code interpreter to the user storage container           
-            for file_name, file_data in files_list.items():                
+            # Download the files from the code interpreter to the user storage container
+            for file_name, file_data in files_list.items():
                 content_artifacts.append(ContentArtifact(
                     id = self.name,
                     title = self.name,

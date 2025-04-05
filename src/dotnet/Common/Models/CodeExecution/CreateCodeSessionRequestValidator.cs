@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using FoundationaLLM.Common.Constants.Context;
 
 namespace FoundationaLLM.Common.Models.CodeExecution
 {
@@ -21,6 +22,14 @@ namespace FoundationaLLM.Common.Models.CodeExecution
             RuleFor(request => request.Context)
                 .NotEmpty()
                 .WithMessage("The context must be provided.");
+            RuleFor(request => request.EndpointProvider)
+                .NotEmpty()
+                .WithMessage("The endpoint provider must be provided.");
+            RuleFor(request => request.Language)
+                .NotEmpty()
+                .WithMessage("The language must be provided.")
+                .Must(lang => CodeSessionLanguages.All.Contains(lang))
+                .WithMessage($"The language must be one of the following: {string.Join(", ", CodeSessionLanguages.All)}.");
         }
     }
 }

@@ -31,10 +31,10 @@ namespace FoundationaLLM.Common.Constants.Configuration
             "FoundationaLLM:PythonSDK:*";
         
         /// <summary>
-        /// Filter for the configuration section used to identify settings for code execution services.
+        /// Filter for the configuration section used to identify settings for Azure Container Apps Dynamic Sessions code execution services.
         /// </summary>
-        public const string FoundationaLLM_Code_CodeExecution =
-            "FoundationaLLM:Code:CodeExecution:*";
+        public const string FoundationaLLM_Code_CodeExecution_AzureContainerAppsDynamicSessions =
+            "FoundationaLLM:Code:CodeExecution:AzureContainerAppsDynamicSessions:*";
         
         /// <summary>
         /// Filter for the configuration section used to identify settings for resource providers caching.

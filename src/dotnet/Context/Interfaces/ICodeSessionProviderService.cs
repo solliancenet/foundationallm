@@ -10,12 +10,18 @@ namespace FoundationaLLM.Context.Interfaces
     public interface ICodeSessionProviderService
     {
         /// <summary>
+        /// Gets the name of the code session provider.
+        /// </summary>
+        string ProviderName { get; }
+
+        /// <summary>
         /// Creates a new code session.
         /// </summary>
         /// <param name="instanceId">The unique identifier of the FoundationaLLM instance.</param>
         /// <param name="agentName">The name of the agent for which the code execution session is created.</param>
         /// <param name="conversationId">The unique identifier of the conversation.</param>
         /// <param name="context">The context in which the code execution session is created. This is usually the name of the agent tool, but it is not limited to that.</param>
+        /// <param name="language">The code session programing language.</param>
         /// <param name="userIdentity">The <see cref="UnifiedUserIdentity"/> providing the user identity information.</param>
         /// <returns>A <see cref="CreateCodeSessionResponse"/> object with the properties of the code execution session.</returns>
         Task<CreateCodeSessionResponse> CreateCodeSession(
@@ -23,6 +29,7 @@ namespace FoundationaLLM.Context.Interfaces
             string agentName,
             string conversationId,
             string context,
+            string language,
             UnifiedUserIdentity userIdentity);
 
         /// <summary>

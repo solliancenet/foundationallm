@@ -6,18 +6,28 @@
     public static class AgentToolPropertyNames
     {
         /// <summary>
-        /// Indicates whether code execution is enabled or not.
+        /// Indicates whether the agent tool requires a code session.
         /// </summary>
-        public const string FoundationaLLM_AzureContainerApps_CodeExecution_Enabled = "foundationallm_aca_code_execution_enabled";
+        public const string CodeSessionRequired = "code_session_required";
 
         /// <summary>
-        /// The session identifier required to execute code in Azure Container Apps Dynamic Sessions.
+        /// The name of the code session provider.
         /// </summary>
-        public const string FoundationaLLM_AzureContainerApps_CodeExecution_SessionId = "foundationallm_aca_code_execution_session_id";
+        public const string CodeSessionEndpointProvider = "code_session_endpoint_provider";
 
         /// <summary>
-        /// The endpoint required to execute code in Azure Container Apps Dynamic Sessions.
+        /// The programming language of the code session.
         /// </summary>
-        public const string FoundationaLLM_AzureContainerApps_CodeExecution_Endpoint = "foundationallm_aca_code_execution_endpoint";
+        public const string CodeSessionLanguage = "code_session_language";
+
+        /// <summary>
+        /// The identifier of the code session.
+        /// </summary>
+        public const string CodeSessionId = "code_session_id";
+
+        /// <summary>
+        /// The code session endpoint.
+        /// </summary>
+        public const string CodeSessionEndpoint = "code_session_endpoint";
     }
 }

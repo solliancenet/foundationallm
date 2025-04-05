@@ -193,7 +193,9 @@ namespace FoundationaLLM.Common.Clients
             string instanceId,
             string agentName,
             string conversationId,
-            string context)
+            string context,
+            string endpointProvider,
+            string language)
         {
             try
             {
@@ -208,7 +210,9 @@ namespace FoundationaLLM.Common.Clients
                         {
                             AgentName = agentName,
                             ConversationId = conversationId,
-                            Context = context
+                            Context = context,
+                            EndpointProvider = endpointProvider,
+                            Language = language
                         }));
 
                 if (responseMessage.IsSuccessStatusCode)

@@ -91,19 +91,27 @@
 		]
 	},
 	{
-		"namespace": "Code:CodeExecution",
+		"namespace": "Code:CodeExecution:AzureContainerAppsDynamicSessions",
 		"dependency_injection_key": null,
 		"configuration_section": {
-			"description": "Configuration section used to identify settings for code execution services."
+			"description": "Configuration section used to identify settings for Azure Container Apps Dynamic Sessions code execution services."
 		},
 		"configuration_keys": [
 			{
-				"name": "AzureContainerAppsDynamicSessions",
-				"description": "The settings for the Azure Container Apps Dynamic Sessions code execution service.",
+				"name": "CodeInterpreter",
+				"description": "The settings for the Azure Container Apps Dynamic Sessions code interpreter code execution service.",
 				"secret": "",
-				"value": "{\\\"DynamicSessionsEndpoints\\\": []}",
+				"value": "{\"Endpoints\": []",
 				"content_type": "application/json",
-				"first_version": "0.9.1"
+				"first_version": "0.9.7"
+			},
+			{
+				"name": "CustomContainer",
+				"description": "The settings for the Azure Container Apps Dynamic Sessions custom container code execution service.",
+				"secret": "",
+				"value": "{\"Endpoints\": []",
+				"content_type": "application/json",
+				"first_version": "0.9.7"
 			}
 		]
 	},

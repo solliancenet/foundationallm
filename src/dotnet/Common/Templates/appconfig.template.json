@@ -64,8 +64,15 @@
             "tags": {}
         },
         {
-            "key": "FoundationaLLM:Code:CodeExecution:AzureContainerAppsDynamicSessions",
-            "value": "{\"DynamicSessionsEndpoints\": []}",
+            "key": "FoundationaLLM:Code:CodeExecution:AzureContainerAppsDynamicSessions:CodeInterpreter",
+            "value": "{"Endpoints": []",
+            "label": null,
+            "content_type": "application/json",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:Code:CodeExecution:AzureContainerAppsDynamicSessions:CustomContainer",
+            "value": "{"Endpoints": []",
             "label": null,
             "content_type": "application/json",
             "tags": {}

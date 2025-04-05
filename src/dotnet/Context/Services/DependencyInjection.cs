@@ -103,23 +103,31 @@ namespace FoundationaLLM
         }
 
         /// <summary>
-        /// Registers the <see cref="ICodeSessionProviderService"/> implementation with the dependency injection container.
+        /// Registers the <see cref="ICodeSessionProviderService"/> implementations with the dependency injection container.
         /// </summary>
         /// <param name="builder">The <see cref="IHostApplicationBuilder"/> application builder.</param>
-        public static void AddAzureContainerAppsCodeSessionProviderService(this IHostApplicationBuilder builder) =>
-            builder.Services.AddAzureContainerAppsCodeSessionProviderService(builder.Configuration);
+        public static void AddAzureContainerAppsCodeSessionProviderServices(this IHostApplicationBuilder builder) =>
+            builder.Services.AddAzureContainerAppsCodeSessionProviderServices(builder.Configuration);
 
         /// <summary>
-        /// Registers the <see cref="ICodeSessionProviderService"/> implementation with the dependency injection container.
+        /// Registers the <see cref="ICodeSessionProviderService"/> implementations with the dependency injection container.
         /// </summary>
         /// <param name="services">The <see cref="IServiceCollection"/> dependency injection container service collection.</param>
         /// <param name="configuration">The <see cref="IConfiguration"/> application configuration provider.</param>
-        public static void AddAzureContainerAppsCodeSessionProviderService(this IServiceCollection services, IConfiguration configuration)
+        public static void AddAzureContainerAppsCodeSessionProviderServices(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddOptions<AzureContainerAppsCodeSessionProviderServiceSettings>()
-                .Bind(configuration.GetSection(AppConfigurationKeys.FoundationaLLM_Code_CodeExecution_AzureContainerAppsDynamicSessions));
+            services.AddOptions<AzureContainerAppsCodeInterpreterServiceSettings>()
+                .Bind(configuration.GetSection(
+                    AppConfigurationKeys.FoundationaLLM_Code_CodeExecution_AzureContainerAppsDynamicSessions_CodeInterpreter));
 
-            services.AddSingleton<ICodeSessionProviderService, AzureContainerAppsCodeSessionProviderService>();
+            services.AddSingleton<ICodeSessionProviderService, AzureContainerAppsCodeInterpreterService>();
+
+            services.AddOptions<AzureContainerAppsCustomContainerServiceSettings>()
+                .Bind(configuration.GetSection(
+                    AppConfigurationKeys.FoundationaLLM_Code_CodeExecution_AzureContainerAppsDynamicSessions_CustomContainer));
+
+            services.AddSingleton<ICodeSessionProviderService, AzureContainerAppsCustomContainerService>();
+
             services.ActivateSingleton<ICodeSessionProviderService>();
         }
     }

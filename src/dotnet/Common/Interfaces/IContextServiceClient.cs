@@ -51,11 +51,15 @@ namespace FoundationaLLM.Common.Interfaces
         /// <param name="agentName">The name of the agent.</param>
         /// <param name="conversationId">The conversation identifier.</param>
         /// <param name="context">The context within the conversation in which the code session must be created (e.g., an agent tool name).</param>
+        /// <param name="endpointProvider">The name of the code session endpoint provider.</param>
+        /// <param name="language">The programming language of the code session.</param>
         /// <returns>A <see cref="ContextServiceResponse{T}"/> instance where <c>T</c> is of type <see cref="CreateCodeSessionResponse"/>.</returns>
         Task<ContextServiceResponse<CreateCodeSessionResponse>> CreateCodeSession(
             string instanceId,
             string agentName,
             string conversationId,
-            string context);
+            string context,
+            string endpointProvider,
+            string language);
     }
 }

@@ -17,19 +17,34 @@ namespace FoundationaLLM.Context.Services
     /// </summary>
     /// <param name="fileService">The file service used for file operations.</param>
     /// <param name="cosmosDBService">The Azure Cosmos DB service providing database services.</param>
-    /// <param name="codeSessionProviderService">The code session provider service.</param>
+    /// <param name="codeSessionProviderServices">The code session provider services.</param>
     /// <param name="resourceValidatorFactory">The resource validator factory.</param>
     /// <param name="logger">The logger used for logging.</param>
     public class CodeSessionService(
         IFileService fileService,
         IAzureCosmosDBCodeSessionService cosmosDBService,
-        ICodeSessionProviderService codeSessionProviderService,
+        IEnumerable<ICodeSessionProviderService> codeSessionProviderServices,
         IResourceValidatorFactory resourceValidatorFactory,
         ILogger<CodeSessionService> logger) : ICodeSessionService
     {
         IFileService _fileService = fileService;
         IAzureCosmosDBCodeSessionService _cosmosDBService = cosmosDBService;
-        ICodeSessionProviderService _codeSessionProviderService = codeSessionProviderService;
+
+        ICodeSessionProviderService _codeInterpreterCodeSessionProviderService =
+            codeSessionProviderServices.FirstOrDefault(x =>
+                x.ProviderName == CodeSessionProviderNames.AzureContainerAppsCodeInterpreter)
+                ?? throw new ContextServiceException(
+                    $"The code session provider service {CodeSessionProviderNames.AzureContainerAppsCodeInterpreter} was not found.",
+                    StatusCodes.Status500InternalServerError);
+
+        ICodeSessionProviderService _customContainerCodeSessionProviderService =
+            codeSessionProviderServices.FirstOrDefault(x =>
+                x.ProviderName == CodeSessionProviderNames.AzureContainerAppsCustomContainer)
+                ?? throw new ContextServiceException(
+                    $"The code session provider service {CodeSessionProviderNames.AzureContainerAppsCustomContainer} was not found.",
+                    StatusCodes.Status500InternalServerError);
+
+
         ILogger<CodeSessionService> _logger = logger;
         StandardValidator _validator = new(
             resourceValidatorFactory,
@@ -45,12 +60,16 @@ namespace FoundationaLLM.Context.Services
         {
             await _validator.ValidateAndThrowAsync(codeSessionRequest);
 
+            var codeSessionProviderService = GetCodeSessionProviderService(
+                codeSessionRequest.EndpointProvider);
+
             // Create a new code session using the code session provider service.
-            var codeSessionProviderResponse = await _codeSessionProviderService.CreateCodeSession(
+            var codeSessionProviderResponse = await codeSessionProviderService.CreateCodeSession(
                 instanceId,
                 codeSessionRequest.AgentName,
                 codeSessionRequest.ConversationId,
                 codeSessionRequest.Context,
+                codeSessionRequest.Language,
                 userIdentity);
 
             // Create the attached code session record.
@@ -58,8 +77,9 @@ namespace FoundationaLLM.Context.Services
                 instanceId,
                 codeSessionRequest.ConversationId,
                 codeSessionProviderResponse.SessionId,
-                CodeSessionProviderNames.AzureContainerAppsDynamicSessions,
+                codeSessionRequest.EndpointProvider,
                 codeSessionProviderResponse.Endpoint,
+                codeSessionRequest.Language,
                 userIdentity);
 
             // Save the code session record to the database (update if it already exists).
@@ -87,11 +107,14 @@ namespace FoundationaLLM.Context.Services
                     $"The code session record with id {sessionId} was not found.",
                     StatusCodes.Status404NotFound);
 
+            var codeSessionProviderService = GetCodeSessionProviderService(
+                codeSessionRecord.EndpointProvider);
+
             var uploadResults = request.FileNames.Distinct()
                 .ToDictionary(x => x, x => false);
 
             //Attempt to cleanup the code session by removing any existing files.
-            await _codeSessionProviderService.DeleteCodeSessionFileStoreItems(
+            await codeSessionProviderService.DeleteCodeSessionFileStoreItems(
                 codeSessionRecord.Id,
                 codeSessionRecord.Endpoint);
 
@@ -109,7 +132,7 @@ namespace FoundationaLLM.Context.Services
                 uploadResults[fileName] =
                     fileContent != null
                     && fileContent.FileContent != null
-                    && await _codeSessionProviderService.UploadFileToCodeSession(
+                    && await codeSessionProviderService.UploadFileToCodeSession(
                         codeSessionRecord.Id,
                         codeSessionRecord.Endpoint,
                         fileName,
@@ -157,7 +180,10 @@ namespace FoundationaLLM.Context.Services
                     $"The code session record with id {codeSessionFileUploadRecord.CodeSessionId} was not found.",
                     StatusCodes.Status404NotFound);
 
-            var fileStoreItems = await _codeSessionProviderService.GetCodeSessionFileStoreItems(
+            var codeSessionProviderService = GetCodeSessionProviderService(
+                codeSessionRecord.EndpointProvider);
+
+            var fileStoreItems = await codeSessionProviderService.GetCodeSessionFileStoreItems(
                 codeSessionRecord.Id,
                 codeSessionRecord.Endpoint);
 
@@ -171,7 +197,7 @@ namespace FoundationaLLM.Context.Services
 
             foreach (var newFileStoreItem in newFileStoreItems)
             {
-                var fileContentStream = await _codeSessionProviderService.DownloadFileFromCodeSession(
+                var fileContentStream = await codeSessionProviderService.DownloadFileFromCodeSession(
                     codeSessionRecord.Id,
                     codeSessionRecord.Endpoint,
                     newFileStoreItem.Name,
@@ -207,5 +233,18 @@ namespace FoundationaLLM.Context.Services
 
             return result;
         }
+
+        private ICodeSessionProviderService GetCodeSessionProviderService(
+            string codeSessionProviderName) =>
+            codeSessionProviderName switch
+            {
+                CodeSessionProviderNames.AzureContainerAppsCodeInterpreter =>
+                    _codeInterpreterCodeSessionProviderService,
+                CodeSessionProviderNames.AzureContainerAppsCustomContainer =>
+                    _customContainerCodeSessionProviderService,
+                _ => throw new ContextServiceException(
+                    $"The code session provider service {codeSessionProviderName} is not supported.",
+                        StatusCodes.Status400BadRequest)
+            };
     }
 }

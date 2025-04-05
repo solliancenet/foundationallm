@@ -34,8 +34,8 @@ from foundationallm.models.orchestration import ContentArtifact
 
 class FoundationaLLMFileAnalysisTool(FoundationaLLMToolBase):
 
-    DYNAMIC_SESSION_ENDPOINT: ClassVar[str] = "foundationallm_aca_code_execution_endpoint"
-    DYNAMIC_SESSION_ID: ClassVar[str] = "foundationallm_aca_code_execution_session_id"
+    DYNAMIC_SESSION_ENDPOINT: ClassVar[str] = "code_session_endpoint"
+    DYNAMIC_SESSION_ID: ClassVar[str] = "code_session_id"
 
     def __init__(self, tool_config: AgentTool, objects: dict, user_identity:UserIdentity, config: Configuration):
         """ Initializes the FoundationaLLMDataAnalysisTool class with the tool configuration,

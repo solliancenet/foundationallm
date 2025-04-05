@@ -6,8 +6,13 @@
     public static class CodeSessionProviderNames
     {
         /// <summary>
-        /// The Azure Container Apps Dynamic Sessions code session provider.
+        /// The Azure Container Apps Dynamic Sessions code interpreter.
         /// </summary>
-        public const string AzureContainerAppsDynamicSessions = "AzureContainerAppsDynamicSessions";
+        public const string AzureContainerAppsCodeInterpreter = "AzureContainerAppsCodeInterpreter";
+
+        /// <summary>
+        /// The Azure Container Apps Dynamic Sessions custom container.
+        /// </summary>
+        public const string AzureContainerAppsCustomContainer = "AzureContainerAppsCustomContainer";
     }
 }

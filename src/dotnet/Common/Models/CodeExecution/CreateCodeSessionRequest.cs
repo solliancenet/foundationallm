@@ -24,5 +24,17 @@ namespace FoundationaLLM.Common.Models.CodeExecution
         /// </summary>
         [JsonPropertyName("context")]
         public required string Context { get; set; }
+
+        /// <summary>
+        /// Gets or sets the name of the code session provider.
+        /// </summary>
+        [JsonPropertyName("endpoint_provider")]
+        public required string EndpointProvider { get; set; }
+
+        /// <summary>
+        /// Gets or sets the language of the code session.
+        /// </summary>
+        [JsonPropertyName("language")]
+        public required string Language { get; set; }
     }
 }

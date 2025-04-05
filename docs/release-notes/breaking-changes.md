@@ -3,6 +3,29 @@
 > [!NOTE]
 > This section is for changes that are not yet released but will affect future releases.
 
+## Starting from 0.9.7-beta138
+
+## Configuration changes
+
+The `FoundationaLLM:Code:CodeExecution:AzureContainerAppsDynamicSessions` configuration setting has been replaced by the following configuration settings:
+
+Name | Content Type | Description | Default value
+--- | --- | --- | ---
+`FoundationaLLM:Code:CodeExecution:AzureContainerAppsDynamicSessions:CodeInterpreter` | `application/json` | The settings for the Azure Container Apps Dynamic Sessions code interpreter. | `{ "Endpoints": { "Python": [], "CSharp": []} }`
+`FoundationaLLM:Code:CodeExecution:AzureContainerAppsDynamicSessions:CustomContainer` | `application/json` | The settings for the Azure Container Apps Dynamic Sessions custom container. | `{ "Endpoints": { "Python": [], "CSharp": []} }`
+
+## Code sessions
+
+The tool property `foundationallm_aca_code_execution_enabled` has been renamed to `code_session_required`. The property indicates whether the tool requires a code session during its execution. If the property is set to `true`, the following additional properties must be set:
+
+- `code_session_endpoint_provider`: Supported values are `AzureContainerAppsCodeInterpreter` (indicates that the code session is provided by the Azure Container Apps Dynamic Sessions code interpreter) and `AzureContainerAppsCustomContainer` (indicates that the code session is provided by the Azure Container Apps Dynamic Sessions custom container).
+- `code_session_language`: Supported values are `Python` and `CSharp`.
+
+Tools that require a code session should expect the following properties to be injected:
+
+- `code_session_endpoint` (instead of the previous `foundationallm_aca_code_execution_session_id`)
+- `code_session_id` (instead of the previous `foundationallm_aca_code_execution_session_id`)
+
 ## Starting from 0.9.7-beta128
 
 ## Configuration changes

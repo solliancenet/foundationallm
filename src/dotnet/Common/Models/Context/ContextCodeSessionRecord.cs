@@ -27,7 +27,7 @@ namespace FoundationaLLM.Common.Models.Context
         /// <summary>
         /// Gets or sets the code session provider name.
         /// </summary>
-        [JsonPropertyName("endopoint_provider")]
+        [JsonPropertyName("endpoint_provider")]
         [JsonPropertyOrder(1)]
         public string EndpointProvider { get; set; }
 
@@ -37,6 +37,13 @@ namespace FoundationaLLM.Common.Models.Context
         [JsonPropertyName("endpoint")]
         [JsonPropertyOrder(2)]
         public string Endpoint { get; set; }
+
+        /// <summary>
+        /// Gets or sets the code session programming language.
+        /// </summary>
+        [JsonPropertyName("language")]
+        [JsonPropertyOrder(3)]
+        public string Language { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ContextCodeSessionRecord"/> class.
@@ -56,6 +63,7 @@ namespace FoundationaLLM.Common.Models.Context
         /// <param name="codeSessionId">The code session unique identifier.</param>
         /// <param name="endpointProvider">The code session provider.</param>
         /// <param name="endpoint">The code session provider endpoint.</param>
+        /// <param name="language">The code session programming language.</param>
         /// <param name="userIdentity">The <see cref="UnifiedUserIdentity"/> providing details about the user identity.</param>
         public ContextCodeSessionRecord(
             string instanceId,
@@ -63,6 +71,7 @@ namespace FoundationaLLM.Common.Models.Context
             string codeSessionId,
             string endpointProvider,
             string endpoint,
+            string language,
             UnifiedUserIdentity userIdentity) : base(
                 codeSessionId,
                 instanceId,
@@ -72,6 +81,7 @@ namespace FoundationaLLM.Common.Models.Context
             ConversationId = conversationId;
             EndpointProvider = endpointProvider;
             Endpoint = endpoint;
+            Language = language;
         }
     }
 }
