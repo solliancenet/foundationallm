@@ -1,10 +1,12 @@
-﻿namespace FoundationaLLM.Common.Constants.OpenAI
+﻿using FoundationaLLM.Common.Clients;
+
+namespace FoundationaLLM.Common.Constants.OpenAI
 {
     /// <summary>
     /// Provides the names of the parameters that can be used to create OpenAI agent capabilities.
     /// </summary>
     /// <remarks>
-    /// The constants are used by the callers of the <see cref="IGatewayServiceClient"/> implementations.
+    /// The constants are used by the callers of the <see cref="GatewayServiceClient"/> implementations.
     /// </remarks>
     public static class OpenAIAgentCapabilityParameterNames
     {

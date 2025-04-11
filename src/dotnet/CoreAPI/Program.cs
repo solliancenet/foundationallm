@@ -66,8 +66,7 @@ namespace FoundationaLLM.Core.API
                 options.Select(AppConfigurationKeyFilters.FoundationaLLM_ResourceProviders_Agent_Storage);
                 options.Select(AppConfigurationKeyFilters.FoundationaLLM_ResourceProviders_Attachment_Storage);
                 options.Select(AppConfigurationKeyFilters.FoundationaLLM_ResourceProviders_AIModel_Storage);
-                options.Select(AppConfigurationKeyFilters.FoundationaLLM_ResourceProviders_Configuration_Storage);
-                options.Select(AppConfigurationKeyFilters.FoundationaLLM_ResourceProviders_AzureOpenAI_Storage);
+                options.Select(AppConfigurationKeyFilters.FoundationaLLM_ResourceProviders_Configuration_Storage);                
 
                 options.Select(AppConfigurationKeyFilters.FoundationaLLM_Quota_Storage);
 
@@ -113,6 +112,7 @@ namespace FoundationaLLM.Core.API
             builder.AddAgentResourceProvider();
             builder.AddAttachmentResourceProvider();
             builder.AddConfigurationResourceProvider();
+            builder.AddAzureAIResourceProvider();
             builder.AddAzureOpenAIResourceProvider();
             builder.AddAIModelResourceProvider();
             builder.AddConversationResourceProvider();

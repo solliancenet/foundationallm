@@ -1,9 +1,9 @@
-﻿using Azure.AI.OpenAI;
+﻿using Azure.AI.Projects;
 using FoundationaLLM.Common.Authentication;
 using FoundationaLLM.Common.Clients;
 using FoundationaLLM.Common.Constants;
 using FoundationaLLM.Common.Constants.Agents;
-using FoundationaLLM.Common.Constants.OpenAI;
+using FoundationaLLM.Common.Constants.AzureAI;
 using FoundationaLLM.Common.Constants.ResourceProviders;
 using FoundationaLLM.Common.Exceptions;
 using FoundationaLLM.Common.Extensions;
@@ -13,7 +13,7 @@ using FoundationaLLM.Common.Models.Authorization;
 using FoundationaLLM.Common.Models.Configuration.Instance;
 using FoundationaLLM.Common.Models.Configuration.ResourceProviders;
 using FoundationaLLM.Common.Models.ResourceProviders;
-using FoundationaLLM.Common.Models.ResourceProviders.AzureOpenAI;
+using FoundationaLLM.Common.Models.ResourceProviders.AzureAI;
 using FoundationaLLM.Common.Services.ResourceProviders;
 using FoundationaLLM.Common.Services.Storage;
 using Microsoft.AspNetCore.Http;
@@ -22,10 +22,10 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Text.Json;
 
-namespace FoundationaLLM.AzureOpenAI.ResourceProviders
+namespace AzureAI.ResourceProviders
 {
     /// <summary>
-    /// Implements the FoundationaLLM.AzureOpenAI resource provider.
+    /// Implements the FoundationaLLM.AzureAI resource provider.
     /// </summary>
     /// <param name="instanceOptions">The options providing the <see cref="InstanceSettings"/> with instance settings.</param>
     /// <param name="cacheOptions">The options providing the <see cref="ResourceProviderCacheSettings"/> with settings for the resource provider cache.</param>
@@ -35,7 +35,7 @@ namespace FoundationaLLM.AzureOpenAI.ResourceProviders
     /// <param name="cosmosDBService">The <see cref="IAzureCosmosDBService"/> providing Cosmos DB services.</param>
     /// <param name="serviceProvider">The <see cref="IServiceProvider"/> of the main dependency injection container.</param>
     /// <param name="logger">The <see cref="ILogger"/> used for logging.</param>
-    public class AzureOpenAIResourceProviderService(
+    public class AzureAIResourceProviderService(
         IOptions<InstanceSettings> instanceOptions,
         IOptions<ResourceProviderCacheSettings> cacheOptions,
         IAuthorizationServiceClient authorizationService,        
@@ -43,7 +43,7 @@ namespace FoundationaLLM.AzureOpenAI.ResourceProviders
         IResourceValidatorFactory resourceValidatorFactory,
         IAzureCosmosDBService cosmosDBService,
         IServiceProvider serviceProvider,
-        ILogger<AzureOpenAIResourceProviderService> logger)
+        ILogger<AzureAIResourceProviderService> logger)
         : ResourceProviderServiceBase<ResourceReference>(
             instanceOptions.Value,
             cacheOptions.Value,
@@ -56,6 +56,7 @@ namespace FoundationaLLM.AzureOpenAI.ResourceProviders
             eventTypesToSubscribe: null,
             useInternalReferencesStore: false)
     {
+        
         private readonly IAzureCosmosDBService _cosmosDBService = cosmosDBService;
 
         /// <inheritdoc/>
@@ -63,7 +64,7 @@ namespace FoundationaLLM.AzureOpenAI.ResourceProviders
             AzureOpenAIResourceProviderMetadata.AllowedResourceTypes;
 
         /// <inheritdoc/>
-        protected override string _name => ResourceProviderNames.FoundationaLLM_AzureOpenAI;
+        protected override string _name => ResourceProviderNames.FoundationaLLM_AzureAI;
 
         protected override async Task InitializeInternal() =>
             await Task.CompletedTask;
@@ -140,7 +141,7 @@ namespace FoundationaLLM.AzureOpenAI.ResourceProviders
 
             return resourcePath.Action switch
             {
-                ResourceProviderActions.LoadFileContent => ((await LoadFileContent((result as AzureOpenAIFileMapping)!)) as TResult)!,
+                ResourceProviderActions.LoadFileContent => ((await LoadFileContentAsync((result as AzureAIAgentFileMapping)!)) as TResult)!,
                 _ => throw new ResourceProviderException(
                     $"The action {resourcePath.Action} is not supported by the {_name} resource provider.",
                     StatusCodes.Status400BadRequest)
@@ -160,7 +161,7 @@ namespace FoundationaLLM.AzureOpenAI.ResourceProviders
             // This is the PEP (Policy Enforcement Point) where the resource provider enforces the policy definition to upsert the resource.
             // The implementation of the PEP is straightforward: the resource provider validates the UPN of the user identity.
 
-            var updatedResource = (resource as AzureOpenAIResourceBase)!;
+            var updatedResource = (resource as AzureAIAgentResourceBase)!;
 
             if (!StringComparer.Ordinal.Equals(updatedResource.UPN, userIdentity.UPN))
                 throw new ResourceProviderException(
@@ -178,7 +179,7 @@ namespace FoundationaLLM.AzureOpenAI.ResourceProviders
 
             if (existingResource != null)
             {
-                if (!StringComparer.Ordinal.Equals((existingResource as AzureOpenAIResourceBase)!.UPN,
+                if (!StringComparer.Ordinal.Equals((existingResource as AzureAIAgentResourceBase)!.UPN,
                         userIdentity.UPN))
                 {
                     throw new ResourceProviderException(
@@ -186,8 +187,8 @@ namespace FoundationaLLM.AzureOpenAI.ResourceProviders
                         StatusCodes.Status403Forbidden);
                 }
 
-                if (existingResource is AzureOpenAIResourceBase resource1
-                    && updatedResource is AzureOpenAIResourceBase resource2
+                if (existingResource is AzureAIAgentResourceBase resource1
+                    && updatedResource is AzureAIAgentResourceBase resource2
                     && (
                         !StringComparer.Ordinal.Equals(resource1.Id, resource2.Id)
                         || !StringComparer.Ordinal.Equals(resource1.Name, resource2.Name)
@@ -202,12 +203,12 @@ namespace FoundationaLLM.AzureOpenAI.ResourceProviders
 
             return updatedResource switch
             {
-                AzureOpenAIConversationMapping conversationMapping => ((await UpdateConversationMapping(
+                AzureAIAgentConversationMapping conversationMapping => ((await UpdateConversationMappingAsync(
                     conversationMapping,
                     existingResource == null,
                     userIdentity,
                     options)) as TResult)!,
-                AzureOpenAIFileMapping fileMapping => ((await UpdateFileMapping(
+                AzureAIAgentFileMapping fileMapping => ((await UpdateFileMappingAsync(
                     fileMapping,
                     existingResource == null,
                     userIdentity,
@@ -222,73 +223,67 @@ namespace FoundationaLLM.AzureOpenAI.ResourceProviders
 
         #region Resource management
 
-        private async Task<ResourceProviderActionResult<FileContent>> LoadFileContent(AzureOpenAIFileMapping fileMapping)
-        {
-            // Switched to the less efficient (and not recommended) approach of forcing the creation of
-            // a new TokenCredential object each time we use the Azure OpenAI client SDK.
-            // This is indended to overcome the intermittent issue of 401s due to a potential bug in this SDK.
-            var azureOpenAIClient = new AzureOpenAIClient(
-                new Uri(fileMapping.OpenAIEndpoint),
-                ServiceContext.CreateAzureCredential());
-            var fileClient = azureOpenAIClient.GetOpenAIFileClient();
+        private async Task<ResourceProviderActionResult<FileContent>> LoadFileContentAsync(AzureAIAgentFileMapping fileMapping)
+        {           
+            var agentsClient = new AgentsClient(fileMapping.ProjectConnectionString, ServiceContext.AzureCredential);
 
-            // Retrieve using the OpenAI file ID.           
-            var result = await fileClient.DownloadFileAsync(fileMapping!.OpenAIFileId);
+            // Retrieve the file content from the Azure AI Agent service using the file ID.
+            var result = await agentsClient.GetFileContentAsync(fileMapping.AzureAIAgentFileId);                     
 
             return new ResourceProviderActionResult<FileContent>(fileMapping.FileObjectId, true)
             {
                 Resource = new()
                 {
-                    Name = fileMapping!.OpenAIFileId!,
-                    OriginalFileName = fileMapping!.OriginalFileName,
+                    Name = fileMapping.AzureAIAgentFileId,
+                    OriginalFileName = fileMapping.OriginalFileName,
                     ContentType = fileMapping.FileContentType,
                     BinaryContent = result.Value.ToMemory()
                 }
             };
         }
 
-        private async Task<AzureOpenAIConversationMappingUpsertResult> UpdateConversationMapping(
-            AzureOpenAIConversationMapping conversationMapping,
+        private async Task<AzureAIAgentConversationMappingUpsertResult> UpdateConversationMappingAsync(
+            AzureAIAgentConversationMapping conversationMapping,
             bool isNew,
             UnifiedUserIdentity userIdentity,
             ResourceProviderUpsertOptions? options = null)
         {
             #region Load and validate upsert options
 
-            var agentObjectId = options?.Parameters.GetValueOrDefault(AzureOpenAIResourceProviderUpsertParameterNames.AgentObjectId) as string
+            var agentObjectId = options?.Parameters.GetValueOrDefault(AzureAIResourceProviderUpsertParameterNames.AgentObjectId) as string
                 ?? throw new ResourceProviderException(
-                    $"The {_name} resource provider requires the {AzureOpenAIResourceProviderUpsertParameterNames.AgentObjectId} parameter to update the {conversationMapping.Name} conversation mapping.",
+                    $"The {_name} resource provider requires the {AzureAIResourceProviderUpsertParameterNames.AgentObjectId} parameter to update the {conversationMapping.Name} conversation mapping.",
                     StatusCodes.Status400BadRequest);
 
-            var conversationId = options?.Parameters.GetValueOrDefault(AzureOpenAIResourceProviderUpsertParameterNames.ConversationId) as string
+            var conversationId = options?.Parameters.GetValueOrDefault(AzureAIResourceProviderUpsertParameterNames.ConversationId) as string
                 ?? throw new ResourceProviderException(
-                    $"The {_name} resource provider requires the {AzureOpenAIResourceProviderUpsertParameterNames.ConversationId} parameter to update the {conversationMapping.Name} conversation mapping.",
+                    $"The {_name} resource provider requires the {AzureAIResourceProviderUpsertParameterNames.ConversationId} parameter to update the {conversationMapping.Name} conversation mapping.",
                     StatusCodes.Status400BadRequest);
 
-            var openAIAssistantId = options?.Parameters.GetValueOrDefault(AzureOpenAIResourceProviderUpsertParameterNames.OpenAIAssistantId) as string
+            var azureAIAgentId = options?.Parameters.GetValueOrDefault(AzureAIResourceProviderUpsertParameterNames.AzureAIAgentId) as string
                 ?? throw new ResourceProviderException(
-                    $"The {_name} resource provider requires the {AzureOpenAIResourceProviderUpsertParameterNames.OpenAIAssistantId} parameter to update the {conversationMapping.Name} conversation mapping.",
+                    $"The {_name} resource provider requires the {AzureAIResourceProviderUpsertParameterNames.AzureAIAgentId} parameter to update the {conversationMapping.Name} conversation mapping.",
                     StatusCodes.Status400BadRequest);
 
-            var mustCreateAssistantThread = options?.Parameters.GetValueOrDefault(AzureOpenAIResourceProviderUpsertParameterNames.MustCreateOpenAIAssistantThread) as bool?
+            var mustCreateAgentThread = options?.Parameters.GetValueOrDefault(AzureAIResourceProviderUpsertParameterNames.MustCreateAzureAIAgentThread) as bool?
                 ?? throw new ResourceProviderException(
-                    $"The {_name} resource provider requires the {AzureOpenAIResourceProviderUpsertParameterNames.MustCreateOpenAIAssistantThread} parameter to update the {conversationMapping.Name} conversation mapping.",
+                    $"The {_name} resource provider requires the {AzureAIResourceProviderUpsertParameterNames.MustCreateAzureAIAgentThread} parameter to update the {conversationMapping.Name} conversation mapping.",
                     StatusCodes.Status400BadRequest);
 
             #endregion
 
-            #region Create the OpenAI assistant thread
+            #region Create the Azure AI Agent Service thread
 
-            var newOpenAIAssistantThreadId = default(string);
-            var newOpenAIVectorStoreId = default(string);
+            var newAzureAIAgentThreadId = default(string);
+            var newAzureAIAgentVectorStoreId = default(string);
 
             if (isNew)
             {
                 conversationMapping.ObjectId = ResourcePath.GetObjectId(_instanceSettings.Id, _name,
-                    AzureOpenAIResourceTypeNames.ConversationMappings, conversationMapping.Name);
+                    AzureAIResourceTypeNames.AgentConversationMappings, conversationMapping.Name);
             }
 
-            if (mustCreateAssistantThread)
+            if (mustCreateAgentThread)
             {
                 var gatewayClient = new GatewayServiceClient(
                    await _serviceProvider.GetRequiredService<IHttpClientFactoryService>()
@@ -297,83 +292,83 @@ namespace FoundationaLLM.AzureOpenAI.ResourceProviders
 
                 Dictionary<string, object> parameters = new()
                 {
-                    { OpenAIAgentCapabilityParameterNames.OpenAIAssistantId, openAIAssistantId },
-                    { OpenAIAgentCapabilityParameterNames.CreateOpenAIAssistantThread, mustCreateAssistantThread },
-                    { OpenAIAgentCapabilityParameterNames.OpenAIEndpoint, conversationMapping.OpenAIEndpoint }
+                    { AzureAIAgentServiceCapabilityParameterNames.AgentId, azureAIAgentId },
+                    { AzureAIAgentServiceCapabilityParameterNames.CreateThread, mustCreateAgentThread },
+                    { AzureAIAgentServiceCapabilityParameterNames.ProjectConnectionString, conversationMapping.ProjectConnectionString }
                 };
 
                 var agentCapabilityResult = await gatewayClient!.CreateAgentCapability(
                     _instanceSettings.Id,
-                    AgentCapabilityCategoryNames.OpenAIAssistants,
+                    AgentCapabilityCategoryNames.AzureAIAgents,
                     string.Empty,
                     parameters);
 
                 var referenceTime = DateTime.UtcNow;
 
-                if (agentCapabilityResult.TryGetValue(OpenAIAgentCapabilityParameterNames.OpenAIAssistantThreadId, out var newOpenAIAssistantThreadIdObject)
-                    && newOpenAIAssistantThreadIdObject != null)
-                    newOpenAIAssistantThreadId = ((JsonElement)newOpenAIAssistantThreadIdObject!).Deserialize<string>();
+                if (agentCapabilityResult.TryGetValue(AzureAIAgentServiceCapabilityParameterNames.ThreadId, out var newAzureAIAgentThreadIdObject)
+                    && newAzureAIAgentThreadIdObject != null)
+                    newAzureAIAgentThreadId = ((JsonElement)newAzureAIAgentThreadIdObject!).Deserialize<string>();
 
-                if (agentCapabilityResult.TryGetValue(OpenAIAgentCapabilityParameterNames.OpenAIVectorStoreId, out var newOpenAIAssistantVectorStoreIdObject)
-                    && newOpenAIAssistantVectorStoreIdObject != null)
-                    newOpenAIVectorStoreId = ((JsonElement)newOpenAIAssistantVectorStoreIdObject!).Deserialize<string>();
+                if (agentCapabilityResult.TryGetValue(AzureAIAgentServiceCapabilityParameterNames.VectorStoreId, out var newAzureAIAgentVectorStoreIdObject)
+                    && newAzureAIAgentVectorStoreIdObject != null)
+                    newAzureAIAgentVectorStoreId = ((JsonElement)newAzureAIAgentVectorStoreIdObject!).Deserialize<string>();
 
-                if (string.IsNullOrWhiteSpace(newOpenAIVectorStoreId))
+                if (string.IsNullOrWhiteSpace(newAzureAIAgentVectorStoreId))
                     throw new ResourceProviderException(
-                        $"The OpenAI assistant vector store was not created for the agent {agentObjectId} and conversation {conversationId}.",
+                        $"The Azure AI Agent Service vector store was not created for the agent {agentObjectId} and conversation {conversationId}.",
                         StatusCodes.Status500InternalServerError);
 
-                if (string.IsNullOrWhiteSpace(newOpenAIAssistantThreadId))
+                if (string.IsNullOrWhiteSpace(newAzureAIAgentThreadId))
                     throw new ResourceProviderException(
-                        $"The OpenAI assistant thread was not created for the agent {agentObjectId} and conversation {conversationId}.",
+                        $"The Azure AI Agent Service thread was not created for the agent {agentObjectId} and conversation {conversationId}.",
                         StatusCodes.Status500InternalServerError);
 
-                conversationMapping.OpenAIAssistantsThreadId = newOpenAIAssistantThreadId;
-                conversationMapping.OpenAIAssistantsThreadCreatedOn = referenceTime;
-                conversationMapping.OpenAIVectorStoreId = newOpenAIVectorStoreId;
-                conversationMapping.OpenAIVectorStoreCreatedOn = referenceTime;
+                conversationMapping.AzureAIAgentThreadId = newAzureAIAgentThreadId;
+                conversationMapping.AzureAIAgentThreadCreatedOn = referenceTime;
+                conversationMapping.AzureAIAgentVectorStoreId = newAzureAIAgentVectorStoreId;
+                conversationMapping.AzureAIAgentVectorStoreCreatedOn = referenceTime;
             }
 
             #endregion
 
             UpdateBaseProperties(conversationMapping, userIdentity, isNew: isNew);
 
-            await _cosmosDBService.UpsertItemAsync<AzureOpenAIConversationMapping>(
+            await _cosmosDBService.UpsertItemAsync<AzureAIAgentConversationMapping>(
                 AzureCosmosDBContainers.ExternalResources,
                 $"{userIdentity.UPN!.NormalizeUserPrincipalName()}-{_instanceSettings.Id}",
                 conversationMapping);
 
-            return new AzureOpenAIConversationMappingUpsertResult
+            return new AzureAIAgentConversationMappingUpsertResult
             {
                 ObjectId = conversationMapping.ObjectId!,
                 ResourceExists = !isNew,
-                NewOpenAIAssistantThreadId = newOpenAIAssistantThreadId!,
-                NewOpenAIVectorStoreId = newOpenAIVectorStoreId
+                NewAzureAIAgentThreadId = newAzureAIAgentThreadId,
+                NewAzureAIAgentVectorStoreId = newAzureAIAgentVectorStoreId
             };
         }
 
-        private async Task<ResourceProviderUpsertResult<AzureOpenAIFileMapping>> UpdateFileMapping(
-            AzureOpenAIFileMapping fileMapping,
+        private async Task<ResourceProviderUpsertResult<AzureAIAgentFileMapping>> UpdateFileMappingAsync(
+            AzureAIAgentFileMapping fileMapping,
             bool isNew,
             UnifiedUserIdentity userIdentity,
             ResourceProviderUpsertOptions? options = null)
         {
             #region Load and validate upsert options
 
-            var agentObjectId = options?.Parameters.GetValueOrDefault(AzureOpenAIResourceProviderUpsertParameterNames.AgentObjectId) as string;
+            var agentObjectId = options?.Parameters.GetValueOrDefault(AzureAIResourceProviderUpsertParameterNames.AgentObjectId) as string;
 
-            var attachmentObjectId = options?.Parameters.GetValueOrDefault(AzureOpenAIResourceProviderUpsertParameterNames.AttachmentObjectId) as string;
+            var attachmentObjectId = options?.Parameters.GetValueOrDefault(AzureAIResourceProviderUpsertParameterNames.AttachmentObjectId) as string;
 
-            var mustCreateOpenAIFile = options?.Parameters.GetValueOrDefault(AzureOpenAIResourceProviderUpsertParameterNames.MustCreateOpenAIFile) as bool?
+            var mustCreateAzureAIAgentFile = options?.Parameters.GetValueOrDefault(AzureAIResourceProviderUpsertParameterNames.MustCreateAzureAIAgentFile) as bool?
                 ?? false;
 
             #endregion
 
             #region Create the OpenAI file
 
-            var newOpenAIFileId = default(string);
+            var newAzureAIAgentFileId = default(string);
 
-            if (mustCreateOpenAIFile)
+            if (mustCreateAzureAIAgentFile)
             {
                 var gatewayClient = new GatewayServiceClient(
                    await _serviceProvider.GetRequiredService<IHttpClientFactoryService>()
@@ -382,46 +377,46 @@ namespace FoundationaLLM.AzureOpenAI.ResourceProviders
 
                 Dictionary<string, object> parameters = new()
                     {
-                        { OpenAIAgentCapabilityParameterNames.CreateOpenAIFile, true },
-                        { OpenAIAgentCapabilityParameterNames.OpenAIEndpoint, fileMapping.OpenAIEndpoint },
-                        { OpenAIAgentCapabilityParameterNames.AttachmentObjectId,  attachmentObjectId }
+                        { AzureAIAgentServiceCapabilityParameterNames.CreateFile, true },
+                        { AzureAIAgentServiceCapabilityParameterNames.ProjectConnectionString, fileMapping.ProjectConnectionString },
+                        { AzureAIAgentServiceCapabilityParameterNames.AttachmentObjectId,  attachmentObjectId! }
                     };
 
                 var agentCapabilityResult = await gatewayClient!.CreateAgentCapability(
                     _instanceSettings.Id,
-                    AgentCapabilityCategoryNames.OpenAIAssistants,
+                    AgentCapabilityCategoryNames.AzureAIAgents,
                     string.Empty,
                     parameters);
 
                 var referenceTime = DateTime.UtcNow;
 
-                if (agentCapabilityResult.TryGetValue(OpenAIAgentCapabilityParameterNames.OpenAIFileId, out var newOpenAIFileIdObject)
-                    && newOpenAIFileIdObject != null)
-                        newOpenAIFileId = ((JsonElement)newOpenAIFileIdObject!).Deserialize<string>();
+                if (agentCapabilityResult.TryGetValue(AzureAIAgentServiceCapabilityParameterNames.FileId, out var newAzureAIAgentFileIdObject)
+                    && newAzureAIAgentFileIdObject != null)
+                    newAzureAIAgentFileId = ((JsonElement)newAzureAIAgentFileIdObject!).Deserialize<string>();
 
-                if (string.IsNullOrWhiteSpace(newOpenAIFileId))
+                if (string.IsNullOrWhiteSpace(newAzureAIAgentFileId))
                     throw new ResourceProviderException(
                         $"The OpenAI assistant file was not created for the agent {agentObjectId}.",
                         StatusCodes.Status500InternalServerError);
 
-                fileMapping.Id = newOpenAIFileId;
-                fileMapping.Name = newOpenAIFileId;
+                fileMapping.Id = newAzureAIAgentFileId;
+                fileMapping.Name = newAzureAIAgentFileId;
                 fileMapping.ObjectId = ResourcePath.GetObjectId(_instanceSettings.Id, _name,
-                    AzureOpenAIResourceTypeNames.FileMappings, newOpenAIFileId);
-                fileMapping.OpenAIFileId = newOpenAIFileId;
-                fileMapping.OpenAIFileUploadedOn = referenceTime;
+                    AzureOpenAIResourceTypeNames.FileMappings, newAzureAIAgentFileId);
+                fileMapping.AzureAIAgentFileId = newAzureAIAgentFileId;
+                fileMapping.AzureAIAgentFileUploadedOn = referenceTime;
             }
 
             #endregion
 
             UpdateBaseProperties(fileMapping, userIdentity, isNew: isNew);
 
-            await _cosmosDBService.UpsertItemAsync<AzureOpenAIFileMapping>(
+            await _cosmosDBService.UpsertItemAsync<AzureAIAgentFileMapping>(
                 AzureCosmosDBContainers.ExternalResources,
                 $"{userIdentity.UPN!.NormalizeUserPrincipalName()}-{_instanceSettings.Id}",
                 fileMapping);
 
-            return new ResourceProviderUpsertResult<AzureOpenAIFileMapping>
+            return new ResourceProviderUpsertResult<AzureAIAgentFileMapping>
             {
                 ObjectId = fileMapping.ObjectId!,
                 ResourceExists = isNew,

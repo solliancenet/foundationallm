@@ -225,28 +225,6 @@ namespace FoundationaLLM.Common.Constants.Configuration
 
         #endregion
 
-        #region FoundationaLLM:ResourceProviders:AzureOpenAI
-
-        #endregion
-
-        #region FoundationaLLM:ResourceProviders:AzureOpenAI:Storage
-        
-        /// <summary>
-        /// The app configuration key for the FoundationaLLM:ResourceProviders:AzureOpenAI:Storage:AuthenticationType setting.
-        /// <para>Value description:<br/>The type of authentication used to connect to the Azure Blob Storage account used by the FoundationaLLM.AzureOpenAI resource provider. Can be one of: AzureIdentity, AccountKey, or ConnectionString.</para>
-        /// </summary>
-        public const string FoundationaLLM_ResourceProviders_AzureOpenAI_Storage_AuthenticationType =
-            "FoundationaLLM:ResourceProviders:AzureOpenAI:Storage:AuthenticationType";
-        
-        /// <summary>
-        /// The app configuration key for the FoundationaLLM:ResourceProviders:AzureOpenAI:Storage:AccountName setting.
-        /// <para>Value description:<br/>The name of the Azure Blob Storage account used by the FoundationaLLM.AzureOpenAI resource provider.</para>
-        /// </summary>
-        public const string FoundationaLLM_ResourceProviders_AzureOpenAI_Storage_AccountName =
-            "FoundationaLLM:ResourceProviders:AzureOpenAI:Storage:AccountName";
-
-        #endregion
-
         #region FoundationaLLM:ResourceProviders:Configuration
 
         #endregion
@@ -469,6 +447,13 @@ namespace FoundationaLLM.Common.Constants.Configuration
         /// </summary>
         public const string FoundationaLLM_APIEndpoints_CoreAPI_Configuration_AzureOpenAIAssistantsFileSearchFileExtensions =
             "FoundationaLLM:APIEndpoints:CoreAPI:Configuration:AzureOpenAIAssistantsFileSearchFileExtensions";
+        
+        /// <summary>
+        /// The app configuration key for the FoundationaLLM:APIEndpoints:CoreAPI:Configuration:AzureAIAgentsFileSearchFileExtensions setting.
+        /// <para>Value description:<br/>The comma-separated list file extensions that are supported by the Azure AI Agent Service file search tool.</para>
+        /// </summary>
+        public const string FoundationaLLM_APIEndpoints_CoreAPI_Configuration_AzureAIAgentsFileSearchFileExtensions =
+            "FoundationaLLM:APIEndpoints:CoreAPI:Configuration:AzureAIAgentsFileSearchFileExtensions";
         
         /// <summary>
         /// The app configuration key for the FoundationaLLM:APIEndpoints:CoreAPI:Configuration:AllowedUploadFileExtensions setting.
@@ -1059,6 +1044,13 @@ namespace FoundationaLLM.Common.Constants.Configuration
         /// </summary>
         public const string FoundationaLLM_APIEndpoints_GatewayAPI_Configuration_AzureOpenAIAssistantsMaxVectorizationTimeSeconds =
             "FoundationaLLM:APIEndpoints:GatewayAPI:Configuration:AzureOpenAIAssistantsMaxVectorizationTimeSeconds";
+        
+        /// <summary>
+        /// The app configuration key for the FoundationaLLM:APIEndpoints:GatewayAPI:Configuration:AzureAIAgentServiceMaxVectorizationTimeSeconds setting.
+        /// <para>Value description:<br/>The maximum time in seconds allowed for an Azure AI Agent Service vectorization process to complete.</para>
+        /// </summary>
+        public const string FoundationaLLM_APIEndpoints_GatewayAPI_Configuration_AzureAIAgentServiceMaxVectorizationTimeSeconds =
+            "FoundationaLLM:APIEndpoints:GatewayAPI:Configuration:AzureAIAgentServiceMaxVectorizationTimeSeconds";
 
         #endregion
 

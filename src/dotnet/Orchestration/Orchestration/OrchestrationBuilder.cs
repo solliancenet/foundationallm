@@ -11,6 +11,7 @@ using FoundationaLLM.Common.Models.ResourceProviders;
 using FoundationaLLM.Common.Models.ResourceProviders.Agent;
 using FoundationaLLM.Common.Models.ResourceProviders.Agent.AgentWorkflows;
 using FoundationaLLM.Common.Models.ResourceProviders.AIModel;
+using FoundationaLLM.Common.Models.ResourceProviders.AzureAI;
 using FoundationaLLM.Common.Models.ResourceProviders.AzureOpenAI;
 using FoundationaLLM.Common.Models.ResourceProviders.Configuration;
 using FoundationaLLM.Common.Models.ResourceProviders.DataSource;
@@ -299,6 +300,14 @@ namespace FoundationaLLM.Orchestration.Core.Orchestration
                     CompletionRequestObjectsKeys.OpenAIAssistantsAssistantId,
                     azureOpenAIAssistantsWorkflow.AssistantId
                         ?? throw new OrchestrationException("The OpenAI Assistants assistant identifier was not found in the agent workflow."));
+            }
+
+            if (agentWorkflow is AzureAIAgentServiceAgentWorkflow azureAIAgentServiceWorkflow)
+            {
+                explodedObjectsManager.TryAdd(
+                    CompletionRequestObjectsKeys.AzureAIAgentServiceAgentId,
+                    azureAIAgentServiceWorkflow.AgentId
+                        ?? throw new OrchestrationException("The Azure AI Agent Service agent identifier was not found in the agent workflow."));
             }
 
             var gatewayAPIEndpointConfiguration = await configurationResourceProvider.GetResourceAsync<APIEndpointConfiguration>(
@@ -748,6 +757,86 @@ namespace FoundationaLLM.Orchestration.Core.Orchestration
                 return vectorStoreId;
             }
 
+            if (agent.Workflow is AzureAIAgentServiceAgentWorkflow)
+            {
+                if (!resourceProviderServices.TryGetValue(ResourceProviderNames.FoundationaLLM_AzureAI, out var azureAIResourceProvider))
+                    throw new OrchestrationException($"The resource provider {ResourceProviderNames.FoundationaLLM_AzureAI} was not loaded.");
+
+                var workflow = agent.Workflow as AzureAIAgentServiceAgentWorkflow;
+
+                explodedObjectsManager.TryGet<string>(CompletionRequestObjectsKeys.AzureAIAgentServiceAgentId, out string? azureAIAgentId);
+                
+                var resourceProviderUpsertOptions = new ResourceProviderUpsertOptions
+                {
+                    Parameters = new()
+                    {
+                        { AzureAIResourceProviderUpsertParameterNames.AgentObjectId, agent.ObjectId! },
+                        { AzureAIResourceProviderUpsertParameterNames.ConversationId, conversationId },
+                        { AzureAIResourceProviderUpsertParameterNames.AzureAIAgentId, azureAIAgentId! },
+                        { AzureAIResourceProviderUpsertParameterNames.MustCreateAzureAIAgentThread, false }
+                    }
+                };
+
+                var existsResult =
+                    await azureAIResourceProvider.ResourceExistsAsync<AzureAIAgentConversationMapping>(instanceId, conversationId, currentUserIdentity);
+
+                if (existsResult.Exists && existsResult.Deleted)
+                    throw new OrchestrationException($"The conversation mapping for conversation {conversationId} was deleted but not purged. It cannot be used for active conversations.");
+
+                var conversationMapping = existsResult.Exists
+                    ? await azureAIResourceProvider.GetResourceAsync<AzureAIAgentConversationMapping>(instanceId, conversationId, currentUserIdentity)
+                    : new AzureAIAgentConversationMapping
+                    {
+                        Name = conversationId,
+                        Id = conversationId,
+                        UPN = currentUserIdentity.UPN!,
+                        InstanceId = instanceId,
+                        ConversationId = conversationId,
+                        ProjectConnectionString = workflow!.ProjectConnectionString,
+                        AzureAIAgentId = azureAIAgentId!
+                    };
+
+                string? vectorStoreId;
+
+                if (string.IsNullOrWhiteSpace(conversationMapping.AzureAIAgentThreadId))
+                {
+                    // We're either in the case of creating a new conversation mapping or the Azure AI Agent Service thread identifier is missing.
+                    // This can happen if previous attempts of creating the Azure AI Agent Service thread failed.
+                    // Either way we need to force an update to ensure we're attempting to create the Azure AI Agent Service thread.
+
+                    resourceProviderUpsertOptions.Parameters[AzureAIResourceProviderUpsertParameterNames.MustCreateAzureAIAgentThread] = true;
+
+                    // We need to update the conversation mapping.
+                    // We will rely on the upsert operation result to fill in the Azure AI Agent Service related properties.
+                    // We expect to get back valid values for the Azure AI Agent Service thread identifier and Azure AI Agent Service vector store identifier.
+
+                    var result = await azureAIResourceProvider.UpsertResourceAsync<AzureAIAgentConversationMapping, AzureAIAgentConversationMappingUpsertResult>(
+                        instanceId,
+                        conversationMapping,
+                        currentUserIdentity,
+                        resourceProviderUpsertOptions);
+
+                    if (string.IsNullOrWhiteSpace(result.NewAzureAIAgentThreadId))
+                        throw new OrchestrationException("The Azure AI Agent Service thread ID was not returned.");
+                    else
+                        explodedObjectsManager.TryAdd(
+                            CompletionRequestObjectsKeys.AzureAIAgentServiceThreadId,
+                            result.NewAzureAIAgentThreadId);
+
+                    vectorStoreId = result.NewAzureAIAgentVectorStoreId;
+                }
+                else
+                {
+                    explodedObjectsManager.TryAdd(
+                        CompletionRequestObjectsKeys.AzureAIAgentServiceAgentId,
+                        conversationMapping.AzureAIAgentId);
+                    explodedObjectsManager.TryAdd(
+                        CompletionRequestObjectsKeys.AzureAIAgentServiceThreadId,
+                        conversationMapping.AzureAIAgentThreadId!);
+                    vectorStoreId = conversationMapping.AzureAIAgentVectorStoreId;
+                }
+                return vectorStoreId;
+            }           
             return null;
         }
     }

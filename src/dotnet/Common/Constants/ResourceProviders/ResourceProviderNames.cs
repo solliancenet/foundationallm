@@ -53,6 +53,11 @@ namespace FoundationaLLM.Common.Constants.ResourceProviders
         public const string FoundationaLLM_AzureOpenAI = "FoundationaLLM.AzureOpenAI";
 
         /// <summary>
+        /// The name of the FoundationaLLM.AzureAI resource provider.
+        /// </summary>
+        public const string FoundationaLLM_AzureAI = "FoundationaLLM.AzureAI";
+
+        /// <summary>
         /// The name of the FoundationaLLM.Conversation resource provider.
         /// </summary>
         public const string FoundationaLLM_Conversation = "FoundationaLLM.Conversation";

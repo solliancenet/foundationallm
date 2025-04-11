@@ -112,5 +112,12 @@ namespace FoundationaLLM.Common.Models.ResourceProviders.Agent
         /// <returns>True if the agent uses an Azure OpenAI Assistants workflow, False otherwise.</returns>
         public bool HasAzureOpenAIAssistantsWorkflow() =>
             Workflow != null && Workflow is AzureOpenAIAssistantsAgentWorkflow;
+
+        /// <summary>
+        /// Checks whether the agent uses an Azure AI Agent Service workflow.
+        /// </summary>
+        /// <returns></returns>
+        public bool HasAzureAIAgentServiceWorkflow() =>
+            Workflow != null && Workflow is AzureAIAgentServiceAgentWorkflow;
     }
 }

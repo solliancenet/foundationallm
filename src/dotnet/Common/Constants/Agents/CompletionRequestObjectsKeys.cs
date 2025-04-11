@@ -24,6 +24,16 @@ namespace FoundationaLLM.Common.Constants.Agents
         public const string OpenAIAssistantsThreadId = "OpenAI.Assistants.Thread.Id";
 
         /// <summary>
+        /// The key name for the Azure AI Agent Service agent identifier value.
+        /// </summary>
+        public const string AzureAIAgentServiceAgentId = "AzureAI.AgentService.Agent.Id";
+
+        /// <summary>
+        /// The key name for the Azure AI Agent Service thread identifier value.
+        /// </summary>
+        public const string AzureAIAgentServiceThreadId = "AzureAI.AgentService.Thread.Id";
+
+        /// <summary>
         /// The key name for the Gateway API EndpointConfiguration identifier value.
         /// </summary>
         public const string GatewayAPIEndpointConfiguration = "GatewayAPIEndpointConfiguration";

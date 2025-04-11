@@ -6,6 +6,11 @@
     public static class AgentWorkflowTypes
     {
         /// <summary>
+        /// The Azure AI Agent Service agent workflow.
+        /// </summary>
+        public const string AzureAIAgentService = "azure-ai-agent-service-workflow";
+
+        /// <summary>
         /// The OpenAI Assistants agent workflow.
         /// </summary>
         public const string AzureOpenAIAssistants = "azure-openai-assistants-workflow";

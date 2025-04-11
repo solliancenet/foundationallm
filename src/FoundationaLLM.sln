@@ -1,4 +1,3 @@
-﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33530.505
@@ -125,29 +124,31 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Conversation", "dotnet\Conv
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VectorizationEngine", "dotnet\VectorizationEngine\VectorizationEngine.csproj", "{60EFF702-32FA-449B-BA34-7DEA70616D3F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthorizationEngine", "dotnet\AuthorizationEngine\AuthorizationEngine.csproj", "{57FDCB0F-6FF4-4514-BD34-881055866584}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthorizationEngine", "dotnet\AuthorizationEngine\AuthorizationEngine.csproj", "{57FDCB0F-6FF4-4514-BD34-881055866584}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataPipeline", "dotnet\DataPipeline\DataPipeline.csproj", "{710F5569-8B02-4876-B9C8-F79AB0B044A2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataPipeline", "dotnet\DataPipeline\DataPipeline.csproj", "{710F5569-8B02-4876-B9C8-F79AB0B044A2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin", "dotnet\Plugin\Plugin.csproj", "{80B506D5-BEFC-4793-BD6C-AEDDCEDD1FD2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plugin", "dotnet\Plugin\Plugin.csproj", "{80B506D5-BEFC-4793-BD6C-AEDDCEDD1FD2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "plugins", "plugins", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataPipelinePlugins", "dotnet\DataPipelinePlugins\DataPipelinePlugins.csproj", "{807C9B32-F904-4E9C-95C0-8AE8A5118674}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataPipelinePlugins", "dotnet\DataPipelinePlugins\DataPipelinePlugins.csproj", "{807C9B32-F904-4E9C-95C0-8AE8A5118674}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "context", "context", "{A5985DC7-94FA-4DD7-A277-0D29577A77CB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataPipelineAPI", "dotnet\DataPipelineAPI\DataPipelineAPI.csproj", "{562B8A32-2F96-4DDA-A38E-365550009EB4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataPipelineAPI", "dotnet\DataPipelineAPI\DataPipelineAPI.csproj", "{562B8A32-2F96-4DDA-A38E-365550009EB4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataPipelineFrontendWorker", "dotnet\DataPipelineFrontendWorker\DataPipelineFrontendWorker.csproj", "{7A27035D-E28D-F006-05E2-82C15A136772}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataPipelineFrontendWorker", "dotnet\DataPipelineFrontendWorker\DataPipelineFrontendWorker.csproj", "{7A27035D-E28D-F006-05E2-82C15A136772}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataPipelineBackendWorker", "dotnet\DataPipelineBackendWorker\DataPipelineBackendWorker.csproj", "{8139DB9C-7952-75A2-676C-5AB7B9690049}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataPipelineBackendWorker", "dotnet\DataPipelineBackendWorker\DataPipelineBackendWorker.csproj", "{8139DB9C-7952-75A2-676C-5AB7B9690049}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContextAPI", "dotnet\ContextAPI\ContextAPI.csproj", "{A20938BC-5DDA-DB4A-A929-959A4CE47A30}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContextAPI", "dotnet\ContextAPI\ContextAPI.csproj", "{A20938BC-5DDA-DB4A-A929-959A4CE47A30}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Context", "dotnet\Context\Context.csproj", "{D70C225A-5DD6-455A-ACEC-BF350B2FA2B5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Context", "dotnet\Context\Context.csproj", "{D70C225A-5DD6-455A-ACEC-BF350B2FA2B5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharpCodeSessionAPI", "dotnet\CSharpCodeSessionAPI\CSharpCodeSessionAPI.csproj", "{AE10C460-B9BE-4035-B137-A463DDCACF27}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSharpCodeSessionAPI", "dotnet\CSharpCodeSessionAPI\CSharpCodeSessionAPI.csproj", "{AE10C460-B9BE-4035-B137-A463DDCACF27}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureAI", "dotnet\AzureAI\AzureAI.csproj", "{A68136BD-B924-4E3F-ACF0-42F920EB30BF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -382,6 +383,10 @@ Global
 		{AE10C460-B9BE-4035-B137-A463DDCACF27}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AE10C460-B9BE-4035-B137-A463DDCACF27}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AE10C460-B9BE-4035-B137-A463DDCACF27}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A68136BD-B924-4E3F-ACF0-42F920EB30BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A68136BD-B924-4E3F-ACF0-42F920EB30BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A68136BD-B924-4E3F-ACF0-42F920EB30BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A68136BD-B924-4E3F-ACF0-42F920EB30BF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -455,6 +460,7 @@ Global
 		{A20938BC-5DDA-DB4A-A929-959A4CE47A30} = {A5985DC7-94FA-4DD7-A277-0D29577A77CB}
 		{D70C225A-5DD6-455A-ACEC-BF350B2FA2B5} = {A5985DC7-94FA-4DD7-A277-0D29577A77CB}
 		{AE10C460-B9BE-4035-B137-A463DDCACF27} = {A5985DC7-94FA-4DD7-A277-0D29577A77CB}
+		{A68136BD-B924-4E3F-ACF0-42F920EB30BF} = {2C948535-3001-4852-9686-492A23E9E356}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FF5DE858-4B85-4EE8-8A6D-46E8E4FBA078}

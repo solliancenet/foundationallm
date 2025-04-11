@@ -6,29 +6,21 @@ namespace FoundationaLLM.Common.Models.ResourceProviders.AzureOpenAI
     /// <summary>
     /// Provides details about a file mapping between FoundationaLLM and Azure OpenAI.
     /// </summary>
-    public class AzureOpenAIFileMapping : AzureOpenAIResourceBase
+    public class AzureOpenAIFileMapping : AzureOpenAIResourceBase, IFileMapping
     {
-        /// <summary>
-        /// The FoundationaLLM.Attachment resource object id.
-        /// </summary>
+        /// <inheritdoc/>
         [JsonPropertyName("file_object_id")]
         public required string FileObjectId { get; set; }
 
-        /// <summary>
-        /// The original file name of the file.
-        /// </summary>
+        /// <inheritdoc/>
         [JsonPropertyName("original_file_name")]
         public required string OriginalFileName { get; set; }
 
-        /// <summary>
-        /// The content type of the file.
-        /// </summary>
+        /// <inheritdoc/>
         [JsonPropertyName("file_content_type")]
         public required string FileContentType { get; set; }
 
-        /// <summary>
-        /// Indicates whether the file requires vectorization or not.
-        /// </summary>
+        /// <inheritdoc/>
         [JsonPropertyName("file_requires_vectorization")]
         public bool FileRequiresVectorization { get; set; } = false;
 

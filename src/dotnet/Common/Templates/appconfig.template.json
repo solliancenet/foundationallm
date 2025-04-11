@@ -169,20 +169,6 @@
             "tags": {}
         },
         {
-            "key": "FoundationaLLM:ResourceProviders:AzureOpenAI:Storage:AuthenticationType",
-            "value": "AzureIdentity",
-            "label": null,
-            "content_type": "",
-            "tags": {}
-        },
-        {
-            "key": "FoundationaLLM:ResourceProviders:AzureOpenAI:Storage:AccountName",
-            "value": "${env:AZURE_STORAGE_ACCOUNT_NAME}",
-            "label": null,
-            "content_type": "",
-            "tags": {}
-        },
-        {
             "key": "FoundationaLLM:ResourceProviders:Configuration:Storage:AuthenticationType",
             "value": "AzureIdentity",
             "label": null,
@@ -338,6 +324,13 @@
         },
         {
             "key": "FoundationaLLM:APIEndpoints:CoreAPI:Configuration:AzureOpenAIAssistantsFileSearchFileExtensions",
+            "value": "c, cpp, cs, css, doc, docx, html, java, js, json, md, pdf, php, pptx, py, rb, sh, tex, ts, txt",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:APIEndpoints:CoreAPI:Configuration:AzureAIAgentsFileSearchFileExtensions",
             "value": "c, cpp, cs, css, doc, docx, html, java, js, json, md, pdf, php, pptx, py, rb, sh, tex, ts, txt",
             "label": null,
             "content_type": "",
@@ -828,6 +821,13 @@
         },
         {
             "key": "FoundationaLLM:APIEndpoints:GatewayAPI:Configuration:AzureOpenAIAssistantsMaxVectorizationTimeSeconds",
+            "value": "120",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:APIEndpoints:GatewayAPI:Configuration:AzureAIAgentServiceMaxVectorizationTimeSeconds",
             "value": "120",
             "label": null,
             "content_type": "",

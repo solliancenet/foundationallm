@@ -37,12 +37,6 @@ namespace FoundationaLLM.Common.Constants.Configuration
             "FoundationaLLM:ResourceProviders:Attachment";
         
         /// <summary>
-        /// Dependency injection key used by the FoundationaLLM.AzureOpenAI resource provider.
-        /// </summary>
-        public const string FoundationaLLM_ResourceProviders_AzureOpenAI =
-            "FoundationaLLM:ResourceProviders:AzureOpenAI";
-        
-        /// <summary>
         /// Dependency injection key used by the FoundationaLLM.Configuration resource provider.
         /// </summary>
         public const string FoundationaLLM_ResourceProviders_Configuration =

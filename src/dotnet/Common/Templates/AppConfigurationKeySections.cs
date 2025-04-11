@@ -67,12 +67,6 @@ namespace FoundationaLLM.Common.Constants.Configuration
             "FoundationaLLM:ResourceProviders:Attachment:Storage";
         
         /// <summary>
-        /// Configuration section used to identify the storage settings for the FoundationaLLM.AzureOpenAI resource provider.
-        /// </summary>
-        public const string FoundationaLLM_ResourceProviders_AzureOpenAI_Storage =
-            "FoundationaLLM:ResourceProviders:AzureOpenAI:Storage";
-        
-        /// <summary>
         /// Configuration section used to identify the storage settings for the FoundationaLLM.Configuration resource provider.
         /// </summary>
         public const string FoundationaLLM_ResourceProviders_Configuration_Storage =

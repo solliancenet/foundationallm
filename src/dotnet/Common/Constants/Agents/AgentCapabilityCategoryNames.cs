@@ -11,6 +11,11 @@
         public const string OpenAIAssistants = "OpenAI.Assistants";
 
         /// <summary>
+        /// Indicates the agent has the Azure AI Agents Service capability.
+        /// </summary>
+        public const string AzureAIAgents = "AzureAI.Agents";
+
+        /// <summary>
         /// Indicates the agent has the FoundationaLLM Knowledge Management capability.
         /// </summary>
         public const string FoundationaLLMKnowledgeManagement = "FoundationaLLM.KnowledgeManagement";
