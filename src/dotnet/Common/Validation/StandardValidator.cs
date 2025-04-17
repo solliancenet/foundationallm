@@ -1,7 +1,4 @@
-﻿using FoundationaLLM.Common.Exceptions;
-using FoundationaLLM.Common.Interfaces;
-using Microsoft.AspNetCore.Http;
-using OpenTelemetry.Resources;
+﻿using FoundationaLLM.Common.Interfaces;
 
 namespace FoundationaLLM.Common.Validation
 {

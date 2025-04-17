@@ -92,7 +92,7 @@ namespace FoundationaLLM.Management.API
                 AppConfigurationKeySections.FoundationaLLM_Events_Profiles_ManagementAPI);
 
             builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
-            builder.Services.AddScoped<IOrchestrationContext, OrchestrationContext>();
+            builder.AddOrchestrationContext();
             builder.AddHttpClientFactoryService();
 
             // Resource validation.

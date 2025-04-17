@@ -53,6 +53,7 @@ namespace FoundationaLLM.Orchestration.API
                 options.Select(AppConfigurationKeyFilters.FoundationaLLM_APIEndpoints);
 
                 options.Select(AppConfigurationKeyFilters.FoundationaLLM_APIEndpoints_AuthorizationAPI_Essentials);
+
                 options.Select(AppConfigurationKeyFilters.FoundationaLLM_ResourceProviders_Configuration_Storage);
                 options.Select(AppConfigurationKeyFilters.FoundationaLLM_ResourceProviders_Agent_Storage);
                 options.Select(AppConfigurationKeyFilters.FoundationaLLM_ResourceProviders_Vectorization_Storage);
@@ -61,6 +62,8 @@ namespace FoundationaLLM.Orchestration.API
                 options.Select(AppConfigurationKeyFilters.FoundationaLLM_ResourceProviders_Attachment_Storage);
                 options.Select(AppConfigurationKeyFilters.FoundationaLLM_ResourceProviders_AIModel_Storage);
                 options.Select(AppConfigurationKeyFilters.FoundationaLLM_ResourceProviders_Prompt_Storage);
+                options.Select(AppConfigurationKeyFilters.FoundationaLLM_ResourceProviders_DataPipeline_Storage);
+
                 options.Select(AppConfigurationKeyFilters.FoundationaLLM_APIEndpoints_CoreAPI_Configuration_CosmosDB);
                 options.Select(AppConfigurationKeyFilters.FoundationaLLM_APIEndpoints_AzureEventGrid_Essentials);
                 options.Select(AppConfigurationKeyFilters.FoundationaLLM_APIEndpoints_AzureEventGrid_Configuration);
@@ -109,7 +112,7 @@ namespace FoundationaLLM.Orchestration.API
             builder.Services.AddOptions<LangChainServiceSettings>()
                 .Bind(builder.Configuration.GetSection(AppConfigurationKeySections.FoundationaLLM_APIEndpoints_LangChainAPI_Configuration));
 
-            builder.Services.AddScoped<IOrchestrationContext, OrchestrationContext>();
+            builder.AddOrchestrationContext();
             builder.Services.AddScoped<IUserClaimsProviderService, NoOpUserClaimsProviderService>();
             builder.AddUserProfileService();
 
@@ -144,6 +147,8 @@ namespace FoundationaLLM.Orchestration.API
             builder.AddAIModelResourceProvider();
             builder.AddAzureOpenAIResourceProvider();
             builder.AddAzureAIResourceProvider();
+            builder.AddRemoteDataPipelineServiceClient(); // Required by the DataPipeline resource provider.
+            builder.AddDataPipelineResourceProvider();
 
             // Register the downstream services and HTTP clients.
             builder.AddHttpClientFactoryService();

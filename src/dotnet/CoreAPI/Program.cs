@@ -130,7 +130,7 @@ namespace FoundationaLLM.Core.API
             builder.Services.AddScoped<IOneDriveWorkSchoolService, OneDriveWorkSchoolService>();
 
             builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
-            builder.Services.AddScoped<IOrchestrationContext, OrchestrationContext>();
+            builder.AddOrchestrationContext();
 
             // Add authentication configuration.
             var e2ETestEnvironmentValue = Environment.GetEnvironmentVariable(EnvironmentVariables.FoundationaLLM_Environment) ?? string.Empty;

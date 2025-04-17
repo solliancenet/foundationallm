@@ -9,5 +9,10 @@
         /// Data Pipeline type.
         /// </summary>
         public const string DataPipeline = "data-pipeline";
+
+        /// <summary>
+        /// Data Pipeline run type.
+        /// </summary>
+        public const string DataPipelineRun = "data-pipeline-run";
     }
 }

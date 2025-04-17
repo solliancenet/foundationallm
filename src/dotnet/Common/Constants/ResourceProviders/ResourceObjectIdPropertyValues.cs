@@ -21,6 +21,16 @@
         public const string RouterPrompt = "router_prompt";
 
         /// <summary>
+        /// The data pipeline used to upload files.
+        /// </summary>
+        public const string FileUploadDataPipeline = "file_upload_data_pipeline";
+
+        /// <summary>
+        /// The vector store container used to store individual vector stores.
+        /// </summary>
+        public const string VectorDatabase = "vector_database";
+
+        /// <summary>
         /// Main indexing profile.
         /// </summary>
         public const string MainIndexingProfile = "main_indexing_profile";

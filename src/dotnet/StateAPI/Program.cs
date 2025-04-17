@@ -65,7 +65,7 @@ builder.Services.AddControllers();
 
 // Add API Key Authorization
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddScoped<IOrchestrationContext, OrchestrationContext>();
+builder.AddOrchestrationContext();
 builder.Services.AddScoped<IUserClaimsProviderService, NoOpUserClaimsProviderService>();
 builder.Services.AddScoped<APIKeyAuthenticationFilter>();
 builder.Services.AddOptions<APIKeyValidationSettings>()

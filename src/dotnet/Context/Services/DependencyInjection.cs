@@ -3,7 +3,6 @@ using FoundationaLLM.Common.Constants.Configuration;
 using FoundationaLLM.Common.Models.CodeExecution;
 using FoundationaLLM.Common.Models.Configuration.CosmosDB;
 using FoundationaLLM.Common.Models.Configuration.Storage;
-using FoundationaLLM.Common.Models.ResourceProviders.AIModel;
 using FoundationaLLM.Common.Services.Storage;
 using FoundationaLLM.Context.Interfaces;
 using FoundationaLLM.Context.Models.Configuration;
@@ -46,6 +45,7 @@ namespace FoundationaLLM
                         Options.Create<BlobStorageServiceSettings>(
                             sp.GetRequiredService<IOptions<ContextServiceSettings>>().Value.FileService.Storage),
                         sp.GetRequiredService<ILogger<BlobStorageService>>()),
+                    settings: sp.GetRequiredService<IOptions<ContextServiceSettings>>().Value.FileService,
                     logger: sp.GetRequiredService<ILogger<FileService>>()));
         }
 

@@ -71,7 +71,7 @@ builder.AddAzureContainerAppsCodeSessionProviderServices();
 // Scoped services
 //---------------------------
 
-builder.Services.AddScoped<IOrchestrationContext, OrchestrationContext>();
+builder.AddOrchestrationContext();
 builder.Services.AddScoped<IUserClaimsProviderService, NoOpUserClaimsProviderService>();
 builder.AddFileService();
 builder.AddCodeSessionService();

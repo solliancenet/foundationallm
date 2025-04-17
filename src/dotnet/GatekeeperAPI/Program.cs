@@ -123,7 +123,7 @@ namespace FoundationaLLM.Gatekeeper.API
             builder.Services.AddScoped<IGatekeeperIntegrationAPIService, GatekeeperIntegrationAPIService>();
 
             builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
-            builder.Services.AddScoped<IOrchestrationContext, OrchestrationContext>();
+            builder.AddOrchestrationContext();
             builder.Services.AddScoped<IUserClaimsProviderService, NoOpUserClaimsProviderService>();
 
             // Add Azure Cosmos DB services

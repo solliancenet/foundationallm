@@ -53,7 +53,7 @@ builder.AddCorsPolicies();
 // Add configurations to the container
 builder.AddInstanceProperties();
 
-builder.Services.AddScoped<IOrchestrationContext, OrchestrationContext>();
+builder.AddOrchestrationContext();
 builder.Services.AddScoped<IUserClaimsProviderService, NoOpUserClaimsProviderService>();
 builder.AddHttpClientFactoryService();
 

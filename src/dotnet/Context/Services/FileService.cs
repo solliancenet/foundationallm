@@ -1,7 +1,9 @@
-﻿using FoundationaLLM.Common.Interfaces;
+﻿using FoundationaLLM.Common.Constants.Context;
+using FoundationaLLM.Common.Interfaces;
 using FoundationaLLM.Common.Models.Authentication;
 using FoundationaLLM.Common.Models.Context;
 using FoundationaLLM.Context.Interfaces;
+using FoundationaLLM.Context.Models.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace FoundationaLLM.Context.Services
@@ -15,10 +17,16 @@ namespace FoundationaLLM.Context.Services
     public class FileService(
         IAzureCosmosDBFileService cosmosDBService,
         IStorageService storageService,
+        FileServiceSettings settings,
         ILogger<FileService> logger) : IFileService
     {
         private readonly IAzureCosmosDBFileService _cosmosDBService = cosmosDBService;
         private readonly IStorageService _storageService = storageService;
+        private readonly FileServiceSettings _settings = settings;
+        private readonly HashSet<string> _knowledgeSearchFileTypes = [.. settings
+            .KnowledgeSearchFileExtensions
+            .Split(",")
+            .Select(s => s.Trim().ToLower())];
         private readonly ILogger<FileService> _logger = logger;
 
         /// <inheritdoc/>
@@ -39,6 +47,15 @@ namespace FoundationaLLM.Context.Services
                 fileName,
                 contentType,
                 content.Length,
+                origin switch
+                {
+                    ContextRecordOrigins.CodeSession => FileProcessingTypes.None,
+                    ContextRecordOrigins.UserUpload => _knowledgeSearchFileTypes
+                        .Contains(Path.GetExtension(fileName).Replace(".", string.Empty).ToLower())
+                            ? FileProcessingTypes.ConversationDataPipeline
+                            : FileProcessingTypes.None,
+                    _ => FileProcessingTypes.None
+                },
                 userIdentity,
                 metadata);
 

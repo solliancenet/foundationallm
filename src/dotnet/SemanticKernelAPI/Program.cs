@@ -98,7 +98,7 @@ namespace FoundationaLLM.SemanticKernel.API
             builder.AddAIModelResourceProvider();
 
             builder.AddHttpClientFactoryService();
-            builder.Services.AddScoped<IOrchestrationContext, OrchestrationContext>();
+            builder.AddOrchestrationContext();
             builder.Services.AddScoped<IUserClaimsProviderService, NoOpUserClaimsProviderService>();
 
             builder.Services.AddAuthorization();

@@ -7,7 +7,6 @@ using FoundationaLLM.Common.Models.Conversation;
 using FoundationaLLM.Common.Models.Orchestration;
 using FoundationaLLM.Common.Models.Orchestration.Response;
 using FoundationaLLM.Common.Models.ResourceProviders;
-using FoundationaLLM.Common.Models.ResourceProviders.Agent;
 using FoundationaLLM.Common.Models.ResourceProviders.Agent.AgentFiles;
 using FoundationaLLM.Common.Models.ResourceProviders.Attachment;
 using Microsoft.Azure.Cosmos;
@@ -34,6 +33,7 @@ namespace FoundationaLLM.Common.Services.Azure
         private Container _attachments;
         private Container _externalResources;
         private Container _completionsCache;
+        private Container _dataPipelines;
         private readonly Lazy<Task<Container>> _userProfiles;
         private Task<Container> _userProfilesTask => _userProfiles.Value;
         private readonly Database _database;
@@ -127,12 +127,17 @@ namespace FoundationaLLM.Common.Services.Azure
                 ?? throw new ArgumentException(
                     $"Unable to connect to existing Azure Cosmos DB container ({AzureCosmosDBContainers.CompletionsCache}).");
 
+            _dataPipelines = database?.GetContainer(AzureCosmosDBContainers.DataPipelines)
+                ?? throw new ArgumentException(
+                    $"Unable to connect to existing Azure Cosmos DB container ({AzureCosmosDBContainers.DataPipelines}).");
+
             _containers[AzureCosmosDBContainers.Sessions] = _sessions;
             _containers[AzureCosmosDBContainers.UserSessions] = _userSessions;
             _containers[AzureCosmosDBContainers.Operations] = _operations;
             _containers[AzureCosmosDBContainers.Attachments] = _attachments;
             _containers[AzureCosmosDBContainers.ExternalResources] = _externalResources;
             _containers[AzureCosmosDBContainers.CompletionsCache] = _completionsCache;
+            _containers[AzureCosmosDBContainers.DataPipelines] = _dataPipelines;
 
             _logger.LogInformation("Cosmos DB service initialized.");
         }

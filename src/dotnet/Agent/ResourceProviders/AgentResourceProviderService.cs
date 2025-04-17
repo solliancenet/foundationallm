@@ -975,7 +975,7 @@ namespace FoundationaLLM.Agent.ResourceProviders
 
             switch (toolResource.Name)
             {
-                case ToolNames.OpenAIAssistantsFileSearchTool:
+                case AgentToolNames.OpenAIAssistantsFileSearchTool:
                     var gatewayClient = await GetGatewayServiceClient(userIdentity);
                     var agentObjectId = ResourcePath.GetObjectId(_instanceSettings.Id, _name, AgentResourceTypeNames.Agents, resourcePath.MainResourceId!);
                     var agent = await GetResourceAsync<AgentBase>(agentObjectId, userIdentity);
@@ -1024,7 +1024,7 @@ namespace FoundationaLLM.Agent.ResourceProviders
 
                     break;
 
-                case ToolNames.OpenAIAssistantsCodeInterpreterTool:
+                case AgentToolNames.OpenAIAssistantsCodeInterpreterTool:
                     var gatewayClientCI = await GetGatewayServiceClient(userIdentity);
                     var agentObjectIdCI = ResourcePath.GetObjectId(_instanceSettings.Id, _name, AgentResourceTypeNames.Agents, resourcePath.MainResourceId!);
                     var agentCI = await GetResourceAsync<AgentBase>(agentObjectIdCI, userIdentity);
@@ -1095,7 +1095,7 @@ namespace FoundationaLLM.Agent.ResourceProviders
             var toolResource = await GetResourceAsync<Tool>(toolObjectId, userIdentity);
             switch (toolResource.Name)
             {
-                case ToolNames.OpenAIAssistantsFileSearchTool:
+                case AgentToolNames.OpenAIAssistantsFileSearchTool:
                     var gatewayClient = await GetGatewayServiceClient(userIdentity);
                     var agentObjectId = ResourcePath.GetObjectId(_instanceSettings.Id, _name, AgentResourceTypeNames.Agents, resourcePath.MainResourceId!);
                     var agent = await GetResourceAsync<AgentBase>(agentObjectId, userIdentity);
@@ -1116,7 +1116,7 @@ namespace FoundationaLLM.Agent.ResourceProviders
 
                     break;
 
-                case ToolNames.OpenAIAssistantsCodeInterpreterTool:
+                case AgentToolNames.OpenAIAssistantsCodeInterpreterTool:
                     var gatewayClientCI = await GetGatewayServiceClient(userIdentity);
                     var agentObjectIdCI = ResourcePath.GetObjectId(_instanceSettings.Id, _name, AgentResourceTypeNames.Agents, resourcePath.MainResourceId!);
                     var agentCI = await GetResourceAsync<AgentBase>(agentObjectIdCI, userIdentity);

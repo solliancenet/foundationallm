@@ -1243,6 +1243,39 @@
 		]
 	},
 	{
+		"namespace": "APIEndpoints:DataPipelineAPI:Configuration",
+		"dependency_injection_key": null,
+		"configuration_section": {
+			"description": "Configuration section for the FoundationaLLM Data Pipeline API."
+		},
+		"configuration_keys": [
+			{
+				"name": "CosmosDB:Endpoint",
+				"description": "The URL of the Azure Cosmos DB service used by the Data Pipeline API file service.",
+				"secret": "",
+				"value": "${env:AZURE_COSMOS_DB_ENDPOINT}",
+				"content_type": "",
+				"first_version": "0.9.7"
+			},
+			{
+				"name": "CosmosDB:Database",
+				"description": "The name of the Azure Cosmos DB database used by the Data Pipeline API file service.",
+				"secret": "",
+				"value": "database",
+				"content_type": "",
+				"first_version": "0.9.7"
+			},
+			{
+				"name": "CosmosDB:Containers",
+				"description": "The comma-separated list of database containers used by the Data Pipeline API file service.",
+				"secret": "",
+				"value": "Context",
+				"content_type": "",
+				"first_version": "0.9.7"
+			}
+		]
+	},
+	{
 		"namespace": "APIEndpoints:DataPipelineFrontendWorker:Essentials",
 		"dependency_injection_key": null,
 		"configuration_section": {
@@ -1359,6 +1392,14 @@
 			{
 				"name": "FileService:CosmosDB:Containers",
 				"description": "The comma-separated list of database containers used by the Context API file service.",
+				"secret": "",
+				"value": "Context",
+				"content_type": "",
+				"first_version": "0.9.7"
+			},
+			{
+				"name": "FileService:KnowledgeSearchFileExtensions",
+				"description": "The comma-separated list of file extensions that are subject to knowledge search.",
 				"secret": "",
 				"value": "Context",
 				"content_type": "",

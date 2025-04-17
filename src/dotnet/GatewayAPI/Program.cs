@@ -91,7 +91,7 @@ builder.AddResourceValidatorFactory();
 
 // API key validation
 builder.Services.AddTransient<IAPIKeyValidationService, APIKeyValidationService>();
-builder.Services.AddScoped<IOrchestrationContext, OrchestrationContext>();
+builder.AddOrchestrationContext();
 builder.Services.AddScoped<IUserClaimsProviderService, NoOpUserClaimsProviderService>();
 
 builder.Services.AddControllers();

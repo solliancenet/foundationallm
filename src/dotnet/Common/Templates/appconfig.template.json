@@ -722,6 +722,27 @@
             "tags": {}
         },
         {
+            "key": "FoundationaLLM:APIEndpoints:DataPipelineAPI:Configuration:CosmosDB:Endpoint",
+            "value": "${env:AZURE_COSMOS_DB_ENDPOINT}",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:APIEndpoints:DataPipelineAPI:Configuration:CosmosDB:Database",
+            "value": "database",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:APIEndpoints:DataPipelineAPI:Configuration:CosmosDB:Containers",
+            "value": "Context",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
             "key": "FoundationaLLM:APIEndpoints:DataPipelineFrontendWorker:Essentials:APIKey",
             "value": "{\"uri\":\"${env:AZURE_KEY_VAULT_ENDPOINT}secrets/foundationallm-apiendpoints-datapipelinefrontendworker-apikey\"}",
             "label": null,
@@ -793,6 +814,13 @@
         },
         {
             "key": "FoundationaLLM:APIEndpoints:ContextAPI:Configuration:FileService:CosmosDB:Containers",
+            "value": "Context",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:APIEndpoints:ContextAPI:Configuration:FileService:KnowledgeSearchFileExtensions",
             "value": "Context",
             "label": null,
             "content_type": "",

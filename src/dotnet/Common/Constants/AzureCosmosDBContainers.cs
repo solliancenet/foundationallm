@@ -54,5 +54,10 @@
         /// The vector store for cached completions (used by the semantic cache service).
         /// </summary>
         public const string CompletionsCache = "CompletionsCache";
+
+        /// <summary>
+        /// Stores objects managed by the FoundationaLLM.DataPipeline resource provider.
+        /// </summary>
+        public const string DataPipelines = "DataPipelines";
     }
 }

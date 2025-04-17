@@ -8,10 +8,11 @@ namespace FoundationaLLM.Common.Models.ResourceProviders.Agent
     public class KnowledgeManagementAgent : AgentBase
     {
         /// <summary>
-        /// The vectorization settings for the agent.
+        /// Gets or sets the vectorization settings for the agent.
         /// </summary>
+        [Obsolete("Use KnowledgeSearch property instead. This property will be removed in future versions.")]
         [JsonPropertyName("vectorization")]
-        public AgentVectorizationSettings Vectorization { get; set; }
+        public AgentVectorizationSettings? Vectorization { get; set; }
 
         /// <summary>
         /// Whether the agent has an inline context and does not rely on an external resource.

@@ -1,9 +1,9 @@
-﻿namespace FoundationaLLM.Common.Models.ResourceProviders.Agent
+﻿namespace FoundationaLLM.Common.Constants.Agents
 {
     /// <summary>
     /// Registry of built-in tool names.
     /// </summary>
-    public static class ToolNames
+    public static class AgentToolNames
     {
         /// <summary>
         /// Name of the built-in tool OpenAIAssistantsFileSearch.

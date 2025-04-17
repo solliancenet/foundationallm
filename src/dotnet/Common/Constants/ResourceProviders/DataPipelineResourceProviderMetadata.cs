@@ -35,7 +35,23 @@ namespace FoundationaLLM.Common.Constants.ResourceProviders
                         new ResourceTypeAction(ResourceProviderActions.Purge, true, false, [
                             new ResourceTypeAllowedTypes(HttpMethod.Post.Method, AuthorizableOperations.Delete, [], [], [typeof(ResourceProviderActionResult)])
                         ])
-                    ]
+                    ],
+                    SubTypes = new()
+                    {
+                        {
+                            DataPipelineResourceTypeNames.DataPipelineRuns,
+                            new ResourceTypeDescriptor (
+                                DataPipelineResourceTypeNames.DataPipelineRuns,
+                                typeof(DataPipelineRun))
+                            {
+                                AllowedTypes = [
+                                    new ResourceTypeAllowedTypes(HttpMethod.Get.Method, AuthorizableOperations.Write, [], [], [typeof(ResourceProviderGetResult<DataPipelineRun>)]),
+                                    new ResourceTypeAllowedTypes(HttpMethod.Post.Method, AuthorizableOperations.Write, [], [typeof(DataPipelineRun)], [typeof(ResourceProviderUpsertResult<DataPipelineRun>)])
+                                ],
+                                Actions = []
+                            }
+                        }
+                    }
                 }
             }
         };

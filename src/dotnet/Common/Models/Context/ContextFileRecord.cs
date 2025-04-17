@@ -61,6 +61,13 @@ namespace FoundationaLLM.Common.Models.Context
         public long FileSizeBytes { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating the type of processing that is required for the file.
+        /// </summary>
+        [JsonPropertyName("file_processing_type")]
+        [JsonPropertyOrder(6)]
+        public string FileProcessingType { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="ContextFileRecord"/> class.
         /// </summary>
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
@@ -79,6 +86,7 @@ namespace FoundationaLLM.Common.Models.Context
         /// <param name="fileName">The original name of the file.</param>
         /// <param name="contentType">The content type of the file.</param>
         /// <param name="fileSizeBytes">The size of the file in bytes.</param>
+        /// <param name="fileProcessingType">The type of processing that is required for the file.</param>
         /// <param name="userIdentity">The <see cref="UnifiedUserIdentity"/> providing details about the user identity.</param>
         /// <param name="metadata">Optional metadata dictionary associated with the context file record.</param>
         public ContextFileRecord(
@@ -88,6 +96,7 @@ namespace FoundationaLLM.Common.Models.Context
             string fileName,
             string contentType,
             long fileSizeBytes,
+            string fileProcessingType,
             UnifiedUserIdentity userIdentity,
             Dictionary<string, string>? metadata = null) : base(
                 string.Empty,
@@ -107,6 +116,7 @@ namespace FoundationaLLM.Common.Models.Context
             ContentType = contentType;
             FilePath = filePath;
             FileSizeBytes = fileSizeBytes;
+            FileProcessingType = fileProcessingType;
         }
     }
 }

@@ -9,5 +9,10 @@
         /// Data pipelines.
         /// </summary>
         public const string DataPipelines = "dataPipelines";
+
+        /// <summary>
+        /// Data pipeline runs.
+        /// </summary>
+        public const string DataPipelineRuns = "dataPipelineRuns";
     }
 }

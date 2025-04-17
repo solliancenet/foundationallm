@@ -179,7 +179,7 @@ builder.Services.ActivateKeyedSingleton<ITokenizerService>(TokenizerServiceNames
 builder.Services.AddKeyedScoped<ITextEmbeddingService, GatewayTextEmbeddingService>(
     DependencyInjectionKeys.FoundationaLLM_Vectorization_TextEmbedding_Gateway);
 
-builder.Services.AddScoped<IOrchestrationContext, OrchestrationContext>();
+builder.AddOrchestrationContext();
 builder.AddHttpClientFactoryService();
 
 // Indexing

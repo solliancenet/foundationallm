@@ -17,5 +17,10 @@ namespace FoundationaLLM.Context.Models.Configuration
         /// Gets or sets the Azure Cosmos DB settings.
         /// </summary>
         public required AzureCosmosDBSettings CosmosDB { get; set; }
+
+        /// <summary>
+        /// Gets or sets the comma-separated list of file extensions that are subject to knowledge search.
+        /// </summary>
+        public required string KnowledgeSearchFileExtensions { get; set; }
     }
 }

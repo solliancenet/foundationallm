@@ -117,6 +117,7 @@ namespace FoundationaLLM.Orchestration.Core.Orchestration
                     instanceId,
                     result.Agent.ObjectId!,
                     (KnowledgeManagementAgent)result.Agent,
+                    originalRequest.SessionId!,
                     result.APIEndpointConfiguration!.Url,
                     result.ExplodedObjectsManager.GetExplodedObjects() ?? [],
                     callContext,
@@ -177,6 +178,7 @@ namespace FoundationaLLM.Orchestration.Core.Orchestration
                     AgentResourceTypeNames.Agents,
                     operationContext.AgentName),
                 null,
+                operationContext.SessionId!,
                 operationContext.AgentWorkflowMainAIModelAPIEndpoint!,
                 null,
                 callContext,
@@ -837,7 +839,9 @@ namespace FoundationaLLM.Orchestration.Core.Orchestration
                 }
                 return vectorStoreId;
             }           
-            return null;
+
+            // The default vector store identifier is derived directly from the conversation identifier.
+            return $"vector-{conversationId}";
         }
     }
 }
