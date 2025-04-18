@@ -40,6 +40,7 @@
     <Compile Include="foundationallm\models\agents\agent_tool.py" />
     <Compile Include="foundationallm\models\agents\agent_workflows\agent_workflow_ai_model.py" />
     <Compile Include="foundationallm\models\agents\agent_workflows\agent_workflow_base.py" />
+    <Compile Include="foundationallm\models\agents\agent_workflows\azure_ai_agent_service_agent_workflow.py" />
     <Compile Include="foundationallm\models\agents\agent_workflows\azure_openai_assistants_agent_workflow.py" />
     <Compile Include="foundationallm\models\agents\agent_workflows\external_agent_workflow.py" />
     <Compile Include="foundationallm\models\agents\agent_workflows\langchain_expression_language_agent_workflow.py" />
@@ -52,6 +53,7 @@
     <Compile Include="foundationallm\models\authentication\authentication_parameters_keys.py" />
     <Compile Include="foundationallm\models\constants\agent_capability_categories.py" />
     <Compile Include="foundationallm\models\constants\ai_model_resource_type_names.py" />
+    <Compile Include="foundationallm\models\constants\azure_ai_resource_type_names.py" />
     <Compile Include="foundationallm\models\constants\content_artifact_type_names.py" />
     <Compile Include="foundationallm\models\constants\prompt_resource_type_names.py" />
     <Compile Include="foundationallm\models\constants\resource_object_id_property_names.py" />

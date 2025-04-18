@@ -1,4 +1,5 @@
 aiohttp==3.11.11
+azure-ai-projects==1.0.0b8
 azure-appconfiguration-provider==1.2.0
 azure-identity==1.17.1
 azure-keyvault-secrets==4.8.0

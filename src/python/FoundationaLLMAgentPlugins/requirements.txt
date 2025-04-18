@@ -7,9 +7,9 @@ azure-monitor-opentelemetry-exporter==1.0.0b36
 azure-search-documents==11.6.0b9
 azure-storage-blob==12.21.0
 boto3==1.36.13
-foundationallm==0.9.7-beta148
 langchain==0.3.17
 langchain-aws==0.2.12
+langchain_azure_ai==0.1.2
 langchain-experimental==0.3.4
 langchain-google-vertexai==2.0.13
 langchain-openai==0.3.3
@@ -26,3 +26,5 @@ wikipedia==1.4.0
 
 pyodbc==5.2.0
 pyarrow==18.1.0
+azure-ai-projects==1.0.0b8
+dist/foundationallm-0.0.1-py3-none-any.whl

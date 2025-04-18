@@ -7,6 +7,7 @@ from foundationallm.models.agents import (
     AgentConversationHistorySettings,
     AgentGatekeeperSettings,
     AgentOrchestrationSettings,
+    AzureAIAgentServiceAgentWorkflow,
     AzureOpenAIAssistantsAgentWorkflow,
     LangChainExpressionLanguageAgentWorkflow,
     LangGraphReactAgentWorkflow,
@@ -27,7 +28,7 @@ class AgentBase(ResourceBase):
     tools: Optional[List[AgentTool]] = Field(default=[], description="A list of assigned agent tools.")
     workflow: Optional[
         Annotated [
-            Union[AzureOpenAIAssistantsAgentWorkflow, LangChainExpressionLanguageAgentWorkflow, LangGraphReactAgentWorkflow, ExternalAgentWorkflow],
+            Union[AzureAIAgentServiceAgentWorkflow, AzureOpenAIAssistantsAgentWorkflow, LangChainExpressionLanguageAgentWorkflow, LangGraphReactAgentWorkflow, ExternalAgentWorkflow],
             Field(discriminator='type')
         ]
     ]= Field(default=None, description="The workflow configuration for the agent.")

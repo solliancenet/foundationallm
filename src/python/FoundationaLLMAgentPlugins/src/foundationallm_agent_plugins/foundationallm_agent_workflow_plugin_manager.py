@@ -5,12 +5,14 @@ from foundationallm.models.agents import AgentTool, ExternalAgentWorkflow
 from foundationallm.langchain.common import FoundationaLLMWorkflowBase
 from foundationallm.plugins import WorkflowPluginManagerBase
 
+from foundationallm_agent_plugins.workflows import AzureAIAgentServiceWorkflow
 from foundationallm_agent_plugins.workflows import FoundationaLLMFunctionCallingWorkflow
 
 class FoundationaLLMAgentWorkflowPluginManager(WorkflowPluginManagerBase):
 
+    AZURE_AI_AGENT_SERVICE_WORKFLOW_CLASS_NAME = 'AzureAIAgentServiceWorkflow'
     FOUNDATIONALLM_FUNCTION_CALLING_WORKFLOW_CLASS_NAME = 'FoundationaLLMFunctionCallingWorkflow'
-
+    
     def __init__(self):
         super().__init__()
 
@@ -43,6 +45,8 @@ class FoundationaLLMAgentWorkflowPluginManager(WorkflowPluginManagerBase):
         """
         if workflow_config.class_name == FoundationaLLMAgentWorkflowPluginManager.FOUNDATIONALLM_FUNCTION_CALLING_WORKFLOW_CLASS_NAME:
             return FoundationaLLMFunctionCallingWorkflow(workflow_config, objects, tools, user_identity, config)
+        elif workflow_config.class_name == FoundationaLLMAgentWorkflowPluginManager.AZURE_AI_AGENT_SERVICE_WORKFLOW_CLASS_NAME:
+            return AzureAIAgentServiceWorkflow(workflow_config, objects, tools, user_identity, config)
         raise ValueError(f'Unknown workflow name: {workflow_config.name}')
 
     def refresh_tools():

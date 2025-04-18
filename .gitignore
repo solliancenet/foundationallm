@@ -403,3 +403,5 @@ dist
 **/foundationallm-certificates.SecretProviderClass.json
 **/foundationallm_external_modules**
 certs.zip
+
+src/python/PythonSDK/MANIFEST.in
