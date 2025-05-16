@@ -67,7 +67,7 @@ Invoke-AndRequireSuccess "Deploy ingress-nginx" {
             --install gateway oci://$($registry)/helm/ingress-nginx `
             --namespace ${gatewayNamespace} `
             --values ${ingressNginxValues} `
-            --version 4.10.0
+            --version 4.12.1
     }
     else 
     {
@@ -77,7 +77,7 @@ Invoke-AndRequireSuccess "Deploy ingress-nginx" {
             --install gateway ingress-nginx/ingress-nginx `
             --namespace ${gatewayNamespace} `
             --values ${ingressNginxValues} `
-            --version 4.10.0        
+            --version 4.12.1        
     }
 }
 

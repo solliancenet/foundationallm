@@ -71,6 +71,7 @@ function Escrow-Helm-Chart-Dependencies {
 
     Write-Host "Escrowing dependencies..." -ForegroundColor Green
     $values = Get-Content $chartPath/values.yaml | ConvertFrom-Yaml
+    $globalReference = (Get-NestedProperty -obj $values -propertyPath "global.image")
 
     foreach ($dependency in $dependencies) {
         Write-Host "Escrowing image $($dependency.name) to $destRegistry" -ForegroundColor Green
@@ -78,7 +79,11 @@ function Escrow-Helm-Chart-Dependencies {
         $reference = (Get-NestedProperty -obj $values -propertyPath $dependency.helmValue)
         $image = $reference.image
         $tag = $reference.tag
-        $registry = $reference.registry
+        if ($reference.PSObject.Properties.Name -contains "registry") {
+            $registry = $reference.registry
+        } else {
+            $registry = $globalReference.registry
+        }
         if ($dependency.suffix)
         {
             $suffix = "@$(Get-NestedProperty -obj $reference -propertyPath $dependency.suffix)"

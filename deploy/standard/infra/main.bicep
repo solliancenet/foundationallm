@@ -97,7 +97,7 @@ module app 'app-rg.bicep' = {
     networkingResourceGroupName: resourceGroups.net
     openAiResourceGroupName: resourceGroups.oai
     openAiName: openai.outputs.azureOpenAiName
-    deployOpenAi: empty(existingOpenAiInstance)
+    deployOpenAi: empty(existingOpenAiInstance.name)
     opsResourceGroupName: resourceGroups.ops
     project: project
     services: services
