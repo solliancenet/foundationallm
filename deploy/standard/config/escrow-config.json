@@ -35,12 +35,6 @@
                     "helmValue": "controller.image"
                 },
                 {
-                    "name": "opentelemetry",
-                    "suffix": "digest",
-                    "remove": ["digest"],
-                    "helmValue": "controller.opentelemetry.image"
-                },
-                {
                     "name": "certgen",
                     "suffix": "digest",
                     "remove": ["digest"],
