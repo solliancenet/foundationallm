@@ -6,7 +6,7 @@
     "description": null,
     "cost_center": null,
     "category": "LLM",
-	"subcategory": "AIModel",
+    "subcategory": "AIModel",
     "authentication_type": "APIKey",
     "api_version": "2024-07-01-preview",
     "authentication_parameters": {
@@ -18,5 +18,10 @@
     "url_exceptions": [],
     "timeout_seconds": 60,
     "retry_strategy_name": "ExponentialBackoff",
-    "provider": "microsoft"
+    "provider": "microsoft",
+    "created_on": "{{deployTime}}",
+    "updated_on": "{{deployTime}}",
+    "created_by": "SYSTEM",
+    "updated_by": "SYSTEM",
+    "deleted": false
 }

@@ -89,10 +89,8 @@ module storage 'modules/storageAccount.bicep' = {
       'orchestration-completion-requests'
     ]
     queues: [
-      'embed'
-      'extract'
-      'index'
-      'partition'
+      'frontend-worker'
+      'backend-worker'
     ]
   }
 }

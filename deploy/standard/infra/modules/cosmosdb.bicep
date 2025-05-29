@@ -148,6 +148,24 @@ var containers = [
       ]
     }
   }
+  {
+    name: 'Context'
+    defaultTtl: null
+    partitionKey: {
+      paths: [
+        '/upn'
+      ]
+    }
+  }
+  {
+    name: 'DataPipelines'
+    defaultTtl: null
+    partitionKey: {
+      paths: [
+        '/runId'
+      ]
+    }
+  }
 ]
 
 @description('The Resource logs to enable')
@@ -222,7 +240,7 @@ resource main 'Microsoft.DocumentDB/databaseAccounts@2023-09-15' = {
     }
 
     capacity: {
-      totalThroughputLimit: 10000
+      totalThroughputLimit: 20000
     }
 
     consistencyPolicy: {
@@ -282,7 +300,7 @@ resource cosmosContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/con
     properties: {
       options: {
         autoscaleSettings: {
-          maxThroughput: 1000
+          maxThroughput: 4000
         }
       }
       resource: {
@@ -331,7 +349,7 @@ resource cosmosContainerWithTtl 'Microsoft.DocumentDB/databaseAccounts/sqlDataba
     properties: {
       options: {
         autoscaleSettings: {
-          maxThroughput: 1000
+          maxThroughput: 4000
         }
       }
       resource: {
@@ -382,7 +400,7 @@ resource cosmosContainerWithVecIdx 'Microsoft.DocumentDB/databaseAccounts/sqlDat
     properties: {
       options: {
         autoscaleSettings: {
-          maxThroughput: 1000
+          maxThroughput: 4000
         }
       }
       resource: {

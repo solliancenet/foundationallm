@@ -71,10 +71,31 @@
             "tags": {}
         },
         {
-            "key": "FoundationaLLM:Code:CodeExecution:AzureContainerAppsDynamicSessions",
-            "value": "{\"DynamicSessionsEndpoints\": []}",
+            "key": "FoundationaLLM:Code:CodeExecution:AzureContainerAppsDynamicSessions:CodeInterpreter",
+            "value": "{\"Endpoints\": {\"Python\": [\"{{sessionPoolEndpoint}}\"], \"CSharp\": [\"{{sessionPoolEndpoint}}\"]}",
             "label": null,
             "content_type": "application/json",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:Code:CodeExecution:AzureContainerAppsDynamicSessions:CustomContainer",
+            "value": "{\"Endpoints\": {\"Python\": [], \"CSharp\": []}",
+            "label": null,
+            "content_type": "application/json",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:Quota:Storage:AuthenticationType",
+            "value": "AzureIdentity",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:Quota:Storage:AccountName",
+            "value": "{{storageAccountAdlsName}}",
+            "label": null,
+            "content_type": "",
             "tags": {}
         },
         {
@@ -108,6 +129,20 @@
         {
             "key": "FoundationaLLM:ResourceProvidersCache:CacheExpirationScanFrequencySeconds",
             "value": "30",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:ResourceProviders:AzureAI:Storage:AuthenticationType",
+            "value": "AzureIdentity",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:ResourceProviders:AzureAI:Storage:AccountName",
+            "value": "{{storageAccountAdlsName}}",
             "label": null,
             "content_type": "",
             "tags": {}
@@ -155,20 +190,6 @@
             "tags": {}
         },
         {
-            "key": "FoundationaLLM:ResourceProviders:AzureOpenAI:Storage:AuthenticationType",
-            "value": "AzureIdentity",
-            "label": null,
-            "content_type": "",
-            "tags": {}
-        },
-        {
-            "key": "FoundationaLLM:ResourceProviders:AzureOpenAI:Storage:AccountName",
-            "value": "{{storageAccountAdlsName}}",
-            "label": null,
-            "content_type": "",
-            "tags": {}
-        },
-        {
             "key": "FoundationaLLM:ResourceProviders:Configuration:Storage:AuthenticationType",
             "value": "AzureIdentity",
             "label": null,
@@ -177,6 +198,20 @@
         },
         {
             "key": "FoundationaLLM:ResourceProviders:Configuration:Storage:AccountName",
+            "value": "{{storageAccountAdlsName}}",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:ResourceProviders:DataPipeline:Storage:AuthenticationType",
+            "value": "AzureIdentity",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:ResourceProviders:DataPipeline:Storage:AccountName",
             "value": "{{storageAccountAdlsName}}",
             "label": null,
             "content_type": "",
@@ -197,6 +232,20 @@
             "tags": {}
         },
         {
+            "key": "FoundationaLLM:ResourceProviders:Plugin:Storage:AuthenticationType",
+            "value": "AzureIdentity",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:ResourceProviders:Plugin:Storage:AccountName",
+            "value": "{{storageAccountAdlsName}}",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
             "key": "FoundationaLLM:ResourceProviders:Prompt:Storage:AuthenticationType",
             "value": "AzureIdentity",
             "label": null,
@@ -205,6 +254,20 @@
         },
         {
             "key": "FoundationaLLM:ResourceProviders:Prompt:Storage:AccountName",
+            "value": "{{storageAccountAdlsName}}",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:ResourceProviders:Vector:Storage:AuthenticationType",
+            "value": "AzureIdentity",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:ResourceProviders:Vector:Storage:AccountName",
             "value": "{{storageAccountAdlsName}}",
             "label": null,
             "content_type": "",
@@ -274,6 +337,62 @@
             "tags": {}
         },
         {
+            "key": "FoundationaLLM:APIEndpoints:ContextAPI:Essentials:APIKey",
+            "value": "{\"uri\":\"{{keyvaultUri}}secrets/foundationallm-apiendpoints-contextapi-apikey\"}",
+            "label": null,
+            "content_type": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:APIEndpoints:ContextAPI:Essentials:AppInsightsConnectionString",
+            "value": "{\"uri\":\"{{keyvaultUri}}secrets/foundationallm-appinsights-connectionstring\"}",
+            "label": null,
+            "content_type": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:APIEndpoints:ContextAPI:Configuration:FileService:KnowledgeSearchFileExtensions",
+            "value": "c, cpp, cs, css, doc, docx, html, java, js, json, md, pdf, php, pptx, py, rb, sh, tex, ts, txt",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:APIEndpoints:ContextAPI:Configuration:FileService:Storage:AccountName",
+            "value": "{{contextStorageAccount}}",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:APIEndpoints:ContextAPI:Configuration:FileService:Storage:AuthenticationType",
+            "value": "AzureIdentity",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:APIEndpoints:ContextAPI:Configuration:FileService:CosmosDB:Endpoint",
+            "value": "{{cosmosEndpoint}}",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:APIEndpoints:ContextAPI:Configuration:FileService:CosmosDB:Database",
+            "value": "database",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:APIEndpoints:ContextAPI:Configuration:FileService:CosmosDB:Containers",
+            "value": "Context",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
             "key": "FoundationaLLM:APIEndpoints:CoreAPI:Essentials:APIUrl",
             "value": "https://{{coreApiHostname}}/core",
             "label": null,
@@ -285,6 +404,13 @@
             "value": "{\"uri\":\"{{keyvaultUri}}secrets/foundationallm-appinsights-connectionstring\"}",
             "label": null,
             "content_type": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:APIEndpoints:CoreAPI:Configuration:AzureAIAgentsFileSearchExensions",
+            "value": "c, cpp, cs, css, doc, docx, html, java, js, json, md, pdf, php, pptx, py, rb, sh, tex, ts, txt",
+            "label": null,
+            "content_type": "",
             "tags": {}
         },
         {
@@ -418,6 +544,132 @@
             "value": "{\"uri\":\"{{keyvaultUri}}secrets/foundationallm-appinsights-connectionstring\"}",
             "label": null,
             "content_type": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:APIEndpoints:DataPipelineAPI:Essentials:APIKey",
+            "value": "{\"uri\":\"{{keyvaultUri}}secrets/foundationallm-apiendpoints-datapipelineapi-apikey\"}",
+            "label": null,
+            "content_type": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:APIEndpoints:DataPipelineAPI:Essentials:AppInsightsConnectionString",
+            "value": "{\"uri\":\"{{keyvaultUri}}secrets/foundationallm-appinsights-connectionstring\"}",
+            "label": null,
+            "content_type": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:APIEndpoints:DataPipelineAPI:Configuration:Storage:AccountName",
+            "value": "{{storageAccountAdlsName}}",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:APIEndpoints:DataPipelineAPI:Configuration:Storage:AuthenticationType",
+            "value": "AzureIdentity",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:APIEndpoints:DataPipelineAPI:Configuration:FrontendWorkerQueue",
+            "value": "frontend-worker",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:APIEndpoints:DataPipelineAPI:Configuration:BackendWorkerQueue",
+            "value": "backend-worker",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:APIEndpoints:DataPipelineBackendWorker:Essentials:APIKey",
+            "value": "{\"uri\":\"{{keyvaultUri}}secrets/foundationallm-apiendpoints-datapipelinebackendworker-apikey\"}",
+            "label": null,
+            "content_type": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:APIEndpoints:DataPipelineBackendWorker:Essentials:AppInsightsConnectionString",
+            "value": "{\"uri\":\"{{keyvaultUri}}secrets/foundationallm-appinsights-connectionstring\"}",
+            "label": null,
+            "content_type": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:APIEndpoints:DataPipelineBackendWorker:Configuration:Storage:AccountName",
+            "value": "{{storageAccountAdlsName}}",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:APIEndpoints:DataPipelineBackendWorker:Configuration:Storage:AuthenticationType",
+            "value": "AzureIdentity",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:APIEndpoints:DataPipelineBackendWorker:Configuration:Queue",
+            "value": "backend-worker",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:APIEndpoints:DataPipelineBackendWorker:Configuration:ParallelProcessorsCount",
+            "value": "10",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:APIEndpoints:DataPipelineFrontendWorker:Essentials:APIKey",
+            "value": "{\"uri\":\"{{keyvaultUri}}secrets/foundationallm-apiendpoints-datapipelinefrontendworker-apikey\"}",
+            "label": null,
+            "content_type": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:APIEndpoints:DataPipelineFrontendWorker:Essentials:AppInsightsConnectionString",
+            "value": "{\"uri\":\"{{keyvaultUri}}secrets/foundationallm-appinsights-connectionstring\"}",
+            "label": null,
+            "content_type": "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:APIEndpoints:DataPipelineFrontendWorker:Configuration:Storage:AccountName",
+            "value": "{{storageAccountAdlsName}}",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:APIEndpoints:DataPipelineFrontendWorker:Configuration:Storage:AuthenticationType",
+            "value": "AzureIdentity",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:APIEndpoints:DataPipelineFrontendWorker:Configuration:Queue",
+            "value": "frontend-worker",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:APIEndpoints:DataPipelineFrontendWorker:Configuration:ParallelProcessorsCount",
+            "value": "10",
+            "label": null,
+            "content_type": "",
             "tags": {}
         },
         {
@@ -694,6 +946,13 @@
             "tags": {}
         },
         {
+            "key": "FoundationaLLM:APIEndpoints:GatewayAPI:Configuration:AzureAIAgentServiceMaxVectorizationTimeSeconds",
+            "value": "120",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
             "key": "FoundationaLLM:APIEndpoints:GatewayAPI:Configuration:AzureOpenAIAssistantsMaxVectorizationTimeSeconds",
             "value": "120",
             "label": null,
@@ -960,6 +1219,41 @@
             "tags": {}
         },
         {
+            "key": "FoundationaLLM:DataPipeline:State:CosmosDB:Containers",
+            "value": "DataPipelines",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:DataPipeline:State:CosmosDB:Database",
+            "value": "database",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:DataPipeline:State:CosmosDB:Endpoint",
+            "value": "{{cosmosEndpoint}}",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:DataPipeline:State:Storage:AuthenticationType",
+            "value": "AzureIdentity",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:DataPipeline:State:Storage:AccountName",
+            "value": "{{storageAccountAdlsName}}",
+            "label": null,
+            "content_type": "",
+            "tags": {}
+        },
+        {
             "key": "FoundationaLLM:UserPortal:Authentication:Entra:Instance",
             "value": "https://login.microsoftonline.com/",
             "label": null,
@@ -1123,6 +1417,27 @@
         {
             "key": "FoundationaLLM:Events:Profiles:CoreAPI",
             "value": "{{coreApiEventGridProfile}}",
+            "label": null,
+            "content_type": "application/json",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:Events:Profiles:DataPipelineAPI",
+            "value": "{{dataPipelineApiEventGridProfile}}",
+            "label": null,
+            "content_type": "application/json",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:Events:Profiles:DataPipelineBackendWorker",
+            "value": "{{dataPipelineBackendWorkerEventGridProfile}}",
+            "label": null,
+            "content_type": "application/json",
+            "tags": {}
+        },
+        {
+            "key": "FoundationaLLM:Events:Profiles:DataPipelineFrontendWorker",
+            "value": "{{dataPipelineFrontendWorkerEventGridProfile}}",
             "label": null,
             "content_type": "application/json",
             "tags": {}
