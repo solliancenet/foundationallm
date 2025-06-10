@@ -49,6 +49,8 @@ param project string
 param services array
 var serviceNames = [for service in services: service.name]
 
+param contextResourceGroupName string
+
 @description('Storage Resource Group name')
 param storageResourceGroupName string
 
@@ -92,7 +94,6 @@ var backendServices = {
   'semantic-kernel-api': { displayName: 'SemanticKernelAPI' }
   'state-api': { displayName: 'StateAPI' }
   'vectorization-job': { displayName: 'VectorizationWorker' }
-  'context-api': { displayName: 'ContextAPI' }
   'datapipeline-api': { displayName: 'DataPipelineAPI' }
   'datapipeline-frontendworker': { displayName: 'DataPipelineFrontendWorker' }
   'datapipeline-backendworker': { displayName: 'DataPipelineBackendWorker' }
@@ -523,6 +524,18 @@ module dataPipelineFrontendWorkerCosmosRoles './modules/sqlRoleAssignments.bicep
   dependsOn: [srBackend]
 }
 
+module dataPipelineFrontendWorkerVecRoles 'modules/utility/roleAssignments.bicep' = {
+  name: 'DPFEWVecRoles-${timestamp}'
+  scope: resourceGroup(vectorizationResourceGroupName)
+  params: {
+    principalId: srBackend[indexOf(backendServiceNames, 'datapipeline-frontendworker')].outputs.servicePrincipalId
+    roleDefinitionIds: {
+      'Search Index Data Contributor': '8ebe5a00-799e-43f5-93ac-243d3dce84a7'
+      'Search Service Contributor': '7ca78c08-252a-4471-8644-bb5ff32d4ba0'
+    }
+  }
+}
+
 module dataPipelineBackendWorkerCosmosRoles './modules/sqlRoleAssignments.bicep' = {
   scope: resourceGroup(storageResourceGroupName)
   name: 'datapipeline-backendworker-cosmos-role'
@@ -534,6 +547,18 @@ module dataPipelineBackendWorkerCosmosRoles './modules/sqlRoleAssignments.bicep'
     }
   }
   dependsOn: [srBackend]
+}
+
+module dataPipelineBackendWorkerVecRoles 'modules/utility/roleAssignments.bicep' = {
+  name: 'DPBEWVecRoles-${timestamp}'
+  scope: resourceGroup(vectorizationResourceGroupName)
+  params: {
+    principalId: srBackend[indexOf(backendServiceNames, 'datapipeline-backendworker')].outputs.servicePrincipalId
+    roleDefinitionIds: {
+      'Search Index Data Contributor': '8ebe5a00-799e-43f5-93ac-243d3dce84a7'
+      'Search Service Contributor': '7ca78c08-252a-4471-8644-bb5ff32d4ba0'
+    }
+  }
 }
 
 module searchIndexDataReaderRole 'modules/utility/roleAssignments.bicep' = {
@@ -664,6 +689,28 @@ module searchIndexDataReaderSemanticKernelRole 'modules/utility/roleAssignments.
     roleDefinitionIds: {
       'Search Index Data Reader': '1407120a-92aa-4202-b7e9-c0e197c71c8f'
       'Search Service Contributor': '7ca78c08-252a-4471-8644-bb5ff32d4ba0'
+    }
+  }
+}
+
+module sessionPoolExecutorLangchainRole 'modules/utility/roleAssignments.bicep' = {
+  name: 'sessionPoolExecLangchainRole-${timestamp}'
+  scope: resourceGroup(contextResourceGroupName)
+  params: {
+    principalId: srBackend[indexOf(backendServiceNames, 'langchain-api')].outputs.servicePrincipalId
+    roleDefinitionIds: {
+      'Azure ContainerApps Session Executor': '0fb8eba5-a2bb-4abe-b1c1-49dfad359bb0'
+    }
+  }
+}
+
+module sessionPoolExecutorSemanticKernelRole 'modules/utility/roleAssignments.bicep' = {
+  name: 'sessionPoolExecSemKerRole-${timestamp}'
+  scope: resourceGroup(contextResourceGroupName)
+  params: {
+    principalId: srBackend[indexOf(backendServiceNames, 'semantic-kernel-api')].outputs.servicePrincipalId
+    roleDefinitionIds: {
+      'Azure ContainerApps Session Executor': '0fb8eba5-a2bb-4abe-b1c1-49dfad359bb0'
     }
   }
 }

@@ -21,6 +21,7 @@ var roleDefinitions = {
   'Reader':                                'acdd72a7-3385-48ef-bd42-f606fba81ae7'
   'Storage Blob Data Contributor':         'ba92f5b4-2d11-453d-a403-e96b0029c9fe'
   'Storage Queue Data Contributor':        '974c5e8b-45b9-4653-ba55-5f855dd0fb88'
+  'Azure ContainerApps Session Executor':  '0fb8eba5-a2bb-4abe-b1c1-49dfad359bb0'
 }
 
 var roleAssignmentsToCreate = [
