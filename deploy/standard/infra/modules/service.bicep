@@ -107,7 +107,7 @@ module opsRoleAssignments 'utility/roleAssignments.bicep' = {
   }
 }
 
-@description('OPS Role assignments for microservice managed identity')
+@description('APP Role assignments for microservice managed identity')
 module appRoleAssignments 'utility/roleAssignments.bicep' = {
   name: 'appIAM-${serviceName}-${timestamp}'
   scope: resourceGroup()

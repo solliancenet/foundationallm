@@ -46,24 +46,30 @@
     "assistant_id": "{{oaiAssistantId}}",
     "package_name": "FoundationaLLM",
     "resource_object_ids": {
-			"/instances/{{instanceId}}/providers/FoundationaLLM.Agent/workflows/OpenAIAssistants": {
-				"object_id": "/instances/{{instanceId}}/providers/FoundationaLLM.Agent/workflows/OpenAIAssistants",
-				"properties": {}
-			},
-			"/instances/{{instanceId}}/providers/FoundationaLLM.AIModel/aiModels/GPT4oCompletionAIModel" : {
-				"object_id": "/instances/{{instanceId}}/providers/FoundationaLLM.AIModel/aiModels/GPT4oCompletionAIModel",
-				"properties": {
-					"object_role": "main_model",
-					"model_parameters": {}
-				}
-			},
-			"/instances/{{instanceId}}/providers/FoundationaLLM.Prompt/prompts/FoundationaLLM": {
-				"object_id": "/instances/{{instanceId}}/providers/FoundationaLLM.Prompt/prompts/FoundationaLLM",
-				"properties": {
-					"object_role": "main_prompt"
-				}
-			}
-		}
+      "/instances/{{instanceId}}/providers/FoundationaLLM.Agent/workflows/OpenAIAssistants": {
+        "object_id": "/instances/{{instanceId}}/providers/FoundationaLLM.Agent/workflows/OpenAIAssistants",
+        "properties": {}
+      },
+      "/instances/{{instanceId}}/providers/FoundationaLLM.AIModel/aiModels/GPT4oCompletionAIModel": {
+        "object_id": "/instances/{{instanceId}}/providers/FoundationaLLM.AIModel/aiModels/GPT4oCompletionAIModel",
+        "properties": {
+          "object_role": "main_model",
+          "model_parameters": {}
+        }
+      },
+      "/instances/{{instanceId}}/providers/FoundationaLLM.Prompt/prompts/FoundationaLLM": {
+        "object_id": "/instances/{{instanceId}}/providers/FoundationaLLM.Prompt/prompts/FoundationaLLM",
+        "properties": {
+          "object_role": "main_prompt"
+        }
+      }
+    }
   },
-  "tools": []
+  "tools": [],
+  "created_on": "{{deployTime}}",
+  "updated_on": "{{deployTime}}",
+  "created_by": "SYSTEM",
+  "updated_by": "SYSTEM",
+  "deleted": false,
+  "expiration_date": null
 }

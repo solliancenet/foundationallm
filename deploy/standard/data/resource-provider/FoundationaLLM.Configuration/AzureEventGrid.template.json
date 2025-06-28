@@ -13,5 +13,10 @@
     "url": "{{eventGridNamespaceEndpoint}}",
     "url_exceptions": [],
     "timeout_seconds": 60,
-    "retry_strategy_name": "ExponentialBackoff"
+    "retry_strategy_name": "ExponentialBackoff",
+    "created_on": "{{deployTime}}",
+    "updated_on": "{{deployTime}}",
+    "created_by": "SYSTEM",
+    "updated_by": "SYSTEM",
+    "deleted": false
 }

@@ -7,6 +7,12 @@
 			"Deleted": false
 		},
 		{
+			"Name": "AzureAIAgentServiceWorkflow",
+			"Filename": "/FoundationaLLM.Agent/AzureAIAgentServiceWorkflow.json",
+			"Type": "workflow",
+			"Deleted": false
+		},
+		{
 			"Name": "OpenAIAssistants",
 			"Filename": "/FoundationaLLM.Agent/OpenAIAssistants.json",
 			"Type": "workflow",

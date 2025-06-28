@@ -125,21 +125,16 @@ $authServices = @{
 }
 
 $services = @{
-    orchestrationapi         = @{
-        miName         = "mi-orchestration-api-$svcResourceSuffix"
-        miConfigName   = "orchestrationApiMiClientId"
-        ingressEnabled = $false
-    }
-    agenthubapi              = @{
-        miName         = "mi-agent-hub-api-$svcResourceSuffix"
-        miConfigName   = "agentHubApiMiClientId"
-        ingressEnabled = $false
-    }
     chatui                   = @{
         miName         = "mi-chat-ui-$svcResourceSuffix"
         miConfigName   = "chatUiMiClientId"
         ingressEnabled = $true
         hostname       = "www.internal.foundationallm.ai"
+    }
+    contextapi         = @{
+        miName         = "mi-context-api-$svcResourceSuffix"
+        miConfigName   = "contextApiMiClientId"
+        ingressEnabled = $false
     }
     coreapi                  = @{
         miName         = "mi-core-api-$svcResourceSuffix"
@@ -152,9 +147,19 @@ $services = @{
         miConfigName   = "coreJobMiClientId"
         ingressEnabled = $false
     }
-    datasourcehubapi         = @{
-        miName         = "mi-data-source-hub-api-$svcResourceSuffix"
-        miConfigName   = "dataSourceHubApiMiClientId"
+    datapipelineapi         = @{
+        miName         = "mi-datapipeline-api-$svcResourceSuffix"
+        miConfigName   = "dataPipelineApiMiClientId"
+        ingressEnabled = $false
+    }
+    datapipelinefrontendworker         = @{
+        miName         = "mi-datapipeline-frontendworker-$svcResourceSuffix"
+        miConfigName   = "dataPipelineFrontendWorkerMiClientId"
+        ingressEnabled = $false
+    }
+    datapipelinebackendworker         = @{
+        miName         = "mi-datapipeline-backendworker-$svcResourceSuffix"
+        miConfigName   = "dataPipelineBackendWorkerMiClientId"
         ingressEnabled = $false
     }
     gatekeeperapi            = @{
@@ -194,9 +199,9 @@ $services = @{
         ingressEnabled = $true
         hostname       = "management.internal.foundationallm.ai"
     }
-    prompthubapi             = @{
-        miName         = "mi-prompt-hub-api-$svcResourceSuffix"
-        miConfigName   = "promptHubApiMiClientId"
+    orchestrationapi         = @{
+        miName         = "mi-orchestration-api-$svcResourceSuffix"
+        miConfigName   = "orchestrationApiMiClientId"
         ingressEnabled = $false
     }
     semantickernelapi        = @{
@@ -219,26 +224,6 @@ $services = @{
         miConfigName   = "vectorizationJobMiClientId"
         ingressEnabled = $false
     }
-    contextapi         = @{
-        miName         = "mi-context-api-$svcResourceSuffix"
-        miConfigName   = "contextApiMiClientId"
-        ingressEnabled = $false
-    }
-    datapipelineapi         = @{
-        miName         = "mi-datapipeline-api-$svcResourceSuffix"
-        miConfigName   = "dataPipelineApiMiClientId"
-        ingressEnabled = $false
-    }
-    datapipelinefrontendworker         = @{
-        miName         = "mi-datapipeline-frontendworker-$svcResourceSuffix"
-        miConfigName   = "dataPipelineFrontendWorkerMiClientId"
-        ingressEnabled = $false
-    }
-    datapipelinebackendworker         = @{
-        miName         = "mi-datapipeline-backendworker-$svcResourceSuffix"
-        miConfigName   = "dataPipelineBackendWorkerMiClientId"
-        ingressEnabled = $false
-    }
 }
 
 $tokens.deployTime = $((Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ss.fffffffZ'))
@@ -248,13 +233,17 @@ $tokens.managementApiRoleAssignmentGuid = $(New-Guid).Guid
 $tokens.coreApiRoleAssignmentGuid = $(New-Guid).Guid
 $tokens.vectorizationApiRoleAssignmentGuid = $(New-Guid).Guid
 $tokens.orchestrationApiRoleAssignmentGuid = $(New-Guid).Guid
+$tokens.orchestrationApiPipelineManagerRoleAssignmentGuid = $(New-Guid).Guid
 $tokens.gatekeeperApiRoleAssignmentGuid = $(New-Guid).Guid
 $tokens.gatewayApiRoleAssignmentGuid = $(New-Guid).Guid
+$tokens.contextApiRoleAssignmentGuid = $(New-Guid).Guid
 $tokens.vectorizationJobRoleAssignmentGuid = $(New-Guid).Guid
 $tokens.conversationPolicyGuid = $(New-Guid).Guid
 $tokens.attachmentPolicyGuid = $(New-Guid).Guid
 $tokens.conversationMappingsPolicyGuid = $(New-Guid).Guid
 $tokens.fileMappingsPolicyGuid = $(New-Guid).Guid
+$tokens.agentConversationMappingsPolicyGuid = $(New-Guid).Guid
+$tokens.agentFileMappingsPolicyGuid = $(New-Guid).Guid
 $tokens.configReadAccessGuid1 = $(New-Guid).Guid
 $tokens.configReadAccessGuid2 = $(New-Guid).Guid
 $tokens.agentReaderGuid = $(New-Guid).Guid
@@ -278,6 +267,8 @@ $tokens.pbacConversationsOwnerGuid = $(New-Guid).Guid
 $tokens.pbacConversationMappingsGuid = $(New-Guid).Guid
 $tokens.pbacAttachmentsOwnerGuid = $(New-Guid).Guid
 $tokens.pbacFileMappingsGuid = $(New-Guid).Guid
+$tokens.pbacAgentConversationMappingsGuid = $(New-Guid).Guid
+$tokens.pbacAgentFileMappingsGuid = $(New-Guid).Guid
 
 $tokens.subscriptionId = $subscriptionId
 $tokens.storageResourceGroup = $resourceGroups.storage
@@ -456,6 +447,14 @@ $storageAccountAdlsName = Invoke-AndRequireSuccess "Get ADLS Storage Account" {
 }
 $tokens.storageAccountAdlsName = $storageAccountAdlsName
 
+$contextStorageAccountAdlsName = Invoke-AndRequireSuccess "Get ADLS Context Storage Account" {
+    az storage account list `
+        --resource-group $($resourceGroups.context) `
+        --query "[?kind=='StorageV2'].name" `
+        --output tsv
+}
+$tokens.contextStorageAccount = $contextStorageAccountAdlsName
+
 foreach ($service in $services.GetEnumerator()) {
     $miClientId = Invoke-AndRequireSuccess "Get $($service.Key) managed identity" {
         az identity show `
@@ -490,6 +489,7 @@ foreach ($service in $authServices.GetEnumerator()) {
 }
 
 $tokens.oneDriveBaseUrl = $env:ONEDRIVE_BASE_URL
+$tokens.sessionPoolEndpoint = $env:CONTEXT_SESSION_POOL_ENDPOINT
 
 $tokens.orchestrationApiMiClientId = $services["orchestrationapi"].miClientId
 $tokens.orchestrationApiMiObjectId = $services["orchestrationapi"].miObjectId
@@ -606,6 +606,7 @@ PopulateTemplate $tokens "..,data,resource-provider,FoundationaLLM.Agent,Foundat
 PopulateTemplate $tokens "..,data,resource-provider,FoundationaLLM.Agent,OpenAIAssistants.template.json" "..,..,common,data,resource-provider,FoundationaLLM.Agent,OpenAIAssistants.json"
 PopulateTemplate $tokens "..,data,resource-provider,FoundationaLLM.Agent,LangGraphReactAgent.template.json" "..,..,common,data,resource-provider,FoundationaLLM.Agent,LangGraphReactAgent.json"
 PopulateTemplate $tokens "..,data,resource-provider,FoundationaLLM.Agent,LangChainExpressionLanguage.template.json" "..,..,common,data,resource-provider,FoundationaLLM.Agent,LangChainExpressionLanguage.json"
+PopulateTemplate $tokens "..,data,resource-provider,FoundationaLLM.Agent,AzureAIAgentServiceWorkflow.template.json" "..,..,common,data,resource-provider,FoundationaLLM.Agent,AzureAIAgentServiceWorkflow.json"
 PopulateTemplate $tokens "..,data,resource-provider,FoundationaLLM.Agent,DALLEImageGeneration.template.json" "..,..,common,data,resource-provider,FoundationaLLM.Agent,DALLEImageGeneration.json"
 PopulateTemplate $tokens "..,data,resource-provider,FoundationaLLM.Agent,ExternalAgentWorkflow.template.json" "..,..,common,data,resource-provider,FoundationaLLM.Agent,ExternalAgentWorkflow.json"
 PopulateTemplate $tokens "..,data,resource-provider,FoundationaLLM.Agent,FoundationaLLMContentSearchTool.template.json" "..,..,common,data,resource-provider,FoundationaLLM.Agent,FoundationaLLMContentSearchTool.json"
@@ -640,6 +641,7 @@ PopulateTemplate $tokens "..,data,resource-provider,FoundationaLLM.Configuration
 
 
 PopulateTemplate $tokens "..,data,resource-provider,FoundationaLLM.Prompt,FoundationaLLM.template.json" "..,..,common,data,resource-provider,FoundationaLLM.Prompt,FoundationaLLM.json"
+PopulateTemplate $tokens "..,data,resource-provider,FoundationaLLM.Vector,ConversationFiles.template.json" "..,..,common,data,resource-provider,FoundationaLLM.Vector,ConversationFiles.json"
 PopulateTemplate $tokens "..,data,role-assignments,DefaultRoleAssignments.template.json" "..,data,role-assignments,$($instanceId).json"
 PopulateTemplate $tokens "..,data,policy-assignments,DefaultPolicyAssignments.template.json" "..,data,policy-assignments,$($instanceId)-policy.json"
 

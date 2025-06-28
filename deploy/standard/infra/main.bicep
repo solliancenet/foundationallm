@@ -84,6 +84,7 @@ module app 'app-rg.bicep' = {
     availabilityZones: availabilityZones
     backendAksNodeSku: backendAksNodeSku
     backendAksSystemNodeSku: backendAksSystemNodeSku
+    contextResourceGroupName: resourceGroups.context
     frontendAksNodeSku: frontendAksNodeSku
     frontendAksSystemNodeSku: frontendAksSystemNodeSku
     environmentName: environmentName
@@ -131,6 +132,31 @@ module auth 'auth-rg.bicep' = {
     vnetId: networking.outputs.vnetId
   }
 }
+
+module context 'context-rg.bicep' = {
+  dependsOn: [rg, app]
+  name: 'context-${timestamp}'
+  scope: resourceGroup(resourceGroups.context)
+  params: {
+    actionGroupId: ops.outputs.actionGroupId
+    administratorObjectId: administratorObjectId
+    appResourceGroupName: resourceGroups.app
+    environmentName: environmentName
+    dnsResourceGroup: dnsResourceGroup
+    dnsSubscriptionId: dnsSubscriptionId
+    instanceId: instanceId
+    k8sNamespace: k8sNamespace
+    location: location
+    logAnalyticsWorkspaceId: ops.outputs.logAnalyticsWorkspaceId
+    opsResourceGroupName: resourceGroups.ops
+    storageResourceGroupName: resourceGroups.storage
+    principalType: principalType
+    project: project
+    services: services
+    vnetId: networking.outputs.vnetId
+  }
+}
+
 
 module networking 'networking-rg.bicep' = {
   dependsOn: [rg]
@@ -226,12 +252,16 @@ output AZURE_OPENAI_ENDPOINT string = openai.outputs.azureOpenAiEndpoint
 output AZURE_OPENAI_ID string = openai.outputs.azureOpenAiId
 output AZURE_STORAGE_ACCOUNT_NAME string = storage.outputs.storageAccountName
 
+output CONTEXT_STORAGE_ACCOUNT_NAME string = context.outputs.contextStoreName
+output CONTEXT_SESSION_POOL_ENDPOINT string = context.outputs.sessionPoolEndpoint
+
 output FOUNDATIONALLM_PROJECT string = project
 output FOUNDATIONALLM_K8S_NS string = k8sNamespace
 output FOUNDATIONALLM_REGISTRY string = registry
 
 output FLLM_APP_RG     string = resourceGroups.app
 output FLLM_AUTH_RG    string = resourceGroups.auth
+output FLLM_CONTEXT_RG string = resourceGroups.context
 output FLLM_DATA_RG    string = resourceGroups.data
 output FLLM_JBX_RG     string = resourceGroups.jbx
 output FLLM_NET_RG     string = resourceGroups.net

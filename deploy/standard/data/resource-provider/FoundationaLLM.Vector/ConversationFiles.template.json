@@ -1,0 +1,21 @@
+{
+  "type": "vector-database",
+  "name": "ConversationFiles",
+  "object_id": "/instances/{{instanceId}}/providers/FoundationaLLM.Vector/vectorDatabases/ConversationFiles",
+  "display_name": "Conversation files vectorization",
+  "description": "The vector database that used by default when processing files that are uploaded in conversations.",
+  "cost_center": null,
+  "database_type": "AzureAISearch",
+  "database_name": "ConversationFiles",
+  "embedding_property_name": "Embedding",
+  "content_property_name": "Text",
+  "vector_store_id_property_name": "VectorStoreId",
+  "api_endpoint_configuration_object_id": "/instances/{{instanceId}}/providers/FoundationaLLM.Configuration/apiEndpointConfigurations/AzureAISearch",
+  "properties": null,
+  "created_on": "{{deployTime}}",
+  "updated_on": "{{deployTime}}",
+  "created_by": "SYSTEM",
+  "updated_by": "SYSTEM",
+  "deleted": false,
+  "expiration_date": null
+}
