@@ -11,12 +11,17 @@
     "api_version": "2024-07-01-preview",
     "authentication_parameters": {
         "api_key_configuration_name": "FoundationaLLM:APIEndpoints:AzureOpenAI:Essentials:APIKey",
-		"api_key_header_name": "api-key"
+        "api_key_header_name": "api-key"
     },
     "operation_type": "chat",
     "url": "{{openAiEndpointUri}}",
     "url_exceptions": [],
     "timeout_seconds": 60,
     "retry_strategy_name": "ExponentialBackoff",
-    "provider": "microsoft"
+    "provider": "microsoft",
+    "created_on": "{{deployTime}}",
+    "updated_on": "{{deployTime}}",
+    "created_by": "SYSTEM",
+    "updated_by": "SYSTEM",
+    "deleted": false
 }

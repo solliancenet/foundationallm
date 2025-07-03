@@ -1,15 +1,15 @@
 {
-    "type": "langgraph-react-agent-workflow",
-    "name": "LangGraphReactAgent",
-    "object_id": "/instances/${env:FOUNDATIONALLM_INSTANCE_ID}/providers/FoundationaLLM.Agent/workflows/LangGraphReactAgent",
-    "display_name": "LangGraphReactAgent",
-    "description": "LangGraph ReAct workflow",
-    "cost_center": null,
-    "properties": null,
-    "created_on": "0001-01-01T00:00:00+00:00",
-    "updated_on": "0001-01-01T00:00:00+00:00",
-    "created_by": "SYSTEM",
-    "updated_by": null,
-    "deleted": false,
-    "expiration_date": null
-  }
+  "type": "langgraph-react-agent-workflow",
+  "name": "LangGraphReactAgent",
+  "object_id": "/instances/${env:FOUNDATIONALLM_INSTANCE_ID}/providers/FoundationaLLM.Agent/workflows/LangGraphReactAgent",
+  "display_name": "LangGraphReactAgent",
+  "description": "LangGraph ReAct workflow",
+  "cost_center": null,
+  "properties": null,
+  "created_on": "{{deployTime}}",
+  "updated_on": "{{deployTime}}",
+  "created_by": "SYSTEM",
+  "updated_by": "SYSTEM",
+  "deleted": false,
+  "expiration_date": null
+}

@@ -6,19 +6,25 @@
   "description": null,
   "cost_center": null,
   "category": "General",
+  "subcategory": null,
   "authentication_type": "APIKey",
   "authentication_parameters": {
     "api_key_configuration_name": "FoundationaLLM:APIEndpoints:DataPipelineAPI:Essentials:APIKey",
     "api_key_header_name": "X-API-KEY"
   },
   "url": "http://datapipeline-api.{{serviceNamespaceName}}.svc.cluster.local",
-  "status_endpoint": "/status",
+  "status_endpoint": "/instances/{{instanceId}}/status",
   "url_exceptions": [],
-  "timeout_seconds": 60,
+  "timeout_seconds": 2400,
   "retry_strategy_name": "ExponentialBackoff",
-  "created_on": "0001-01-01T00:00:00+00:00",
-  "updated_on": "0001-01-01T00:00:00+00:00",
+  "provider": null,
+  "api_version": null,
+  "operation_type": null,
+  "properties": null,
+  "created_on": "{{deployTime}}",
+  "updated_on": "{{deployTime}}",
   "created_by": "SYSTEM",
-  "updated_by": null,
-  "deleted": false
+  "updated_by": "SYSTEM",
+  "deleted": false,
+  "expiration_date": null
 }

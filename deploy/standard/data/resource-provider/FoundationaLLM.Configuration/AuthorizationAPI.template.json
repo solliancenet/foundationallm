@@ -1,24 +1,23 @@
 {
-    "type": "api-endpoint",
-    "name": "AuthorizationAPI",
-    "object_id": "/instances/{{instanceId}}/providers/FoundationaLLM.Configuration/apiEndpointConfigurations/AuthorizationAPI",
-    "display_name": null,
-    "description": null,
-    "cost_center": null,
-    "category": "General",
-    "authentication_type": "AzureIdentity",
-    "authentication_parameters":{
-      "scope":"api://FoundationaLLM-Authorization"
-    },
-    "url": "http://authorization-api.{{serviceNamespaceName}}.svc.cluster.local",
-    "status_endpoint": "/status",
-    "url_exceptions": [],
-    "timeout_seconds": 60,
-    "retry_strategy_name": "ExponentialBackoff",
-    "created_on": "0001-01-01T00:00:00+00:00",
-    "updated_on": "0001-01-01T00:00:00+00:00",
-    "created_by": null,
-    "updated_by": "SYSTEM",
-    "deleted": false
-  }
-  
+  "type": "api-endpoint",
+  "name": "AuthorizationAPI",
+  "object_id": "/instances/{{instanceId}}/providers/FoundationaLLM.Configuration/apiEndpointConfigurations/AuthorizationAPI",
+  "display_name": null,
+  "description": null,
+  "cost_center": null,
+  "category": "General",
+  "authentication_type": "AzureIdentity",
+  "authentication_parameters": {
+    "scope": "api://FoundationaLLM-Authorization"
+  },
+  "url": "http://authorization-api.{{serviceNamespaceName}}.svc.cluster.local",
+  "status_endpoint": "/status",
+  "url_exceptions": [],
+  "timeout_seconds": 60,
+  "retry_strategy_name": "ExponentialBackoff",
+  "created_on": "{{deployTime}}",
+  "updated_on": "{{deployTime}}",
+  "created_by": "SYSTEM",
+  "updated_by": "SYSTEM",
+  "deleted": false
+}

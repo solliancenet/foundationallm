@@ -1,0 +1,15 @@
+{
+  "type": "azure-ai-agent-service-workflow",
+  "name": "AzureAIAgentServiceWorkflow",
+  "object_id": "/instances/{{instanceId}}/providers/FoundationaLLM.Agent/workflows/AzureAIAgentServiceWorkflow",
+  "display_name": "AzureAIAgentServiceWorkflow",
+  "description": "Azure AI Agent Service Workflow",
+  "cost_center": null,
+  "properties": null,
+  "created_on": "{{deployTime}}",
+  "updated_on": "{{deployTime}}",
+  "created_by": "SYSTEM",
+  "updated_by": "SYSTEM",
+  "deleted": false,
+  "expiration_date": null
+}

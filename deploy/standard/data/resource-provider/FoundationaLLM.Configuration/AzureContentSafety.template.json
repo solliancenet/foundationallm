@@ -7,7 +7,7 @@
   "cost_center": null,
   "category": "Gatekeeper",
   "authentication_type": "APIKey",
-  "authentication_parameters":{
+  "authentication_parameters": {
     "api_key_configuration_name": "FoundationaLLM:APIEndpoints:AzureContentSafety:Essentials:APIKey",
     "api_key_header_name": "Ocp-Apim-Subscription-Key"
   },
@@ -15,9 +15,9 @@
   "url_exceptions": [],
   "timeout_seconds": 60,
   "retry_strategy_name": "ExponentialBackoff",
-  "created_on": "0001-01-01T00:00:00+00:00",
-  "updated_on": "0001-01-01T00:00:00+00:00",
-  "created_by": null,
+  "created_on": "{{deployTime}}",
+  "updated_on": "{{deployTime}}",
+  "created_by": "SYSTEM",
   "updated_by": "SYSTEM",
   "deleted": false
 }

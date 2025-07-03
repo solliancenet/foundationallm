@@ -1,0 +1,11 @@
+{
+	"ResourceReferences": [
+		{
+			"Name": "ConversationFiles",
+			"Filename": "/FoundationaLLM.Vector/ConversationFiles.json",
+			"Type": "vector-database",
+			"Deleted": false
+		}
+	],
+	"DefaultResourceName": null
+}
