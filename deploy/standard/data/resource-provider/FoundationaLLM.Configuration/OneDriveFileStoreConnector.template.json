@@ -1,24 +1,24 @@
 {
-    "type": "api-endpoint",
-    "name": "OneDriveFileStoreConnector",
-    "object_id": "/instances/{{instanceId}}/providers/FoundationaLLM.Configuration/apiEndpointConfigurations/OneDriveFileStoreConnector",
-    "display_name": null,
-    "description": null,
-    "cost_center": null,
-    "category": "FileStoreConnector",
-    "subcategory": "OneDriveWorkSchool",
-    "authentication_type": "AzureIdentity",
-    "authentication_parameters": {
-      "scope": "Files.Read.All"
-    },
-    "url": "{{oneDriveBaseUrl}}",
-    "status_endpoint": "",
-    "url_exceptions": [],
-    "timeout_seconds": 2400,
-    "retry_strategy_name": "ExponentialBackoff",
-    "created_on": "0001-01-01T00:00:00+00:00",
-    "updated_on": "0001-01-01T00:00:00+00:00",
-    "created_by": null,
-    "updated_by": "SYSTEM",
-    "deleted": false
-  }
+  "type": "api-endpoint",
+  "name": "OneDriveFileStoreConnector",
+  "object_id": "/instances/{{instanceId}}/providers/FoundationaLLM.Configuration/apiEndpointConfigurations/OneDriveFileStoreConnector",
+  "display_name": null,
+  "description": null,
+  "cost_center": null,
+  "category": "FileStoreConnector",
+  "subcategory": "OneDriveWorkSchool",
+  "authentication_type": "AzureIdentity",
+  "authentication_parameters": {
+    "scope": "Files.Read.All"
+  },
+  "url": "{{oneDriveBaseUrl}}",
+  "status_endpoint": "",
+  "url_exceptions": [],
+  "timeout_seconds": 2400,
+  "retry_strategy_name": "ExponentialBackoff",
+  "created_on": "{{deployTime}}",
+  "updated_on": "{{deployTime}}",
+  "created_by": "SYSTEM",
+  "updated_by": "SYSTEM",
+  "deleted": false
+}
