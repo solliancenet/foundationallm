@@ -1,2 +1,2 @@
-# foundationallm
-A platform accelerating delivery of secure, trustworthy enterprise copilots.
+# FoundationaLLM
+The FoundationaLLM repository is available at https://github.com/foundationallm/foundationallm.
